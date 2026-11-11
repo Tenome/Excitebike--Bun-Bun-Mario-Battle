@@ -371,3 +371,16 @@ The run codes `41`-`4F` (8-column runs) draw like plain ground but change
 the riding (4 to 56 of 63 frames differ): surfaces with effects, not yet
 measured. The editor (`tools/editor/course_editor.html`) carries these as
 default names.
+
+## Rider palettes and voices (Gen A)
+
+* `$80:BDAF + character * 8 + slot`: OBJ palette of each rider slot (OAM
+  attribute bits via `$0B`, written by `$80:B17B`). Player's own slot: Mario
+  2, Luigi 3, Toad 4, Wario 1. Race sprite colours come from the palette
+  block loaded at CGRAM 128 (`$88:B700` in practice/race).
+* `$80:CB19 + character * 8 + rider`: crash voice sound per rider (`$37-$3A`).
+  Gen B has the same table at `$80:C8E9` (+`$50` for Stadium 4, +`$28` when
+  `$1E91` is set). Gen B's palette table is not found yet.
+* A character swap mod (Peach/Yoshi into a Gen A slot) needs the 16 KB rider
+  set, that slot's 16 colours in each OBJ palette block, and the name record
+  (Gen B name tiles + `$50`).
