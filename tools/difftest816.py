@@ -78,6 +78,7 @@ def main():
     ap.add_argument('--seed', type=int, default=1)
     ap.add_argument('--steps', type=int, default=20000)
     ap.add_argument('--verbose', action='store_true')
+    ap.add_argument('--dump-fail', action='store_true', help='save the first failing case per function')
     ap.add_argument('--hand-only', action='store_true', help='test only the hand-written variants')
     a = ap.parse_args()
     os.chdir(ROOT)
@@ -189,6 +190,15 @@ def main():
                 res['fail'] += 1
                 if first is None:
                     first = '; '.join(problems)
+                    if a.dump_fail:
+                        dd = os.path.join('build', a.ver, 'fail_%s' % name)
+                        os.makedirs(dd, exist_ok=True)
+                        open(os.path.join(dd, 'wram_in.bin'), 'wb').write(bytes(base))
+                        open(os.path.join(dd, 'hw.bin'), 'wb').write(bytes(hw))
+                        open(os.path.join(dd, 'wram_orig.bin'), 'wb').write(bytes(cpu.wram))
+                        open(os.path.join(dd, 'wram_lifted.bin'), 'wb').write(outw)
+                        json.dump({'regs': regs, 'p': p, 'long': long_call, 'pc': pc,
+                                   'm': m.value, 'x': x.value}, open(os.path.join(dd, 'case.json'), 'w'))
             else:
                 res['pass'] += 1
         for k in totals:

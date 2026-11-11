@@ -343,6 +343,8 @@ void RunGameModeScript_m1x1(void)
     u8 step = rd8(DP(MODE_STEP));
     wr8(DP(MODE_STEP), (u8)(step + 1));
     u8 entry = (u8)(step - 1);
+    Y = entry;                                         /* LDY $77 / DEY */
+    SET_A8(list >> 8);                                 /* last byte the original loaded */
     if (!(entry & 0x80)) {                             /* steps 1..$80: list entry */
         u32 base = ((u32)DB << 16) + rd16(DP(0x02));
         u8 y = (u8)(entry << 1);
