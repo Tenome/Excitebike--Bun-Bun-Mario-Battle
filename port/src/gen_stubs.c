@@ -22,7 +22,8 @@
  *
  * There is no BIOS in the port, so the BIOS jump would run into open bus.
  * This replacement always takes the to_mode12 path, the one Stadium 2 and 4
- * ship with ($81:800C = 1). Everything else matches the original.
+ * ship with ($81:800C = 1), and also rewinds the broadcast clock to minute 0
+ * (see below). Everything else matches the original.
  */
 RecompReturn HleEndScreenStart(CpuState *cpu)
 {
@@ -35,6 +36,12 @@ RecompReturn HleEndScreenStart(CpuState *cpu)
         cpu->_flag_N = 0;
         cyc += 1 + 6;                       /* branch taken, RTS */
     } else {
+        /* Port addition: restart the broadcast hour (minute 0, frame 0) so
+         * mode $12 -> $0D replays the intro instead of idling at minute 60,
+         * past the end of the schedule. */
+        cpu_write8(cpu, 0x7F, 0xFFFF, 0x00);
+        cpu_write8(cpu, 0x7F, 0xFFFA, 0x00);
+        cpu_write8(cpu, 0x7F, 0xFFFB, 0x00);
         cpu_write8(cpu, 0x00, (uint16)(cpu->D + 0x76), 0x12);
         cpu_write8(cpu, 0x00, (uint16)(cpu->D + 0x75), 0x00);
         cpu_write8(cpu, 0x00, (uint16)(cpu->D + 0x77), 0x00);

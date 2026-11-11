@@ -629,7 +629,9 @@ def finish(d, args):
     with open(os.path.join(out, 'listing.asm'), 'w') as f:
         f.write(d.listing())
     with open(os.path.join(out, 'code.json'), 'w') as f:
-        json.dump({'insn': {'%06X' % k: [v[0], v[1], v[2], v[3]] for k, v in d.insn.items()},
+        json.dump({'jt': {'%06X' % site: {'table': '%06X' % t, 'targets': ['%06X' % x for x in tg]}
+                          for site, (t, tg) in d.jumptables.items()},
+                   'insn': {'%06X' % k: [v[0], v[1], v[2], v[3]] for k, v in d.insn.items()},
                    'funcs': {'%06X' % k: sorted(['M%dX%d' % (int(a), int(b)) for a, b in v])
                              for k, v in d.funcs.items()}}, f, indent=0)
     print(d.report().split('\n== Hardware')[0])

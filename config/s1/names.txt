@@ -37,3 +37,11 @@
 81F959 BsxClockTick
 80A34B EepromReadWords
 80A387 EepromSendCommand
+# kernel helpers
+8082B6 QueueSound           # A -> ring buffer $1400[$65 & $3F]
+81A1E5 Random               # mixes H/V counters, frame counter $63, broadcast clock
+81A620 SetHdmaPreset        # clears HDMA shadows; A = preset index ($FF = none)
+80B2A5 VramQueueTiles20     # VramQueueTiles with $0F = $20
+80B2A9 VramQueueTiles       # header byte (w nibbles) at ($02), entry appended to $7F:0000 queue
+80B3FE VramQueueCopy        # [$02] source, $10 length, $00 VRAM address -> $7F:0000 queue
+8088E0 SpcUpload            # IPL upload ($BBAA handshake); X selects block via $80:88CE/D4/DA

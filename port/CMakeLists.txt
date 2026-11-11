@@ -92,6 +92,12 @@ target_compile_definitions(BunbunS1SNESRecomp PRIVATE
 )
 snesrecomp_target_sdl(BunbunS1SNESRecomp)
 
+# MSVC treats _ptr32/_ptr64 as keywords (aliases of __ptr32/__ptr64), but the
+# v2 emitter names temporaries _ptrNN. Rename them for this compiler.
+if(MSVC)
+  target_compile_definitions(BunbunS1SNESRecomp PRIVATE _ptr32=snes_tmp_ptr32 _ptr64=snes_tmp_ptr64)
+endif()
+
 # The desktop host: launcher flow, ROM resolution, config.ini + [KeyMap],
 # window + SDL/OpenGL presenters, audio, gamepads, the save-state browser and
 # rewind filmstrip, the pacing clock, crash handlers and the post-mortem

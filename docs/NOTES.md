@@ -110,8 +110,20 @@ Seen on screen (port build, one boot per minute, `tools/minuteshots.sh`):
 | 7–10, 19–22, ... | free run (4 min) |
 | 11–12, 23–24, ... | "コース N 決勝" card (2 min) |
 | 13–16, 25–28, ... | final race (4 min) |
+| 41–52 | course 4 (same pattern) |
+| 53 | "Congratulations" podium (results) |
+| 54–59 | bonus game: night stage with a "TIME" counter |
+| 57 | end screen check (`$80:E023`, mode `$10`) |
+| 60 | end of broadcast |
 
 The 2-minute cards are where the SoundLink narration played.
+
+Mode `$12` (`$80:9F68`) is a staff credits roll (cast: ピーチ姫, ワリオ, ...; then
+St.GIGA staff, game staff, sound, programmers). Stadium 1 never shows it
+because its end screen jumps into the BIOS first. The port's replacement for
+`$80:9DE0` now reaches it. The credits' own Start handler (`$80:9FE0`) jumps
+into the BIOS the same way and still needs replacing (it is mid-function, so
+the whole `$80:9F68` handler needs an `hle_func`).
 
 Coverage runs can tune in at any minute by poking `$7F:FFFF` (script
 `poke 1FFFF NN`); this is what the debug keys at `$81:800E` do too.
@@ -131,3 +143,14 @@ from the deliberate jump into the BS-X BIOS.
 ## Open questions
 * What do the remaining 16.6% of static instructions belong to (2-player
   paths, bonus games, error paths)?
+
+## snesrecomp integration notes
+* Every `JMP ($0000)` dispatcher must be declared to the analyzer, otherwise it
+  is an "unresolved IndirectGoto" and runs on the interpreter (which also
+  bypasses `hle_func` replacements). `tools/mkcfg.py --into` now writes
+  `indirect_dispatch <site> <n> ptrtail targets:...` for every table bsdis
+  resolved, and `idx:X` for `JMP/JSR (abs,X)`. After this, 572 of 574 variants
+  are native.
+* MSVC treats `_ptr32`/`_ptr64` as keywords; the v2 emitter uses those names for
+  temporaries. `port/CMakeLists.txt` renames them with compile definitions.
+  (Upstream bug worth reporting.)
