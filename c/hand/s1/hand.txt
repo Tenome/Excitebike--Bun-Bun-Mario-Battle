@@ -59,3 +59,8 @@
 81BAE8  1 1  mem+X,Y,C,V    RivalWaitStep_BAE8
 81BC2E  1 1  mem+X,Y,C,V    RivalWaitStep_BC2E
 81BD06  1 1  mem+X,Y,C,V    RivalWaitStep_BD06
+81B7B9  1 1  mem+X,Y,C,V    RivalWaitRandom_B7B9
+81B8ED  1 1  mem+X,Y,C,V    RivalWaitRandom_B8ED
+81BA2E  1 1  mem+X,Y,C,V    RivalWaitRandom_BA2E
+81BB49  1 1  mem+X,Y,C,V    RivalWaitRandom_BB49
+81BCA1  1 1  mem+X,Y,C,V    RivalWaitRandom_BCA1

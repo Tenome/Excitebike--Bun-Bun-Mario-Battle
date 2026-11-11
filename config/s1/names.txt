@@ -81,3 +81,8 @@
 81BAE8 RivalWaitStep_BAE8   # wait on $0379, then timer $80, action 2 (waiting: 0)
 81BC2E RivalWaitStep_BC2E   # wait on $0379, then timer $09, action 3 (waiting: 0)
 81BD06 RivalWaitStep_BD06   # wait on $0379, then timer $C0, action 4 (waiting: 0)
+81B7B9 RivalWaitRandom_B7B9   # wait on $0379, then timer $20, random $0329, action 1
+81B8ED RivalWaitRandom_B8ED   # wait on $0379, then timer $10, random $0329, action 1
+81BA2E RivalWaitRandom_BA2E   # wait on $0379, then timer $0A, random $0329, action 1
+81BB49 RivalWaitRandom_BB49   # wait on $0379, then timer $09, random $0329, action 1
+81BCA1 RivalWaitRandom_BCA1   # wait on $0379, then timer $10, random $0329, action 1
