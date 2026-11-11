@@ -341,3 +341,130 @@ void AddSpeedFraction_m1x1(void)
         wr8(ABS(0x0180 + X), inc8(rd8(ABS(0x0180 + X))));
     ret();
 }
+
+/* $80:C337 Tick08CC (RTS): count down the per-rider timer $08CC,X; it is
+ * cancelled (zeroed) while any of bits 6-7 of $0178,X are set. */
+void Tick08CC_m1x1(void)
+{
+    lda8(rd8(ABS(0x08CC + X)));
+    if (fz) { ret(); return; }
+    wr8(ABS(0x08CC + X), dec8(rd8(ABS(0x08CC + X))));
+    lda8(rd8(ABS(0x0178 + X)));
+    and8(0xC0);
+    if (fz) { ret(); return; }
+    lda8(0x00);
+    wr8(ABS(0x08CC + X), 0x00);
+    ret();
+}
+
+/* $80:C98F DivideAX (RTS): divide A by X by repeated subtraction while the
+ * result stays positive (signed): X = quotient, A = remainder. */
+void DivideAX_m1x1(void)
+{
+    u8 d = (u8)X;
+    wr8(DP(0x0F), d);
+    ldx8(0x00);
+    do {
+        WAIT_TICK();
+        X = inc8((u8)X);
+        fc = 1;
+        sbc8(rd8(DP(0x0F)));
+    } while (!fn);
+    X = dec8((u8)X);
+    adc8(rd8(DP(0x0F)));
+    ret();
+}
+
+/* Fill words $7F:000E..$7F:000C+last with a tile word (a blank row in the
+ * VRAM queue buffer). */
+static void fill_queue_row(u8 last, u16 tile)
+{
+    ldx8(last);
+    rep(0x20);
+    lda16(tile);
+    do {
+        wr16(LONGX(0x7F000C), tile);
+        X = dec8((u8)X);
+        X = dec8((u8)X);
+    } while (!fz);
+    sep(0x20);
+}
+
+/* $80:DCD8 BlankQueueRow (RTS): 15 blank tiles ($00FC) at $7F:000E. */
+void BlankQueueRow_m1x1(void)
+{
+    fill_queue_row(0x1E, 0x00FC);
+    ret();
+}
+
+/* $81:8C21 BlankQueueRowPal2 (RTL): 10 blank tiles, palette 2 ($08FC). */
+void BlankQueueRowPal2_m1x1(void)
+{
+    fill_queue_row(0x14, 0x08FC);
+    retl();
+}
+
+/* $81:97CC RivalCountdown_97CC: count the 16-bit $0319,X down; at zero go
+ * to the next state ($0309 + 1, 16-bit) and reload 208 frames. */
+void RivalCountdown_97CC_m1x1(void)
+{
+    X = rd8(ABS(0x039D));
+    rep(0x20);
+    u16 t = dec16(rd16(ABS(0x0319 + X)));
+    wr16(ABS(0x0319 + X), t);
+    if (t == 0) {
+        wr16(ABS(0x0309 + X), inc16(rd16(ABS(0x0309 + X))));
+        lda16(0x00D0);
+        wr16(ABS(0x0319 + X), 0x00D0);
+    }
+    sep(0x20);
+    ret();
+}
+
+void VramQueueTiles_m1x1(void);
+
+/* $80:95AE DrawText95C4 (RTS): queue the tile list at $80:95C4 to VRAM
+ * $1CA4 with attribute byte $24. */
+void DrawText95C4_m1x1(void)
+{
+    rep(0x20);
+    lda16(0x1CA4); wr16(DP(0x00), 0x1CA4);
+    lda16(0x95C4); wr16(DP(0x02), 0x95C4);
+    sep(0x20);
+    lda8(0x24);
+    wr8(DP(0x0F), 0x24);
+    push16(0x95C2); VramQueueTiles_m1x1();
+    ret();
+}
+
+/* $80:9E77 BeginFadeIn (RTS): start fading in ($1923 + 1), advance the mode
+ * flag $75, set the mode timer $88 to 900 frames, main screen BG1+OBJ
+ * ($1905 = $11) and clear $190D. */
+void BeginFadeIn_m1x1(void)
+{
+    wr8(ABS(0x1923), inc8(rd8(ABS(0x1923))));
+    wr8(DP(0x75), inc8(rd8(DP(0x75))));
+    rep(0x20);
+    lda16(0x0384);
+    wr16(DP(0x88), 0x0384);
+    sep(0x20);
+    lda8(0x11);
+    wr8(ABS(0x1905), 0x11);
+    wr8(ABS(0x190D), 0);
+    ret();
+}
+
+/* $80:AB18 SendSpeedToApu (RTS): engine pitch = player speed ($01C0:$01B8)
+ * >> 3, low byte to APUIO2. */
+void SendSpeedToApu_m1x1(void)
+{
+    lda8(rd8(ABS(0x01C0)));
+    A = (u16)((A << 8) | (A >> 8));             /* XBA */
+    nz8((u8)A);
+    lda8(rd8(ABS(0x01B8)));
+    rep(0x20);
+    lda16(lsr16(lsr16(lsr16(A))));
+    sep(0x20);
+    wr8(ABS(0x2142), (u8)A);
+    ret();
+}

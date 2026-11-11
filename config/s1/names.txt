@@ -108,3 +108,11 @@
 80A458 SumBytes0850          # $085B = sum($0850-$085A) & $3F
 80BD39 Nop_BD39              # empty hook (8 NOPs)
 80BFBA AddSpeedFraction      # $0180 = $01C0 + carry of $01B8 + $0914
+80C337 Tick08CC              # count down $08CC,X; cancelled by $0178,X bits 6-7
+80C98F DivideAX              # X = A / X, A = remainder (repeated subtraction)
+80DCD8 BlankQueueRow         # 15 blank tiles ($00FC) at $7F:000E
+818C21 BlankQueueRowPal2     # 10 blank tiles ($08FC) at $7F:000E
+8197CC RivalCountdown_97CC   # 16-bit countdown $0319, then next state, reload 208
+8095AE DrawText95C4          # queue tiles $80:95C4 to VRAM $1CA4
+809E77 BeginFadeIn           # fade in, $75++, $88 = 900, TM = $11
+80AB18 SendSpeedToApu        # APUIO2 = speed >> 3 (engine pitch)

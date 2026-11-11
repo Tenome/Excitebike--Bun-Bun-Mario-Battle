@@ -86,3 +86,11 @@
 80A458  1 1  mem+Y          SumBytes0850
 80BD39  1 1  mem+Y          Nop_BD39
 80BFBA  1 1  mem+X,Y,C,V    AddSpeedFraction
+80C337  1 1  mem+X,Y,C,V    Tick08CC
+80C98F  1 1  mem+X,V        DivideAX
+80DCD8  1 1  mem+Y          BlankQueueRow
+818C21  1 1  mem+Y          BlankQueueRowPal2
+8197CC  1 1  mem+V          RivalCountdown_97CC
+8095AE  1 1  mem+Y,V        DrawText95C4
+809E77  1 1  mem+X,Y,C,V    BeginFadeIn
+80AB18  1 1  mem+X,Y,C,V    SendSpeedToApu

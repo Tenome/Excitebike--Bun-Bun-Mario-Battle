@@ -186,6 +186,14 @@ BRIDGE(HleHand_ResetMinuteFrame, ResetMinuteFrame_m1x1, 30)
 BRIDGE(HleHand_SumBytes0850,     SumBytes0850_m1x1,     100)
 BRIDGE(HleHand_Nop_BD39,         Nop_BD39_m1x1,         20)
 BRIDGE(HleHand_AddSpeedFraction, AddSpeedFraction_m1x1, 40)
+BRIDGE(HleHand_Tick08CC,            Tick08CC_m1x1,            40)
+BRIDGE(HleHand_DivideAX,            DivideAX_m1x1,            100)
+BRIDGE(HleHand_BlankQueueRow,       BlankQueueRow_m1x1,       100)
+BRIDGE(HleHand_BlankQueueRowPal2,   BlankQueueRowPal2_m1x1,   80)
+BRIDGE(HleHand_RivalCountdown_97CC, RivalCountdown_97CC_m1x1, 40)
+BRIDGE(HleHand_DrawText95C4,        DrawText95C4_m1x1,        200)
+BRIDGE(HleHand_BeginFadeIn,         BeginFadeIn_m1x1,         40)
+BRIDGE(HleHand_SendSpeedToApu,      SendSpeedToApu_m1x1,      40)
 /* Not bridged: RunGameModeScript (c/hand/s1/modes.c). Its reset path makes
  * non-tail calls into recompiled routines, and a recompiled routine may yield
  * to the frame scheduler mid-call (a long one like $80:B873 does), which hand
