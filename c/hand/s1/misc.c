@@ -468,3 +468,50 @@ void SendSpeedToApu_m1x1(void)
     wr8(ABS(0x2142), (u8)A);
     ret();
 }
+
+/* $80:DA85 DispatchBy85 (RTS): tail-jump through the routine table at
+ * $80:D409 indexed by $85 (pointer kept at $00/$01, X = 0). */
+void DispatchBy85_m1x1(void)
+{
+    lda8(rd8(DP(0x85)));
+    lda8(asl8((u8)A));
+    Y = (u8)A; nz8((u8)Y);
+    lda8(rd8(ABS(0xD409 + Y))); wr8(DP(0x00), (u8)A);
+    Y = inc8((u8)Y);
+    lda8(rd8(ABS(0xD409 + Y))); wr8(DP(0x01), (u8)A);
+    ldx8(0x00);
+    r816_call_pc(0x800000u | rd16(LONG(0x000000)));
+}
+
+/* $80:E3FB StartMode01 (RTS): mode 1 from step 0 with a 1800-frame timer
+ * ($88), start fading out ($1923 - 1), return C = 1. */
+void StartMode01_m1x1(void)
+{
+    rep(0x20);
+    lda16(0x0708);
+    wr16(DP(0x88), 0x0708);
+    sep(0x20);
+    lda8(0x01);
+    wr8(DP(0x76), 0x01);
+    wr8(DP(0x75), 0);
+    wr8(DP(0x77), 0);
+    wr8(ABS(0x1923), dec8(rd8(ABS(0x1923))));
+    fc = 1;
+    ret();
+}
+
+/* $80:E043 AnimSourceFromFrame (RTL): $86 = $B800 + (($63 & $30) << 5),
+ * one of four 512-byte animation frames, changing every 16 frames. */
+void AnimSourceFromFrame_m1x1(void)
+{
+    rep(0x20);
+    lda16(rd16(DP(0x63)));
+    and16(0x0030);
+    for (int i = 0; i < 5; i++)
+        lda16(asl16(A));
+    fc = 0;
+    adc16(0xB800);
+    wr16(ABS(0x0086), A);
+    sep(0x20);
+    retl();
+}

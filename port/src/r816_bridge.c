@@ -194,6 +194,12 @@ BRIDGE(HleHand_RivalCountdown_97CC, RivalCountdown_97CC_m1x1, 40)
 BRIDGE(HleHand_DrawText95C4,        DrawText95C4_m1x1,        200)
 BRIDGE(HleHand_BeginFadeIn,         BeginFadeIn_m1x1,         40)
 BRIDGE(HleHand_SendSpeedToApu,      SendSpeedToApu_m1x1,      40)
+BRIDGE(HleHand_RiderShadowY,        RiderShadowY_m1x1,        40)
+BRIDGE(HleHand_ScrollByPlayerSpeed, ScrollByPlayerSpeed_m1x1, 40)
+BRIDGE(HleHand_Add32,               Add32_m1x1,               40)
+BRIDGE(HleHand_DispatchBy85,        DispatchBy85_m1x1,        40)
+BRIDGE(HleHand_StartMode01,         StartMode01_m1x1,         40)
+BRIDGE(HleHand_AnimSourceFromFrame, AnimSourceFromFrame_m1x1, 40)
 /* Not bridged: RunGameModeScript (c/hand/s1/modes.c). Its reset path makes
  * non-tail calls into recompiled routines, and a recompiled routine may yield
  * to the frame scheduler mid-call (a long one like $80:B873 does), which hand

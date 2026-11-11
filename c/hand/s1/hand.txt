@@ -94,3 +94,9 @@
 8095AE  1 1  mem+Y,V        DrawText95C4
 809E77  1 1  mem+X,Y,C,V    BeginFadeIn
 80AB18  1 1  mem+X,Y,C,V    SendSpeedToApu
+80BF74  1 1  mem+X,Y,C,V    RiderShadowY
+80BFD0  1 1  mem+X,Y        ScrollByPlayerSpeed
+80A1A6  1 1  mem+Y,V        Add32
+80DA85  1 1  mem+V          DispatchBy85
+80E3FB  1 1  mem+X,Y,C,V    StartMode01
+80E043  1 1  mem+X,Y,C,V    AnimSourceFromFrame

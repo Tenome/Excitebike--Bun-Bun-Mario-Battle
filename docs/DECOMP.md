@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 90 hand-written (22.1%), 87 of them in the port.
+407 functions in the static map; 96 hand-written (23.6%), 93 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -42,6 +42,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:9248` | RaceSetup | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:95AE` | DrawText95C4 | `mem+Y,V` | `misc.c` | yes |
 | `$80:9E77` | BeginFadeIn | `mem+X,Y,C,V` | `misc.c` | yes |
+| `$80:A1A6` | Add32 | `mem+Y,V` | `physics.c` | yes |
 | `$80:A458` | SumBytes0850 | `mem+Y` | `misc.c` | yes |
 | `$80:A5B7` | DrawRacerName | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:A66D` | DrawHudLabelA | `mem+X,Y,C,V` | `race.c` | yes |
@@ -55,7 +56,9 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:B4AE` | StepLfsr | `mem+X,Y,C,V` | `frame.c` | yes |
 | `$80:B4D9` | ReadJoypads | `mem+X,Y,C,V` | `kernel.c` |  |
 | `$80:BD39` | Nop_BD39 | `mem+Y` | `misc.c` | yes |
+| `$80:BF74` | RiderShadowY | `mem+X,Y,C,V` | `physics.c` | yes |
 | `$80:BFBA` | AddSpeedFraction | `mem+X,Y,C,V` | `misc.c` | yes |
+| `$80:BFD0` | ScrollByPlayerSpeed | `mem+X,Y` | `physics.c` | yes |
 | `$80:C337` | Tick08CC | `mem+X,Y,C,V` | `misc.c` | yes |
 | `$80:C98F` | DivideAX | `mem+X,V` | `misc.c` | yes |
 | `$80:D069` | ClipRiderSprite | `mem+X,C,V` | `objects.c` | yes |
@@ -67,7 +70,10 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:D38E` | DrawCoinIcons | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:D3C1` | DrawSmallObject | `mem+X,Y,V` | `objects.c` | yes |
 | `$80:D3FD` | ClearWords1530 | `mem+C,V` | `misc.c` | yes |
+| `$80:DA85` | DispatchBy85 | `mem+V` | `misc.c` | yes |
 | `$80:DCD8` | BlankQueueRow | `mem+Y` | `misc.c` | yes |
+| `$80:E043` | AnimSourceFromFrame | `mem+X,Y,C,V` | `misc.c` | yes |
+| `$80:E3FB` | StartMode01 | `mem+X,Y,C,V` | `misc.c` | yes |
 | `$81:8C21` | BlankQueueRowPal2 | `mem+Y` | `misc.c` | yes |
 | `$81:9761` | RivalDispatch_9761 | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:97CC` | RivalCountdown_97CC | `mem+V` | `misc.c` | yes |

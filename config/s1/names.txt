@@ -116,3 +116,9 @@
 8095AE DrawText95C4          # queue tiles $80:95C4 to VRAM $1CA4
 809E77 BeginFadeIn           # fade in, $75++, $88 = 900, TM = $11
 80AB18 SendSpeedToApu        # APUIO2 = speed >> 3 (engine pitch)
+80BF74 RiderShadowY          # $0979,X = ($090C - $0190 - 8) * 2 + $01F0 + 4
+80BFD0 ScrollByPlayerSpeed   # $92/$94 += $0180; carry flips $8C, bumps $95
+80A1A6 Add32                 # 32-bit $10 += $04
+80DA85 DispatchBy85          # jump table $80:D409 by $85
+80E3FB StartMode01           # mode 1, $88 = 1800, fade out, C = 1
+80E043 AnimSourceFromFrame   # $86 = $B800 + (($63 & $30) << 5)
