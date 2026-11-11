@@ -86,3 +86,7 @@
 81BA2E RivalWaitRandom_BA2E   # wait on $0379, then timer $0A, random $0329, action 1
 81BB49 RivalWaitRandom_BB49   # wait on $0379, then timer $09, random $0329, action 1
 81BCA1 RivalWaitRandom_BCA1   # wait on $0379, then timer $10, random $0329, action 1
+81B7E0 RivalAlternate_B7E0   # alternate two moves (timers $81:B815, actions $81:B817)
+81B914 RivalAlternate_B914   # alternate two moves (timers $81:B949, actions $81:B94B)
+81BA55 RivalAlternate_BA55   # alternate two moves (timers $81:BA8A, actions $81:BA8C)
+81BB70 RivalAlternate_BB70   # alternate two moves (timers $81:BBA5, actions $81:BBA7)

@@ -164,6 +164,10 @@ BRIDGE(HleHand_RivalWaitRandom_B8ED, RivalWaitRandom_B8ED_m1x1, 120)
 BRIDGE(HleHand_RivalWaitRandom_BA2E, RivalWaitRandom_BA2E_m1x1, 120)
 BRIDGE(HleHand_RivalWaitRandom_BB49, RivalWaitRandom_BB49_m1x1, 120)
 BRIDGE(HleHand_RivalWaitRandom_BCA1, RivalWaitRandom_BCA1_m1x1, 120)
+BRIDGE(HleHand_RivalAlternate_B7E0, RivalAlternate_B7E0_m1x1, 120)
+BRIDGE(HleHand_RivalAlternate_B914, RivalAlternate_B914_m1x1, 120)
+BRIDGE(HleHand_RivalAlternate_BA55, RivalAlternate_BA55_m1x1, 120)
+BRIDGE(HleHand_RivalAlternate_BB70, RivalAlternate_BB70_m1x1, 120)
 /* Not bridged: RunGameModeScript (c/hand/s1/modes.c). Its reset path makes
  * non-tail calls into recompiled routines, and a recompiled routine may yield
  * to the frame scheduler mid-call (a long one like $80:B873 does), which hand

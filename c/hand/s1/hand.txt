@@ -64,3 +64,7 @@
 81BA2E  1 1  mem+X,Y,C,V    RivalWaitRandom_BA2E
 81BB49  1 1  mem+X,Y,C,V    RivalWaitRandom_BB49
 81BCA1  1 1  mem+X,Y,C,V    RivalWaitRandom_BCA1
+81B7E0  1 1  mem+X,Y,C,V    RivalAlternate_B7E0
+81B914  1 1  mem+X,Y,C,V    RivalAlternate_B914
+81BA55  1 1  mem+X,Y,C,V    RivalAlternate_BA55
+81BB70  1 1  mem+X,Y,C,V    RivalAlternate_BB70

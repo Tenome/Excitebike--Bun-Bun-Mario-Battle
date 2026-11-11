@@ -97,3 +97,47 @@ void RivalWaitRandom_BB49_m1x1(void) { wait_then_step_random(0xBB59, 0x09, 1); }
 
 /* $81BCA1: next timer $10, go action 1. */
 void RivalWaitRandom_BCA1_m1x1(void) { wait_then_step_random(0xBCB1, 0x10, 1); }
+
+/* "Alternate" handlers: each time timer $0369 runs out, flip the step
+ * $0319 between 0 and 1. Coming back to 0 uses up one repeat ($0329); with
+ * none left, go back to state 0 and idle for a random 64-127 frames ($0379).
+ * Otherwise the next timer and action come from two-entry tables (step 0, 1)
+ * stored right after each handler's code. */
+static void alternate(u16 jsl_ret, u16 timer_table, u16 action_table)
+{
+    X = rd8(ABS(0x039D));
+    nz8((u8)X);
+    lda8(rd8(ABS(0x0369 + X)));
+    if ((u8)A != 0) { ret(); return; }
+    u8 step = (u8)(rd8(ABS(0x0319 + X)) ^ 0x01);
+    lda8(step);
+    wr8(ABS(0x0319 + X), step);
+    Y = step;
+    if (step == 0) {
+        u8 left = dec8(rd8(ABS(0x0329 + X)));
+        wr8(ABS(0x0329 + X), left);
+        if (left == 0) {
+            wr8(ABS(0x0309 + X), 0);
+            push8(0x81); push16(jsl_ret); Random_m1x1();
+            and8(0x3F);
+            fc = 0;
+            adc8(0x40);
+            wr8(ABS(0x0379 + X), (u8)A);
+            ret();
+            return;
+        }
+    }
+    lda8(rd8(ABS(timer_table + Y)));
+    wr8(ABS(0x0369 + X), (u8)A);
+    lda8(rd8(ABS(action_table + Y)));
+    wr8(ABS(0x0349 + X), (u8)A);
+    ret();
+}
+
+void RivalAlternate_B7E0_m1x1(void) { alternate(0xB7FE, 0xB815, 0xB817); }
+
+void RivalAlternate_B914_m1x1(void) { alternate(0xB932, 0xB949, 0xB94B); }
+
+void RivalAlternate_BA55_m1x1(void) { alternate(0xBA73, 0xBA8A, 0xBA8C); }
+
+void RivalAlternate_BB70_m1x1(void) { alternate(0xBB8E, 0xBBA5, 0xBBA7); }
