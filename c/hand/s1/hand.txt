@@ -46,3 +46,6 @@
 80D14B  1 1  mem+X,Y,C,V    DrawPosition
 809236  1 1  mem+X,Y,C,V    RaceHudInit
 809248  1 1  mem+X,Y,C,V    RaceSetup
+80D069  1 1  mem+X,C,V      ClipRiderSprite
+80D34A  1 1  mem+X,Y,V      StepObjectX
+80D3C1  1 1  mem+X,Y,V      DrawSmallObject

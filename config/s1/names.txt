@@ -68,3 +68,6 @@
 80D14B DrawPosition         # big digit race position $0928 at VRAM $1894
 809236 RaceHudInit          # HUD labels and position digit
 809248 RaceSetup            # racer name, lap state, $09D3-$0CD2 tables, HUD positions
+80D069 ClipRiderSprite      # hide halves of rider X 2x2 sprite at OAM $07 near the screen edges
+80D34A StepObjectX          # object X: pos $1500/$1501 + fraction $1520 += velocity $1510 (hi nibble signed whole, lo nibble fraction)
+80D3C1 DrawSmallObject      # object X as an animated large sprite (tiles $80:D3F3), OAM slot X*2+4
