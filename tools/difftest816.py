@@ -96,7 +96,9 @@ def main():
     if not a.snapshots and os.path.isdir(os.path.join('build', 'snapshots', a.ver)):
         a.snapshots = os.path.join('build', 'snapshots', a.ver, '*.bin')
     if a.snapshots:
-        for f in sorted(glob.glob(a.snapshots))[:64]:
+        files = sorted(glob.glob(a.snapshots))
+        step = max(1, len(files) // 64)
+        for f in files[::step][:64]:
             b = open(f, 'rb').read()
             if len(b) == 0x20000:
                 snaps.append(b)
