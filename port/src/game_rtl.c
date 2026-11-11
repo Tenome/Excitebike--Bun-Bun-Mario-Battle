@@ -36,6 +36,7 @@
 
 #include "beam_frame_driver.h"
 #include "common_rtl.h"
+#include <stdlib.h>
 
 /* Set by port replacements (src/gen_stubs.c) that stand in for "return to the
  * BS-X BIOS": the console is reset at the next frame boundary, which is what
@@ -70,9 +71,37 @@ static void GameInitialize(void)
     }
 }
 
+/* Optional: BUNBUN_SKIPWAIT=1 lets P1 Start skip the broadcast's waiting
+ * screens (the title's "please wait" and the 2-minute course cards, where the
+ * SoundLink narration used to play) by advancing the broadcast clock one
+ * minute: $7F:FFFF = minute, $7F:FFFA/B = frame within the minute. The game's
+ * own schedule checks then move on. Gen A modes: $0E title wait, $02 course
+ * card. (The intro text, mode $0D, scrolls on its own timer; advancing the
+ * clock there would skip whole courses, so it is left alone.) */
+static int SkipWaitEnabled(void)
+{
+    static int v = -1;
+    if (v < 0) { const char *e = getenv("BUNBUN_SKIPWAIT"); v = e && *e && *e != '0'; }
+    return v;
+}
+
+static void SkipWaitAfterFrame(void)
+{
+#ifndef BUNBUN_GENB
+    uint8 mode = g_ram[0x76], pressed = g_ram[0x21];
+    if ((mode == 0x0E || mode == 0x02) && (pressed & 0x10) && g_ram[0x1FFFF] < 59) {
+        g_ram[0x1FFFF]++;
+        g_ram[0x1FFFA] = 0;
+        g_ram[0x1FFFB] = 0;
+    }
+#endif
+}
+
 void GameRunOneFrame(void)
 {
     snes_beam_frame_driver_run_frame();
+    if (SkipWaitEnabled())
+        SkipWaitAfterFrame();
     if (g_port_reset_request) {
         g_port_reset_request = 0;
         RtlReset(1);
