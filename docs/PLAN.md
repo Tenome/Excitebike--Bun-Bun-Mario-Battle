@@ -87,6 +87,11 @@ The rest of the 1 MB is graphics, tracks, music and other data.
    frame by frame, and fix the differences.
 
 ### Phase 4: readable decompilation
+0. ✅ Pipeline (2026-11-11): `tools/lift816.py` lifts every function variant to
+   faithful C over `c/runtime816.h` (`c/auto/<ver>/`, regenerated, not
+   committed); `tools/difftest816.py` checks each one against the original in
+   `tools/cpu816.py` from real WRAM snapshots (WRAM, registers, flags, ordered
+   hardware writes).
 1. Hand-lift routines to readable C, kept in `c/`. `c/s1_core.c` is the start.
 2. Use the same approach as the NES Excitebike port: test each routine
    against the recompiled or interpreted original. Compare RAM and the order
