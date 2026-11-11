@@ -325,6 +325,9 @@ void RunGameModeScript_m1x1(void)
         u16 handler = table_word(ABS(0xB65D), mode);
         wr8(DP(0x00), (u8)handler);
         wr8(DP(0x01), (u8)(handler >> 8));
+        Y = (u8)((mode << 1) + 1);                     /* handlers see the dispatcher's */
+        SET_A8(handler >> 8);                          /* Y and A, as in the original */
+        nz8((u8)(handler >> 8));
         if (!r816_call_pc(0x800000 | rd16(0x0000)))
             r816_unknown_target(0x808A00, rd16(0x0000));
         return;
@@ -336,6 +339,7 @@ void RunGameModeScript_m1x1(void)
     u16 list = table_word(ABS(0xB683), mode);          /* this mode's setup list */
     wr8(DP(0x02), (u8)list);
     wr8(DP(0x03), (u8)(list >> 8));
+    X = (u8)((mode << 1) + 1);
     u8 step = rd8(DP(MODE_STEP));
     wr8(DP(MODE_STEP), (u8)(step + 1));
     u8 entry = (u8)(step - 1);
@@ -344,8 +348,11 @@ void RunGameModeScript_m1x1(void)
         u8 y = (u8)(entry << 1);
         wr8(DP(0x00), rd8((base + y) & 0xFFFFFF));
         y = (u8)(y + 1);
-        wr8(DP(0x01), rd8((base + y) & 0xFFFFFF));
+        u8 hi = rd8((base + y) & 0xFFFFFF);
+        wr8(DP(0x01), hi);
         Y = y;
+        SET_A8(hi);
+        nz8(hi);
         if (!r816_call_pc(0x800000 | rd16(0x0000)))
             r816_unknown_target(0x808A2B, rd16(0x0000));
         return;
