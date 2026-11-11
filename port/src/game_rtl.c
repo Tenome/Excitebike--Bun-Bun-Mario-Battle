@@ -52,8 +52,10 @@ int g_port_reset_request;
 #include <stdlib.h>
 #include "snes/cart.h"
 void BunbunCoursesInit(void);
+int BunbunModsFolderApply(void);
 static void GameInitialize(void)
 {
+    BunbunModsFolderApply();     /* mods/ folder: graphics, palettes, patches */
 #ifdef BUNBUN_GENB
     static int courses_ready;
     if (!courses_ready) { courses_ready = 1; BunbunCoursesInit(); }

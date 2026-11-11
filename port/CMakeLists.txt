@@ -48,6 +48,7 @@ function(bunbun_game tgt gendir cfgdir identity title)
       ${CMAKE_SOURCE_DIR}/src/game_rtl.c
       ${CMAKE_SOURCE_DIR}/src/gen_stubs.c
       ${CMAKE_SOURCE_DIR}/src/courses.c
+      ${CMAKE_SOURCE_DIR}/src/mods_folder.c
   )
 
   # ROM identity. rom_identity.txt is the one place the digests live: the build

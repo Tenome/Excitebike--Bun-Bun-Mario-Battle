@@ -264,3 +264,59 @@ Seen on screen (`tools/minuteshots.sh` on the interpreter-only S4 build):
 
 Gen B adds the player select, the course map, the jump contest and a speed
 readout. For the merge, Gen B is the natural base engine.
+
+## Graphics uploads per game mode (`$80:B873` → `$80:B88D`)
+
+At each mode's setup, `$80:B88D` walks a list from `$80:B9B2` (word index per
+mode `$76`) into 7-byte entries at `$80:B9D8`: VRAM word address, byte count,
+source address, source bank; `$FFFF` ends a list. Each entry is one DMA
+through DmaKick. Stadium 1 build:
+
+| Mode | Uploads (source+size → VRAM) |
+|---|---|
+| 00 | `88:8000+1000→1000` `84:8000+8000→4000` `82:8000+3800→2400` `82:F000+1000→3800` `89:A000+0800→0800` |
+| 01 | `88:8000+1000→1000` `99:8000+8000→4000` `9F:8000+4000→2000` `88:D800+0800→0000` `88:F800+0800→0800` |
+| 02 | `9C:8000+8000→4000` `88:E800+0800→0800` `88:8000+1000→1000` |
+| 03 | `88:8000+1000→1000` `83:8000+8000→4000` `82:8000+2800→2400` `82:F000+1000→3800` `89:8000+1000→0000` `89:9000+1000→0800` |
+| 04 | `88:8000+1000→1000` `8C:D000+3000→4000` `98:8000+4000→2000` `88:C800+0800→0000` `88:D000+0800→0800` `8A:F000+0800→1B00` |
+| 05, 06 | `88:8000+1000→1000` `84:8000+2000→4000` |
+| 09 | `88:8000+1000→1000` `9E:8000+8000→4000` `82:C000+4000→2000` `89:E000+1000→0800` `89:F000+1000→0000` |
+| 0A | `82:C000+4000→2000` `8A:A000+4000→4000` `88:8000+1000→1000` `8A:E000+0800→0000` `8A:E800+0800→0800` |
+| 0C | `88:8000+1000→1000` `83:8000+8000→4000` `8B:8000+2000→2000` `82:F000+1000→3800` `89:8000+1000→0000` `89:9000+1000→0800` |
+| 0D | `9F:C000+3000→1000` `9A:8000+8000→4000` `89:A800+0800→0800` `8B:E000+0800→2800` |
+| 0F | `88:8000+1000→1000` `82:F000+1000→3800` `97:8000+8000→4000` `89:C000+1000→0800` `89:D000+0800→0000` |
+| 10 | `8B:A000+2000→1000` `8B:C000+2000→2800` `9B:8000+8000→4000` `88:E000+0800→0000` |
+| 11 | `8D:8000+8000→4000` `8C:B000+0800→0000` |
+| 12 | `8C:8000+3000→1000` `8F:B000+0800→3000` `9D:8000+8000→4000` `88:F000+0800→0000` |
+
+(07, 08, 0B, 0E: only the font `88:8000`.) The 2 KB uploads to VRAM
+`$0000`/`$0800` are tilemaps. Channels 6 and 7 run indirect HDMA from tables
+at `$84:8482`/`$84:9E0D` (Gen A): the "DMA-read" parts of banks `$82-$84`
+that are not in this list are HDMA scroll data.
+
+## Rider sprites by character
+
+`$1542` is the player's character. Rider animation frames stream to four
+sprite slots each frame (NmiFixedUploads: sources `$1E12-$1E18`, banks
+`$1543-$1546`). `$80:B5D6` fills the banks from `$80:B608 + character * 4`
+and `$80:B55B` the offsets from `$80:B618 + character * 8`:
+
+| `$1542` | slot 0 (player) | slot 1 | slot 2 | slot 3 |
+|---|---|---|---|---|
+| 0 | `86:8000` | `86:C000` | `87:8000` | `87:C000` |
+| 1 | `86:C000` | `86:8000` | `87:8000` | `87:C000` |
+| 2 | `87:8000` | `86:8000` | `86:C000` | `87:C000` |
+| 3 | `87:C000` | `86:C000` | `86:8000` | `87:8000` |
+
+So each character's frames are one 16 KB set (frame `f` at
+`set + (f & $FE) * $200 + (f & 1) * $100`, two 8-tile rows of `$100` bytes),
+and the race always shows the four characters, the player's in slot 0.
+
+## Sound samples
+
+The driver sets the sample directory to `$5C00` (DSP `$5D` = `$5C`, ARAM
+`$0557`). `tools/sound.py list s1` maps every directory entry back to its ROM
+range (each upload stream is contiguous in the file). The driver block
+(`$8E:8000`) holds the shared instruments and two long samples at ARAM
+`$4100` and `$31F0`; each song set (`$90`-`$93`) adds entries `$20`-`$24` at
+ARAM `$C360`+; the credits set (`$85`) has its own instruments.

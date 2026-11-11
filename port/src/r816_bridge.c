@@ -27,11 +27,80 @@ extern uint8_t DB, PB;
 extern uint8_t fn, fz, fc, fv, fd, fi, fm, fx;
 
 uint8_t r816_bus_read(uint32_t a) { return cpu_read8(&g_cpu, (uint8)(a >> 16), (uint16)a); }
-void r816_bus_write(uint32_t a, uint8_t v) { cpu_write8(&g_cpu, (uint8)(a >> 16), (uint16)a, v); }
+
+/* Optional DMA catalogue (BUNBUN_DMALOG=<file>): every distinct DMA started
+ * by hand code (all of the game's uploads go through DmaKick,
+ * NmiFlushVramQueue, NmiFixedUploads and friends) is written once with the
+ * PPU state that tells what it is: destination register and address (VRAM
+ * word, CGRAM entry or OAM), BG mode, tile and map bases, OBSEL and the game
+ * mode $76. tools/assets.py turns it into the asset list. */
+#include <stdio.h>
+#include <stdlib.h>
+#include "snes/ppu.h"
+#include "common_rtl.h"
+static uint32_t s_wmadd;                /* WMADD ($2181-$2183) as hand code set it */
+static void dma_catalogue(uint8 enable)
+{
+    static FILE *f;
+    static int init;
+    static uint64_t seen[4096];
+    static int nseen;
+    if (!init) {
+        const char *e = getenv("BUNBUN_DMALOG");
+        init = 1;
+        if (e && *e) {
+            f = fopen(e, "w");
+            if (f) fprintf(f, "# src size bbad dmap dest bgmode bgTileAdr bgsc0 bgsc1 bgsc2 bgsc3 obsel mode\n");
+        }
+    }
+    if (!f || !g_ppu)
+        return;
+    for (int c = 0; c < 8; c++) {
+        if (!(enable & (1 << c)))
+            continue;
+        uint16 base = (uint16)(0x4300 + c * 16);
+        uint8 dmap = cpu_read8(&g_cpu, 0, base), bbad = cpu_read8(&g_cpu, 0, base + 1);
+        uint32_t src = cpu_read8(&g_cpu, 0, base + 2) | cpu_read8(&g_cpu, 0, base + 3) << 8 |
+                       (uint32_t)cpu_read8(&g_cpu, 0, base + 4) << 16;
+        uint32_t size = cpu_read8(&g_cpu, 0, base + 5) | cpu_read8(&g_cpu, 0, base + 6) << 8;
+        if (!size) size = 0x10000;
+        uint16 dest = 0;
+        if (bbad == 0x18 || bbad == 0x19) dest = g_ppu->vramPointer;
+        else if (bbad == 0x22) dest = g_ppu->cgramPointer;
+        else if (bbad == 0x04) dest = g_ppu->oamAdr;
+        else if (bbad == 0x80) dest = (uint16)s_wmadd;   /* WRAM (bank in bit 16) */
+        uint64_t key = (uint64_t)src | (uint64_t)size << 24 | (uint64_t)bbad << 41 | (uint64_t)dest << 49;
+        int dup = 0;
+        for (int i = 0; i < nseen; i++)
+            if (seen[i] == key) { dup = 1; break; }
+        if (dup)
+            continue;
+        if (nseen < 4096)
+            seen[nseen++] = key;
+        fprintf(f, "%06X %05X %02X %02X %04X %02X %04X %02X %02X %02X %02X %02X %02X\n",
+                (unsigned)src, (unsigned)size, bbad, dmap, dest, g_ppu->bgmode,
+                g_ppu->bgTileAdr, g_ppu->bgXsc[0], g_ppu->bgXsc[1], g_ppu->bgXsc[2],
+                g_ppu->bgXsc[3], g_ppu->obsel, g_ram[0x76]);
+        fflush(f);
+    }
+}
+
+void r816_bus_write(uint32_t a, uint8_t v)
+{
+    if (((a >> 16) & 0x40) == 0) {
+        uint16 r = (uint16)a;
+        if (r == 0x420B && v)
+            dma_catalogue(v);
+        else if (r == 0x2181) s_wmadd = (s_wmadd & 0x1FF00) | v;
+        else if (r == 0x2182) s_wmadd = (s_wmadd & 0x100FF) | (uint32_t)v << 8;
+        else if (r == 0x2183) s_wmadd = (s_wmadd & 0x0FFFF) | (uint32_t)(v & 1) << 16;
+    }
+    cpu_write8(&g_cpu, (uint8)(a >> 16), (uint16)a, v);
+}
 
 /* The difftest harness provides these; the port has no hardware log. */
 uint8_t hw_read(uint16_t reg) { return cpu_read8(&g_cpu, 0x00, reg); }
-void hw_write(uint16_t reg, uint8_t v) { cpu_write8(&g_cpu, 0x00, reg, v); }
+void hw_write(uint16_t reg, uint8_t v) { r816_bus_write(reg, v); }
 void open_write(uint32_t a, uint8_t v) { (void)a; (void)v; }
 
 /* Loop guard used by hand code that waits on hardware: never bails here. */
@@ -209,6 +278,22 @@ BRIDGE(HleHand_MergeBsxFlags, MergeBsxFlags_m1x1, 80)
 BRIDGE(HleHand_ScrollFarLayer, ScrollFarLayer_m1x1, 80)
 BRIDGE(HleHand_LaneFromY, LaneFromY_m1x1, 80)
 BRIDGE(HleHand_MarkFastRider, MarkFastRider_m1x1, 80)
+BRIDGE(HleHand_DmaKick, DmaKick_m0x1, 20)
+BRIDGE(HleHand_RivalPause_B94D, RivalPause_B94D_m1x1, 120)
+BRIDGE(HleHand_RivalSequence_BD23, RivalSequence_BD23_m1x1, 40)
+BRIDGE(HleHand_DrawRiderShadowPair, DrawRiderShadowPair_m1x1, 60)
+BRIDGE(HleHand_PlayerOverheatWarn, PlayerOverheatWarn_m1x1, 100)
+BRIDGE(HleHand_ScrollRivalsRelative, ScrollRivalsRelative_m1x1, 200)
+BRIDGE(HleHand_EndScreenTimeout, EndScreenTimeout_m1x1, 200)
+BRIDGE(HleHand_RivalWalkAway_BECE, RivalWalkAway_BECE_m1x1, 60)
+BRIDGE(HleHand_RiderLaneBand, RiderLaneBand_m1x1, 80)
+BRIDGE(HleHand_AnimateWheels, AnimateWheels_m1x1, 200)
+BRIDGE(HleHand_SetupSpriteRow15, SetupSpriteRow15_m1x1, 400)
+BRIDGE(HleHand_RivalSequence_B9D5, RivalSequence_B9D5_m1x1, 120)
+BRIDGE(HleHand_RivalSequence_BAAD, RivalSequence_BAAD_m1x1, 120)
+BRIDGE(HleHand_RivalSequence_BC4B, RivalSequence_BC4B_m1x1, 120)
+BRIDGE(HleHand_BsxReadSerial3, BsxReadSerial3_m1x1, 400)
+BRIDGE(HleHand_RiderHeightStep, RiderHeightStep_m1x1, 60)
 /* Not bridged: RunGameModeScript (c/hand/s1/modes.c). Its reset path makes
  * non-tail calls into recompiled routines, and a recompiled routine may yield
  * to the frame scheduler mid-call (a long one like $80:B873 does), which hand
