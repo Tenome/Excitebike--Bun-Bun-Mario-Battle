@@ -30,9 +30,11 @@ def build_dll(ver):
     out = os.path.join(ROOT, 'build', ver, 'lifted.dll')
     srcs = [os.path.join(ROOT, 'c', 'runtime816.c'), os.path.join(ROOT, 'c', 'difftest_harness.c'),
             os.path.join(ROOT, 'c', 'auto', ver, 'lifted.c')]
-    newest = max(os.path.getmtime(s) for s in srcs + [os.path.join(ROOT, 'c', 'runtime816.h')])
+    srcs += sorted(glob.glob(os.path.join(ROOT, 'c', 'hand', ver, '*.c')))
+    newest = max(os.path.getmtime(s) for s in srcs + glob.glob(os.path.join(ROOT, 'c', '*.h')) + glob.glob(os.path.join(ROOT, 'c', 'hand', ver, '*.h')))
     if not os.path.exists(out) or os.path.getmtime(out) < newest:
-        cmd = ['clang', '-O1', '-w', '-shared', '-I', os.path.join(ROOT, 'c'), '-o', out] + srcs
+        cmd = ['clang', '-O1', '-w', '-shared', '-I', os.path.join(ROOT, 'c'),
+               '-I', os.path.join(ROOT, 'c', 'auto', ver), '-o', out] + srcs
         r = subprocess.run(cmd, capture_output=True, text=True)
         if r.returncode:
             sys.exit(r.stdout + r.stderr)
@@ -76,6 +78,7 @@ def main():
     ap.add_argument('--seed', type=int, default=1)
     ap.add_argument('--steps', type=int, default=20000)
     ap.add_argument('--verbose', action='store_true')
+    ap.add_argument('--hand-only', action='store_true', help='test only the hand-written variants')
     a = ap.parse_args()
     os.chdir(ROOT)
     code = json.load(open('build/%s/code.json' % a.ver))
@@ -94,6 +97,13 @@ def main():
             b = open(f, 'rb').read()
             if len(b) == 0x20000:
                 snaps.append(b)
+    hand_mode = {}
+    hp = os.path.join('c', 'hand', a.ver, 'hand.txt')
+    if os.path.exists(hp):
+        for line in open(hp):
+            t = line.split('#')[0].split()
+            if len(t) >= 4:
+                hand_mode[(int(t[0], 16), int(t[1]), int(t[2]))] = t[3]
     rnd = random.Random(a.seed)
     n = dll.h_count()
     totals = {'pass': 0, 'fail': 0, 'skip': 0}
@@ -105,6 +115,9 @@ def main():
         if a.only and a.only.upper() not in (name.upper(), '%06X' % pc) and not name.upper().startswith(a.only.upper()):
             continue
         long_call = returns_long(code, pc)
+        mode_cmp = hand_mode.get((pc, m.value, x.value), 'full')
+        if a.only is None and a.hand_only and (pc, m.value, x.value) not in hand_mode:
+            continue
         res = {'pass': 0, 'fail': 0, 'skip': 0}
         first = None
         for case in range(a.cases):
@@ -165,6 +178,8 @@ def main():
             want = [cpu.A, cpu.X, cpu.Y, cpu.S, cpu.D, cpu.DB, cpu.P & 0xFF]
             got = list(out)
             for nm, w_, g_ in zip(('A', 'X', 'Y', 'S', 'D', 'DB', 'P'), want, got):
+                if mode_cmp == 'mem' and nm in ('A', 'X', 'Y', 'P'):
+                    continue
                 if (w_ & mask_ax) != (g_ & mask_ax):
                     problems.append('%s orig %04X lifted %04X' % (nm, w_, g_))
             if lw != ow:

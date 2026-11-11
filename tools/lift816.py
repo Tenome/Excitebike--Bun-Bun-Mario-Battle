@@ -349,7 +349,15 @@ class Lifter:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('ver')
+    ap.add_argument('--hand', help='hand.txt: variants implemented by hand (bodies not emitted)')
     a = ap.parse_args()
+    hand = set()
+    hp = a.hand or 'c/hand/%s/hand.txt' % a.ver
+    if os.path.exists(hp):
+        for line in open(hp):
+            t = line.split('#')[0].split()
+            if len(t) >= 3:
+                hand.add((int(t[0], 16), t[1] == '1', t[2] == '1'))
     code = json.load(open('build/%s/code.json' % a.ver))
     rom = open('orig/%s.bs' % a.ver, 'rb').read()
     names = load_names('config/%s/names.txt' % a.ver)
@@ -372,6 +380,9 @@ def main():
             'extern jmp_buf r816_bail; extern long r816_ticks, r816_limit;',
             '#define R816_TICK() do { if (++r816_ticks > r816_limit) longjmp(r816_bail, 1); } while (0)', '']
     for pc, m, x in variants:
+        if (pc, m, x) in hand:
+            body.append('/* %s: hand-written in c/hand/%s */' % (lf.fname(pc, m, x), a.ver))
+            continue
         body.extend(lf.lift_variant(pc, m, x))
         body.append('')
     body.append('const LiftedEntry lifted_table[] = {')

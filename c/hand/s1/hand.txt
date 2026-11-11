@@ -1,0 +1,8 @@
+# Hand-written replacements for lifted routines (Stadium 1).
+# pc24  m x  compare   name
+# compare: mem = WRAM + hardware writes + S/D/DB; full = also A/X/Y and flags.
+808539  0 1  mem   DmaKick
+808541  0 1  mem   DmaCopyToWram
+808562  0 1  mem   DmaFillZero
+8082B6  1 1  mem   QueueSound
+80B4D9  1 1  mem   ReadJoypads

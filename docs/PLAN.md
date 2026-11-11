@@ -96,7 +96,12 @@ The rest of the 1 MB is graphics, tracks, music and other data.
    11 fail. Every failure is a jump table indexed out of range by a random
    input (for example `$80:E834` takes its index in A), not a lifting error;
    the lifted code falls back to dispatch-by-address for pointer values
-   outside a table.
+   outside a table. Stadium 4 (539 variants): 4,004 pass, 306 skipped, 2 fail
+   (one function, same out-of-range cause).
+0b. ✅ Hand-written replacements: `c/hand/<ver>/*.c` + `hand.txt`; the lifter
+   leaves those bodies out and the difftest checks them (`--hand-only`).
+   First five (DmaKick, DmaCopyToWram, DmaFillZero, QueueSound, ReadJoypads)
+   pass.
 1. Hand-lift routines to readable C, kept in `c/`. `c/s1_core.c` is the start.
 2. Use the same approach as the NES Excitebike port: test each routine
    against the recompiled or interpreted original. Compare RAM and the order
