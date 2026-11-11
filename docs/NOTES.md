@@ -347,3 +347,27 @@ format, so the full roster (Mario, Luigi, Toad, Wario, Peach, Yoshi) exists
 across the S1 and S3/S4 dumps. A merged roster in the Gen B engine needs a
 sixth set placed in free ROM, longer per-character tables (banks, offsets,
 names, the select wheel) and the sprite palettes per character.
+
+## Course column codes (from in-game tests)
+
+Each code `00`-`3F` was placed alone at column 31 of Stadium 1 course 1 in a
+custom course (`mods/.../courses/course0.bin`) and the race was captured
+(`projects/codes`, 63 runs). What appears:
+
+| Codes | Object |
+|---|---|
+| `01` `05` `06` `07` `08` `0A` `0B` `14` `21` `23` | ramps of different sizes and slopes (`14` a huge wall ramp, `21` a slope, `23` a long down slope) |
+| `09` | start/finish gate with the LAP sign (the loader writes it to six columns) |
+| `0C` `0D` | puddles (upper / lower rows) |
+| `0E` | crystal spike |
+| `02`-`04` `11`-`13` `15`-`1C` `1F` `20` `22` | posts, poles, blocks and barriers in different rows |
+| `1D` `1E` | barrier with a ball |
+| `0F` `10` `28` `29` | item boxes |
+| `24`-`27` | coin in row 1-4 |
+| `2A`-`2D` | the items the broadcast drops in (`$80:82AF`) |
+| `2E`-`3F` | nothing visible, race unchanged |
+
+The run codes `41`-`4F` (8-column runs) draw like plain ground but change
+the riding (4 to 56 of 63 frames differ): surfaces with effects, not yet
+measured. The editor (`tools/editor/course_editor.html`) carries these as
+default names.

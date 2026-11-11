@@ -156,3 +156,8 @@
 80EDC4 AddScore              # score digits $0CE5-$0CEA += $09AC-$09B1
 80ADF9 AccelerateRider       # speed += $80:B851[Y], player capped at $80:B867/B86A
 80C187 ClearRiderState       # zero rider X's fields
+819F1E ApplyVelocityX        # X position $0279/$027A += speed $0299 (fraction $02B9)
+81932A SpawnPlayerSpark      # effect slot 0 at the player
+8195EE StepSpark             # effect slot Y: count down, rise, draw tile $8E
+80D038 ClearMidScreenRiders    # clear riders crossing mid-screen, clip sprites
+80A0AA BsxCheckSerial        # BS-X serial read, $2197 = $80 when ready

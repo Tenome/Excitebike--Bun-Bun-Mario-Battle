@@ -326,6 +326,11 @@ BRIDGE(HleHand_RiderStartCheck, RiderStartCheck_m1x1, 80)
 BRIDGE(HleHand_AddScore, AddScore_m1x1, 200)
 BRIDGE(HleHand_AccelerateRider, AccelerateRider_m1x1, 80)
 BRIDGE(HleHand_ClearRiderState, ClearRiderState_m1x1, 150)
+BRIDGE(HleHand_ApplyVelocityX, ApplyVelocityX_m1x1, 40)
+BRIDGE(HleHand_SpawnPlayerSpark, SpawnPlayerSpark_m1x1, 80)
+BRIDGE(HleHand_StepSpark, StepSpark_m1x1, 80)
+BRIDGE(HleHand_ClearMidScreenRiders, ClearMidScreenRiders_m1x1, 300)
+BRIDGE(HleHand_BsxCheckSerial, BsxCheckSerial_m1x1, 400)
 /* Not bridged: RunGameModeScript (c/hand/s1/modes.c). Its reset path makes
  * non-tail calls into recompiled routines, and a recompiled routine may yield
  * to the frame scheduler mid-call (a long one like $80:B873 does), which hand

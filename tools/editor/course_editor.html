@@ -85,9 +85,9 @@ kbd { font: 12px ui-monospace, monospace; border: 1px solid var(--line); border-
   </section>
   <section class="card">
     <strong>Codes in this course</strong>
-    <p class="muted" style="margin:4px 0 8px">Names are notes for you (kept in this browser). Known so far:
-      <code>40</code> plain ground (Gen A; Gen B uses <code>80</code>), <code>41-4C</code> ground variants,
-      <code>09</code> wide element (stamps 6 columns), <code>2A-2D</code>/<code>08</code> items the broadcast drops in.</p>
+    <p class="muted" style="margin:4px 0 8px">Default names come from placing each code in a test course and
+      looking at the race (Gen A; Gen B shares <code>00-3F</code>). Rename any of them: your names are kept in this
+      browser.</p>
     <table><thead><tr><th>Code</th><th>Count</th><th>Name</th></tr></thead><tbody id="codes"></tbody></table>
   </section>
   <section class="card muted">
@@ -136,8 +136,89 @@ function setName(code, v) {
   const n = names(); if (v) n[code] = v; else delete n[code];
   try { localStorage.setItem("bunbun-code-names", JSON.stringify(n)); } catch {}
 }
-const DEFAULT_NAMES = { 0x40: "ground", 0x80: "ground", 0x09: "wide element", 0x2A: "item", 0x2B: "item",
-  0x2C: "item", 0x2D: "item", 0x08: "item / obstacle", 0x00: "empty (end)" };
+const DEFAULT_NAMES = {
+  0x00: "empty (end of course)",
+  0x01: "ramp, wide",
+  0x02: "post, top row",
+  0x03: "post, 2nd row",
+  0x04: "post, 3rd row",
+  0x05: "ramp, large",
+  0x06: "ramp, steep",
+  0x07: "ramp, medium",
+  0x08: "ramp, small",
+  0x09: "start/finish (LAP) gate, 6 columns",
+  0x0A: "ramp, medium (2)",
+  0x0B: "ramp, tall",
+  0x0C: "puddles, top rows",
+  0x0D: "puddles, bottom rows",
+  0x0E: "crystal spike",
+  0x0F: "item box, top row",
+  0x10: "item box, bottom row",
+  0x11: "pole, tall",
+  0x12: "post, short",
+  0x13: "post, short (top)",
+  0x14: "wall ramp, huge",
+  0x15: "ramp edge, thin",
+  0x16: "barrier",
+  0x17: "pole",
+  0x18: "block, low",
+  0x19: "post, small",
+  0x1A: "block",
+  0x1B: "post",
+  0x1C: "block, top",
+  0x1D: "barrier with ball",
+  0x1E: "barrier with ball (2)",
+  0x1F: "block, two rows",
+  0x20: "striped post",
+  0x21: "slope",
+  0x22: "tall post",
+  0x23: "ramp, large (long down slope)",
+  0x24: "coin, top row",
+  0x25: "coin, 2nd row",
+  0x26: "coin, 3rd row",
+  0x27: "coin, bottom row",
+  0x28: "item box",
+  0x29: "item box (2)",
+  0x2A: "item (broadcast drop)",
+  0x2B: "item (broadcast drop) 2",
+  0x2C: "item (broadcast drop) 3",
+  0x2D: "item (broadcast drop) 4",
+  0x2E: "unused (no effect seen)",
+  0x2F: "unused (no effect seen)",
+  0x30: "unused (no effect seen)",
+  0x31: "unused (no effect seen)",
+  0x32: "unused (no effect seen)",
+  0x33: "unused (no effect seen)",
+  0x34: "unused (no effect seen)",
+  0x35: "unused (no effect seen)",
+  0x36: "unused (no effect seen)",
+  0x37: "unused (no effect seen)",
+  0x38: "unused (no effect seen)",
+  0x39: "unused (no effect seen)",
+  0x3A: "unused (no effect seen)",
+  0x3B: "unused (no effect seen)",
+  0x3C: "unused (no effect seen)",
+  0x3D: "unused (no effect seen)",
+  0x3E: "unused (no effect seen)",
+  0x3F: "unused (no effect seen)",
+  0x40: "ground",
+  0x41: "ground variant (effect on riding)",
+  0x42: "ground variant (effect on riding)",
+  0x43: "ground variant (effect on riding)",
+  0x44: "ground variant (effect on riding)",
+  0x45: "ground variant (effect on riding)",
+  0x46: "ground variant (effect on riding)",
+  0x47: "ground variant (effect on riding)",
+  0x48: "ground variant (effect on riding)",
+  0x49: "ground variant (effect on riding)",
+  0x4A: "ground variant (effect on riding)",
+  0x4B: "ground variant (effect on riding)",
+  0x4C: "ground variant (effect on riding)",
+  0x4D: "ground variant (effect on riding)",
+  0x4E: "ground variant (effect on riding)",
+  0x4F: "ground variant (effect on riding)",
+  0x80: "ground",
+};
 function nameOf(c) { return names()[c] || DEFAULT_NAMES[c] || ""; }
 
 function colour(c) {

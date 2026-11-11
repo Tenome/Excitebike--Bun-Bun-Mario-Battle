@@ -223,20 +223,17 @@ void RivalSequence_BB05_m1x1(void)
     ret();
 }
 
-/*
- * $81:9F4C ApplyVelocity (M=1, X=1, RTL): add the signed 4.4 speed in
- * $02A9,X to the object's position: the low nibble (x16) into the fraction
- * $02C9,X, the high nibble, sign-extended, plus the carry into the 16-bit
- * position $0289/$028A,X.
- */
-void ApplyVelocity_m1x1(void)
+/* Add the signed 4.4 speed at speed,X to an object coordinate: the low nibble
+ * (x16) into the fraction frac,X, the high nibble, sign-extended, plus the
+ * carry into the 16-bit position pos/pos+1,X. */
+static void apply_speed(u16 speed, u16 frac, u16 pos)
 {
-    u8 v = rd8(ABS(0x02A9 + X));
+    u8 v = rd8(ABS(speed + X));
     lda8(v);
     lda8(asl8(asl8(asl8(asl8(v)))));
     fc = 0;
-    adc8(rd8(ABS(0x02C9 + X)));
-    wr8(ABS(0x02C9 + X), (u8)A);
+    adc8(rd8(ABS(frac + X)));
+    wr8(ABS(frac + X), (u8)A);
     push8(getP());                                 /* keep the fraction's carry */
     lda8(v);
     lda8(lsr8(lsr8(lsr8(lsr8(v)))));
@@ -247,11 +244,26 @@ void ApplyVelocity_m1x1(void)
         Y = dec8((u8)Y);
     }
     setP(pull8());
-    adc8(rd8(ABS(0x0289 + X)));
-    wr8(ABS(0x0289 + X), (u8)A);
+    adc8(rd8(ABS(pos + X)));
+    wr8(ABS(pos + X), (u8)A);
     lda8((u8)Y);
-    adc8(rd8(ABS(0x028A + X)));
-    wr8(ABS(0x028A + X), (u8)A);
+    adc8(rd8(ABS(pos + 1 + X)));
+    wr8(ABS(pos + 1 + X), (u8)A);
+}
+
+/* $81:9F4C ApplyVelocity (RTL): Y position $0289/$028A,X += speed $02A9,X
+ * (fraction $02C9,X). */
+void ApplyVelocity_m1x1(void)
+{
+    apply_speed(0x02A9, 0x02C9, 0x0289);
+    retl();
+}
+
+/* $81:9F1E ApplyVelocityX (RTL): X position $0279/$027A,X += speed $0299,X
+ * (fraction $02B9,X). */
+void ApplyVelocityX_m1x1(void)
+{
+    apply_speed(0x0299, 0x02B9, 0x0279);
     retl();
 }
 

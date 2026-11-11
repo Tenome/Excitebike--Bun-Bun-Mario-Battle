@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 130 hand-written (31.9%), 128 of them in the port.
+407 functions in the static map; 135 hand-written (33.2%), 133 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -49,6 +49,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:9E77` | BeginFadeIn | `mem+X,Y,C,V` | `misc.c` | yes |
 | `$80:A03F` | GrowBar087E | `mem+X,Y,V` | `misc.c` | yes |
 | `$80:A07F` | StepColourCycle | `mem+X,Y,V` | `misc.c` | yes |
+| `$80:A0AA` | BsxCheckSerial | `mem+X,Y,C,V` | `misc.c` | yes |
 | `$80:A1A6` | Add32 | `mem+Y,V` | `physics.c` | yes |
 | `$80:A41C` | MergeBsxFlags | `mem+Y` | `misc.c` | yes |
 | `$80:A458` | SumBytes0850 | `mem+Y` | `misc.c` | yes |
@@ -77,7 +78,8 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:C98F` | DivideAX | `mem+X,V` | `misc.c` | yes |
 | `$80:C99D` | RiderLaneBand | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:CEE7` | DrawRiderShadowPair | `mem+X,Y,V` | `race.c` | yes |
-| `$80:D069` | ClipRiderSprite | `mem+X,C,V` | `objects.c` | yes |
+| `$80:D038` | ClearMidScreenRiders | `mem+X,Y,C,V` | `race.c` | yes |
+| `$80:D069` | ClipRiderSprite | `mem+X,C,V` | `race.c` | yes |
 | `$80:D0BA` | UpdatePlayerPlace | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:D0E5` | ComputePlaces | `mem+X` | `race.c` | yes |
 | `$80:D113` | DrawPlace | `mem+X,Y,C,V` | `race.c` | yes |
@@ -97,9 +99,12 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:EAD1` | PlayerOverheatWarn | `mem+A,X,Y,C,V` | `race.c` | yes |
 | `$80:EDC4` | AddScore | `mem+X,Y,C,V` | `race.c` | yes |
 | `$81:8C21` | BlankQueueRowPal2 | `mem+Y` | `misc.c` | yes |
+| `$81:932A` | SpawnPlayerSpark | `mem+X,C,V` | `objects.c` | yes |
+| `$81:95EE` | StepSpark | `mem+Y,C,V` | `objects.c` | yes |
 | `$81:9761` | RivalDispatch_9761 | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:97CC` | RivalCountdown_97CC | `mem+V` | `misc.c` | yes |
 | `$81:9EF5` | ObjectFacing | `mem+X,V` | `objects.c` | yes |
+| `$81:9F1E` | ApplyVelocityX | `mem+X,V` | `ai.c` | yes |
 | `$81:9F4C` | ApplyVelocity | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:A01B` | LoadCourse | `mem+X,Y,C,V` | `kernel.c` | yes |
 | `$81:A1E5` | Random | `mem+A,X,Y,C,V` | `misc.c` | yes |

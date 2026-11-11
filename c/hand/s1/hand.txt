@@ -134,3 +134,8 @@
 80EDC4  1 1  mem+X,Y,C,V    AddScore
 80ADF9  1 1  mem+X,V        AccelerateRider
 80C187  1 1  mem+A,X,C,V    ClearRiderState
+819F1E  1 1  mem+X,V        ApplyVelocityX
+81932A  1 1  mem+X,C,V      SpawnPlayerSpark
+8195EE  1 1  mem+Y,C,V      StepSpark
+80D038  1 1  mem+X,Y,C,V    ClearMidScreenRiders
+80A0AA  1 1  mem+X,Y,C,V    BsxCheckSerial

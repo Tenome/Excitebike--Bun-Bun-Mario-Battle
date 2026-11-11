@@ -512,3 +512,43 @@ void ClearRiderState_m1x1(void)
         wr8(ABS(fields[i] + X), 0x00);
     ret();
 }
+
+void ClipRiderSprite_m1x1(void);
+
+/*
+ * $80:D038 ClearMidScreenRiders (RTS): for each of the 8 positions in $0950
+ * that holds a rider: when it is in the middle of the screen (X $0190 in
+ * $70-$8F, on an even screen $0198), clear it (ClearRiderState) and set
+ * $092A = 1; then ClipRiderSprite with $07 = $80:BD9A[position].
+ */
+void ClearMidScreenRiders_m1x1(void)
+{
+    ldy8(0x07);
+    do {
+        wr8(DP(0x05), (u8)Y);
+        lda8(rd8(ABS(0x0950 + Y)));
+        if (!fz) {
+            X = (u8)A; nz8((u8)X);
+            lda8(rd8(ABS(0xBD9A + Y)));
+            wr8(DP(0x07), (u8)A);
+            lda8(rd8(ABS(0x0198 + X)));
+            lda8(lsr8((u8)A));
+            if (!fc) {
+                lda8(rd8(ABS(0x0190 + X)));
+                cmp8((u8)A, 0x70);
+                if (fc) {
+                    cmp8((u8)A, 0x90);
+                    if (!fc) {
+                        push16(0xD05A); ClearRiderState_m1x1();
+                        lda8(0x01);
+                        wr8(ABS(0x092A), 0x01);
+                    }
+                }
+            }
+            push16(0xD062); ClipRiderSprite_m1x1();
+        }
+        ldy8(rd8(DP(0x05)));
+        Y = dec8((u8)Y);
+    } while (!fn);
+    ret();
+}

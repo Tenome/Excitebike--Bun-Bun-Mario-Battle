@@ -678,3 +678,20 @@ void BsxReadSerial3_m1x1(void)
     wr8(ABS(0x2199), 0x41);
     retl();
 }
+
+void BsxReadSerial3_m1x1(void);
+
+/* $80:A0AA BsxCheckSerial (RTS): read 3 bytes from the BS-X serial port to
+ * $00-$02,X; when bits 0-1 of $01 are both set, write $80 to $2197. */
+void BsxCheckSerial_m1x1(void)
+{
+    push8(0x80); push16(0xA0AD); BsxReadSerial3_m1x1();
+    lda8(rd8(DP(0x01)));
+    and8(0x03);
+    cmp8((u8)A, 0x03);
+    if (fz) {
+        lda8(0x80);
+        wr8(ABS(0x2197), 0x80);
+    }
+    ret();
+}

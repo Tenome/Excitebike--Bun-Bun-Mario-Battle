@@ -165,3 +165,62 @@ void ObjectFacing_m1x1(void)
     nz8((u8)Y);
     retl();
 }
+
+/*
+ * $81:932A SpawnPlayerSpark (RTL): start effect slot 0 at the player's
+ * position ($0190, $01B0): kind 3 ($0110), 3 frames ($0120), speeds
+ * $F8/$D0 ($0138/$0140), and set $09AD = 1.
+ */
+void SpawnPlayerSpark_m1x1(void)
+{
+    push8(DB);
+    lda8(0x81);
+    push8(0x81);
+    DB = pull8(); nz8(DB);
+    push8((u8)X);
+    ldx8(0x00);
+    lda8(rd8(ABS(0x0190))); wr8(ABS(0x0100 + X), (u8)A);
+    lda8(rd8(ABS(0x01B0))); wr8(ABS(0x0108 + X), (u8)A);
+    lda8(0x00); wr8(ABS(0x0118 + X), 0x00);
+    lda8(0x03); wr8(ABS(0x0110 + X), 0x03);
+    lda8(0xF8); wr8(ABS(0x0138 + X), 0xF8);
+    lda8(0xD0); wr8(ABS(0x0140 + X), 0xD0);
+    lda8(0x03); wr8(ABS(0x0120 + X), 0x03);
+    wr8(ABS(0x0128 + X), 0);
+    lda8(0x01); wr8(ABS(0x09AD), 0x01);
+    X = pull8(); nz8((u8)X);
+    DB = pull8(); nz8(DB);
+    retl();
+}
+
+/*
+ * $81:95EE StepSpark (RTS), effect slot Y: count its frames $0120 down (kind
+ * $0110 cleared at zero), rise one pixel every other frame, and draw it as
+ * sprite (Y + 4) in the OAM buffer: tile $8E, attribute $2D, large.
+ */
+void StepSpark_m1x1(void)
+{
+    X = Y; nz8((u8)X);
+    u8 t = dec8(rd8(ABS(0x0120 + X)));
+    wr8(ABS(0x0120 + X), t);
+    if (t == 0)
+        wr8(ABS(0x0110 + X), 0);
+    lda8(rd8(ABS(0x0120 + X)));
+    lda8(lsr8((u8)A));
+    if (fc)
+        wr8(ABS(0x0108 + X), dec8(rd8(ABS(0x0108 + X))));
+    lda8((u8)X);
+    lda8(asl8((u8)A));
+    Y = (u8)A; nz8((u8)Y);
+    lda8(rd8(ABS(0x0100 + X))); wr8(ABS(0x1610 + Y), (u8)A);
+    lda8(rd8(ABS(0x0108 + X))); wr8(ABS(0x1611 + Y), (u8)A);
+    lda8(0x8E); wr8(ABS(0x1612 + Y), 0x8E);
+    lda8(0x2D); wr8(ABS(0x1613 + Y), 0x2D);
+    lda8((u8)Y);
+    lda8(lsr8((u8)A));
+    lda8(lsr8((u8)A));
+    Y = (u8)A; nz8((u8)Y);
+    lda8(0x02);
+    wr8(ABS(0x1824 + Y), 0x02);
+    ret();
+}
