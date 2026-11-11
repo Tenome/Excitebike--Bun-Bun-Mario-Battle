@@ -52,3 +52,10 @@
 80D0BA  1 1  mem+X,Y,C,V    UpdatePlayerPlace
 80D0E5  1 1  mem+X          ComputePlaces
 80D38E  1 1  mem+X,Y,C,V    DrawCoinIcons
+81B819  1 1  mem+X,Y,C,V    RivalWaitStep_B819
+81B879  1 1  mem+X,Y,C,V    RivalWaitStep_B879
+81B9B6  1 1  mem+X,Y,C,V    RivalWaitStep_B9B6
+81BA8E  1 1  mem+X,Y,C,V    RivalWaitStep_BA8E
+81BAE8  1 1  mem+X,Y,C,V    RivalWaitStep_BAE8
+81BC2E  1 1  mem+X,Y,C,V    RivalWaitStep_BC2E
+81BD06  1 1  mem+X,Y,C,V    RivalWaitStep_BD06

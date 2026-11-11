@@ -151,6 +151,14 @@ BRIDGE(HleHand_DrawSmallObject,    DrawSmallObject_m1x1,    80)
 BRIDGE(HleHand_UpdatePlayerPlace,  UpdatePlayerPlace_m1x1,  200)
 BRIDGE(HleHand_ComputePlaces,      ComputePlaces_m1x1,      1500)
 BRIDGE(HleHand_DrawCoinIcons,      DrawCoinIcons_m1x1,      200)
+/* c/hand/s1/ai.c */
+BRIDGE(HleHand_RivalWaitStep_B819, RivalWaitStep_B819_m1x1, 40)
+BRIDGE(HleHand_RivalWaitStep_B879, RivalWaitStep_B879_m1x1, 40)
+BRIDGE(HleHand_RivalWaitStep_B9B6, RivalWaitStep_B9B6_m1x1, 40)
+BRIDGE(HleHand_RivalWaitStep_BA8E, RivalWaitStep_BA8E_m1x1, 40)
+BRIDGE(HleHand_RivalWaitStep_BAE8, RivalWaitStep_BAE8_m1x1, 40)
+BRIDGE(HleHand_RivalWaitStep_BC2E, RivalWaitStep_BC2E_m1x1, 40)
+BRIDGE(HleHand_RivalWaitStep_BD06, RivalWaitStep_BD06_m1x1, 40)
 /* Not bridged: RunGameModeScript (c/hand/s1/modes.c). Its reset path makes
  * non-tail calls into recompiled routines, and a recompiled routine may yield
  * to the frame scheduler mid-call (a long one like $80:B873 does), which hand

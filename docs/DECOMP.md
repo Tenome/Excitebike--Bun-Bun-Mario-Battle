@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 48 hand-written (11.8%), 45 of them in the port.
+407 functions in the static map; 55 hand-written (13.5%), 52 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -60,5 +60,12 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:D3C1` | DrawSmallObject | `mem+X,Y,V` | `objects.c` | yes |
 | `$81:A01B` | LoadCourse | `mem+X,Y,C,V` | `kernel.c` | yes |
 | `$81:A1E5` | Random | `mem+A,X,Y,C,V` | `misc.c` | yes |
+| `$81:B819` | RivalWaitStep_B819 | `mem+X,Y,C,V` | `ai.c` | yes |
+| `$81:B879` | RivalWaitStep_B879 | `mem+X,Y,C,V` | `ai.c` | yes |
+| `$81:B9B6` | RivalWaitStep_B9B6 | `mem+X,Y,C,V` | `ai.c` | yes |
+| `$81:BA8E` | RivalWaitStep_BA8E | `mem+X,Y,C,V` | `ai.c` | yes |
+| `$81:BAE8` | RivalWaitStep_BAE8 | `mem+X,Y,C,V` | `ai.c` | yes |
+| `$81:BC2E` | RivalWaitStep_BC2E | `mem+X,Y,C,V` | `ai.c` | yes |
+| `$81:BD06` | RivalWaitStep_BD06 | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:F8BB` | BsxPollStream | `mem+X,Y,C,V` | `kernel.c` | yes |
 
