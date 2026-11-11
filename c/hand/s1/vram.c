@@ -8,7 +8,8 @@
  *   +5  source address (low byte only: $7F:00xx + $0C, see below), +7 bank $7F
  *   +8  byte count               +A  offset of the following record
  *   +C  the data itself
- * The NMI handler ($80:876B) walks the records and DMAs each one.
+ * NmiFlushVramQueue ($80:8979) DMAs every record during vblank (records
+ * start at $7F:0002; head $0002 = empty, $FFFF = locked) and resets the head.
  */
 #include "hand/hand.h"
 
@@ -24,7 +25,9 @@ static inline u32 q(u16 off, u16 field) { return (0x7F0000u + field + off) & 0xF
  *
  * Note: +5/+6 store only the low byte of (offset + $0C) and a zero, so the
  * record's own source address is only right while the queue stays under
- * $100 bytes. The NMI side decides whether that matters (kept as is).
+ * $100 bytes (a record past offset $F4 would DMA from the wrong place). In
+ * play the queue stays smaller (largest head seen over 6,000 intro/title
+ * frames: $E2), so the original never hits it; kept as is.
  */
 void VramQueueCopy_m1x1(void)
 {

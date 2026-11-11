@@ -5,8 +5,8 @@
 808541 DmaCopyToWram
 808562 DmaFillZero
 8085FF Nmi
-80876B NmiVramUpload
-808979 NmiOamUpload
+80876B NmiFixedUploads      # sprite graphics slots, HUD, palette, tilemap, OAM DMA
+808979 NmiFlushVramQueue    # DMAs every record of the $7F:0000 queue, then resets it
 8089ED RunGameModeScript
 80BBDA Irq
 81F80C BsxOpenTimeChannel
