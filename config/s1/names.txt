@@ -45,3 +45,4 @@
 80B2A9 VramQueueTiles       # header byte (w nibbles) at ($02), entry appended to $7F:0000 queue
 80B3FE VramQueueCopy        # [$02] source, $10 length, $00 VRAM address -> $7F:0000 queue
 8088E0 SpcUpload            # IPL upload ($BBAA handshake); X selects block via $80:88CE/D4/DA
+81A01B LoadCourse

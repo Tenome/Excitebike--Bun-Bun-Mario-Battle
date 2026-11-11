@@ -6,3 +6,4 @@
 808562  0 1  mem   DmaFillZero
 8082B6  1 1  mem   QueueSound
 80B4D9  1 1  mem   ReadJoypads
+81A01B  1 1  mem   LoadCourse

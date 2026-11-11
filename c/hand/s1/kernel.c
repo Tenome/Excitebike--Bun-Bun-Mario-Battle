@@ -131,3 +131,72 @@ void ReadJoypads_m1x1(void)
     read_pad(REG_JOY2L, P2_HELD_LO, P2_PRESS_LO, P2_PREV_LO, P2_HELD_HI, P2_PRESS_HI, P2_PREV_HI);
     retl();
 }
+
+/*
+ * $81:A01B LoadCourse (M=1, X=1, RTL). Expands the current course into the
+ * track buffer $7F:4000 (one byte per column, see tools/course.py).
+ *
+ *   course = $0CD7 != 0 ? special course ($81:800C * 2 + 8)
+ *                       : $81:800C * 4 + $7C       ($81:800C picks the Stadium)
+ *   bytes from $81:8C81 + start[course], count[course] source bytes:
+ *     b & $40 -> run: next byte n, b written n times
+ *     b == $09 -> also written to the next five columns
+ *
+ * Does nothing when the buffer already holds a course and $7D (laps run?) is
+ * non-zero. The source counter lives in $00 and is decremented as a byte,
+ * like the original.
+ */
+void LoadCourse_m1x1(void)
+{
+    if (rd16(LONG(0x7F4000)) != 0 && (rd16(DP(0x7D)) & 0xFF) != 0) {
+        sep(0x30);
+        retl();
+        return;
+    }
+    rep(0x30);
+    for (int i = 0x0FFE; i >= 0; i -= 2)
+        wr16(LONG(0x7F4000 + i), 0);
+
+    u16 stadium = rd16(LONG(0x81800C));
+    u16 index;
+    if (rd16(ABS(0x0CD7)) != 0) {
+        index = (u16)(stadium * 2 + 0x10);
+    } else {
+        wr16(DP(0x00), rd16(DP(0x7C)) & 0xFF);
+        index = (u16)((stadium * 4 + rd16(DP(0x00))) * 2);
+    }
+    wr16(DP(0x00), rd16(LONG(0x818C6D + index)));     /* source byte count */
+    u16 src = rd16(LONG(0x818C59 + index));            /* offset into $81:8C81 */
+
+    sep(0x20);
+    push8(DB);
+    push8(0x7F);                                       /* LDA #$7F / PHA / PLB */
+    DB = pull8();                                      /* buffer writes use DB */
+    u16 col = 0;
+    do {
+        u8 b = rd8(LONG(0x818C81 + src));
+        wr8(ABS(0x4000 + col), b);
+        if (b == 0x09)
+            for (int k = 1; k <= 5; k++)
+                wr8(ABS(0x4000 + col + k), 0x09);
+        if (b & 0x40) {
+            wr8(DP(0x02), b);
+            wr8(DP(0x00), (u8)(rd8(DP(0x00)) - 1));
+            src++;
+            u16 n = rd8(LONG(0x818C81 + src));
+            push16(src);                               /* PHX ... PLX around the run */
+            for (u16 k = 0; k < n; k++)
+                wr8(ABS(0x4000 + col + k), rd8(DP(0x02)));
+            src = pull16();
+            col = (u16)(col + n - 1);
+        }
+        src++;
+        col++;
+        wr8(DP(0x00), (u8)(rd8(DP(0x00)) - 1));
+    } while (rd8(DP(0x00)) != 0);
+    X = src;
+    Y = col;
+    sep(0x10);
+    DB = pull8();
+    retl();
+}
