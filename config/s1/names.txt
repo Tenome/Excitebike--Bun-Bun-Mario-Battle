@@ -13,3 +13,4 @@
 81F8BB BsxPollStream
 81FA68 BsxDetect
 81FA81 BsxProbeReceiver
+80B4D9 ReadJoypads

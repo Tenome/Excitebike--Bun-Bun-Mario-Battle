@@ -5,3 +5,4 @@ orig/
 *.smc
 build/
 __pycache__/
+*.log

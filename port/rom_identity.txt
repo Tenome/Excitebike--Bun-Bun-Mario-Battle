@@ -1,0 +1,26 @@
+# ROM identity for BunBun S1 — the single source of truth.
+#
+# Read by three consumers, so a revision change is made once, here:
+#   - the build   (CMake generates snesrecomp_rom_identity.h from this file)
+#   - tools/regen.sh
+#   - .github/workflows/release.yml
+#
+# Format is `key = value`, one per line; `#` starts a comment. Values may be
+# quoted. Leaving a digest empty means the build cannot verify a ROM it is
+# handed — it will say so rather than accept it.
+
+display_name    = BunBun S1
+rom_file        = s1.sfc
+# Every digest of the bare image (copier header stripped), so the Retro
+# catalog can take a submission's identity from this file rather than ask
+# the submitter to hash the ROM again. The build verifies on crc32/sha256.
+expected_crc32  = 6e6d087c
+expected_md5    = 272968c6a21f5b558dbcaabe09ae693b
+expected_sha1   = c65ccf7c0766b8eb9b8d0d2de339021d5217027f
+expected_sha256 = a22163ddd3d07f01101e885297568d1863db0639e5b1b97fc84dff253dee2089
+rom_size        = 1048576
+mapping         = lorom
+region          = JPN
+# What a mod package's [[target]] game_id must name to apply to this title
+# (snesrecomp/docs/MOD_PACKAGES.md). Stable across revisions on purpose.
+game_id         = bunbuns1-jpn

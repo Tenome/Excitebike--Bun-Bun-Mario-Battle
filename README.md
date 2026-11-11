@@ -21,3 +21,20 @@ python tools/bsdis.py orig/s1.bs --out build/s1        # report.txt, listing.asm
 python tools/mkcfg.py build/s1/code.json build/s1/cfg --names config/s1/names.txt
 snesrecomp.exe generate --rom s1.sfc --cfg-dir build/s1/cfg --out-dir build/s1/gen --cfg-roots
 ```
+
+## Native port (`port/`)
+
+A snesrecomp game project for Stadium 1, with the framework and launcher as
+submodules (`git submodule update --init --recursive`).
+
+```bash
+python tools/bsdis.py orig/s1.bs --out build/s1
+python tools/mkcfg.py build/s1/code.json port/recomp --names config/s1/names.txt --into
+cp orig/s1.bs port/s1.sfc && (cd port && bash tools/regen.sh --cfg-roots)
+cmake -S port -B port/build -G "Visual Studio 18 2026" -A x64
+cmake --build port/build --config Release --parallel
+port/build/Release/BunbunS1SNESRecomp.exe --no-launcher --rom port/s1.sfc
+```
+
+Coverage: `tools/covrun.sh` runs random-input sessions with snesrecomp's
+coverage capture; `tools/covcmp.py` checks them against the static map.

@@ -52,8 +52,33 @@ data.
   CGADSUB, NMITIMEN, HDMAEN).
 * `$1E12`, `$1543`: VRAM upload source.
 
+## Build stamp and debug flags (`$81:8000`)
+* `$81:8000-$8005`: BCD build timestamp YY MM DD hh mm ss.
+  S1 dump `98-03-23 13:40:41`, S2 `97-05-02 17:37:15`, S3 `97-10-23 20:53:10`,
+  S4 `98-03-19 15:49:25`. The S1 dump is a 1998 rebuild, not the May 1997 original.
+* `$81:800C`: mode flag read by the menus and race setup (`$80:916B`, `$80:B715`,
+  ...). 0 in S1/S3, 1 in S2/S4/S2-rebroadcast. Probably "second-week episode".
+* `$81:800E`: debug flag, read by the main loop (`$80:8116`). When set: P2 A/X
+  step `$7FFFFF` down/up, P1 L toggles pause (`$1917`), P1 R advances one frame.
+
+## Main loop (`$80:80FE`)
+Wait for NMI (`$081A`), poll BS stream, `$80:B4AE`, `ReadJoypads`, optional debug
+keys, then (unless paused) `$80:B498`, `$80:823C`, `$80:B226`,
+`RunGameModeScript`, scroll helpers when `$90` is set, `$80:B538`, `$80:85A6`
+(joypad consumers), `$80:819F`, clear `$081A`.
+
+## Broadcast clock
+The game shows a clock (19:0x) and waits on the title ("しばらくおまちください")
+for the scheduled start. Without a receiver Reset seeds `$7FFFF9` = $13 (19 h),
+`$7FFFFA` = 2, `$7FFFFB` = 5, `$7FFFFF` = 2, and the race opens at 19:04 game time
+(about 55 s after the title appears).
+
+## Dispatch idioms the disassembler recognises
+* `LDA tbl,Y / STA $00 / INY / LDA tbl,Y / STA $01 / JMP ($0000)` (word table)
+* two-level: outer table of list pointers, `LDA ($02),Y` steps the list (`$80:8A2B`)
+* split tables: low bytes at `tbl`, high bytes at `tbl+n` (`$80:BE3B`)
+* `JMP (tbl,X)` / `JSR (tbl,X)`, tables end where the first handler starts
+
 ## Open questions
-* What is the byte at `$81:800C`? It is 0 in S1 and 1 in the S2 rebroadcast
-  dump, which is otherwise S1. It is in a data block (no direct code reference).
 * What is the second dispatcher at `$80:8A2B` (`JMP ($0000)` from a list
   pointer at `$02`)? Its targets need the lists under `$80:B683`.

@@ -1,0 +1,38 @@
+# addr  size  name   notes   (Stadium 1 / Gen A; D=$0000 unless noted)
+0000 2 scratch0      general scratch / DMA length
+0002 3 scratch_ptr   general pointer (also DMA source when D=$4300)
+0020 1 p1_held_hi    B Y Sel St U D L R
+0021 1 p1_press_hi
+0022 1 p2_held_hi
+0023 1 p2_press_hi
+0024 1 p1_held_lo    A X L R (low nibble = 0)
+0025 1 p2_held_lo
+0026 1 p1_press_lo
+0027 1 p2_press_lo
+0028 1 p1_prev_hi
+0029 1 p2_prev_hi
+002A 1 p1_prev_lo
+002B 1 p2_prev_lo
+0075 1 script_active  RunGameModeScript: 0 = run mode init handler
+0076 1 game_mode      index into $80:B65D / $80:B683
+0077 1 script_step    position in the mode's handler list
+008C 1 bg1_hofs_hi
+0090 1 bg1_vofs_mode
+0091 1 hud_irq_enable NMITIMEN $B1 instead of $81
+0092 1 bg1_hofs_lo
+0093 1 bg1_vofs
+0098 4 bg2_scroll    HOFS lo/hi, VOFS lo/hi
+009C 4 bg3_scroll
+081A 1 nmi_skip_upload
+1903 1 sh_inidisp
+1905 1 sh_tm
+1906 1 sh_ts
+190A 1 sh_tmw
+190B 1 sh_tsw
+190C 1 sh_cgwsel
+190D 1 sh_cgadsub
+190E 1 sh_nmitimen
+190F 1 sh_hdmaen
+7FFFE1 1 bs_no_receiver  1 = satellite receiver absent
+7FFFF7 2 bs_channel      opened time channel id ($5533 = failed)
+7FFFFF 1 bs_last_byte    last value received on the time channel

@@ -73,7 +73,10 @@ The rest of the 1 MB is graphics, tracks, music and other data.
 1. Generate C with `snesrecomp generate --cfg-roots` from our cfg seeds. ✅
    First run: 542 function variants, 533 native and 9 left to the interpreter.
 2. Scaffold a full game project with snesrecomp's `setup_project`: CMake,
-   runner, SDL3 and the launcher. Get it to the title screen.
+   runner, SDL3 and the launcher. Get it to the title screen. ✅ `port/`
+   boots Stadium 1 natively through the intro, title and into a race
+   (2026-11-10). Native and interpreter-only builds render the same scenes;
+   frame timing drifts by a few frames (not yet co-simulated).
 3. Replace the BS-X library with a C function (`hle_func`). It reports "no
    receiver" or returns a fake clock, so time-gated content can be unlocked.
 4. Compare against an independent emulator (snesref plus a libretro core)

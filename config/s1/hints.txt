@@ -1,0 +1,4 @@
+# Stadium 1 (Gen A) analysis hints for tools/bsdis.py
+# $80:8A2B: RunGameModeScript steps through a per-mode handler list.
+table2 80B683 19 m1x1
+resolved 808A2B

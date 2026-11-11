@@ -1,0 +1,8 @@
+[submodule "port/snesrecomp"]
+	path = port/snesrecomp
+	url = https://github.com/RetroPortingToolKit/snesrecomp
+	branch = main
+[submodule "port/recomp-ui"]
+	path = port/recomp-ui
+	url = https://github.com/mstan/recomp-ui.git
+	branch = master

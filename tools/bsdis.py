@@ -115,6 +115,8 @@ class Disasm:
         self.conflicts = set()
         self.queue = []
         self.jumptables = {}        # site -> (table addr, [targets])
+        self.names = {}
+        self.resolved = set()       # indirect sites explained by hints
         self.seed_bases = set()     # table starts learned in a previous pass
         self.ptables = {}           # site -> (table addr, m, x), resolved after tracing
 
@@ -144,6 +146,8 @@ class Disasm:
                 limit = min([b for b in bases if b > t] + [t + 256])
                 tgts, a = [], t
                 while a + 1 < limit and a not in self.insn:
+                    if any(tg > t and a >= tg for tg in tgts):
+                        break
                     w = self.rom.word(a)
                     if w is None or w < 0x8000 or not self.plausible((t & 0xFF0000) | w, m, x):
                         break
@@ -177,7 +181,7 @@ class Disasm:
                     self.conflicts.add(pc)
             self.flags_at[pc].add((m, x))
             self.insn[pc] = (mnem, mode, size, operand, m, x)
-            hist = (hist + [(pc, mnem, mode, operand)])[-16:]
+            hist = (hist + [(pc, mnem, mode, operand)])[-32:]
             bank = pc & 0xFF0000
             nxt = bank | ((pc + size) & 0xFFFF)
 
@@ -280,15 +284,75 @@ class Disasm:
     def ptr_table(self, site, hist, ptr, m, x):
         """Recognise 'LDA tbl,Y / STA ptr / ... LDA tbl,Y / STA ptr+1 / JMP (ptr)'
         and 'LDA tbl,X (16-bit) / STA ptr / JMP (ptr)'."""
-        base = None
+        base = hi_base = None
         for i in range(len(hist) - 1):
             a, b = hist[i], hist[i + 1]
             if a[1] == 'LDA' and a[2] in ('absx', 'absy') and b[1] == 'STA'                     and b[2] in ('dp', 'abs') and b[3] == ptr:
                 base = a[3]
+            if a[1] == 'LDA' and a[2] in ('absx', 'absy') and b[1] == 'STA'                     and b[2] in ('dp', 'abs') and b[3] == ptr + 1:
+                hi_base = a[3]
         if base is None:
+            return self.ptr_table2(site, hist, ptr, m, x)
+        bank = site & 0xFF0000
+        if m and hi_base is not None and hi_base != base + 1 and 0 < hi_base - base <= 64:
+            # split table: low bytes at base, high bytes at hi_base
+            n = hi_base - base
+            tg = []
+            for i in range(n):
+                lo, hi = self.rom.byte(bank | (base + i)), self.rom.byte(bank | (hi_base + i))
+                t = bank | lo | hi << 8
+                if (t & 0xFFFF) < 0x8000 or not self.plausible(t, m, x):
+                    continue
+                tg.append(t)
+            self.jumptables[site] = (bank | base, tg)
+            self.resolved.add(site)
+            for t in tg:
+                self.add_root(t, m, x, src=site)
+            return True
+        self.ptables[site] = (bank | base, m, x)
+        return True
+
+    def ptr_table2(self, site, hist, ptr, m, x):
+        """'LDA tbl,X / STA dp / LDA tbl+1,X / STA dp+1 ... LDA (dp),Y / STA ptr / JMP (ptr)':
+        tbl holds pointers to lists of handler pointers."""
+        dp = None
+        for i in range(len(hist) - 1):
+            a, b = hist[i], hist[i + 1]
+            if a[1] == 'LDA' and a[2] == 'idpy' and b[1] == 'STA' and b[3] == ptr:
+                dp = a[3]
+        if dp is None:
+            return False
+        outer = None
+        for i in range(len(hist) - 1):
+            a, b = hist[i], hist[i + 1]
+            if a[1] == 'LDA' and a[2] in ('absx', 'absy') and b[1] == 'STA'                     and b[2] == 'dp' and b[3] == dp:
+                outer = a[3]
+        if outer is None:
             return False
         bank = site & 0xFF0000
-        self.ptables[site] = (bank | base, m, x)
+        base = bank | outer
+        lists, a = [], base
+        while not lists or a < min(lists):
+            w = self.rom.word(a)
+            if w is None or w < 0x8000 or len(lists) > 256:
+                break
+            lists.append(bank | w)
+            a += 2
+        starts = sorted(set(lists))
+        bounds = starts[1:] + [starts[-1] + 0x100] if starts else []
+        tg = []
+        for st, en in zip(starts, bounds):
+            q = st
+            while q < en:
+                w = self.rom.word(q)
+                if w is None or w < 0x8000 or not self.plausible(bank | w, m, x):
+                    break
+                tg.append(bank | w)
+                q += 2
+        self.jumptables[site] = (base, tg)
+        self.resolved.add(site)
+        for t in tg:
+            self.add_root(t, m, x, src=site)
         return True
 
     def jump_table(self, site, table, m, x, call):
@@ -299,6 +363,8 @@ class Disasm:
         for _ in range(128):
             if a in self.insn or (a in self.labels and a != table) or (a != table and a in self.seed_bases):
                 break
+            if any(t > table and a >= t for t in tgts):
+                break       # walked into the first handler
             w = self.rom.word(a)
             if w is None or w < 0x8000 or not self.plausible(bank | w, m, x):
                 break
@@ -369,6 +435,8 @@ class Disasm:
         }[mode]
 
     def lab(self, a):
+        if a in self.names:
+            return self.names[a]
         if a in self.funcs:
             return 'sub_%06X' % a
         return 'L%06X' % a
@@ -387,7 +455,7 @@ class Disasm:
                 if len(callers) > 6:
                     cs += ', ... (%d)' % len(callers)
                 out.append('')
-                out.append('; ---- sub_%06X  [%s]  callers: %s' % (pc, fl, cs or '-'))
+                out.append('; ---- %s  [%s]  callers: %s' % (self.lab(pc), fl, cs or '-'))
             if pc in self.labels or pc in self.funcs:
                 out.append('%s:' % self.lab(pc))
             raw = ' '.join('%02X' % self.rom.byte((pc & 0xFF0000) | ((pc + i) & 0xFFFF)) for i in range(size))
@@ -429,6 +497,8 @@ class Disasm:
         r.append('')
         r.append('== Unresolved control flow (%d)' % len(self.unresolved))
         for pc, t in sorted(set(self.unresolved)):
+            if pc in self.resolved:
+                continue
             r.append('  $%06X  %s' % (pc, t))
         r.append('')
         r.append('== Jump tables (heuristic)')
@@ -453,6 +523,8 @@ def main():
     ap.add_argument('--entry', action='append', default=[],
                     help='extra root, e.g. 80:8000 or 80:8000:m0x1')
     ap.add_argument('--no-tables', action='store_true')
+    ap.add_argument('--hints', help='hints file (default config/<ver>/hints.txt)')
+    ap.add_argument('--names', help='names file (default config/<ver>/names.txt)')
     args = ap.parse_args()
 
     data = open(args.rom, 'rb').read()
@@ -487,11 +559,68 @@ def build(rom, args, seed):
             m = 'm0' not in f
             x = 'x0' not in f
         d.add_root(pc, m, x)
+    apply_hints(d, rom, args)
     d.run()
     return d
 
 
+def _mx(tok):
+    tok = (tok or 'm1x1').lower()
+    return 'm0' not in tok, 'x0' not in tok
+
+
+def apply_hints(d, rom, args):
+    """Hints file grammar (one per line, # comments, addresses are 24-bit hex):
+         code  <pc> [mXxY]                 extra code entry
+         table <addr> <count> [mXxY]       table of 16-bit code pointers (same bank)
+         table2 <addr> <count> [mXxY]      table of pointers to lists of code pointers
+         ltable <addr> <count> [mXxY]      table of 24-bit code pointers
+         data  <start> <end>               never decode as code (not enforced yet)
+    """
+    path = args.hints or os.path.join('config', os.path.splitext(os.path.basename(args.rom))[0], 'hints.txt')
+    if not os.path.exists(path):
+        return
+    for line in open(path):
+        t = line.split('#')[0].split()
+        if not t:
+            continue
+        kind = t[0]
+        if kind == 'resolved':
+            d.resolved.add(int(t[1], 16))
+        elif kind == 'code':
+            m, x = _mx(t[2] if len(t) > 2 else None)
+            d.add_root(int(t[1], 16), m, x)
+        elif kind in ('table', 'table2', 'ltable'):
+            base, n = int(t[1], 16), int(t[2], 0)
+            m, x = _mx(t[3] if len(t) > 3 else None)
+            bank = base & 0xFF0000
+            if kind == 'table':
+                for i in range(n):
+                    d.add_root(bank | rom.word(base + 2 * i), m, x, src=base)
+            elif kind == 'ltable':
+                for i in range(n):
+                    a = base + 3 * i
+                    d.add_root(rom.word(a) | rom.byte(a + 2) << 16, m, x, src=base)
+            else:
+                lists = sorted({bank | rom.word(base + 2 * i) for i in range(n)})
+                bounds = lists[1:] + [lists[-1] + 0x100]
+                for st, en in zip(lists, bounds):
+                    a = st
+                    while a < en:
+                        w = rom.word(a)
+                        if w is None or w < 0x8000 or not d.plausible(bank | w, m, x):
+                            break
+                        d.add_root(bank | w, m, x, src=st)
+                        a += 2
+
+
 def finish(d, args):
+    npath = args.names or os.path.join('config', os.path.splitext(os.path.basename(args.rom))[0], 'names.txt')
+    if os.path.exists(npath):
+        for line in open(npath):
+            t = line.split('#')[0].split()
+            if len(t) >= 2:
+                d.names[int(t[0], 16)] = t[1]
 
     out = args.out or os.path.join('build', os.path.splitext(os.path.basename(args.rom))[0])
     os.makedirs(out, exist_ok=True)
@@ -500,7 +629,8 @@ def finish(d, args):
     with open(os.path.join(out, 'listing.asm'), 'w') as f:
         f.write(d.listing())
     with open(os.path.join(out, 'code.json'), 'w') as f:
-        json.dump({'funcs': {'%06X' % k: sorted(['M%dX%d' % (int(a), int(b)) for a, b in v])
+        json.dump({'insn': {'%06X' % k: [v[0], v[1], v[2], v[3]] for k, v in d.insn.items()},
+                   'funcs': {'%06X' % k: sorted(['M%dX%d' % (int(a), int(b)) for a, b in v])
                              for k, v in d.funcs.items()}}, f, indent=0)
     print(d.report().split('\n== Hardware')[0])
 
