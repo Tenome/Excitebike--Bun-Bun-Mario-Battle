@@ -101,6 +101,18 @@ Luigi, Toad, Wario; Stadium 1 normally has three). `BUNBUN_UNLOCK=1` grants
 it at the frame boundary when mode 1 starts (`port/src/game_rtl.c`), and
 Wario races in Stadium 1.
 
+## BS-X player data the game reads (`$11:5716-$5734`)
+Both generations read a block the BS-X BIOS maintains (open bus without it):
+* `$11:5719-$571F`: episode flags. Gen A: two or more set → Wario unlock
+  (above); `$80:A41C` also ORs pairs of them into the end-screen digits
+  `$0856-$0858`.
+* Gen B `$80:A070`: `$11:5730-$5734` combined as a 5-digit number (weights
+  10000, 1000, 100, 10, 1, via `$80:B98E`) into `$0850-$0855`.
+* Gen B `$80:A129`: `$11:572C-$572E` each split into tens and units into
+  `$0854-$0859` (looks like a date: year, month, day).
+A port could fill this block from a save file to recreate the player's BS-X
+profile.
+
 ## Race state layout (first look)
 Like the NES Excitebike, state is kept in parallel arrays indexed by X:
 * `$0200-$026F`: 14 fields, stride 8, X = rider 0..7 (races have 8 riders).
