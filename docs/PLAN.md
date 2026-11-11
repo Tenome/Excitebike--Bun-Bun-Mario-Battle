@@ -103,7 +103,9 @@ The rest of the 1 MB is graphics, tracks, music and other data.
    (`port/src/courses.c`); with `BUNBUN_GENA_ROM=<s1 dump>` and
    `BUNBUN_COURSES=1|2` the Gen B engine plays the Stadium 1 or 2 courses
    (converted on load, run flag `$40` → `$80`). Runs without errors; the
-   terrain-code mapping is not yet checked tile by tile.
+   terrain-code mapping is not yet checked tile by tile. Without the override
+   the replacement builds a track buffer identical to the original (checked
+   against the interpreter-only build: 353 bytes, 0 differences).
 1. Match routines across versions by instruction signature, ignoring
    addresses. This gives the exact code differences A↔A, B↔B and A↔B.
 2. Use the Gen B engine (Stadium 4) as the base. Load each Stadium's data
