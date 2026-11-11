@@ -213,14 +213,18 @@ class Disasm:
                 self.labels.add(tgt)
                 self.queue.append((tgt, m, x, stk))
                 return
-            elif mnem == 'JSR' and mode == 'abs':
-                tgt = bank | operand
+            elif mnem == 'JSR' and mode == 'abs' or mnem == 'JSL' and self.rom.off(operand) is not None:
+                tgt = bank | operand if mnem == 'JSR' else operand
                 self.add_root(tgt, m, x, src=pc)
+                exits = self.exit_states(tgt, m, x)
+                if exits and exits != {(m, x)}:
+                    # callee changes width: continue after the call in each exit width
+                    ex = sorted(exits)
+                    for em, exx in ex[1:]:
+                        self.queue.append((nxt, em, exx, stk))
+                    m, x = ex[0]
             elif mnem == 'JSL':
-                if self.rom.off(operand) is None:
-                    self.ext_long[operand].add(pc)
-                else:
-                    self.add_root(operand, m, x, src=pc)
+                self.ext_long[operand].add(pc)
             elif mnem == 'JMP' and mode == 'abs':
                 tgt = bank | operand
                 self.labels.add(tgt)
@@ -247,6 +251,78 @@ class Disasm:
             elif mnem in ('BRK', 'COP'):
                 self.unresolved.append((pc, '%s #$%02X' % (mnem, operand)))
             pc = nxt
+
+    def exit_states(self, entry, m, x, _depth=0):
+        """Set of (m, x) at the routine's RTS/RTL when entered with (m, x).
+
+        Walks the body on its own (branches, JMP/BRL within the bank, calls
+        summarised recursively). Empty set = no return found (or unknown);
+        callers then assume the width is preserved."""
+        key = (entry, m, x)
+        memo = self.__dict__.setdefault('_exit_memo', {})
+        if key in memo:
+            return memo[key]
+        memo[key] = set()               # recursion guard
+        if _depth > 24:
+            return set()
+        out, seen, work = set(), set(), [(entry, m, x, ())]
+        steps = 0
+        while work and steps < 20000:
+            pc, cm, cx, stk = work.pop()
+            while steps < 20000:
+                steps += 1
+                if (pc, cm, cx, stk) in seen:
+                    break
+                seen.add((pc, cm, cx, stk))
+                op = self.rom.byte(pc)
+                if op is None:
+                    break
+                mn, mode = OPS[op]
+                size = 1 + operand_size(mode, cm, cx)
+                operand = 0
+                for i in range(1, size):
+                    b = self.rom.byte((pc & 0xFF0000) | ((pc + i) & 0xFFFF))
+                    if b is None:
+                        break
+                    operand |= b << (8 * (i - 1))
+                bank = pc & 0xFF0000
+                nxt = bank | ((pc + size) & 0xFFFF)
+                if mn == 'REP':
+                    cm = cm and not operand & 0x20; cx = cx and not operand & 0x10
+                elif mn == 'SEP':
+                    cm = cm or bool(operand & 0x20); cx = cx or bool(operand & 0x10)
+                elif mn == 'PHP':
+                    stk = (stk + ((cm, cx),))[-8:]
+                elif mn == 'PLP':
+                    if stk:
+                        cm, cx = stk[-1]; stk = stk[:-1]
+                if mn in ('RTS', 'RTL'):
+                    out.add((cm, cx)); break
+                if mn in ('RTI', 'STP', 'BRK', 'COP') or (mn in ('JMP', 'JML') and mode in ('iabs', 'iabsx', 'ilabs')):
+                    break
+                if mn in BRANCHES:
+                    work.append((bank | ((nxt + (operand - 256 if operand & 0x80 else operand)) & 0xFFFF), cm, cx, stk))
+                elif mn == 'BRA':
+                    pc = bank | ((nxt + (operand - 256 if operand & 0x80 else operand)) & 0xFFFF); continue
+                elif mn == 'BRL':
+                    pc = bank | ((nxt + (operand - 0x10000 if operand & 0x8000 else operand)) & 0xFFFF); continue
+                elif mn == 'JMP' and mode == 'abs':
+                    pc = bank | operand; continue
+                elif mn == 'JML' and mode == 'long':
+                    if self.rom.off(operand) is None:
+                        break
+                    pc = operand; continue
+                elif (mn == 'JSR' and mode == 'abs') or (mn == 'JSL' and self.rom.off(operand) is not None):
+                    t = bank | operand if mn == 'JSR' else operand
+                    ex = self.exit_states(t, cm, cx, _depth + 1)
+                    if ex and ex != {(cm, cx)}:
+                        ex = sorted(ex)
+                        for em, exx in ex[1:]:
+                            work.append((nxt, em, exx, stk))
+                        cm, cx = ex[0]
+                pc = nxt
+        memo[key] = out
+        return out
 
     def plausible(self, pc, m, x, n=4):
         """Cheap sanity check that pc starts real code."""
