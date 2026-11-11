@@ -156,3 +156,148 @@ void VramQueueTiles20_m1x1(void)
     SET_A8(0x20);
     VramQueueTiles_m1x1();
 }
+
+/*
+ * $80:8979 NmiFlushVramQueue (M=1, X=1, RTL), in vblank. DMAs every queued
+ * record to VRAM with channel 0, then empties the queue (head = $0002).
+ * Head $FFFF means the queue is being written: skip this frame.
+ */
+void NmiFlushVramQueue_m1x1(void)
+{
+    push8(DB);
+    push8(0x80); DB = pull8();                         /* PHK / PLB */
+    rep(0x30);
+    Y = 0;
+    wr16(DP(0x02), 0);
+    sep(0x20);
+    X = 0;
+    push8(DB);
+    push8(0x7F); DB = pull8();                         /* queue bank */
+    wr8(DP(0x00), 0x7F);
+    rep(0x20);
+    u16 head = rd16(ABS(0x0000));
+    A = head;
+    wr16(DP(0x04), head);
+    int locked = head == 0xFFFF;
+    int empty = rd16(DP(0x02)) == 0 && head == 0x0002;   /* $02 was just cleared */
+    if (!locked && !empty) {
+        u16 x = 2;
+        do {
+            wr16(LONG(0x004300), rd16(ABS(x + 3)));    /* DMAP0, BBAD0 */
+            wr16(LONG(0x002116), rd16(ABS(x + 0)));    /* VMADD */
+            wr16(LONG(0x004302), rd16(ABS(x + 5)));    /* A1T0 */
+            wr16(LONG(0x004304), rd16(ABS(x + 7)));    /* A1B0 (and DAS0L, rewritten next) */
+            wr16(LONG(0x004305), rd16(ABS(x + 8)));    /* DAS0 */
+            sep(0x20);
+            wr8(LONG(0x002115), rd8(ABS(x + 2)));      /* VMAIN */
+            wr8(LONG(0x00420B), 0x01);                 /* MDMAEN: go */
+            rep(0x20);
+            x = rd16(ABS(x + 0x0A));                   /* next record */
+            A = x;
+        } while (x != rd16(DP(0x04)));
+        X = x;
+        A = 0x0002;
+        wr16(ABS(0x0000), 0x0002);                     /* queue empty */
+    }
+    DB = pull8();
+    sep(0x30);
+    DB = pull8();
+    retl();
+}
+
+void DmaKick_m0x1(void);
+
+/* One VRAM upload through channel 0 (D = $4300): DmaKick with the return
+ * address the original JSR pushes. */
+static void vram_upload(u16 jsr_ret, u16 vram, u16 bytes, u16 src, u8 bank)
+{
+    wr16(ABS(0x2116), vram);                           /* VMADD */
+    wr16(DP(0x05), bytes);                             /* DAS0 */
+    A = src;
+    X = bank;
+    Y = 1;                                             /* channel 0 */
+    push16(jsr_ret);
+    DmaKick_m0x1();
+}
+
+/*
+ * $80:876B NmiFixedUploads (M=1, X=1, RTS), in vblank, with the direct page
+ * moved to the DMA registers ($4300) so DP $00-$06 are channel 0.
+ *
+ *  - four streamed sprite-graphics slots (when $1E12 != 0): source words
+ *    $1E12/$1E14/$1E16/$1E18, banks $1543-$1546, each 2 x $100 bytes to
+ *    VRAM $2000/$2100, $2080/$2180, $2200/$2300, $2280/$2380 (two tile rows);
+ *  - $200 bytes from $9E:($86) to VRAM $4A00 when $86 != 0;
+ *  - the whole palette from $00:1C00 when $1915 is set (then cleared);
+ *  - $200 bytes from $8A:($1E0A) to VRAM ($1E10) when $1E0C and $1E10 are set;
+ *  - OAM: $220 bytes from $00:1600.
+ */
+void NmiFixedUploads_m1x1(void)
+{
+    push16(D);
+    A = 0x4300; D = 0x4300;
+    rep(0x10);
+    wr8(ABS(0x2115), 0x80);                            /* VMAIN: +1 after high byte */
+    Y = 0x1801;
+    wr16(DP(0x00), 0x1801);                            /* DMAP0 = $01, BBAD0 = $18 (VMDATA) */
+    rep(0x20);
+    sep(0x10);
+
+    if (rd16(ABS(0x1E12)) != 0) {
+        static const struct { u16 ret1, ret2, vram, src; u16 bank; } slot[4] = {
+            {0x879F, 0x87B4, 0x2000, 0x1E12, 0x1543},
+            {0x87CA, 0x87DF, 0x2080, 0x1E14, 0x1544},
+            {0x87F5, 0x880A, 0x2200, 0x1E16, 0x1545},
+            {0x8820, 0x8835, 0x2280, 0x1E18, 0x1546},
+        };
+        for (int i = 0; i < 4; i++) {
+            u8 bank = rd8(ABS(slot[i].bank));
+            vram_upload(slot[i].ret1, slot[i].vram, 0x0100, rd16(ABS(slot[i].src)), bank);
+            /* second half: +$100 VRAM words, +$200 source bytes (CLC / ADC) */
+            wr16(ABS(0x2116), (u16)(slot[i].vram + 0x100));
+            wr16(DP(0x05), 0x0100);
+            A = rd16(ABS(slot[i].src));
+            fc = 0;
+            adc16(0x0200);
+            push16(slot[i].ret2);
+            DmaKick_m0x1();
+        }
+    }
+    rep(0x20);
+    sep(0x10);
+    if (rd16(ABS(0x0086)) != 0)
+        vram_upload(0x8853, 0x4A00, 0x0200, rd16(ABS(0x0086)), 0x9E);
+
+    rep(0x10);
+    sep(0x20);
+    if (rd8(ABS(0x1915)) != 0) {                        /* palette upload request */
+        wr8(ABS(0x2121), 0);                           /* CGADD */
+        Y = 0x2200; wr16(DP(0x00), 0x2200);            /* DMAP0 = $00, BBAD0 = $22 (CGDATA) */
+        Y = 0x1C00; wr16(DP(0x02), 0x1C00);
+        SET_A8(0);  wr8(DP(0x04), 0x00);
+        Y = 0x0200; wr16(DP(0x05), 0x0200);
+        SET_A8(1);  wr8(ABS(0x420B), 0x01);
+        wr8(ABS(0x1915), 0);
+    }
+    if (rd8(ABS(0x1E0C)) != 0) {
+        rep(0x20);
+        sep(0x10);
+        if (rd16(ABS(0x1E10)) != 0) {
+            Y = 0x80; wr8(ABS(0x2115), 0x80);
+            A = 0x1801; wr16(DP(0x00), 0x1801);
+            vram_upload(0x88A7, rd16(ABS(0x1E10)), 0x0200, rd16(ABS(0x1E0A)), 0x8A);
+        }
+    }
+    rep(0x20);
+    sep(0x10);
+    wr16(ABS(0x2102), 0);                              /* OAMADD = 0 */
+    wr16(DP(0x00), 0x0400);                            /* DMAP0 = $00, BBAD0 = $04 (OAMDATA) */
+    wr16(DP(0x02), 0x1600);
+    wr16(DP(0x04), 0x0000);
+    wr16(DP(0x05), 0x0220);
+    Y = 1; wr8(ABS(0x420B), 0x01);
+    A = 0x1801; wr16(DP(0x00), 0x1801);                /* leave channel 0 set up for VRAM */
+    sep(0x30);
+    D = pull16();
+    ret();
+}

@@ -15,3 +15,5 @@
 80B3FE  1 1  mem+X,Y,C,V    VramQueueCopy
 80B2A9  1 1  mem+X,Y,C,V    VramQueueTiles
 80B2A5  1 1  mem+X,Y,C,V    VramQueueTiles20
+808979  1 1  mem            NmiFlushVramQueue
+80876B  1 1  mem            NmiFixedUploads

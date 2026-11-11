@@ -78,4 +78,6 @@ BRIDGE(HleHand_BsxPollStream, BsxPollStream_m1x1, 120)
 BRIDGE(HleHand_VramQueueCopy,    VramQueueCopy_m1x1,    1500)
 BRIDGE(HleHand_VramQueueTiles,   VramQueueTiles_m1x1,   1200)
 BRIDGE(HleHand_VramQueueTiles20, VramQueueTiles20_m1x1, 1200)
+BRIDGE(HleHand_NmiFlushVramQueue, NmiFlushVramQueue_m1x1, 400)
+BRIDGE(HleHand_NmiFixedUploads,   NmiFixedUploads_m1x1,   600)
 #endif
