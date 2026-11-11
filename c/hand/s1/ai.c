@@ -141,3 +141,34 @@ void RivalAlternate_B914_m1x1(void) { alternate(0xB932, 0xB949, 0xB94B); }
 void RivalAlternate_BA55_m1x1(void) { alternate(0xBA73, 0xBA8A, 0xBA8C); }
 
 void RivalAlternate_BB70_m1x1(void) { alternate(0xBB8E, 0xBBA5, 0xBBA7); }
+
+/* Per-rival state dispatchers: jump to the handler for the current object's
+ * state ($0309,X) through a table of handler addresses. */
+static void dispatch_state(u16 table, u32 site)
+{
+    X = rd8(ABS(0x039D));
+    lda8(rd8(ABS(0x0309 + X)));
+    SET_A8(asl8((u8)A));
+    X = (u8)A;
+    u16 handler = rd16(0x810000u | (u16)(table + X));
+    if (!r816_call_pc(0x810000u | handler))
+        r816_unknown_target(site, handler);
+}
+
+void RivalDispatch_9761_m1x1(void) { dispatch_state(0x976C, 0x819769); }
+
+void RivalDispatch_B639_m1x1(void) { dispatch_state(0xB644, 0x81B641); }
+
+void RivalDispatch_B6B3_m1x1(void) { dispatch_state(0xB6BE, 0x81B6BB); }
+
+void RivalDispatch_B7A2_m1x1(void) { dispatch_state(0xB7AD, 0x81B7AA); }
+
+void RivalDispatch_B8D6_m1x1(void) { dispatch_state(0xB8E1, 0x81B8DE); }
+
+void RivalDispatch_BA17_m1x1(void) { dispatch_state(0xBA22, 0x81BA1F); }
+
+void RivalDispatch_BB32_m1x1(void) { dispatch_state(0xBB3D, 0x81BB3A); }
+
+void RivalDispatch_BC8A_m1x1(void) { dispatch_state(0xBC95, 0x81BC92); }
+
+void RivalDispatch_BD52_m1x1(void) { dispatch_state(0xBD5D, 0x81BD5A); }

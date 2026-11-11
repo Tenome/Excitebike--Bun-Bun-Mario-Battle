@@ -68,3 +68,12 @@
 81B914  1 1  mem+X,Y,C,V    RivalAlternate_B914
 81BA55  1 1  mem+X,Y,C,V    RivalAlternate_BA55
 81BB70  1 1  mem+X,Y,C,V    RivalAlternate_BB70
+819761  1 1  mem+X,Y,C,V    RivalDispatch_9761
+81B639  1 1  mem+X,Y,C,V    RivalDispatch_B639
+81B6B3  1 1  mem+X,Y,C,V    RivalDispatch_B6B3
+81B7A2  1 1  mem+X,Y,C,V    RivalDispatch_B7A2
+81B8D6  1 1  mem+X,Y,C,V    RivalDispatch_B8D6
+81BA17  1 1  mem+X,Y,C,V    RivalDispatch_BA17
+81BB32  1 1  mem+X,Y,C,V    RivalDispatch_BB32
+81BC8A  1 1  mem+X,Y,C,V    RivalDispatch_BC8A
+81BD52  1 1  mem+X,Y,C,V    RivalDispatch_BD52

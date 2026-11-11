@@ -168,6 +168,15 @@ BRIDGE(HleHand_RivalAlternate_B7E0, RivalAlternate_B7E0_m1x1, 120)
 BRIDGE(HleHand_RivalAlternate_B914, RivalAlternate_B914_m1x1, 120)
 BRIDGE(HleHand_RivalAlternate_BA55, RivalAlternate_BA55_m1x1, 120)
 BRIDGE(HleHand_RivalAlternate_BB70, RivalAlternate_BB70_m1x1, 120)
+BRIDGE(HleHand_RivalDispatch_9761, RivalDispatch_9761_m1x1, 30)
+BRIDGE(HleHand_RivalDispatch_B639, RivalDispatch_B639_m1x1, 30)
+BRIDGE(HleHand_RivalDispatch_B6B3, RivalDispatch_B6B3_m1x1, 30)
+BRIDGE(HleHand_RivalDispatch_B7A2, RivalDispatch_B7A2_m1x1, 30)
+BRIDGE(HleHand_RivalDispatch_B8D6, RivalDispatch_B8D6_m1x1, 30)
+BRIDGE(HleHand_RivalDispatch_BA17, RivalDispatch_BA17_m1x1, 30)
+BRIDGE(HleHand_RivalDispatch_BB32, RivalDispatch_BB32_m1x1, 30)
+BRIDGE(HleHand_RivalDispatch_BC8A, RivalDispatch_BC8A_m1x1, 30)
+BRIDGE(HleHand_RivalDispatch_BD52, RivalDispatch_BD52_m1x1, 30)
 /* Not bridged: RunGameModeScript (c/hand/s1/modes.c). Its reset path makes
  * non-tail calls into recompiled routines, and a recompiled routine may yield
  * to the frame scheduler mid-call (a long one like $80:B873 does), which hand
