@@ -28,6 +28,10 @@ data.
 * `$81:F8BB` is the per-frame poll of the stream (`$2190`/`$2192`/`$2193`),
   called from `$80:810A`. It compares a received byte with `$7FFFFF`
   (the Stadium/episode number?) and calls `$81:F999` when it changes.
+* `$80:A34B` / `$80:A387` bit-bang `$2198` (clock/data lines, MSB first):
+  reads 16 words from the base unit's serial EEPROM into RAM, called from the
+  `$80:A0BC` tree (only when a receiver is present). Probably the player's
+  Satellaview profile (name), used for display.
 * `$7F:FFE0-$7F:FFFF` is a handshake area: `$FFE1`, `$FFE3/4`, `$FFF7/8`
   (channel id), `$FFF9-$FFFB`, `$FFFF`.
 
@@ -86,6 +90,28 @@ the minute goes up by one. Reset seeds hour 19, minute 2.
   `$0E:5000` = `$80`) and does `JML $10:5C3C` into the BS-X BIOS. With no BIOS
   this runs into garbage, so a port must replace it (return to title or a
   Stadium select). Stadium 2 (`$81:800C` = 1) goes to mode `$12` instead.
+
+Schedule tables (Stadium 1), indexed by the course number `$7C` (0..3):
+
+| Table | Values | Meaning |
+|---|---|---|
+| `$80:9727` | 11, 23, 35, 47 | free run ends (minute >= value → mode 2, next segment) |
+| `$80:A5A8` | 18, 30, 42, 54 | final ends; after course 4 → mode 9 |
+| `$80:E023` | 57 (`$39`) | → mode `$10` (ending) |
+
+Seen on screen (port build, one boot per minute, `tools/minuteshots.sh`):
+
+| Minutes | Segment |
+|---|---|
+| 0–2 | intro / rules text ("はじめに") |
+| 3 | title, "しばらくおまちください" |
+| 4–5 | practice with the controls overlay (Y / B) |
+| 6, 17, 29, ... | "コース N フリー走行" card (2 min) |
+| 7–10, 19–22, ... | free run (4 min) |
+| 11–12, 23–24, ... | "コース N 決勝" card (2 min) |
+| 13–16, 25–28, ... | final race (4 min) |
+
+The 2-minute cards are where the SoundLink narration played.
 
 Coverage runs can tune in at any minute by poking `$7F:FFFF` (script
 `poke 1FFFF NN`); this is what the debug keys at `$81:800E` do too.

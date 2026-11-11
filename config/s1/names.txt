@@ -14,3 +14,26 @@
 81FA68 BsxDetect
 81FA81 BsxProbeReceiver
 80B4D9 ReadJoypads
+# game mode handlers ($80:B65D, index = $76)
+808A46 Mode00_IntroWait
+808D25 Mode01
+808C2F Mode02_SegmentCard
+80A9BA Mode03_Race
+809698 Mode04_FreeRunSchedule
+80B6A9 ModeNop
+80D97E Mode09
+80DE07 Mode0A
+80E319 Mode0C
+808A9D Mode0D_IntroText
+808B00 Mode0E_TitleWait
+8099BB Mode0F_EndScreen
+809E6E Mode10_Ending
+809E8E Mode11
+809F68 Mode12_AfterEnd
+80A4FE FinalSchedule
+80823C BroadcastEventInject
+809DE0 EndScreenStart
+80E004 CheckEndingMinute
+81F959 BsxClockTick
+80A34B EepromReadWords
+80A387 EepromSendCommand
