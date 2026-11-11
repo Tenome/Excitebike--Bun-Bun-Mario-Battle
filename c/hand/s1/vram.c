@@ -301,3 +301,42 @@ void NmiFixedUploads_m1x1(void)
     D = pull16();
     ret();
 }
+
+/*
+ * $80:B357 VramQueueBlock (M=1, X=1, RTS; reached by JMP from several HUD
+ * routines, not a call target of its own). Like VramQueueTiles, but each
+ * entry of the list at ($02) is a full tilemap word (tile and attribute),
+ * after the size byte (low nibble = words per row, high nibble = rows).
+ */
+void VramQueueBlock_m1x1(void)
+{
+    u8 x_in = (u8)X, y_in = (u8)Y;
+    push8(x_in);
+    push8(y_in);
+    u32 list = IDP(0x02);
+    u8 size = rd8(list);
+    u8 words = size & 0x0F;
+    wr8(DP(0x05), words);
+    wr8(DP(0x08), (u8)(words << 1));
+    wr8(DP(0x09), 0);
+    wr8(DP(0x04), size >> 4);
+    u16 y = 1;
+    do {
+        u16 off = rd16(QUEUE_HEAD);
+        begin_record(off, rd8(DP(0x05)));
+        u16 x = off;
+        do {
+            wr8(q(x, 0x0C), rd8((list + y) & 0xFFFFFF)); y++;
+            wr8(q(x, 0x0D), rd8((list + y) & 0xFFFFFF)); y++;
+            x += 2;
+            wr8(DP(0x06), (u8)(rd8(DP(0x06)) - 1));
+        } while (rd8(DP(0x06)) != 0);
+        end_record();
+        wr8(DP(0x04), (u8)(rd8(DP(0x04)) - 1));
+        X = x; Y = y;
+    } while (rd8(DP(0x04)) != 0);
+    sep(0x10);
+    Y = pull8();
+    ldx8(pull8());
+    ret();
+}

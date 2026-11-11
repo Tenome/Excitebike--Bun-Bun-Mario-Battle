@@ -39,3 +39,10 @@
 80915A  1 1  mem+X,Y,C,V    SegmentNext
 809201  1 1  mem+X,Y,C,V    EnableHudSplit
 809206  1 1  mem+X,Y,C,V    ClearRaceState
+80A5B7  1 1  mem+X,Y,C,V    DrawRacerName
+80A66D  1 1  mem+X,Y,C,V    DrawHudLabelA
+80A68F  1 1  mem+X,Y,C,V    DrawHudLabelB
+80D113  1 1  mem+X,Y,C,V    DrawLapNumber
+80D14B  1 1  mem+X,Y,C,V    DrawPosition
+809236  1 1  mem+X,Y,C,V    RaceHudInit
+809248  1 1  mem+X,Y,C,V    RaceSetup

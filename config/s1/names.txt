@@ -61,3 +61,10 @@
 80915A SegmentNext          # next game mode, restart its setup, fade out ($1923 = -1)
 809201 EnableHudSplit       # $91 = 1: NMI also enables the H/V IRQ (HUD split)
 809206 ClearRaceState       # zero $0884-$0A12 and $80-$84, sound $2D
+80A5B7 DrawRacerName        # racer name (29-byte records $80:A5F9 by character $1542) at VRAM $1851
+80A66D DrawHudLabelA        # tile block $80:A67E at VRAM $18D1
+80A68F DrawHudLabelB        # tile block $80:A6A5 at VRAM $1891 (unless $84)
+80D113 DrawLapNumber        # big digit lap number at VRAM $1859
+80D14B DrawPosition         # big digit race position $0928 at VRAM $1894
+809236 RaceHudInit          # HUD labels and position digit
+809248 RaceSetup            # racer name, lap state, $09D3-$0CD2 tables, HUD positions

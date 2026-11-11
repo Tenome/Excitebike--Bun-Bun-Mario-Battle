@@ -137,6 +137,13 @@ BRIDGE(HleHand_SegmentNext,        SegmentNext_m1x1,        40)
 /* c/hand/s1/race.c */
 BRIDGE(HleHand_EnableHudSplit,     EnableHudSplit_m1x1,     20)
 BRIDGE(HleHand_ClearRaceState,     ClearRaceState_m1x1,     2000)
+BRIDGE(HleHand_DrawRacerName,      DrawRacerName_m1x1,      800)
+BRIDGE(HleHand_DrawHudLabelA,      DrawHudLabelA_m1x1,      800)
+BRIDGE(HleHand_DrawHudLabelB,      DrawHudLabelB_m1x1,      800)
+BRIDGE(HleHand_DrawLapNumber,      DrawLapNumber_m1x1,      500)
+BRIDGE(HleHand_DrawPosition,       DrawPosition_m1x1,       500)
+BRIDGE(HleHand_RaceHudInit,        RaceHudInit_m1x1,        2000)
+BRIDGE(HleHand_RaceSetup,          RaceSetup_m1x1,          6000)
 /* Not bridged: RunGameModeScript (c/hand/s1/modes.c). Its reset path makes
  * non-tail calls into recompiled routines, and a recompiled routine may yield
  * to the frame scheduler mid-call (a long one like $80:B873 does), which hand

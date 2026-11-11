@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 35 hand-written (8.6%), 32 of them in the port.
+407 functions in the static map; 42 hand-written (10.3%), 39 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -38,6 +38,11 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:915A` | SegmentNext | `mem+X,Y,C,V` | `card.c` | yes |
 | `$80:9201` | EnableHudSplit | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:9206` | ClearRaceState | `mem+X,Y,C,V` | `race.c` | yes |
+| `$80:9236` | RaceHudInit | `mem+X,Y,C,V` | `race.c` | yes |
+| `$80:9248` | RaceSetup | `mem+X,Y,C,V` | `race.c` | yes |
+| `$80:A5B7` | DrawRacerName | `mem+X,Y,C,V` | `race.c` | yes |
+| `$80:A66D` | DrawHudLabelA | `mem+X,Y,C,V` | `race.c` | yes |
+| `$80:A68F` | DrawHudLabelB | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:B226` | ClearOamBuffer | `mem+X,Y,C,V` | `frame.c` | yes |
 | `$80:B2A5` | VramQueueTiles20 | `mem+X,Y,C,V` | `vram.c` | yes |
 | `$80:B2A9` | VramQueueTiles | `mem+X,Y,C,V` | `vram.c` | yes |
@@ -45,6 +50,8 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:B498` | TickTimers | `mem+X,Y,C,V` | `misc.c` | yes |
 | `$80:B4AE` | StepLfsr | `mem+X,Y,C,V` | `frame.c` | yes |
 | `$80:B4D9` | ReadJoypads | `mem+X,Y,C,V` | `kernel.c` |  |
+| `$80:D113` | DrawLapNumber | `mem+X,Y,C,V` | `race.c` | yes |
+| `$80:D14B` | DrawPosition | `mem+X,Y,C,V` | `race.c` | yes |
 | `$81:A01B` | LoadCourse | `mem+X,Y,C,V` | `kernel.c` | yes |
 | `$81:A1E5` | Random | `mem+A,X,Y,C,V` | `misc.c` | yes |
 | `$81:F8BB` | BsxPollStream | `mem+X,Y,C,V` | `kernel.c` | yes |
