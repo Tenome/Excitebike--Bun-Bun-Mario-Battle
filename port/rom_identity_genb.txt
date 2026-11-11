@@ -1,0 +1,12 @@
+# ROM identity for the Gen B engine target (Stadiums 3 and 4), built from the
+# Stadium 4 dump "(2-18)". Same format as rom_identity.txt.
+display_name    = BunBun S3-4
+rom_file        = s4.sfc
+expected_crc32  = c747fc3b
+expected_md5    = 6c5c2343d96bc234a3d8cd37b37b9515
+expected_sha1   = deaca5600afa6f2698f688cceab26efb39d58bfc
+expected_sha256 = d689aacff0aa4b6357ff23de592980b286464be774f6bcdeea7da07d39de00ea
+rom_size        = 1048576
+mapping         = lorom
+region          = JPN
+game_id         = bunbuns4-jpn

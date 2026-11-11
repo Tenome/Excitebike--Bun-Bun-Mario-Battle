@@ -38,13 +38,17 @@
 #define main SDL_main
 #endif
 
+#ifndef BUNBUN_SAVE_PREFIX
+#define BUNBUN_SAVE_PREFIX "saves"
+#endif
+
 #ifndef SNES_GAME_VERSION
 #define SNES_GAME_VERSION "dev"
 #endif
 
 static const SnesDesktopHostGame kGameHost = {
-    .display_name        = "BunBun S1",
-    .window_title        = "BunBun S1",
+    .display_name        = SNES_GAME_TITLE,
+    .window_title        = SNES_GAME_TITLE,
     .region              = SNESRECOMP_ROM_REGION,
     .rom_file            = SNESRECOMP_ROM_FILE,
     .expected_sha256_hex = SNESRECOMP_ROM_EXPECTED_SHA256,
@@ -55,7 +59,7 @@ static const SnesDesktopHostGame kGameHost = {
     .num_players         = 2,
     /* Battery-backed SRAM shows the launcher's SAVES panel. Leave NULL for a
      * title without one. The path is exe-relative. */
-    .sram_path           = "saves/save.srm",
+    .sram_path           = BUNBUN_SAVE_PREFIX "/save.srm",
 };
 
 #ifndef __ANDROID__

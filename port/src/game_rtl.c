@@ -44,8 +44,9 @@ int g_port_reset_request;
 
 /* Stadium selection. Each Gen A build carries both Stadium 1 and Stadium 2
  * (courses, rules, end screen) and picks one with the byte at $81:800C
- * (0 = Stadium 1, 1 = Stadium 2); the 1998 "Stadium 2" rebroadcast is the
- * Stadium 1 build with this byte set. BUNBUN_STADIUM=1|2 selects it here. The
+ * (0 = Stadium 1, 1 = Stadium 2); Gen B builds carry Stadiums 3 and 4 the same
+ * way. The 1998 rebroadcasts are one build per generation with this byte
+ * flipped. BUNBUN_STADIUM=1|2 (Gen A) or 3|4 (Gen B) selects it here. The
  * ROM image is patched in memory after verification; the file is untouched. */
 #include <stdlib.h>
 #include "snes/cart.h"
@@ -54,8 +55,13 @@ static void GameInitialize(void)
     const char *v = getenv("BUNBUN_STADIUM");
     if (v && g_snes && g_snes->cart && g_snes->cart->rom && g_snes->cart->romSize > 0x800C) {
         int st = atoi(v);
-        if (st == 1 || st == 2)
-            g_snes->cart->rom[0x800C] = (uint8_t)(st - 1);   /* $81:800C */
+#ifdef BUNBUN_GENB
+        if (st == 3 || st == 4)     /* Gen B build: 0 = Stadium 3, 1 = Stadium 4 */
+            g_snes->cart->rom[0x800C] = (uint8_t)(st - 3);
+#else
+        if (st == 1 || st == 2)     /* Gen A build: 0 = Stadium 1, 1 = Stadium 2 */
+            g_snes->cart->rom[0x800C] = (uint8_t)(st - 1);
+#endif
     }
 }
 
@@ -88,7 +94,11 @@ const RtlGameInfo kGameInfo = {
     .initialize = &GameInitialize,
     .run_frame = &GameRunOneFrame,
     .draw_ppu_frame = &GameDrawPpuFrame,
+    #ifdef BUNBUN_GENB
+    .save_name_prefix = "save_genb",
+#else
     .save_name_prefix = "save",
+#endif
     .session_reset = &GameSessionReset,
     .hardware_reset = &GameSessionReset,
     .state_save_extra = &snes_beam_frame_driver_state_save,
