@@ -50,8 +50,13 @@ int g_port_reset_request;
  * ROM image is patched in memory after verification; the file is untouched. */
 #include <stdlib.h>
 #include "snes/cart.h"
+void BunbunCoursesInit(void);
 static void GameInitialize(void)
 {
+#ifdef BUNBUN_GENB
+    static int courses_ready;
+    if (!courses_ready) { courses_ready = 1; BunbunCoursesInit(); }
+#endif
     const char *v = getenv("BUNBUN_STADIUM");
     if (v && g_snes && g_snes->cart && g_snes->cart->rom && g_snes->cart->romSize > 0x800C) {
         int st = atoi(v);

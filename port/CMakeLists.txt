@@ -47,6 +47,7 @@ function(bunbun_game tgt gendir cfgdir identity title)
       src/host_contract.c
       src/game_rtl.c
       src/gen_stubs.c
+      src/courses.c
   )
 
   # ROM identity. rom_identity.txt is the one place the digests live: the build

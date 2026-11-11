@@ -38,3 +38,11 @@ port/build/Release/BunbunS1SNESRecomp.exe --no-launcher --rom port/s1.sfc
 
 Coverage: `tools/covrun.sh` runs random-input sessions with snesrecomp's
 coverage capture; `tools/covcmp.py` checks them against the static map.
+
+### Port options (environment variables)
+
+| Variable | Effect |
+|---|---|
+| `BUNBUN_STADIUM=1\|2` | Gen A executable: play Stadium 1 or 2 |
+| `BUNBUN_STADIUM=3\|4` | Gen B executable: play Stadium 3 or 4 |
+| `BUNBUN_GENA_ROM=<path>` + `BUNBUN_COURSES=1\|2` | Gen B executable: use Stadium 1 or 2 courses, read from your Stadium 1 dump |

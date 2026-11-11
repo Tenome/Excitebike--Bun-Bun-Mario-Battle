@@ -97,6 +97,13 @@ The rest of the 1 MB is graphics, tracks, music and other data.
 0. ✅ Found that each build already holds two Stadiums behind `$81:800C`; the
    port's `BUNBUN_STADIUM=1|2` selects Stadium 1 or 2 from one build. Stadiums
    3–4 need the Gen B build (S4 dump).
+0b. ✅ Second executable for the Gen B engine (`BunbunS4SNESRecomp`,
+   `BUNBUN_STADIUM=3|4`), verified at the player select (Luigi vs Yoshi).
+0c. ✅ First cross-generation run: the Gen B course loader is replaced in C
+   (`port/src/courses.c`); with `BUNBUN_GENA_ROM=<s1 dump>` and
+   `BUNBUN_COURSES=1|2` the Gen B engine plays the Stadium 1 or 2 courses
+   (converted on load, run flag `$40` → `$80`). Runs without errors; the
+   terrain-code mapping is not yet checked tile by tile.
 1. Match routines across versions by instruction signature, ignoring
    addresses. This gives the exact code differences A↔A, B↔B and A↔B.
 2. Use the Gen B engine (Stadium 4) as the base. Load each Stadium's data
