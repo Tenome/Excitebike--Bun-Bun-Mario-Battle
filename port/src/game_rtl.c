@@ -42,6 +42,23 @@
  * leaving to the BIOS menu and launching the game again amounts to. */
 int g_port_reset_request;
 
+/* Stadium selection. Each Gen A build carries both Stadium 1 and Stadium 2
+ * (courses, rules, end screen) and picks one with the byte at $81:800C
+ * (0 = Stadium 1, 1 = Stadium 2); the 1998 "Stadium 2" rebroadcast is the
+ * Stadium 1 build with this byte set. BUNBUN_STADIUM=1|2 selects it here. The
+ * ROM image is patched in memory after verification; the file is untouched. */
+#include <stdlib.h>
+#include "snes/cart.h"
+static void GameInitialize(void)
+{
+    const char *v = getenv("BUNBUN_STADIUM");
+    if (v && g_snes && g_snes->cart && g_snes->cart->rom && g_snes->cart->romSize > 0x800C) {
+        int st = atoi(v);
+        if (st == 1 || st == 2)
+            g_snes->cart->rom[0x800C] = (uint8_t)(st - 1);   /* $81:800C */
+    }
+}
+
 void GameRunOneFrame(void)
 {
     snes_beam_frame_driver_run_frame();
@@ -68,7 +85,7 @@ void GameSessionReset(void)
 
 const RtlGameInfo kGameInfo = {
     .title = "bunbuns1",
-    .initialize = NULL,
+    .initialize = &GameInitialize,
     .run_frame = &GameRunOneFrame,
     .draw_ppu_frame = &GameDrawPpuFrame,
     .save_name_prefix = "save",

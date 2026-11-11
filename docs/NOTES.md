@@ -71,12 +71,30 @@ code bank.
   CGADSUB, NMITIMEN, HDMAEN).
 * `$1E12`, `$1543`: VRAM upload source.
 
+## Each build holds two Stadiums
+The course loader (`$81:A01B` Gen A, `$81:A11E` area Gen B) indexes
+`($81:800C * 4 + course) * 2` into a start table and a length table, then
+expands the course bytes into the track buffer at `$7F:4000`:
+
+| Gen | starts | lengths | data | courses |
+|---|---|---|---|---|
+| A (S1/S2) | `$81:8C59` | `$81:8C6D` | `$81:8C81` | 8 (+2 special, picked when `$0CD7` != 0) |
+| B (S3/S4) | `$81:8C62` | `$81:8C76` | `$81:8C8A` | 8 (+2 special) |
+
+The course data is byte-identical in S1 and S2, and in S3, S4 and the S3
+rebroadcast. So `$81:800C` selects the Stadium: Gen A 0 = Stadium 1,
+1 = Stadium 2; Gen B 0 = Stadium 3, 1 = Stadium 4. The 1998 rebroadcast dumps
+are one build per generation with this byte flipped (S2 7-6 = S1 build + 1;
+S3 2-8 = S4 build + 0). The S1 (1998) and S4 dumps together hold all four
+Stadiums. The port selects the Stadium with `BUNBUN_STADIUM=1|2`
+(`port/src/game_rtl.c`, patches the byte in memory after verification);
+verified: Stadium 2 courses appear in the S1 build.
+
 ## Build stamp and debug flags (`$81:8000`)
 * `$81:8000-$8005`: BCD build timestamp YY MM DD hh mm ss.
   S1 dump `98-03-23 13:40:41`, S2 `97-05-02 17:37:15`, S3 `97-10-23 20:53:10`,
   S4 `98-03-19 15:49:25`. The S1 dump is a 1998 rebuild, not the May 1997 original.
-* `$81:800C`: mode flag read by the menus and race setup (`$80:916B`, `$80:B715`,
-  ...). 0 in S1/S3, 1 in S2/S4/S2-rebroadcast. Probably "second-week episode".
+* `$81:800C`: Stadium selector (see above). 0 in S1/S3, 1 in S2/S4/S2-rebroadcast.
 * `$81:800E`: debug flag, read by the main loop (`$80:8116`). When set: P2 A/X
   step `$7FFFFF` down/up, P1 L toggles pause (`$1917`), P1 R advances one frame.
 

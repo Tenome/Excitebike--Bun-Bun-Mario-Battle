@@ -94,6 +94,9 @@ The rest of the 1 MB is graphics, tracks, music and other data.
 3. Turn raw RAM into named structs: riders, track, camera, items.
 
 ### Phase 5: merge the Stadiums
+0. ✅ Found that each build already holds two Stadiums behind `$81:800C`; the
+   port's `BUNBUN_STADIUM=1|2` selects Stadium 1 or 2 from one build. Stadiums
+   3–4 need the Gen B build (S4 dump).
 1. Match routines across versions by instruction signature, ignoring
    addresses. This gives the exact code differences A↔A, B↔B and A↔B.
 2. Use the Gen B engine (Stadium 4) as the base. Load each Stadium's data
