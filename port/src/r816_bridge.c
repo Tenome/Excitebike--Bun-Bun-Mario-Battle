@@ -71,10 +71,14 @@ int r816_call_native(uint32_t pc24, int frame)
 
 /* Hand code tail-jumping to a routine by address (JMP ($0000) dispatch):
  * the target returns to our caller through the frame already on the stack. */
+static int g_tail_pending;
+static RecompReturn g_tail_result;
+
 int r816_call_pc(uint32_t pc24)
 {
     to_cpu(&g_cpu, 0);
-    cpu_dispatch_pc_from(&g_cpu, 0x800000u | pc24, g_cpu.S, pc24);
+    g_tail_result = cpu_dispatch_pc_from(&g_cpu, 0x800000u | pc24, g_cpu.S, pc24);
+    g_tail_pending = 1;          /* the hand routine returns right after this */
     from_cpu(&g_cpu);
     return 1;
 }
@@ -84,9 +88,12 @@ int r816_call_pc(uint32_t pc24)
     RecompReturn hle_name(CpuState *cpu)                  \
     {                                                     \
         from_cpu(cpu);                                    \
+        g_tail_pending = 0;                               \
         hand_fn();                                        \
         to_cpu(cpu, cycles);                              \
-        return RECOMP_RETURN_NORMAL;                      \
+        /* a tail transfer hands its result (a scheduler   \
+         * yield included) back up, as compiled code does */ \
+        return g_tail_pending ? g_tail_result : RECOMP_RETURN_NORMAL; \
     }
 
 #ifndef BUNBUN_GENB
@@ -123,6 +130,9 @@ BRIDGE(HleHand_FinishModeSetup,  FinishModeSetup_m1x1,  40)
 BRIDGE(HleHand_Mode0D_Setup,     Mode0D_Setup_m1x1,     80)
 BRIDGE(HleHand_Mode0E_Setup,     Mode0E_Setup_m1x1,     2500)
 BRIDGE(HleHand_Mode0D_IntroText, Mode0D_IntroText_m1x1, 1500)
+/* c/hand/s1/card.c (Mode02_SegmentCard tail-jumps into recompiled code) */
+BRIDGE(HleHand_Mode02_Setup,       Mode02_Setup_m1x1,       1500)
+BRIDGE(HleHand_Mode02_SegmentCard, Mode02_SegmentCard_m1x1, 40)
 /* Not bridged: RunGameModeScript (c/hand/s1/modes.c). Its reset path makes
  * non-tail calls into recompiled routines, and a recompiled routine may yield
  * to the frame scheduler mid-call (a long one like $80:B873 does), which hand
