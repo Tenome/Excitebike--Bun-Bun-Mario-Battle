@@ -8,3 +8,4 @@
 80B4D9  1 1  mem   ReadJoypads
 81A01B  1 1  mem   LoadCourse
 81F8BB  1 1  mem   BsxPollStream
+8089ED  1 1  mem   RunGameModeScript
