@@ -67,11 +67,28 @@ keys, then (unless paused) `$80:B498`, `$80:823C`, `$80:B226`,
 `RunGameModeScript`, scroll helpers when `$90` is set, `$80:B538`, `$80:85A6`
 (joypad consumers), `$80:819F`, clear `$081A`.
 
-## Broadcast clock
-The game shows a clock (19:0x) and waits on the title ("しばらくおまちください")
-for the scheduled start. Without a receiver Reset seeds `$7FFFF9` = $13 (19 h),
-`$7FFFFA` = 2, `$7FFFFB` = 5, `$7FFFFF` = 2, and the race opens at 19:04 game time
-(about 55 s after the title appears).
+## Broadcast clock and schedule
+The game is one broadcast hour. `$7FFFF9` = hour, `$7FFFFF` = minute (0..59),
+`$7FFFFA` (16-bit) = frame counter within the minute. With a receiver,
+`BsxPollStream` copies the satellite clock into `$7FFFF0-$7FFFF3/$F9/$FF`.
+Without one (`$81:F959`) `$7FFFFA` counts frames and every $0E4C (3660) frames
+the minute goes up by one. Reset seeds hour 19, minute 2.
+
+* minute < 3/4: intro / rules text ("はじめに"), title with "しばらくおまちください".
+* minute 4: the race segment opens (modes `$0C`/`$0E` check `$7FFFFF >= 4`).
+* During a race (mode 3) a change of minute matched against `$80:82A7` (8
+  values) injects an event into the track buffer at `$7F:4000` (`$80:823C`).
+* minute 60 (`$3C`): end of broadcast. Unless hour is `$11`, the game writes
+  `$80` to BS-X register `$2197`, which on hardware hands control back to the
+  BIOS.
+* `$80:9DE0` (end screen, Start pressed): in Stadium 1 (`$81:800C` = 0) the
+  game maps the BIOS back in (BS-X MMC writes to `$03/$04/$07/$08:5000` = 0,
+  `$0E:5000` = `$80`) and does `JML $10:5C3C` into the BS-X BIOS. With no BIOS
+  this runs into garbage, so a port must replace it (return to title or a
+  Stadium select). Stadium 2 (`$81:800C` = 1) goes to mode `$12` instead.
+
+Coverage runs can tune in at any minute by poking `$7F:FFFF` (script
+`poke 1FFFF NN`); this is what the debug keys at `$81:800E` do too.
 
 ## Dispatch idioms the disassembler recognises
 * `LDA tbl,Y / STA $00 / INY / LDA tbl,Y / STA $01 / JMP ($0000)` (word table)
@@ -79,6 +96,12 @@ for the scheduled start. Without a receiver Reset seeds `$7FFFF9` = $13 (19 h),
 * split tables: low bytes at `tbl`, high bytes at `tbl+n` (`$80:BE3B`)
 * `JMP (tbl,X)` / `JSR (tbl,X)`, tables end where the first handler starts
 
+## Coverage status (Stadium 1)
+Static map: 407 functions, 12,688 instructions. Runtime capture (8 random
+sessions + a 60-minute sweep, about 1.1 M frames) executed 10,576 of them
+(83.4%) and found **no** executed instruction outside the static map, apart
+from the deliberate jump into the BS-X BIOS.
+
 ## Open questions
-* What is the second dispatcher at `$80:8A2B` (`JMP ($0000)` from a list
-  pointer at `$02`)? Its targets need the lists under `$80:B683`.
+* What do the remaining 16.6% of static instructions belong to (2-player
+  paths, bonus games, error paths)?

@@ -20,9 +20,15 @@ def main():
     ap.add_argument('frames', type=int)
     ap.add_argument('out')
     ap.add_argument('--p2', action='store_true', help='also drive player 2')
+    ap.add_argument('--minute', type=int, help='poke the broadcast minute ($7F:FFFF) after boot')
+    ap.add_argument('--minute-from-seed', action='store_true', help='minute = seed % 60')
     a = ap.parse_args()
     rnd = random.Random(a.seed)
-    out = ['turbo on', 'wait %d' % rnd.randint(200, 900)]
+    out = ['turbo on', 'wait 60']
+    minute = a.seed % 60 if a.minute_from_seed else a.minute
+    if minute is not None:
+        out += ['poke 1FFFF %02X' % minute, 'poke 1FFFA 0000']
+    out.append('wait %d' % rnd.randint(100, 600))
     t = 0
     while t < a.frames:
         r = rnd.random()

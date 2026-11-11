@@ -59,13 +59,17 @@ The rest of the 1 MB is graphics, tracks, music and other data.
    table at `$80:8A2B` (`$B683` → lists of handler pointers).
 3. Confirm code coverage at run time: run the ROM in the snesrecomp
    interpreter or a reference emulator through `snesref` and log every
-   executed PC. Add the missing roots.
+   executed PC. Add the missing roots. ✅ Stadium 1: 83% executed, nothing
+   missed (see NOTES). Stadiums 2–4 in progress.
 4. Name routines and RAM in `config/<ver>/names.txt` and a RAM map.
 
 ### Phase 2: byte-matching disassembly
 1. Have `bsdis.py` write assembler source (ca65 or WLA-DX) for code and data.
-2. Rebuild each version byte-identically and check it in CI. The same
-   ByteMatch workflow as the NES projects.
+   ✅ `tools/mkasm.py` writes ca65 source per bank; `tools/build.py <ver>`
+   disassembles, assembles, links and compares.
+2. Rebuild each version byte-identically. ✅ All seven dumps match
+   (2026-11-11). CI (ByteMatch) still to do; the source is generated into
+   `build/` because it carries ROM data.
 3. Split the data into assets: graphics (4bpp tiles), palettes, tilemaps,
    tracks, text and SPC700 music. snes2asm's decoders help here.
 
