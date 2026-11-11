@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 77 hand-written (18.9%), 74 of them in the port.
+407 functions in the static map; 82 hand-written (20.1%), 79 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -40,6 +40,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:9206` | ClearRaceState | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:9236` | RaceHudInit | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:9248` | RaceSetup | `mem+X,Y,C,V` | `race.c` | yes |
+| `$80:A458` | SumBytes0850 | `mem+Y` | `misc.c` | yes |
 | `$80:A5B7` | DrawRacerName | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:A66D` | DrawHudLabelA | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:A68F` | DrawHudLabelB | `mem+X,Y,C,V` | `race.c` | yes |
@@ -50,6 +51,8 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:B498` | TickTimers | `mem+X,Y,C,V` | `misc.c` | yes |
 | `$80:B4AE` | StepLfsr | `mem+X,Y,C,V` | `frame.c` | yes |
 | `$80:B4D9` | ReadJoypads | `mem+X,Y,C,V` | `kernel.c` |  |
+| `$80:BD39` | Nop_BD39 | `mem+Y` | `misc.c` | yes |
+| `$80:BFBA` | AddSpeedFraction | `mem+X,Y,C,V` | `misc.c` | yes |
 | `$80:D069` | ClipRiderSprite | `mem+X,C,V` | `objects.c` | yes |
 | `$80:D0BA` | UpdatePlayerPlace | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:D0E5` | ComputePlaces | `mem+X` | `race.c` | yes |
@@ -58,6 +61,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:D34A` | StepObjectX | `mem+X,Y,V` | `objects.c` | yes |
 | `$80:D38E` | DrawCoinIcons | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:D3C1` | DrawSmallObject | `mem+X,Y,V` | `objects.c` | yes |
+| `$80:D3FD` | ClearWords1530 | `mem+C,V` | `misc.c` | yes |
 | `$81:9761` | RivalDispatch_9761 | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:9F4C` | ApplyVelocity | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:A01B` | LoadCourse | `mem+X,Y,C,V` | `kernel.c` | yes |
@@ -90,4 +94,5 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$81:BD06` | RivalWaitStep_BD06 | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:BD52` | RivalDispatch_BD52 | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:F8BB` | BsxPollStream | `mem+X,Y,C,V` | `kernel.c` | yes |
+| `$81:F999` | ResetMinuteFrame | `mem+A,X,Y` | `misc.c` | yes |
 

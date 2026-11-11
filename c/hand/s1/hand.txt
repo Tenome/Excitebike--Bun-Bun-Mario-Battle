@@ -81,3 +81,8 @@
 81BB05  1 1  mem+X,Y,C,V    RivalSequence_BB05
 819F4C  1 1  mem+X,Y,C,V    ApplyVelocity
 81B64A  1 1  mem+X,Y,C,V    RivalTumble_B64A
+80D3FD  1 1  mem+C,V        ClearWords1530
+81F999  1 1  mem+A,X,Y      ResetMinuteFrame
+80A458  1 1  mem+Y          SumBytes0850
+80BD39  1 1  mem+Y          Nop_BD39
+80BFBA  1 1  mem+X,Y,C,V    AddSpeedFraction

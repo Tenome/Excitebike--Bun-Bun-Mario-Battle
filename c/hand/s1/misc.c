@@ -278,3 +278,66 @@ done:
     sep(0x10);
     ret();
 }
+
+/* $80:D3FD ClearWords1530 (RTL): zero the low bytes of the four words at
+ * $1530-$1537 (X is preserved on the stack). */
+void ClearWords1530_m1x1(void)
+{
+    push8((u8)X);
+    for (int x = 6; x >= 0; x -= 2)
+        wr8(ABS(0x1530 + x), 0);
+    X = pull8();
+    nz8((u8)X);
+    retl();
+}
+
+/* $81:F999 ResetMinuteFrame (RTS): restart the frame-within-minute counter
+ * $7F:FFFA (16-bit) and return X = 1; A is preserved. */
+void ResetMinuteFrame_m1x1(void)
+{
+    push8((u8)A);
+    rep(0x20);
+    lda16(0x0000);
+    wr16(LONG(0x7FFFFA), 0x0000);
+    sep(0x20);
+    ldx8(0x01);
+    lda8(pull8());
+    ret();
+}
+
+/* $80:A458 SumBytes0850 (RTL): $085B = (sum of $0850-$085A) & $3F. */
+void SumBytes0850_m1x1(void)
+{
+    ldx8(0x0A);
+    lda8(0x00);
+    for (;;) {
+        fc = 0;
+        adc8(rd8(ABS(0x0850 + X)));
+        X = dec8((u8)X);
+        if (fn) break;
+    }
+    and8(0x3F);
+    wr8(ABS(0x085B), (u8)A);
+    retl();
+}
+
+/* $80:BD39 Nop_BD39 (RTS): eight NOPs, an empty hook. */
+void Nop_BD39_m1x1(void)
+{
+    ret();
+}
+
+/* $80:BFBA AddSpeedFraction (RTS): $0180,X = $01C0,X, plus one when adding
+ * the low speed byte $01B8,X to the fraction $0914,X carries. */
+void AddSpeedFraction_m1x1(void)
+{
+    lda8(rd8(ABS(0x01C0 + X)));
+    wr8(ABS(0x0180 + X), (u8)A);
+    lda8(rd8(ABS(0x01B8 + X)));
+    fc = 0;
+    adc8(rd8(ABS(0x0914 + X)));
+    wr8(ABS(0x0914 + X), (u8)A);
+    if (fc)
+        wr8(ABS(0x0180 + X), inc8(rd8(ABS(0x0180 + X))));
+    ret();
+}

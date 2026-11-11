@@ -181,6 +181,11 @@ BRIDGE(HleHand_ApplyVelocity,      ApplyVelocity_m1x1,      40)
 BRIDGE(HleHand_RivalTumble_B64A,   RivalTumble_B64A_m1x1,   120)
 BRIDGE(HleHand_RivalSequence_B67F, RivalSequence_B67F_m1x1, 40)
 BRIDGE(HleHand_RivalSequence_BB05, RivalSequence_BB05_m1x1, 40)
+BRIDGE(HleHand_ClearWords1530,   ClearWords1530_m1x1,   40)
+BRIDGE(HleHand_ResetMinuteFrame, ResetMinuteFrame_m1x1, 30)
+BRIDGE(HleHand_SumBytes0850,     SumBytes0850_m1x1,     100)
+BRIDGE(HleHand_Nop_BD39,         Nop_BD39_m1x1,         20)
+BRIDGE(HleHand_AddSpeedFraction, AddSpeedFraction_m1x1, 40)
 /* Not bridged: RunGameModeScript (c/hand/s1/modes.c). Its reset path makes
  * non-tail calls into recompiled routines, and a recompiled routine may yield
  * to the frame scheduler mid-call (a long one like $80:B873 does), which hand
