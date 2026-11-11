@@ -515,3 +515,126 @@ void AnimSourceFromFrame_m1x1(void)
     sep(0x20);
     retl();
 }
+
+/* $80:8589 InitFadeState (RTL): $2C = $0F, screen off with forced blank
+ * ($1903 = $80), scroll $92 = 0, and the four channels $1959-$195C = 1-4. */
+void InitFadeState_m1x1(void)
+{
+    lda8(0x0F); wr8(DP(0x2C), 0x0F);
+    lda8(0x80); wr8(ABS(0x1903), 0x80);
+    wr8(DP(0x92), 0);
+    lda8(0x01);
+    for (int a = 0x1959; a <= 0x195C; a++) {
+        wr8(ABS(a), (u8)A);
+        if (a != 0x195C)
+            lda8(inc8((u8)A));
+    }
+    retl();
+}
+
+/* $80:9E46 BeginFadeInBg3 (RTS): BG3 map at $2800 (BG3SC $2A), tile bases
+ * BG1/2 $4000 and BG3 $1000, then like BeginFadeIn but with a 1800-frame
+ * timer, main screen $17 and colour math $190D = $E3. */
+void BeginFadeInBg3_m1x1(void)
+{
+    lda8(0x2A); wr8(ABS(0x2109), 0x2A);
+    lda8(0x44); wr8(ABS(0x210B), 0x44);
+    lda8(0x01); wr8(ABS(0x210C), 0x01);
+    wr8(ABS(0x1923), inc8(rd8(ABS(0x1923))));
+    wr8(DP(0x75), inc8(rd8(DP(0x75))));
+    rep(0x20);
+    lda16(0x0708);
+    wr16(DP(0x88), 0x0708);
+    sep(0x20);
+    lda8(0x17); wr8(ABS(0x1905), 0x17);
+    lda8(0xE3); wr8(ABS(0x190D), 0xE3);
+    ret();
+}
+
+/* $80:99A1 BsxReadSerialByte (RTL): clock 8 bits out of the BS-X serial
+ * port $2199 (write $80 then $81, read bit 7), MSB first, into A. */
+void BsxReadSerialByte_m1x1(void)
+{
+    ldy8(0x08);
+    do {
+        lda8(0x80); wr8(ABS(0x2199), 0x80);
+        lda8(0x81); wr8(ABS(0x2199), 0x81);
+        lda8(rd8(ABS(0x2199)));
+        lda8(asl8((u8)A));                     /* bit into carry */
+        A = (u16)((A << 8) | (A >> 8)); nz8((u8)A);
+        lda8(rol8((u8)A));                     /* shift it into the byte */
+        A = (u16)((A << 8) | (A >> 8)); nz8((u8)A);
+        Y = dec8((u8)Y);
+    } while (!fz);
+    A = (u16)((A << 8) | (A >> 8)); nz8((u8)A);
+    retl();
+}
+
+/* $80:A03F GrowBar087E (RTS): while $087E < 15, count it up and redraw a
+ * symmetric bar: $0474 = old length, and the length-1 ... 1 values going
+ * out both ways from $0455+$1D/$0455+$21. */
+void GrowBar087E_m1x1(void)
+{
+    lda8(rd8(ABS(0x087E)));
+    cmp8((u8)A, 0x0F);
+    if (fz) { ret(); return; }
+    wr8(ABS(0x087E), inc8(rd8(ABS(0x087E))));
+    wr8(ABS(0x0474), (u8)A);
+    ldx8(0x1D);
+    ldy8(0x21);
+    for (;;) {
+        lda8(dec8((u8)A));
+        if (fz) break;
+        wr8(ABS(0x0455 + X), (u8)A);
+        wr8(ABS(0x0455 + Y), (u8)A);
+        Y = inc8((u8)Y); Y = inc8((u8)Y);
+        X = dec8((u8)X); X = dec8((u8)X);
+        if (fn) break;
+    }
+    ret();
+}
+
+/* $80:A07F StepColourCycle (RTS): every 14 frames ($0882 countdown), copy
+ * the next colour word of the list at $88:BC00 (index $0880, $FF = stopped)
+ * to $1C00 and flag the palette upload ($1915). */
+void StepColourCycle_m1x1(void)
+{
+    lda8(rd8(ABS(0x0880)));
+    lda8(inc8((u8)A));
+    if (!fz) {
+        lda8(rd8(ABS(0x0882)));
+        if (fz) {
+            X = rd8(ABS(0x0880));
+            rep(0x20);
+            lda16(rd16(LONGX(0x88BC00)));
+            wr16(ABS(0x1C00), A);
+            sep(0x20);
+            wr8(ABS(0x1915), inc8(rd8(ABS(0x1915))));
+            wr8(ABS(0x0880), inc8(rd8(ABS(0x0880))));
+            wr8(ABS(0x0880), inc8(rd8(ABS(0x0880))));
+            lda8(0x0E);
+            wr8(ABS(0x0882), 0x0E);
+        }
+    }
+    wr8(ABS(0x0882), dec8(rd8(ABS(0x0882))));
+    ret();
+}
+
+/* $80:A41C MergeBsxFlags (RTL): OR the BS-X player data bits into the
+ * unlock flags: $0856 |= $11:5719|$11:571D, $0857 |= $571A|$571E,
+ * $0858 |= $571B|$571F, $0859 |= ($5716 << 4) | $571C. */
+void MergeBsxFlags_m1x1(void)
+{
+    static const u16 dst[3] = { 0x0856, 0x0857, 0x0858 };
+    for (int i = 0; i < 3; i++) {
+        lda8(rd8(LONG(0x115719 + i)));
+        ora8(rd8(LONG(0x11571D + i)));
+        wr8(ABS(dst[i]), tsb8(rd8(ABS(dst[i]))));
+    }
+    lda8(rd8(LONG(0x115716)));
+    for (int i = 0; i < 4; i++)
+        lda8(asl8((u8)A));
+    ora8(rd8(LONG(0x11571C)));
+    wr8(ABS(0x0859), tsb8(rd8(ABS(0x0859))));
+    retl();
+}

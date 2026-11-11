@@ -200,6 +200,15 @@ BRIDGE(HleHand_Add32,               Add32_m1x1,               40)
 BRIDGE(HleHand_DispatchBy85,        DispatchBy85_m1x1,        40)
 BRIDGE(HleHand_StartMode01,         StartMode01_m1x1,         40)
 BRIDGE(HleHand_AnimSourceFromFrame, AnimSourceFromFrame_m1x1, 40)
+BRIDGE(HleHand_InitFadeState, InitFadeState_m1x1, 80)
+BRIDGE(HleHand_BeginFadeInBg3, BeginFadeInBg3_m1x1, 80)
+BRIDGE(HleHand_BsxReadSerialByte, BsxReadSerialByte_m1x1, 80)
+BRIDGE(HleHand_GrowBar087E, GrowBar087E_m1x1, 80)
+BRIDGE(HleHand_StepColourCycle, StepColourCycle_m1x1, 80)
+BRIDGE(HleHand_MergeBsxFlags, MergeBsxFlags_m1x1, 80)
+BRIDGE(HleHand_ScrollFarLayer, ScrollFarLayer_m1x1, 80)
+BRIDGE(HleHand_LaneFromY, LaneFromY_m1x1, 80)
+BRIDGE(HleHand_MarkFastRider, MarkFastRider_m1x1, 80)
 /* Not bridged: RunGameModeScript (c/hand/s1/modes.c). Its reset path makes
  * non-tail calls into recompiled routines, and a recompiled routine may yield
  * to the frame scheduler mid-call (a long one like $80:B873 does), which hand

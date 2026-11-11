@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 96 hand-written (23.6%), 93 of them in the port.
+407 functions in the static map; 105 hand-written (25.8%), 102 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -23,6 +23,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:8539` | DmaKick | `mem+X,Y,C,V` | `vram.c` |  |
 | `$80:8541` | DmaCopyToWram | `mem+V` | `kernel.c` | yes |
 | `$80:8562` | DmaFillZero | `mem+C,V` | `kernel.c` | yes |
+| `$80:8589` | InitFadeState | `mem+X,Y,C,V` | `misc.c` | yes |
 | `$80:85A6` | PackOamHighTable | `mem+X,Y,C,V` | `frame.c` | yes |
 | `$80:876B` | NmiFixedUploads | `mem` | `vram.c` | yes |
 | `$80:8979` | NmiFlushVramQueue | `mem` | `vram.c` | yes |
@@ -41,13 +42,19 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:9236` | RaceHudInit | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:9248` | RaceSetup | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:95AE` | DrawText95C4 | `mem+Y,V` | `misc.c` | yes |
+| `$80:99A1` | BsxReadSerialByte | `mem+A,X,Y,V` | `misc.c` | yes |
+| `$80:9E46` | BeginFadeInBg3 | `mem+X,Y,C,V` | `misc.c` | yes |
 | `$80:9E77` | BeginFadeIn | `mem+X,Y,C,V` | `misc.c` | yes |
+| `$80:A03F` | GrowBar087E | `mem+X,Y,V` | `misc.c` | yes |
+| `$80:A07F` | StepColourCycle | `mem+X,Y,V` | `misc.c` | yes |
 | `$80:A1A6` | Add32 | `mem+Y,V` | `physics.c` | yes |
+| `$80:A41C` | MergeBsxFlags | `mem+Y` | `misc.c` | yes |
 | `$80:A458` | SumBytes0850 | `mem+Y` | `misc.c` | yes |
 | `$80:A5B7` | DrawRacerName | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:A66D` | DrawHudLabelA | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:A68F` | DrawHudLabelB | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:AB18` | SendSpeedToApu | `mem+X,Y,C,V` | `misc.c` | yes |
+| `$80:B0C5` | LaneFromY | `mem+X,Y,C,V` | `physics.c` | yes |
 | `$80:B226` | ClearOamBuffer | `mem+X,Y,C,V` | `frame.c` | yes |
 | `$80:B2A5` | VramQueueTiles20 | `mem+X,Y,C,V` | `vram.c` | yes |
 | `$80:B2A9` | VramQueueTiles | `mem+X,Y,C,V` | `vram.c` | yes |
@@ -71,9 +78,11 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:D3C1` | DrawSmallObject | `mem+X,Y,V` | `objects.c` | yes |
 | `$80:D3FD` | ClearWords1530 | `mem+C,V` | `misc.c` | yes |
 | `$80:DA85` | DispatchBy85 | `mem+V` | `misc.c` | yes |
+| `$80:DB28` | ScrollFarLayer | `mem+V` | `physics.c` | yes |
 | `$80:DCD8` | BlankQueueRow | `mem+Y` | `misc.c` | yes |
 | `$80:E043` | AnimSourceFromFrame | `mem+X,Y,C,V` | `misc.c` | yes |
 | `$80:E3FB` | StartMode01 | `mem+X,Y,C,V` | `misc.c` | yes |
+| `$80:E8EA` | MarkFastRider | `mem+A,X,Y,C,V` | `physics.c` | yes |
 | `$81:8C21` | BlankQueueRowPal2 | `mem+Y` | `misc.c` | yes |
 | `$81:9761` | RivalDispatch_9761 | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:97CC` | RivalCountdown_97CC | `mem+V` | `misc.c` | yes |

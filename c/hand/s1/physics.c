@@ -62,3 +62,79 @@ void Add32_m1x1(void)
     sep(0x20);
     ret();
 }
+
+/*
+ * $80:DB28 ScrollFarLayer (RTS): the far layer scrolls at speed $0180 / 16:
+ * fraction $0994 += $0180 << 4 (the ADC keeps the last ASL's carry), whole
+ * part $8F += carry, and on wrap the tilemap half $8D flips.
+ */
+void ScrollFarLayer_m1x1(void)
+{
+    lda8(rd8(ABS(0x0180)));
+    for (int i = 0; i < 4; i++)
+        lda8(asl8((u8)A));
+    adc8(rd8(ABS(0x0994)));
+    wr8(ABS(0x0994), (u8)A);
+    lda8(rd8(DP(0x8F)));
+    adc8(0x00);
+    wr8(DP(0x8F), (u8)A);
+    if (!fc) { ret(); return; }
+    lda8(rd8(DP(0x8D)));
+    eor8(0x01);
+    wr8(DP(0x8D), (u8)A);
+    ret();
+}
+
+/*
+ * $80:B0C5 LaneFromY (RTS): for each of the 8 riders, $08A4,X = lane 5..1
+ * from the track Y $01F0,X: 5 above Y $10, then one lane lower per 8 pixels.
+ */
+void LaneFromY_m1x1(void)
+{
+    ldx8(0x07);
+    do {
+        ldy8(0x05);
+        lda8(rd8(ABS(0x01F0 + X)));
+        fc = 1;
+        sbc8(0x10);
+        if (!fn) {
+            for (;;) {
+                Y = dec8((u8)Y);
+                if (fz) break;
+                fc = 1;
+                sbc8(0x08);
+                if (fn) break;
+            }
+        }
+        lda8((u8)Y);
+        wr8(ABS(0x08A4 + X), (u8)A);
+        X = dec8((u8)X);
+    } while (!fn);
+    ret();
+}
+
+/*
+ * $80:E8EA MarkFastRider (RTS): a rider on the ground ($01E8,X = 0) with
+ * $01E0,X < 7 (signed compare by N) going faster than $02:80 (speed
+ * $01C0:$01B8) gets $01C8,X = $FF.
+ */
+void MarkFastRider_m1x1(void)
+{
+    lda8(rd8(ABS(0x01E8 + X)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABS(0x01E0 + X)));
+    cmp8((u8)A, 0x07);
+    if (!fn) { ret(); return; }
+    lda8(rd8(ABS(0x01C0 + X)));
+    cmp8((u8)A, 0x03);
+    if (!fc) {
+        cmp8((u8)A, 0x02);
+        if (!fz) { ret(); return; }
+        lda8(rd8(ABS(0x01B8 + X)));
+        lda8(asl8((u8)A));
+        if (!fc) { ret(); return; }
+    }
+    lda8(0xFF);
+    wr8(ABS(0x01C8 + X), 0xFF);
+    ret();
+}

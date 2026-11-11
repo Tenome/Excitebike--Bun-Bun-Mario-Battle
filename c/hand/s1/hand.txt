@@ -100,3 +100,12 @@
 80DA85  1 1  mem+V          DispatchBy85
 80E3FB  1 1  mem+X,Y,C,V    StartMode01
 80E043  1 1  mem+X,Y,C,V    AnimSourceFromFrame
+808589  1 1  mem+X,Y,C,V    InitFadeState
+809E46  1 1  mem+X,Y,C,V    BeginFadeInBg3
+8099A1  1 1  mem+A,X,Y,V    BsxReadSerialByte
+80A03F  1 1  mem+X,Y,V      GrowBar087E
+80A07F  1 1  mem+X,Y,V      StepColourCycle
+80A41C  1 1  mem+Y          MergeBsxFlags
+80DB28  1 1  mem+V          ScrollFarLayer
+80B0C5  1 1  mem+X,Y,C,V    LaneFromY
+80E8EA  1 1  mem+A,X,Y,C,V  MarkFastRider

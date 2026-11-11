@@ -122,3 +122,12 @@
 80DA85 DispatchBy85          # jump table $80:D409 by $85
 80E3FB StartMode01           # mode 1, $88 = 1800, fade out, C = 1
 80E043 AnimSourceFromFrame   # $86 = $B800 + (($63 & $30) << 5)
+808589 InitFadeState         # $2C = $0F, forced blank, $1959-$195C = 1-4
+809E46 BeginFadeInBg3        # BG3 setup + fade in, $88 = 1800
+8099A1 BsxReadSerialByte     # read 8 bits from BS-X $2199
+80A03F GrowBar087E           # grow symmetric bar at $0455 up to 15
+80A07F StepColourCycle       # every 14 frames next colour from $88:BC00 to $1C00
+80A41C MergeBsxFlags         # OR BS-X player data $11:5716-571F into $0856-$0859
+80DB28 ScrollFarLayer        # far layer scroll at $0180/16
+80B0C5 LaneFromY             # $08A4,X = lane 5..1 from $01F0,X
+80E8EA MarkFastRider         # $01C8,X = $FF when grounded and faster than $280
