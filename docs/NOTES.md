@@ -171,3 +171,26 @@ from the deliberate jump into the BS-X BIOS.
 * MSVC treats `_ptr32`/`_ptr64` as keywords; the v2 emitter uses those names for
   temporaries. `port/CMakeLists.txt` renames them with compile definitions.
   (Upstream bug worth reporting.)
+
+## Stadium 4 (Gen B) broadcast hour
+Seen on screen (`tools/minuteshots.sh` on the interpreter-only S4 build):
+
+| Minutes | Segment |
+|---|---|
+| 0–2 | intro text (now lists four event types: free run, final, jump contest, bonus game) |
+| 3 | title "スタジアム4", "しばらくおまちください" |
+| 4–5 | practice with the controls overlay |
+| 6 | PLAYER SELECT ("SELECT YOUR FAVORITE PLAYER!", B to cancel) |
+| 7–10 | course 1 free run, new "COURSE MAP" overview screen |
+| 11 / 12–15 | course 1 final card / final race (HUD adds SPEED km/h) |
+| 16 | JUMP CONTEST rules ("press any button to start") |
+| 17–21 / 22 / 23–26 | course 2 free run / final card / final |
+| 27 | jump contest |
+| 28 / 29–30 | BONUS GAME rules (jump to collect Boos) / bonus game, TIME 30 |
+| 31–35 / 36 / 37–40 | course 3 free run / final card / final |
+| 41 | jump contest |
+| 42–46 / 47 / 48–51 | course 4 free run / final card / final |
+| 52–59 | jump contest rules (waits for a button) |
+
+Gen B adds the player select, the course map, the jump contest and a speed
+readout. For the merge, Gen B is the natural base engine.
