@@ -43,11 +43,11 @@ include(${SNESRECOMP_ROOT}/runner/runner.cmake)
 function(bunbun_game tgt gendir cfgdir identity title)
   add_executable(${tgt}
       ${SNESRECOMP_RUNNER_SOURCES}
-      src/main.c
-      src/host_contract.c
-      src/game_rtl.c
-      src/gen_stubs.c
-      src/courses.c
+      ${CMAKE_SOURCE_DIR}/src/main.c
+      ${CMAKE_SOURCE_DIR}/src/host_contract.c
+      ${CMAKE_SOURCE_DIR}/src/game_rtl.c
+      ${CMAKE_SOURCE_DIR}/src/gen_stubs.c
+      ${CMAKE_SOURCE_DIR}/src/courses.c
   )
 
   # ROM identity. rom_identity.txt is the one place the digests live: the build
@@ -149,9 +149,7 @@ endfunction()
 bunbun_game(BunbunS1SNESRecomp ${CMAKE_SOURCE_DIR}/src/gen ${CMAKE_SOURCE_DIR}/recomp
             ${CMAKE_SOURCE_DIR}/rom_identity.txt "BunBun S1-2")
 if(EXISTS ${CMAKE_SOURCE_DIR}/src/gen-genb/module_v2.c)
-  bunbun_game(BunbunS4SNESRecomp ${CMAKE_SOURCE_DIR}/src/gen-genb ${CMAKE_SOURCE_DIR}/recomp-genb
-              ${CMAKE_SOURCE_DIR}/rom_identity_genb.txt "BunBun S3-4")
-  target_compile_definitions(BunbunS4SNESRecomp PRIVATE BUNBUN_GENB=1 BUNBUN_SAVE_PREFIX="saves_genb")
+  add_subdirectory(genb)
 endif()
 
 # Netplay is not built into this target.
