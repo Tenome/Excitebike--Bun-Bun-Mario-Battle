@@ -90,6 +90,15 @@ Stadiums. The port selects the Stadium with `BUNBUN_STADIUM=1|2`
 (`port/src/game_rtl.c`, patches the byte in memory after verification);
 verified: Stadium 2 courses appear in the S1 build.
 
+## Race state layout (first look)
+Like the NES Excitebike, state is kept in parallel arrays indexed by X:
+* `$0200-$026F`: 14 fields, stride 8, X = rider 0..7 (races have 8 riders).
+* `$0279-$0389`: 18 fields, stride 16, X = object slot 0..15. The object
+  update in bank `$81` dispatches on type through `JSR ($AAD1,X)` and friends
+  (`$81:970D/973C/9748`).
+* `$7F:4000`: expanded course buffer (from `$81:A01B`), `$7F:6000` column index.
+* `$08A4`: current course (0..3); `$7C`: course counter in the schedule.
+
 ## Build stamp and debug flags (`$81:8000`)
 * `$81:8000-$8005`: BCD build timestamp YY MM DD hh mm ss.
   S1 dump `98-03-23 13:40:41`, S2 `97-05-02 17:37:15`, S3 `97-10-23 20:53:10`,

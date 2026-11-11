@@ -36,3 +36,6 @@
 7FFFE1 1 bs_no_receiver  1 = satellite receiver absent
 7FFFF7 2 bs_channel      opened time channel id ($5533 = failed)
 7FFFFF 1 bs_last_byte    last value received on the time channel
+# Parallel arrays (field base + index), Stadium 1
+0200 8 rider_f00     14 fields $0200,$0208,...,$0268, index X = rider 0..7 (8 racers)
+0279 16 obj_f00      18 fields $0279,$0289,...,$0389, index X = object slot 0..15 (bank $81 object handlers, type dispatch $81:970D)
