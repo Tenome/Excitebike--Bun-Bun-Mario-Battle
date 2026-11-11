@@ -124,3 +124,13 @@
 81BC4B  1 1  mem+V          RivalSequence_BC4B
 809982  1 1  mem+X,Y,V      BsxReadSerial3
 80C3F5  1 1  mem+A,X,Y,C,V  RiderHeightStep
+81B896  1 1  mem+V          RivalSequence_B896
+81BCC8  1 1  mem+V          RivalCycle_BCC8
+81B976  1 1  mem+V          RivalCycle_B976
+81B836  1 1  mem+V          RivalSequence_B836
+81BBA9  1 1  mem+V          RivalBlink_BBA9
+819EF5  1 1  mem+X,V        ObjectFacing
+80BF43  1 1  mem+X,Y,C,V    RiderStartCheck
+80EDC4  1 1  mem+X,Y,C,V    AddScore
+80ADF9  1 1  mem+X,V        AccelerateRider
+80C187  1 1  mem+A,X,C,V    ClearRiderState

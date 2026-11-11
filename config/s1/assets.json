@@ -1,0 +1,728 @@
+[
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "obj",
+  "addr": "828000",
+  "size": 14336,
+  "modes": [
+   0,
+   3
+  ],
+  "vram": 9216
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "obj",
+  "addr": "82C000",
+  "size": 16384,
+  "modes": [
+   9
+  ],
+  "vram": 8192
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "bg1",
+  "addr": "838000",
+  "size": 32768,
+  "modes": [
+   12
+  ],
+  "vram": 16384
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "bg1",
+  "addr": "848000",
+  "size": 32768,
+  "modes": [
+   0
+  ],
+  "vram": 16384
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "obj",
+  "addr": "868000",
+  "size": 7424,
+  "modes": [
+   12,
+   3,
+   9
+  ],
+  "vram": 8192,
+  "parts": 29
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "obj",
+  "addr": "869E00",
+  "size": 256,
+  "modes": [
+   12,
+   3,
+   9
+  ],
+  "vram": 8448
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "obj",
+  "addr": "86A000",
+  "size": 4352,
+  "modes": [
+   12,
+   3,
+   9
+  ],
+  "vram": 8192,
+  "parts": 17
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "obj",
+  "addr": "86B200",
+  "size": 256,
+  "modes": [
+   12,
+   3
+  ],
+  "vram": 8448
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "obj",
+  "addr": "86C000",
+  "size": 7424,
+  "modes": [
+   12,
+   3,
+   9
+  ],
+  "vram": 8320,
+  "parts": 29
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "obj",
+  "addr": "86DE00",
+  "size": 256,
+  "modes": [
+   3,
+   9
+  ],
+  "vram": 8448
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "obj",
+  "addr": "86E000",
+  "size": 2048,
+  "modes": [
+   3
+  ],
+  "vram": 8192,
+  "parts": 8
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "obj",
+  "addr": "86E900",
+  "size": 256,
+  "modes": [
+   3
+  ],
+  "vram": 8192
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "obj",
+  "addr": "86EB00",
+  "size": 1536,
+  "modes": [
+   3
+  ],
+  "vram": 8448,
+  "parts": 6
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "obj",
+  "addr": "86F200",
+  "size": 256,
+  "modes": [
+   3
+  ],
+  "vram": 8448
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "obj",
+  "addr": "878000",
+  "size": 7424,
+  "modes": [
+   12,
+   3,
+   9
+  ],
+  "vram": 8704,
+  "parts": 29
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "obj",
+  "addr": "879E00",
+  "size": 256,
+  "modes": [
+   3,
+   9
+  ],
+  "vram": 8448
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "obj",
+  "addr": "87A000",
+  "size": 2048,
+  "modes": [
+   3
+  ],
+  "vram": 8192,
+  "parts": 8
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "obj",
+  "addr": "87A900",
+  "size": 256,
+  "modes": [
+   3
+  ],
+  "vram": 8192
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "obj",
+  "addr": "87AB00",
+  "size": 1536,
+  "modes": [
+   3
+  ],
+  "vram": 8448,
+  "parts": 6
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "obj",
+  "addr": "87B200",
+  "size": 256,
+  "modes": [
+   3
+  ],
+  "vram": 8448
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "obj",
+  "addr": "87C000",
+  "size": 7424,
+  "modes": [
+   12,
+   3,
+   9
+  ],
+  "vram": 8832,
+  "parts": 29
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "obj",
+  "addr": "87DE00",
+  "size": 256,
+  "modes": [
+   3,
+   9
+  ],
+  "vram": 9088
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "obj",
+  "addr": "87E000",
+  "size": 2048,
+  "modes": [
+   3
+  ],
+  "vram": 8192,
+  "parts": 8
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "obj",
+  "addr": "87E900",
+  "size": 256,
+  "modes": [
+   3
+  ],
+  "vram": 8192
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "obj",
+  "addr": "87EB00",
+  "size": 1536,
+  "modes": [
+   3
+  ],
+  "vram": 8448,
+  "parts": 6
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "obj",
+  "addr": "87F200",
+  "size": 256,
+  "modes": [
+   3
+  ],
+  "vram": 8448
+ },
+ {
+  "kind": "tiles",
+  "bpp": 2,
+  "use": "bg3",
+  "addr": "888000",
+  "size": 4096,
+  "modes": [
+   0
+  ],
+  "vram": 4096
+ },
+ {
+  "kind": "palette",
+  "colour": 0,
+  "addr": "88A000",
+  "size": 256,
+  "modes": [
+   3
+  ],
+  "vram": 7168
+ },
+ {
+  "kind": "palette",
+  "colour": 128,
+  "addr": "88A100",
+  "size": 256,
+  "modes": [
+   13
+  ],
+  "vram": 7424
+ },
+ {
+  "kind": "palette",
+  "colour": 0,
+  "addr": "88A200",
+  "size": 256,
+  "modes": [
+   1
+  ],
+  "vram": 7168
+ },
+ {
+  "kind": "palette",
+  "colour": 128,
+  "addr": "88A300",
+  "size": 256,
+  "modes": [
+   1
+  ],
+  "vram": 7424
+ },
+ {
+  "kind": "palette",
+  "colour": 0,
+  "addr": "88A600",
+  "size": 256,
+  "modes": [
+   2
+  ],
+  "vram": 7168
+ },
+ {
+  "kind": "palette",
+  "colour": 0,
+  "addr": "88A800",
+  "size": 256,
+  "modes": [
+   16
+  ],
+  "vram": 7168
+ },
+ {
+  "kind": "palette",
+  "colour": 128,
+  "addr": "88A900",
+  "size": 256,
+  "modes": [
+   16
+  ],
+  "vram": 7424
+ },
+ {
+  "kind": "palette",
+  "colour": 0,
+  "addr": "88AC00",
+  "size": 256,
+  "modes": [
+   0
+  ],
+  "vram": 7168
+ },
+ {
+  "kind": "palette",
+  "colour": 0,
+  "addr": "88AE00",
+  "size": 256,
+  "modes": [
+   13
+  ],
+  "vram": 7168
+ },
+ {
+  "kind": "palette",
+  "colour": 0,
+  "addr": "88B000",
+  "size": 256,
+  "modes": [
+   4
+  ],
+  "vram": 7168
+ },
+ {
+  "kind": "palette",
+  "colour": 128,
+  "addr": "88B100",
+  "size": 256,
+  "modes": [
+   4
+  ],
+  "vram": 7424
+ },
+ {
+  "kind": "palette",
+  "colour": 0,
+  "addr": "88B200",
+  "size": 256,
+  "modes": [
+   15
+  ],
+  "vram": 7168
+ },
+ {
+  "kind": "palette",
+  "colour": 128,
+  "addr": "88B300",
+  "size": 256,
+  "modes": [
+   15
+  ],
+  "vram": 7424
+ },
+ {
+  "kind": "palette",
+  "colour": 0,
+  "addr": "88B400",
+  "size": 256,
+  "modes": [
+   9
+  ],
+  "vram": 7168
+ },
+ {
+  "kind": "palette",
+  "colour": 128,
+  "addr": "88B500",
+  "size": 256,
+  "modes": [
+   9
+  ],
+  "vram": 7424
+ },
+ {
+  "kind": "palette",
+  "colour": 0,
+  "addr": "88B600",
+  "size": 256,
+  "modes": [
+   12
+  ],
+  "vram": 7168
+ },
+ {
+  "kind": "palette",
+  "colour": 128,
+  "addr": "88B700",
+  "size": 256,
+  "modes": [
+   12
+  ],
+  "vram": 7424
+ },
+ {
+  "kind": "tilemap",
+  "bg": 0,
+  "addr": "88C000",
+  "size": 512,
+  "modes": [
+   2
+  ],
+  "vram": 192,
+  "parts": 2
+ },
+ {
+  "kind": "tilemap",
+  "bg": 0,
+  "addr": "88C800",
+  "size": 10240,
+  "modes": [
+   4,
+   1,
+   16,
+   2
+  ],
+  "vram": 0,
+  "parts": 5
+ },
+ {
+  "kind": "tilemap",
+  "bg": 1,
+  "addr": "88F800",
+  "size": 2048,
+  "modes": [
+   1
+  ],
+  "vram": 2048
+ },
+ {
+  "kind": "tilemap",
+  "bg": 0,
+  "addr": "898000",
+  "size": 22528,
+  "modes": [
+   12,
+   0,
+   13,
+   4,
+   15
+  ],
+  "vram": 0,
+  "parts": 8
+ },
+ {
+  "kind": "tilemap",
+  "bg": 1,
+  "addr": "89E000",
+  "size": 8192,
+  "modes": [
+   9
+  ],
+  "vram": 2048,
+  "parts": 2
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "bg1",
+  "addr": "8A8000",
+  "size": 24576,
+  "modes": [
+   12,
+   10
+  ],
+  "vram": 20224,
+  "parts": 17
+ },
+ {
+  "kind": "tilemap",
+  "bg": 0,
+  "addr": "8AE000",
+  "size": 6144,
+  "modes": [
+   10,
+   4
+  ],
+  "vram": 0,
+  "parts": 3
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "obj",
+  "addr": "8B8000",
+  "size": 8192,
+  "modes": [
+   12
+  ],
+  "vram": 8192
+ },
+ {
+  "kind": "tiles",
+  "bpp": 2,
+  "use": "bg3",
+  "addr": "8BA000",
+  "size": 8192,
+  "modes": [
+   16
+  ],
+  "vram": 4096
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "obj",
+  "addr": "8BC000",
+  "size": 10240,
+  "modes": [
+   16,
+   13
+  ],
+  "vram": 10240,
+  "parts": 2
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "bg1",
+  "addr": "8CD000",
+  "size": 12288,
+  "modes": [
+   4
+  ],
+  "vram": 16384
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "bg1",
+  "addr": "978000",
+  "size": 32768,
+  "modes": [
+   15
+  ],
+  "vram": 16384
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "obj",
+  "addr": "988000",
+  "size": 16384,
+  "modes": [
+   4
+  ],
+  "vram": 8192
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "bg1",
+  "addr": "998000",
+  "size": 32768,
+  "modes": [
+   1
+  ],
+  "vram": 16384
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "bg1",
+  "addr": "9A8000",
+  "size": 32768,
+  "modes": [
+   13
+  ],
+  "vram": 16384
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "bg1",
+  "addr": "9B8000",
+  "size": 32768,
+  "modes": [
+   16
+  ],
+  "vram": 16384
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "bg1",
+  "addr": "9C8000",
+  "size": 32768,
+  "modes": [
+   2
+  ],
+  "vram": 16384
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "bg1",
+  "addr": "9E8000",
+  "size": 32768,
+  "modes": [
+   9
+  ],
+  "vram": 16384
+ },
+ {
+  "kind": "tiles",
+  "bpp": 4,
+  "use": "obj",
+  "addr": "9F8000",
+  "size": 16384,
+  "modes": [
+   1
+  ],
+  "vram": 8192
+ },
+ {
+  "kind": "tiles",
+  "bpp": 2,
+  "use": "bg3",
+  "addr": "9FC000",
+  "size": 12288,
+  "modes": [
+   13
+  ],
+  "vram": 4096
+ }
+]

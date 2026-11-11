@@ -514,3 +514,49 @@ int BunbunModsFolderApply(void)
     }
     return s_changed;
 }
+
+/* ---- custom courses ---------------------------------------------------------- */
+/* Called by the LoadCourse bridge: if some enabled mod has courses/courseN.bin
+ * (the last one in name order wins), copy it over the track buffer (the rest
+ * is zero-filled, like the original) and return 1. */
+int BunbunCustomCourse(int index, uint8_t *buf, int cap)
+{
+    char root[1024];
+    const char *env = getenv("BUNBUN_MODS");
+    if (env && *env)
+        SDL_snprintf(root, sizeof root, "%s", env);
+    else
+        SDL_snprintf(root, sizeof root, "%smods", SDL_GetBasePath() ? SDL_GetBasePath() : "");
+    if (!is_dir(root))
+        return 0;
+    Names l = list_dir(root);
+    uint8_t *best = NULL;
+    size_t bestn = 0;
+    char bestname[1200] = "";
+    for (int i = 0; i < l.n; i++) {
+        char mod[1100], p[1200];
+        SDL_snprintf(mod, sizeof mod, "%s/%s", root, l.v[i]);
+        SDL_snprintf(p, sizeof p, "%s/disabled", mod);
+        if (!is_dir(mod) || SDL_GetPathInfo(p, NULL))
+            continue;
+        SDL_snprintf(p, sizeof p, "%s/courses/course%d.bin", mod, index);
+        size_t n;
+        uint8_t *d = SDL_GetPathInfo(p, NULL) ? read_file(p, &n) : NULL;
+        if (d) {
+            SDL_free(best);
+            best = d;
+            bestn = n;
+            SDL_snprintf(bestname, sizeof bestname, "%s", p);
+        }
+    }
+    free_names(&l);
+    if (!best)
+        return 0;
+    if (bestn > (size_t)cap - 8)
+        bestn = (size_t)cap - 8;                    /* keep a zero tail */
+    memset(buf, 0, (size_t)cap);
+    memcpy(buf, best, bestn);
+    SDL_free(best);
+    SDL_Log("mods: course %d from %s (%u columns)", index, bestname, (unsigned)bestn);
+    return 1;
+}

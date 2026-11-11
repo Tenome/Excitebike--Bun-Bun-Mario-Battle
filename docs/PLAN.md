@@ -142,3 +142,17 @@ The rest of the 1 MB is graphics, tracks, music and other data.
   snesrecomp) are git-ignored and never committed.
 * Edit the tools and `config/`, never the generated files.
 * Push only with the owner's OK.
+
+## Port features (goals for the PC version)
+
+Goals: every character from all four Stadiums, a GUI level editor, sound and
+sprite replacement from a plain folder, more riders per race, and other
+quality-of-life improvements.
+
+| Feature | Status |
+|---|---|
+| Mods folder (`docs/MODDING.md`) | ✅ `port/src/mods_folder.c`: IPS, raw `rom/` overlays, `gfx/` PNG tile sheets, `pal/` palettes, `sound/` WAV→BRR samples, `courses/` custom courses. Verified in a race (recoloured rider set; WAV replacement ~38 dB SNR). |
+| Asset export | ✅ `tools/assets.py` (catalogue from the port's DMA log, PNG export, round-trip check), `tools/sound.py` (every BRR sample to WAV). |
+| Course editor | ✅ first version: `tools/editor/course_editor.html` (offline page: opens the ROM or a course file, paint/insert/delete/copy, undo, saves `courseN.bin`). Next: name the column codes from in-game experiments, draw the obstacles with the game's own tiles. |
+| Full roster | Mapped (NOTES "Characters across the Stadiums"): Mario, Luigi, Toad, Wario (Gen A), Peach and Yoshi (Gen B, Yoshi only in the S4 dump). Next: a sixth rider set in free ROM and longer per-character tables in the Gen B engine. |
+| More riders per race | Not started. Races run 8 riders with 4 streamed sprite slots. |

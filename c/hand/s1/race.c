@@ -401,3 +401,114 @@ void AnimateWheels_m1x1(void)
     } while (!fn);
     ret();
 }
+
+/*
+ * $80:BF43 RiderStartCheck (RTS): while the rider's start timer $3D,X has run
+ * out: rivals get $01A8,X = 1; once the rider moves ($01C0,X or $01A8,X set)
+ * or leaves its start row (Y $01F0,X != $80:BDA2,X), mark it started
+ * ($01A8,X = 1) and clear $01D0,X (for rivals only when Y >= 8).
+ */
+void RiderStartCheck_m1x1(void)
+{
+    lda8(rd8(DPX(0x3D)));
+    if (!fz) { ret(); return; }
+    lda8((u8)X);
+    if (!fz) { lda8(0x01); wr8(ABS(0x01A8 + X), 0x01); }
+    lda8(rd8(ABS(0x01C0 + X)));
+    ora8(rd8(ABS(0x01A8 + X)));
+    if (fz) {
+        lda8(rd8(ABS(0x01F0 + X)));
+        cmp8((u8)A, rd8(ABS(0xBDA2 + X)));
+        if (fz) { ret(); return; }
+    }
+    lda8(0x01);
+    wr8(ABS(0x01A8 + X), 0x01);
+    lda8((u8)X);
+    if (!fz) {
+        lda8(rd8(ABS(0x01F0 + X)));
+        cmp8((u8)A, 0x08);
+        if (!fc) { ret(); return; }
+    }
+    lda8(0x00);
+    wr8(ABS(0x01D0 + X), 0x00);
+    ret();
+}
+
+/*
+ * $80:EDC4 AddScore (RTS): add the six decimal digits $09AC-$09B1 to the
+ * score digits $0CE5-$0CEA (index 5 = units), carrying tens up, then clear
+ * the addend. (A digit that does not carry leaves its "minus 10" in $0CE4.)
+ */
+void AddScore_m1x1(void)
+{
+    ldx8(0x05);
+    fc = 0;
+    for (;;) {
+        lda8(rd8(ABS(0x0CE5 + X)));
+        adc8(rd8(ABS(0x09AC + X)));
+        wr8(ABS(0x0CE5 + X), (u8)A);
+        X = dec8((u8)X);
+        if (fn) break;
+        fc = 1;
+        sbc8(0x0A);
+        if (fc) {
+            wr8(ABS(0x0CE6 + X), (u8)A);
+            fc = 1;
+        } else {
+            wr8(ABS(0x0CE4), (u8)A);
+            fc = 0;
+        }
+    }
+    lda8(0x00);
+    ldx8(0x05);
+    do {
+        wr8(ABS(0x09AC + X), 0x00);
+        X = dec8((u8)X);
+    } while (!fn);
+    ret();
+}
+
+/*
+ * $80:ADF9 AccelerateRider (RTS): for the rider in $7F only: speed
+ * $01C0:$01B8,X += $80:B851[Y]; the player (X = 0) is capped at
+ * $80:B86A[Y]:$80:B867[Y].
+ */
+void AccelerateRider_m1x1(void)
+{
+    cmp8((u8)X, rd8(DP(0x7F)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABS(0xB851 + Y)));
+    fc = 0;
+    adc8(rd8(ABS(0x01B8 + X)));
+    wr8(ABS(0x01B8 + X), (u8)A);
+    if (fc)
+        wr8(ABS(0x01C0 + X), inc8(rd8(ABS(0x01C0 + X))));
+    lda8((u8)X);
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABS(0x01C0 + X)));
+    cmp8((u8)A, rd8(ABS(0xB86A + Y)));
+    if (fz) {
+        lda8(rd8(ABS(0x01B8 + X)));
+        cmp8((u8)A, rd8(ABS(0xB867 + Y)));
+        if (!fc) { ret(); return; }
+    } else if (!fc) {
+        ret();
+        return;
+    }
+    lda8(rd8(ABS(0xB867 + Y))); wr8(ABS(0x01B8 + X), (u8)A);
+    lda8(rd8(ABS(0xB86A + Y))); wr8(ABS(0x01C0 + X), (u8)A);
+    ret();
+}
+
+/* $80:C187 ClearRiderState (RTS): zero the per-rider fields of rider X. */
+void ClearRiderState_m1x1(void)
+{
+    static const u16 fields[] = {
+        0x01D8, 0x01F0, 0x01F8, 0x0200, 0x0208, 0x0170, 0x0220, 0x08BC, 0x01B8, 0x01C0, 0x01C8,
+        0x01D0, 0x01E8, 0x01A0, 0x08F4, 0x0210, 0x01A8, 0x0958, 0x08C4, 0x0904, 0x099E,
+    };
+    lda8(0x00);
+    for (unsigned i = 0; i < sizeof fields / sizeof fields[0]; i++)
+        wr8(ABS(fields[i] + X), 0x00);
+    ret();
+}

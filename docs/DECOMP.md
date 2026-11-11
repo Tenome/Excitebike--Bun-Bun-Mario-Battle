@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 120 hand-written (29.5%), 118 of them in the port.
+407 functions in the static map; 130 hand-written (31.9%), 128 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -56,6 +56,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:A66D` | DrawHudLabelA | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:A68F` | DrawHudLabelB | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:AB18` | SendSpeedToApu | `mem+X,Y,C,V` | `misc.c` | yes |
+| `$80:ADF9` | AccelerateRider | `mem+X,V` | `race.c` | yes |
 | `$80:B0C5` | LaneFromY | `mem+X,Y,C,V` | `physics.c` | yes |
 | `$80:B226` | ClearOamBuffer | `mem+X,Y,C,V` | `frame.c` | yes |
 | `$80:B2A5` | VramQueueTiles20 | `mem+X,Y,C,V` | `vram.c` | yes |
@@ -65,10 +66,12 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:B4AE` | StepLfsr | `mem+X,Y,C,V` | `frame.c` | yes |
 | `$80:B4D9` | ReadJoypads | `mem+X,Y,C,V` | `kernel.c` |  |
 | `$80:BD39` | Nop_BD39 | `mem+Y` | `misc.c` | yes |
+| `$80:BF43` | RiderStartCheck | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:BF74` | RiderShadowY | `mem+X,Y,C,V` | `physics.c` | yes |
 | `$80:BFBA` | AddSpeedFraction | `mem+X,Y,C,V` | `misc.c` | yes |
 | `$80:BFD0` | ScrollByPlayerSpeed | `mem+X,Y` | `physics.c` | yes |
 | `$80:BFE5` | ScrollRivalsRelative | `mem+X,Y` | `physics.c` | yes |
+| `$80:C187` | ClearRiderState | `mem+A,X,C,V` | `race.c` | yes |
 | `$80:C337` | Tick08CC | `mem+X,Y,C,V` | `misc.c` | yes |
 | `$80:C3F5` | RiderHeightStep | `mem+A,X,Y,C,V` | `physics.c` | yes |
 | `$80:C98F` | DivideAX | `mem+X,V` | `misc.c` | yes |
@@ -92,9 +95,11 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:E775` | AnimateWheels | `mem+V` | `race.c` | yes |
 | `$80:E8EA` | MarkFastRider | `mem+A,X,Y,C,V` | `physics.c` | yes |
 | `$80:EAD1` | PlayerOverheatWarn | `mem+A,X,Y,C,V` | `race.c` | yes |
+| `$80:EDC4` | AddScore | `mem+X,Y,C,V` | `race.c` | yes |
 | `$81:8C21` | BlankQueueRowPal2 | `mem+Y` | `misc.c` | yes |
 | `$81:9761` | RivalDispatch_9761 | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:97CC` | RivalCountdown_97CC | `mem+V` | `misc.c` | yes |
+| `$81:9EF5` | ObjectFacing | `mem+X,V` | `objects.c` | yes |
 | `$81:9F4C` | ApplyVelocity | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:A01B` | LoadCourse | `mem+X,Y,C,V` | `kernel.c` | yes |
 | `$81:A1E5` | Random | `mem+A,X,Y,C,V` | `misc.c` | yes |
@@ -106,11 +111,14 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$81:B7B9` | RivalWaitRandom_B7B9 | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:B7E0` | RivalAlternate_B7E0 | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:B819` | RivalWaitStep_B819 | `mem+X,Y,C,V` | `ai.c` | yes |
+| `$81:B836` | RivalSequence_B836 | `mem+V` | `ai.c` | yes |
 | `$81:B879` | RivalWaitStep_B879 | `mem+X,Y,C,V` | `ai.c` | yes |
+| `$81:B896` | RivalSequence_B896 | `mem+V` | `ai.c` | yes |
 | `$81:B8D6` | RivalDispatch_B8D6 | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:B8ED` | RivalWaitRandom_B8ED | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:B914` | RivalAlternate_B914 | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:B94D` | RivalPause_B94D | `mem+V` | `ai.c` | yes |
+| `$81:B976` | RivalCycle_B976 | `mem+V` | `ai.c` | yes |
 | `$81:B9B6` | RivalWaitStep_B9B6 | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:B9D5` | RivalSequence_B9D5 | `mem+V` | `ai.c` | yes |
 | `$81:BA17` | RivalDispatch_BA17 | `mem+X,Y,C,V` | `ai.c` | yes |
@@ -123,10 +131,12 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$81:BB32` | RivalDispatch_BB32 | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:BB49` | RivalWaitRandom_BB49 | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:BB70` | RivalAlternate_BB70 | `mem+X,Y,C,V` | `ai.c` | yes |
+| `$81:BBA9` | RivalBlink_BBA9 | `mem+V` | `ai.c` | yes |
 | `$81:BC2E` | RivalWaitStep_BC2E | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:BC4B` | RivalSequence_BC4B | `mem+V` | `ai.c` | yes |
 | `$81:BC8A` | RivalDispatch_BC8A | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:BCA1` | RivalWaitRandom_BCA1 | `mem+X,Y,C,V` | `ai.c` | yes |
+| `$81:BCC8` | RivalCycle_BCC8 | `mem+V` | `ai.c` | yes |
 | `$81:BD06` | RivalWaitStep_BD06 | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:BD23` | RivalSequence_BD23 | `mem+V` | `ai.c` | yes |
 | `$81:BD52` | RivalDispatch_BD52 | `mem+X,Y,C,V` | `ai.c` | yes |

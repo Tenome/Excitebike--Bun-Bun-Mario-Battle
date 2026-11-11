@@ -2,7 +2,8 @@
 """Graphics and palette catalogue, export for the port's mods/ folder.
 
     python tools/assets.py catalog s1 'E:/.../dmalog/*/dma.txt'
-        -> build/s1/assets.json (+ a summary)
+        -> build/s1/assets.json (+ a summary); config/s1/assets.json is the
+           committed copy (addresses and kinds only), used when build/ has none
     python tools/assets.py export s1 OUTDIR [--sheet-width 16]
         -> OUTDIR/gfx/BBAAAA_Nbpp.png (+ .pal.txt), OUTDIR/pal/BBAAAA.txt
     python tools/assets.py check s1 OUTDIR
@@ -240,7 +241,10 @@ def sheet_palette(per, e):
 
 def cmd_export(a):
     rom = open('orig/%s.bs' % a.ver, 'rb').read()
-    assets = json.load(open('build/%s/assets.json' % a.ver))
+    path = 'build/%s/assets.json' % a.ver
+    if not os.path.exists(path):
+        path = 'config/%s/assets.json' % a.ver       # the committed catalogue
+    assets = json.load(open(path))
     per = mode_palettes(rom, assets)
     os.makedirs(os.path.join(a.out, 'gfx'), exist_ok=True)
     os.makedirs(os.path.join(a.out, 'pal'), exist_ok=True)

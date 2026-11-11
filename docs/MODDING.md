@@ -12,6 +12,7 @@ mods/                       beside the executable (or set BUNBUN_MODS=<folder>)
     pal/BBAAAA_....txt
     sound/BBAAAA_....wav
     rom/BBAAAA_....bin
+    courses/courseN.bin
 ```
 
 `BBAAAA` is the SNES address of the data in the ROM (for example `868000` is
@@ -91,6 +92,26 @@ and `<n>b` its length in 9-byte BRR blocks (16 samples each).
   export puts tilemaps here (`..._tilemap_bgN.bin`, 2 bytes per tile entry).
 * `*.ips` in a mod's folder is applied first, before `rom/`, `gfx/`, `pal/`
   and `sound/`. Offsets in IPS files are file offsets in the 1 MB image.
+
+## Courses: `courses/` and the course editor
+
+`courses/courseN.bin` replaces course `N` when the game loads it. The file is
+the expanded track: one byte per column, as the game keeps it in its track
+buffer (`$7F:4000`). Up to 4088 columns.
+
+`N` is the course table index. In the Gen A build (Stadiums 1-2) 0-3 are
+Stadium 1 courses 1-4 and 4-7 are Stadium 2; in the Gen B build 0-3 are
+Stadium 3 and 4-7 Stadium 4. 8 and 9 are the special courses. If several mods
+have the same course, the last one in name order wins.
+
+To edit, open `tools/editor/course_editor.html` in a browser (it runs
+offline, nothing is uploaded). Open your ROM to load its courses (or a course
+`.bin`), paint columns with a code, insert, delete, copy and paste, and save
+`courseN.bin`. Column codes: `40` plain ground in Gen A (`80` in Gen B),
+`41`-`4C` ground variants, `00`-`3F` obstacles and events (`09` is a wide
+element that covers six columns). Code names you type are kept in the
+browser. `python tools/course.py s1 --dump` writes the original courses as
+`build/s1/courseN.bin` in the same format.
 
 ## Debugging
 

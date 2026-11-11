@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bun Bun Course Editor</title>
+<style>
+:root {
+  --bg: #f4f2ee; --panel: #ffffff; --ink: #1d1d1f; --muted: #6b6b70; --line: #d9d6cf;
+  --accent: #c8102e; --sel: rgba(30, 110, 255, .25); --cursor: #1e6eff;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17171a; --panel: #212125; --ink: #ececef; --muted: #a0a0a8; --line: #3a3a40;
+    --accent: #ff5a6e; --sel: rgba(90, 150, 255, .3); --cursor: #6aa3ff;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #17171a; --panel: #212125; --ink: #ececef; --muted: #a0a0a8; --line: #3a3a40;
+  --accent: #ff5a6e; --sel: rgba(90, 150, 255, .3); --cursor: #6aa3ff;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.4 system-ui, sans-serif; }
+header { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; padding: 10px 16px;
+  border-bottom: 1px solid var(--line); background: var(--panel); position: sticky; top: 0; z-index: 2; }
+header h1 { font-size: 16px; margin: 0 8px 0 0; }
+button, select, input[type=number] { font: inherit; color: var(--ink); background: var(--bg);
+  border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; }
+button:hover { border-color: var(--muted); }
+button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+label.file { cursor: pointer; }
+label.file span { display: inline-block; border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; background: var(--bg); }
+label.file input { display: none; }
+main { padding: 12px 16px 40px; display: grid; gap: 12px; }
+main > section { min-width: 0; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px; }
+#stripWrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
+canvas { display: block; image-rendering: pixelated; }
+#status { color: var(--muted); font-variant-numeric: tabular-nums; min-height: 1.4em; }
+#palette { display: flex; flex-wrap: wrap; gap: 4px; }
+.sw { width: 52px; padding: 3px 0; text-align: center; border-radius: 5px; border: 2px solid transparent;
+  font: 12px ui-monospace, monospace; cursor: pointer; color: #111; }
+.sw.on { border-color: var(--cursor); }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+td, th { border-bottom: 1px solid var(--line); padding: 3px 6px; text-align: left; }
+td input { width: 100%; font: inherit; color: var(--ink); background: transparent; border: 0; }
+.muted { color: var(--muted); }
+kbd { font: 12px ui-monospace, monospace; border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Bun Bun Course Editor</h1>
+  <label class="file"><input type="file" id="romFile" accept=".bs,.sfc,.smc,.bin"><span>Open ROM…</span></label>
+  <label class="file"><input type="file" id="binFile" accept=".bin"><span>Open course .bin…</span></label>
+  <select id="engine" title="Engine generation of the ROM">
+    <option value="A">Gen A (Stadium 1–2 dump)</option>
+    <option value="B">Gen B (Stadium 3–4 dump)</option>
+  </select>
+  <select id="courseSel" disabled></select>
+  <button id="save" class="primary" disabled>Save courseN.bin</button>
+</header>
+<main>
+  <section class="card">
+    <div class="row" style="margin-bottom:8px">
+      <button id="undo" title="Ctrl+Z">Undo</button>
+      <button id="redo" title="Ctrl+Y">Redo</button>
+      <button id="ins" title="Insert ground column(s) at the cursor (Ins)">Insert</button>
+      <button id="del" title="Delete the selected column(s) (Del)">Delete</button>
+      <button id="copy" title="Ctrl+C">Copy</button>
+      <button id="paste" title="Ctrl+V: insert the copied columns at the cursor">Paste</button>
+      <span class="muted">Zoom</span><input type="number" id="zoom" min="4" max="40" value="14" style="width:64px">
+      <span class="muted">Insert count</span><input type="number" id="insCount" min="1" max="200" value="1" style="width:64px">
+    </div>
+    <div id="stripWrap"><canvas id="strip" height="150"></canvas></div>
+    <div id="status">Open your ROM (the .bs dump) to load its courses, or a course .bin.</div>
+  </section>
+  <section class="card">
+    <div class="row" style="justify-content:space-between;margin-bottom:6px">
+      <strong>Paint code</strong>
+      <span class="muted">Click or drag to paint · right-click picks a column's code · Shift+drag selects</span>
+    </div>
+    <div id="palette"></div>
+  </section>
+  <section class="card">
+    <strong>Codes in this course</strong>
+    <p class="muted" style="margin:4px 0 8px">Names are notes for you (kept in this browser). Known so far:
+      <code>40</code> plain ground (Gen A; Gen B uses <code>80</code>), <code>41-4C</code> ground variants,
+      <code>09</code> wide element (stamps 6 columns), <code>2A-2D</code>/<code>08</code> items the broadcast drops in.</p>
+    <table><thead><tr><th>Code</th><th>Count</th><th>Name</th></tr></thead><tbody id="codes"></tbody></table>
+  </section>
+  <section class="card muted">
+    <strong style="color:var(--ink)">Using a course in the port</strong>
+    <p>Save as <code>courseN.bin</code> into <code>mods/&lt;your mod&gt;/courses/</code> beside the game.
+    N is the course table index: Stadium 1 courses 1–4 are 0–3, Stadium 2 courses 1–4 are 4–7 (in the Gen A
+    build; in the Gen B build 0–3 are Stadium 3 and 4–7 Stadium 4), 8 and 9 the special courses. The file is one
+    byte per track column, up to 4088 columns. See <code>docs/MODDING.md</code>.</p>
+  </section>
+</main>
+<script>
+"use strict";
+const TABLES = { A: [0x818C59, 0x818C6D, 0x818C81, 0x40], B: [0x818C62, 0x818C76, 0x818C8A, 0x80] };
+let rom = null, cols = new Uint8Array(0), courseIndex = 0, engine = "A";
+let paint = 0x40, cursor = 0, selA = -1, selB = -1, clip = null;
+const undoStack = [], redoStack = [];
+const $ = id => document.getElementById(id);
+const strip = $("strip"), ctx = strip.getContext("2d");
+
+function rd(a) { return rom[(((a >> 16) & 0x7F) << 15) | (a & 0x7FFF)]; }
+function rd16(a) { return rd(a) | rd(a + 1) << 8; }
+
+/* The game's loader ($81:A01B Gen A / $81:A11E Gen B): RUN codes take a count. */
+function decodeCourse(i) {
+  const [st, ln, db, run] = TABLES[engine];
+  const start = rd16(st + 2 * i), len = rd16(ln + 2 * i);
+  const out = new Uint8Array(0x1000);
+  let x = start, y = 0, n = len;
+  while (n > 0 && y < 0x1000 - 8) {
+    const b = rd(db + x);
+    out[y] = b;
+    if (b === 0x09) for (let k = 1; k < 6; k++) out[y + k] = 0x09;
+    if (b & run) {
+      n--; x++;
+      const c = rd(db + x);
+      for (let k = 0; k < c && y + k < 0x1000; k++) out[y + k] = b;
+      y += c - 1;
+    }
+    x++; y++; n--;
+  }
+  return out.slice(0, y);
+}
+
+function names() { try { return JSON.parse(localStorage.getItem("bunbun-code-names") || "{}"); } catch { return {}; } }
+function setName(code, v) {
+  const n = names(); if (v) n[code] = v; else delete n[code];
+  try { localStorage.setItem("bunbun-code-names", JSON.stringify(n)); } catch {}
+}
+const DEFAULT_NAMES = { 0x40: "ground", 0x80: "ground", 0x09: "wide element", 0x2A: "item", 0x2B: "item",
+  0x2C: "item", 0x2D: "item", 0x08: "item / obstacle", 0x00: "empty (end)" };
+function nameOf(c) { return names()[c] || DEFAULT_NAMES[c] || ""; }
+
+function colour(c) {
+  const ground = engine === "A" ? 0x40 : 0x80;
+  if (c === 0) return "#000";
+  if (c === ground) return "#d8b77a";
+  if ((engine === "A" && c > 0x40 && c < 0x80) || (engine === "B" && c > 0x80)) {
+    const k = (c & 0x0F) * 22; return `hsl(${30 + k}, 45%, 62%)`;
+  }
+  return `hsl(${(c * 47) % 360}, 75%, 60%)`;
+}
+
+function snapshot() { undoStack.push(cols.slice()); if (undoStack.length > 200) undoStack.shift(); redoStack.length = 0; }
+function selRange() { if (selA < 0) return null; return [Math.min(selA, selB), Math.max(selA, selB)]; }
+
+function draw() {
+  const z = +$("zoom").value;
+  strip.width = Math.max(cols.length * z + 2, 300);
+  const H = strip.height;
+  ctx.fillStyle = getComputedStyle(document.body).getPropertyValue("--bg"); ctx.fillRect(0, 0, strip.width, H);
+  ctx.font = `${Math.min(11, z - 2)}px ui-monospace, monospace`;
+  ctx.textAlign = "center";
+  for (let i = 0; i < cols.length; i++) {
+    const c = cols[i], x = i * z;
+    ctx.fillStyle = colour(c);
+    const ground = engine === "A" ? 0x40 : 0x80;
+    const isObj = c !== ground && !((engine === "A" && c >= 0x40 && c < 0x80) || (engine === "B" && c >= 0x80));
+    ctx.fillRect(x, isObj ? 30 : 70, z - 1, isObj ? 80 : 40);
+    if (z >= 12 && (isObj || i % 10 === 0)) {
+      ctx.fillStyle = "#111";
+      ctx.save(); ctx.translate(x + z / 2, isObj ? 44 : 84); ctx.fillText(c.toString(16).toUpperCase().padStart(2, "0"), 0, 0); ctx.restore();
+    }
+    if (i % 10 === 0) {
+      ctx.fillStyle = getComputedStyle(document.body).getPropertyValue("--muted");
+      ctx.fillText(String(i), x + z / 2, 138);
+    }
+  }
+  const r = selRange();
+  if (r) { ctx.fillStyle = getComputedStyle(document.body).getPropertyValue("--sel"); ctx.fillRect(r[0] * z, 20, (r[1] - r[0] + 1) * z, 100); }
+  ctx.fillStyle = getComputedStyle(document.body).getPropertyValue("--cursor");
+  ctx.fillRect(cursor * z - 1, 16, 2, 108);
+  updateCodes();
+}
+
+function status(msg) {
+  const c = cols[cursor];
+  $("status").textContent = msg || (cols.length ? `${cols.length} columns · cursor ${cursor}` +
+    (c !== undefined ? ` · code ${c.toString(16).toUpperCase().padStart(2, "0")} ${nameOf(c)}` : "") +
+    (selRange() ? ` · selected ${selRange()[0]}–${selRange()[1]}` : "") : "");
+}
+
+function buildPalette() {
+  const p = $("palette"); p.innerHTML = "";
+  const codes = [];
+  for (let c = 0; c < 0x40; c++) codes.push(c);
+  const base = engine === "A" ? 0x40 : 0x80;
+  for (let c = base; c < base + 0x10; c++) codes.push(c);
+  for (const c of codes) {
+    const d = document.createElement("div");
+    d.className = "sw" + (c === paint ? " on" : "");
+    d.style.background = colour(c);
+    d.textContent = c.toString(16).toUpperCase().padStart(2, "0");
+    d.title = nameOf(c) || "code " + d.textContent;
+    d.onclick = () => { paint = c; buildPalette(); };
+    p.appendChild(d);
+  }
+}
+
+function updateCodes() {
+  const counts = new Map();
+  for (const c of cols) counts.set(c, (counts.get(c) || 0) + 1);
+  const tb = $("codes"); tb.innerHTML = "";
+  [...counts.keys()].sort((a, b) => a - b).forEach(c => {
+    const tr = document.createElement("tr");
+    const hex = c.toString(16).toUpperCase().padStart(2, "0");
+    tr.innerHTML = `<td><span class="sw" style="display:inline-block;width:34px;background:${colour(c)}">${hex}</span></td><td>${counts.get(c)}</td>`;
+    const td = document.createElement("td"), inp = document.createElement("input");
+    inp.value = nameOf(c); inp.placeholder = "name…";
+    inp.onchange = () => { setName(c, inp.value.trim()); buildPalette(); };
+    td.appendChild(inp); tr.appendChild(td); tb.appendChild(tr);
+  });
+}
+
+function colAt(ev) {
+  const rect = strip.getBoundingClientRect(), z = +$("zoom").value;
+  return Math.max(0, Math.min(cols.length - 1, Math.floor((ev.clientX - rect.left) / z)));
+}
+
+let dragging = false, selecting = false;
+strip.addEventListener("contextmenu", e => e.preventDefault());
+strip.addEventListener("mousedown", e => {
+  if (!cols.length) return;
+  const i = colAt(e);
+  cursor = i;
+  if (e.button === 2) { paint = cols[i]; buildPalette(); draw(); status(); return; }
+  if (e.shiftKey) { selecting = true; selA = selB = i; }
+  else { selA = selB = -1; snapshot(); dragging = true; cols[i] = paint; }
+  draw(); status();
+});
+strip.addEventListener("mousemove", e => {
+  if (!cols.length) return;
+  const i = colAt(e);
+  if (dragging) { cols[i] = paint; cursor = i; draw(); }
+  else if (selecting) { selB = i; cursor = i; draw(); }
+  status();
+});
+window.addEventListener("mouseup", () => { dragging = selecting = false; });
+
+function insertAt(pos, arr) {
+  snapshot();
+  const n = new Uint8Array(Math.min(cols.length + arr.length, 0x1000 - 8));
+  n.set(cols.slice(0, pos)); n.set(arr.slice(0, n.length - pos), pos);
+  if (pos + arr.length < n.length) n.set(cols.slice(pos, n.length - arr.length), pos + arr.length);
+  cols = n; draw(); status();
+}
+function deleteSel() {
+  const r = selRange() || [cursor, cursor];
+  snapshot();
+  const n = new Uint8Array(cols.length - (r[1] - r[0] + 1));
+  n.set(cols.slice(0, r[0])); n.set(cols.slice(r[1] + 1), r[0]);
+  cols = n; cursor = Math.min(r[0], cols.length - 1); selA = selB = -1; draw(); status();
+}
+$("ins").onclick = () => insertAt(cursor, new Uint8Array(+$("insCount").value).fill(engine === "A" ? 0x40 : 0x80));
+$("del").onclick = deleteSel;
+$("copy").onclick = () => { const r = selRange() || [cursor, cursor]; clip = cols.slice(r[0], r[1] + 1); status(`copied ${clip.length} columns`); };
+$("paste").onclick = () => { if (clip) insertAt(cursor, clip); };
+$("undo").onclick = () => { if (undoStack.length) { redoStack.push(cols); cols = undoStack.pop(); cursor = Math.min(cursor, cols.length - 1); draw(); status(); } };
+$("redo").onclick = () => { if (redoStack.length) { undoStack.push(cols); cols = redoStack.pop(); draw(); status(); } };
+$("zoom").onchange = draw;
+window.addEventListener("keydown", e => {
+  if (e.target.tagName === "INPUT") return;
+  const k = e.key.toLowerCase();
+  if ((e.ctrlKey || e.metaKey) && k === "z") { $("undo").click(); e.preventDefault(); }
+  else if ((e.ctrlKey || e.metaKey) && k === "y") { $("redo").click(); e.preventDefault(); }
+  else if ((e.ctrlKey || e.metaKey) && k === "c") { $("copy").click(); e.preventDefault(); }
+  else if ((e.ctrlKey || e.metaKey) && k === "v") { $("paste").click(); e.preventDefault(); }
+  else if (k === "delete") $("del").click();
+  else if (k === "insert") $("ins").click();
+  else if (k === "arrowleft") { cursor = Math.max(0, cursor - 1); draw(); status(); }
+  else if (k === "arrowright") { cursor = Math.min(cols.length - 1, cursor + 1); draw(); status(); }
+});
+
+function courseLabel(i) {
+  if (i >= 8) return `Special course ${i - 7} (index ${i})`;
+  const st = engine === "A" ? 1 + (i >> 2) : 3 + (i >> 2);
+  return `Stadium ${st} course ${(i & 3) + 1} (index ${i})`;
+}
+function loadCourse(i) {
+  courseIndex = i; cols = decodeCourse(i); undoStack.length = redoStack.length = 0;
+  cursor = 0; selA = selB = -1; draw(); status(); $("save").disabled = false;
+}
+function fillCourseSel() {
+  const s = $("courseSel"); s.innerHTML = "";
+  for (let i = 0; i < 10; i++) { const o = document.createElement("option"); o.value = i; o.textContent = courseLabel(i); s.appendChild(o); }
+  s.disabled = false; s.value = courseIndex;
+}
+$("courseSel").onchange = e => loadCourse(+e.target.value);
+$("engine").onchange = e => { engine = e.target.value; buildPalette(); if (rom) { fillCourseSel(); loadCourse(courseIndex); } else draw(); };
+$("romFile").onchange = async e => {
+  const f = e.target.files[0]; if (!f) return;
+  let b = new Uint8Array(await f.arrayBuffer());
+  if (b.length % 0x8000 === 512) b = b.slice(512);
+  rom = b;
+  /* Guess the engine: Gen B's start table begins at $81:8C62. */
+  const ga = rom[0x8C59] | rom[0x8C5A] << 8, gb = rom[0x8C62] | rom[0x8C63] << 8;
+  engine = ga === 0 ? "A" : gb === 0 ? "B" : engine;
+  $("engine").value = engine; buildPalette(); fillCourseSel(); loadCourse(0);
+};
+$("binFile").onchange = async e => {
+  const f = e.target.files[0]; if (!f) return;
+  cols = new Uint8Array(await f.arrayBuffer()).slice(0, 0x1000 - 8);
+  let end = cols.length; while (end > 0 && cols[end - 1] === 0) end--;
+  cols = cols.slice(0, end);
+  const m = /course(\d+)/i.exec(f.name); if (m) courseIndex = +m[1];
+  undoStack.length = redoStack.length = 0; cursor = 0; draw(); status(); $("save").disabled = false;
+};
+$("save").onclick = () => {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([cols], { type: "application/octet-stream" }));
+  a.download = `course${courseIndex}.bin`; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+};
+buildPalette(); draw();
+</script>
+</body>
+</html>

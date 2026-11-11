@@ -38,6 +38,8 @@ uint8_t r816_bus_read(uint32_t a) { return cpu_read8(&g_cpu, (uint8)(a >> 16), (
 #include <stdlib.h>
 #include "snes/ppu.h"
 #include "common_rtl.h"
+#include "snes/snes.h"
+#include "snes/cart.h"
 static uint32_t s_wmadd;                /* WMADD ($2181-$2183) as hand code set it */
 static void dma_catalogue(uint8 enable)
 {
@@ -170,7 +172,27 @@ int r816_call_pc(uint32_t pc24)
 BRIDGE(HleHand_QueueSound,    QueueSound_m1x1,    60)
 BRIDGE(HleHand_DmaCopyToWram, DmaCopyToWram_m0x1, 60)
 BRIDGE(HleHand_DmaFillZero,   DmaFillZero_m0x1,   70)
-BRIDGE(HleHand_LoadCourse,    LoadCourse_m1x1,    30000)
+/* LoadCourse with custom courses: after the original expands the course into
+ * the track buffer $7F:4000, a mods/<mod>/courses/courseN.bin (one byte per
+ * column, as tools/course.py --dump and the course editor write it; N = the
+ * table index, Stadium * 4 + course, 8-9 the special courses) replaces it.
+ * Only when the routine really loaded (not on a later lap). */
+int BunbunCustomCourse(int index, uint8_t *buf, int cap);
+void LoadCourse_m1x1(void);
+RecompReturn HleHand_LoadCourse(CpuState *cpu)
+{
+    int loads = !(g_ram[0x14000] | g_ram[0x14001]) || g_ram[0x7D] == 0;
+    from_cpu(cpu);
+    g_tail_pending = 0;
+    LoadCourse_m1x1();
+    to_cpu(cpu, 30000);
+    if (loads && g_snes && g_snes->cart) {
+        int st = g_snes->cart->rom[0x800C];                     /* $81:800C */
+        int idx = (g_ram[0x0CD7] | g_ram[0x0CD8]) ? st * 2 + 8 : st * 4 + g_ram[0x7C];
+        BunbunCustomCourse(idx, &g_ram[0x14000], 0x1000);       /* $7F:4000 */
+    }
+    return RECOMP_RETURN_NORMAL;
+}
 BRIDGE(HleHand_BsxPollStream, BsxPollStream_m1x1, 120)
 /* c/hand/s1/vram.c */
 BRIDGE(HleHand_VramQueueCopy,    VramQueueCopy_m1x1,    1500)
@@ -294,6 +316,16 @@ BRIDGE(HleHand_RivalSequence_BAAD, RivalSequence_BAAD_m1x1, 120)
 BRIDGE(HleHand_RivalSequence_BC4B, RivalSequence_BC4B_m1x1, 120)
 BRIDGE(HleHand_BsxReadSerial3, BsxReadSerial3_m1x1, 400)
 BRIDGE(HleHand_RiderHeightStep, RiderHeightStep_m1x1, 60)
+BRIDGE(HleHand_RivalSequence_B896, RivalSequence_B896_m1x1, 120)
+BRIDGE(HleHand_RivalCycle_BCC8, RivalCycle_BCC8_m1x1, 120)
+BRIDGE(HleHand_RivalCycle_B976, RivalCycle_B976_m1x1, 120)
+BRIDGE(HleHand_RivalSequence_B836, RivalSequence_B836_m1x1, 120)
+BRIDGE(HleHand_RivalBlink_BBA9, RivalBlink_BBA9_m1x1, 120)
+BRIDGE(HleHand_ObjectFacing, ObjectFacing_m1x1, 120)
+BRIDGE(HleHand_RiderStartCheck, RiderStartCheck_m1x1, 80)
+BRIDGE(HleHand_AddScore, AddScore_m1x1, 200)
+BRIDGE(HleHand_AccelerateRider, AccelerateRider_m1x1, 80)
+BRIDGE(HleHand_ClearRiderState, ClearRiderState_m1x1, 150)
 /* Not bridged: RunGameModeScript (c/hand/s1/modes.c). Its reset path makes
  * non-tail calls into recompiled routines, and a recompiled routine may yield
  * to the frame scheduler mid-call (a long one like $80:B873 does), which hand

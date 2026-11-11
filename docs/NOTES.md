@@ -320,3 +320,30 @@ range (each upload stream is contiguous in the file). The driver block
 (`$8E:8000`) holds the shared instruments and two long samples at ARAM
 `$4100` and `$31F0`; each song set (`$90`-`$93`) adds entries `$20`-`$24` at
 ARAM `$C360`+; the credits set (`$85`) has its own instruments.
+
+## Characters across the Stadiums
+
+Racer names (Gen A: 29-byte tile records at `$80:A5F9`, font M=`$76` A=`$5A`
+R=`$7B` I=`$72` O=`$78`...; Gen B: 15-byte records at `$80:A598`, Stadium 4
+at +`$4B`, the same font moved down by `$50`) and the sprite set tables:
+
+| Build | Char | Name | Rider set (16 KB) |
+|---|---|---|---|
+| Gen A (S1/S2), `$1542` | 0 | MARIO | `$86:8000` |
+| | 1 | LUIGI | `$86:C000` |
+| | 2 | KINOPIO (Toad) | `$87:8000` |
+| | 3 | WARIO | `$87:C000` |
+| Gen B (S3/S4), `$154F` | 0 | MARIO | `$99:C000` (97% the same bytes as Gen A Mario) |
+| | 1 | LUIGI (S3) / YOSHI (S4) | `$9A:8000`: Luigi in the S3 dump (92% like Gen A Luigi), Yoshi in the S4 dump |
+| | 2 | KINOPIO | `$9A:C000` (redrawn) |
+| | 3 | WARIO | `$9B:8000` (88% like Gen A Wario) |
+| | 4 | PEACH | `$98:C000` |
+
+Gen B sets the slot banks at `$82:8889` from `$82:88C8` (or `$82:88DC` when
+`$1E91` != 0; they differ only in slot 3) and the offsets from `$82:88F0` /
+`$82:8918`, 4 bytes and 8 bytes per character; the streaming
+(`$80:83D2`, banks `$1550-$1553`) is the same as Gen A's. All sets share one
+format, so the full roster (Mario, Luigi, Toad, Wario, Peach, Yoshi) exists
+across the S1 and S3/S4 dumps. A merged roster in the Gen B engine needs a
+sixth set placed in free ROM, longer per-character tables (banks, offsets,
+names, the select wheel) and the sprite palettes per character.

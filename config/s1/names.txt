@@ -146,3 +146,13 @@
 81BC4B RivalSequence_BC4B    # 5-step list $81:BC7E/BC84, then state 4
 809982 BsxReadSerial3        # read 3 bytes from BS-X serial to $00-$02,X
 80C3F5 RiderHeightStep       # 16-bit $08EC:$08E4 += $08FC, height vs $08DC
+81B896 RivalSequence_B896    # steps 1-4 $81:B8CC/B8D1, restart with random extra
+81BCC8 RivalCycle_BCC8       # 4-step cycle x $0329, then state 0
+81B976 RivalCycle_B976       # 4-step cycle x $0329, then state 2
+81B836 RivalSequence_B836    # steps 1-5 $81:B86D/B873, then state 2
+81BBA9 RivalBlink_BBA9       # flip action every 10 frames, then next state
+819EF5 ObjectFacing          # $02D9,X = direction of the larger speed component
+80BF43 RiderStartCheck       # mark rider started, clear $01D0 when it moves
+80EDC4 AddScore              # score digits $0CE5-$0CEA += $09AC-$09B1
+80ADF9 AccelerateRider       # speed += $80:B851[Y], player capped at $80:B867/B86A
+80C187 ClearRiderState       # zero rider X's fields

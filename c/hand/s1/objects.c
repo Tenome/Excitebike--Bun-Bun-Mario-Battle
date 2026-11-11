@@ -129,3 +129,39 @@ void DrawSmallObject_m1x1(void)
     wr8(ABS(0x1820 + Y), 0x02);                /* large size */
     retl();
 }
+
+/*
+ * $81:9EF5 ObjectFacing (RTL): $02D9,X = the direction of the larger of the
+ * two speed components $0299,X and $02A9,X (signed): 3/2 for $0299 positive
+ * / negative, 1/0 for $02A9; unchanged when they are equal. Y is preserved.
+ */
+void ObjectFacing_m1x1(void)
+{
+    push8((u8)Y);
+    ldy8(0x03);
+    lda8(rd8(ABS(0x0299 + X)));
+    if (fn) {
+        Y = dec8((u8)Y);
+        eor8(0xFF);
+        lda8(inc8((u8)A));
+    }
+    wr8(DP(0x00), (u8)A);
+    wr8(DP(0x02), (u8)Y);
+    ldy8(0x01);
+    lda8(rd8(ABS(0x02A9 + X)));
+    if (fn) {
+        Y = dec8((u8)Y);
+        eor8(0xFF);
+        lda8(inc8((u8)A));
+    }
+    cmp8((u8)A, rd8(DP(0x00)));
+    if (!fz) {
+        if (!fc)
+            ldy8(rd8(DP(0x02)));
+        lda8((u8)Y);
+        wr8(ABS(0x02D9 + X), (u8)A);
+    }
+    Y = pull8();
+    nz8((u8)Y);
+    retl();
+}

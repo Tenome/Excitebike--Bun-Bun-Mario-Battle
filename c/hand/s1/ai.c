@@ -459,3 +459,130 @@ void RivalSequence_BC4B_m1x1(void)
     lda8(rd8(ABS(0xBC84 + Y))); wr8(ABS(0x0349 + X), (u8)A);
     ret();
 }
+
+/* Step a move list held in two tables (timer at $81:tt, action at $81:aa)
+ * for the current object X, step Y. */
+static void move_step(u16 timers, u16 actions)
+{
+    lda8(rd8(ABS(timers + Y))); wr8(ABS(0x0369 + X), (u8)A);
+    lda8(rd8(ABS(actions + Y))); wr8(ABS(0x0349 + X), (u8)A);
+}
+
+/*
+ * $81:B896 RivalSequence_B896: steps 1-4 of a move list (timers $81:B8CC,
+ * actions $81:B8D1), then back to step 1 with its timer plus a random 0-63.
+ */
+void RivalSequence_B896_m1x1(void)
+{
+    X = rd8(ABS(0x039D));
+    lda8(rd8(ABS(0x0369 + X)));
+    if ((u8)A != 0) { ret(); return; }
+    lda8(inc8(rd8(ABS(0x0319 + X))));
+    cmp8((u8)A, 0x05);
+    if (fc) {
+        lda8(0x01);
+        wr8(ABS(0x0319 + X), 0x01);
+        Y = 1; nz8(1);
+        push8(0x81); push16(0xB8AF); Random_m1x1();
+        and8(0x3F);
+        fc = 0;
+        adc8(rd8(ABS(0xB8CC + Y)));
+        wr8(ABS(0x0369 + X), (u8)A);
+    } else {
+        wr8(ABS(0x0319 + X), (u8)A);
+        Y = (u8)A; nz8((u8)Y);
+        lda8(rd8(ABS(0xB8CC + Y)));
+        wr8(ABS(0x0369 + X), (u8)A);
+    }
+    lda8(rd8(ABS(0xB8D1 + Y)));
+    wr8(ABS(0x0349 + X), (u8)A);
+    ret();
+}
+
+/* Shared by $81:BCC8 and $81:B976: a 4-step cycle repeated $0329 times, then
+ * state `next` with a random 64-127 frame wait. */
+static void cycle_repeat(u8 next, u16 jsl_ret, u16 timers, u16 actions)
+{
+    X = rd8(ABS(0x039D));
+    lda8(rd8(ABS(0x0369 + X)));
+    if ((u8)A != 0) { ret(); return; }
+    lda8((u8)((rd8(ABS(0x0319 + X)) + 1) & 0x03));
+    wr8(ABS(0x0319 + X), (u8)A);
+    Y = (u8)A; nz8((u8)Y);
+    if (Y == 0) {
+        u8 n = dec8(rd8(ABS(0x0329 + X)));
+        wr8(ABS(0x0329 + X), n);
+        if (n == 0) {
+            if (next) { lda8(next); wr8(ABS(0x0309 + X), next); }
+            else wr8(ABS(0x0309 + X), 0);
+            wr8(ABS(0x0379 + X), random_64_127(jsl_ret));
+            ret();
+            return;
+        }
+    }
+    move_step(timers, actions);
+    ret();
+}
+
+/* $81:BCC8: 4-step cycle ($81:BCFE/$81:BD02) x $0329, then state 0. */
+void RivalCycle_BCC8_m1x1(void) { cycle_repeat(0, 0xBCE7, 0xBCFE, 0xBD02); }
+
+/* $81:B976: 4-step cycle ($81:B9AE/$81:B9B2) x $0329, then state 2. */
+void RivalCycle_B976_m1x1(void) { cycle_repeat(2, 0xB997, 0xB9AE, 0xB9B2); }
+
+/*
+ * $81:B836 RivalSequence_B836: steps 1-5 (timers $81:B86D, actions
+ * $81:B873); after step 5, state 2 with a random 64-127 frame wait.
+ */
+void RivalSequence_B836_m1x1(void)
+{
+    X = rd8(ABS(0x039D));
+    lda8(rd8(ABS(0x0369 + X)));
+    if ((u8)A != 0) { ret(); return; }
+    lda8(inc8(rd8(ABS(0x0319 + X))));
+    cmp8((u8)A, 0x06);
+    if (fc)
+        lda8(0x00);
+    wr8(ABS(0x0319 + X), (u8)A);
+    Y = (u8)A; nz8((u8)Y);
+    if (Y == 0) {
+        lda8(0x02);
+        wr8(ABS(0x0309 + X), 0x02);
+        wr8(ABS(0x0379 + X), random_64_127(0xB856));
+        ret();
+        return;
+    }
+    move_step(0xB86D, 0xB873);
+    ret();
+}
+
+/*
+ * $81:BBA9 RivalBlink_BBA9: flip between actions (bit 0 of $0349) every 10
+ * frames; when the wait $0379 is over, timer 9, repeat count 1-4 (random),
+ * step 0, action 8, next state.
+ */
+void RivalBlink_BBA9_m1x1(void)
+{
+    X = rd8(ABS(0x039D));
+    lda8(rd8(ABS(0x0369 + X)));
+    if ((u8)A == 0) {
+        lda8(rd8(ABS(0x0349 + X)));
+        eor8(0x01);
+        wr8(ABS(0x0349 + X), (u8)A);
+        lda8(0x0A);
+        wr8(ABS(0x0369 + X), 0x0A);
+    }
+    lda8(rd8(ABS(0x0379 + X)));
+    if ((u8)A != 0) { ret(); return; }
+    lda8(0x0A); wr8(ABS(0x0369 + X), 0x0A);
+    lda8(0x09); wr8(ABS(0x0369 + X), 0x09);
+    push8(0x81); push16(0xBBD0); Random_m1x1();
+    and8(0x03);
+    lda8(inc8((u8)A));
+    wr8(ABS(0x0329 + X), (u8)A);
+    wr8(ABS(0x0319 + X), 0);
+    wr8(ABS(0x0309 + X), inc8(rd8(ABS(0x0309 + X))));
+    lda8(0x08);
+    wr8(ABS(0x0349 + X), 0x08);
+    ret();
+}
