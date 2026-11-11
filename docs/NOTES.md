@@ -14,20 +14,35 @@ Addresses are Stadium 1 (Gen A) unless stated otherwise.
 ## Engine generations
 | | Code | Banks | Functions found by bsdis (first pass) |
 |---|---|---|---|
-| Gen A: S1, S2 | ~24.4 KB | `$80-$81` | 356 |
-| Gen B: S3, S4 | ~32.3 KB | `$80-$82` | 471–474 |
+| Gen A: S1, S2 | ~28.4 KB | `$80-$81` | 407 (current) |
+| Gen B: S3, S4 | ~37.3 KB | `$80-$82` | 532 (current) |
 
 S1 and S2 code is the same apart from a small insertion that shifts later
 addresses. S3 and S4 also share their code. Most of the byte differences are
 data.
+
+Function matching (`tools/xmatch.py`, `tools/fdiff.py`):
+
+| Pair | Same | Changed | Only in A | Only in B |
+|---|---|---|---|---|
+| S1 ↔ S2 | 387 | 18 | 2 | 1 |
+| S3 ↔ S4 | 507 | 23 | 2 | 2 |
+| S2 ↔ S3 | 106 | 204 | 96 | 222 |
+
+S1 ↔ S2: apart from address shifts, the real changes are two end-screen menu
+handlers (`$80:9AF9`, `$80:9B4C`: extra sound and redraw calls) and a few
+constants (for example `$80:9E46` timer `$0708` → `$0E10`). The episodes differ
+in data, not in engine. Gen B (S3/S4) is a substantial rewrite with a third
+code bank.
 
 ## Satellaview (BS-X) usage
 * The only receiver library is `$81:F80C-$81:FAB2`. It uses `$2188-$2197`.
 * `$81:FA68` `BsxDetect` → `$7FFFE1` (1 = no receiver).
 * `$81:F80C` `BsxOpenTimeChannel` (only runs when a receiver is found).
 * `$81:F8BB` is the per-frame poll of the stream (`$2190`/`$2192`/`$2193`),
-  called from `$80:810A`. It compares a received byte with `$7FFFFF`
-  (the Stadium/episode number?) and calls `$81:F999` when it changes.
+  called from `$80:810A`. It copies the satellite clock (minute into `$7FFFFF`,
+  hour into `$7FFFF9`, ...) and, with no data, ticks the clock itself
+  (`$81:F959`, see "Broadcast clock").
 * `$80:A34B` / `$80:A387` bit-bang `$2198` (clock/data lines, MSB first):
   reads 16 words from the base unit's serial EEPROM into RAM, called from the
   `$80:A0BC` tree (only when a receiver is present). Probably the player's
