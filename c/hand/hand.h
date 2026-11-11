@@ -23,6 +23,20 @@ extern long r816_ticks, r816_limit;
 /* Use inside loops that wait on hardware, like the lifted code does. */
 #define WAIT_TICK() do { if (++r816_ticks > r816_limit) longjmp(r816_bail, 1); } while (0)
 
+/* Calling a routine that is not hand-written: the caller pushes the return
+ * frame (push16 / push8+push16, as the JSR/JSL would) and then CALLs. In the
+ * difftest build that runs the lifted C; inside the port it dispatches into
+ * the recompiled program (port/src/r816_bridge.c). frame = 2 (JSR) or 3 (JSL). */
+#ifdef R816_EXTERNAL_BUS
+int r816_call_native(u32 pc24, int frame);
+#define CALL(fn, pc24, frame) ((void)r816_call_native((pc24), (frame)))
+#else
+#define CALL(fn, pc24, frame) fn()
+#endif
+/* Tail transfer (JMP/JML) to a routine by address: r816_call_pc (lifted
+ * dispatcher in the difftest build, the recompiled program in the port). */
+int r816_call_pc(u32 pc24);
+
 static inline void ret(void) { pull16(); }
 static inline void retl(void) { pull16(); pull8(); }
 

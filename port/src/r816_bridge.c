@@ -57,6 +57,28 @@ static void to_cpu(CpuState *cpu, uint32 cycles)
     cpu->master_cycles += (uint64_t)cycles * 8;
 }
 
+/* Hand code calling a recompiled routine whose return frame it has already
+ * pushed (CALL in c/hand/hand.h). Only safe for callees that never yield to
+ * the frame scheduler (see the note at the end of this file). */
+int r816_call_native(uint32_t pc24, int frame)
+{
+    to_cpu(&g_cpu, 0);
+    uint32 ret_pc = 0;
+    cpu_dispatch_call_pc_pushed(&g_cpu, pc24, pc24, (uint8)frame, &ret_pc);
+    from_cpu(&g_cpu);
+    return 1;
+}
+
+/* Hand code tail-jumping to a routine by address (JMP ($0000) dispatch):
+ * the target returns to our caller through the frame already on the stack. */
+int r816_call_pc(uint32_t pc24)
+{
+    to_cpu(&g_cpu, 0);
+    cpu_dispatch_pc_from(&g_cpu, 0x800000u | pc24, g_cpu.S, pc24);
+    from_cpu(&g_cpu);
+    return 1;
+}
+
 #define BRIDGE(hle_name, hand_fn, cycles)                 \
     void hand_fn(void);                                   \
     RecompReturn hle_name(CpuState *cpu)                  \
@@ -90,4 +112,9 @@ BRIDGE(HleHand_TickTimers,       TickTimers_m1x1,       400)
 BRIDGE(HleHand_DrawClock,        DrawClock_m1x1,        500)
 BRIDGE(HleHand_Mode00_IntroWait, Mode00_IntroWait_m1x1, 60)
 BRIDGE(HleHand_Mode0E_TitleWait, Mode0E_TitleWait_m1x1, 40)
+/* Not bridged: RunGameModeScript (c/hand/s1/modes.c). Its reset path makes
+ * non-tail calls into recompiled routines, and a recompiled routine may yield
+ * to the frame scheduler mid-call (a long one like $80:B873 does), which hand
+ * C cannot resume. Rule: bridge only routines whose calls stay inside
+ * hand-written code. */
 #endif
