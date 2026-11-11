@@ -118,6 +118,11 @@ BRIDGE(HleHand_ClearTilemaps,    ClearTilemaps_m1x1,    200)
 BRIDGE(HleHand_InitPpuRegisters, InitPpuRegisters_m1x1, 600)
 BRIDGE(HleHand_FadeStep,             FadeStep_m1x1,             60)
 BRIDGE(HleHand_BroadcastEventInject, BroadcastEventInject_m1x1, 120)
+/* c/hand/s1/title.c */
+BRIDGE(HleHand_FinishModeSetup,  FinishModeSetup_m1x1,  40)
+BRIDGE(HleHand_Mode0D_Setup,     Mode0D_Setup_m1x1,     80)
+BRIDGE(HleHand_Mode0E_Setup,     Mode0E_Setup_m1x1,     2500)
+BRIDGE(HleHand_Mode0D_IntroText, Mode0D_IntroText_m1x1, 1500)
 /* Not bridged: RunGameModeScript (c/hand/s1/modes.c). Its reset path makes
  * non-tail calls into recompiled routines, and a recompiled routine may yield
  * to the frame scheduler mid-call (a long one like $80:B873 does), which hand

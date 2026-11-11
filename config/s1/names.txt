@@ -54,3 +54,6 @@
 8084A8 ForceBlank           # INIDISP = $80 (and shadow $0819), HDMA off
 8084B7 ClearTilemaps        # VRAM $0000-$0FFF and $1800-$1BFF = tile $FC, attribute 0 (fixed-source DMA)
 808322 FadeStep             # INIDISP brightness += $1923 each frame; at 0 after a fade-out: blank, stop sound, reset scroll
+808D16 FinishModeSetup      # main handler on ($75), step 0, $79 = 1, start fade-in ($1923 = 1)
+808A6D Mode0D_Setup          # intro text: BG3 at $2A, timer $88 = $0A8C (or straight to mode 0 from minute 3)
+808B14 Mode0E_Setup         # title: timer $88 = $0384, layers, sounds $2D/$45, title texts

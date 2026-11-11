@@ -30,3 +30,7 @@
 808369  1 1  mem+Y,C,V      InitPpuRegisters
 808322  1 1  mem+X,Y,C,V    FadeStep
 80823C  1 1  mem+X,Y,C,V    BroadcastEventInject
+808D16  1 1  mem+X,Y,C,V    FinishModeSetup
+808A6D  1 1  mem+X,Y,C,V    Mode0D_Setup
+808B14  1 1  mem+X,Y,C,V    Mode0E_Setup
+808A9D  1 1  mem+X,Y,C,V    Mode0D_IntroText

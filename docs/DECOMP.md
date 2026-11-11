@@ -9,13 +9,13 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 26 hand-written (6.4%), 23 of them in the port.
+407 functions in the static map; 30 hand-written (7.4%), 27 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
 | `$80:819F` | DrawClock | `mem+X,Y,C,V` | `misc.c` | yes |
 | `$80:823C` | BroadcastEventInject | `mem+X,Y,C,V` | `misc.c` | yes |
-| `$80:82B6` | QueueSound | `mem+A,X,Y,C,V` | `misc.c` | yes |
+| `$80:82B6` | QueueSound | `mem+A,X,Y,C,V` | `title.c` | yes |
 | `$80:8322` | FadeStep | `mem+X,Y,C,V` | `misc.c` | yes |
 | `$80:8369` | InitPpuRegisters | `mem+Y,C,V` | `init.c` | yes |
 | `$80:84A8` | ForceBlank | `mem+C,V` | `init.c` | yes |
@@ -28,7 +28,11 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:8979` | NmiFlushVramQueue | `mem` | `vram.c` | yes |
 | `$80:89ED` | RunGameModeScript | `mem+X,Y,C,V` | `modes.c` |  |
 | `$80:8A46` | Mode00_IntroWait | `mem+X,Y,C,V` | `misc.c` | yes |
+| `$80:8A6D` | Mode0D_Setup | `mem+X,Y,C,V` | `title.c` | yes |
+| `$80:8A9D` | Mode0D_IntroText | `mem+X,Y,C,V` | `title.c` | yes |
 | `$80:8B00` | Mode0E_TitleWait | `mem+X,Y,C,V` | `misc.c` | yes |
+| `$80:8B14` | Mode0E_Setup | `mem+X,Y,C,V` | `title.c` | yes |
+| `$80:8D16` | FinishModeSetup | `mem+X,Y,C,V` | `title.c` | yes |
 | `$80:B226` | ClearOamBuffer | `mem+X,Y,C,V` | `frame.c` | yes |
 | `$80:B2A5` | VramQueueTiles20 | `mem+X,Y,C,V` | `vram.c` | yes |
 | `$80:B2A9` | VramQueueTiles | `mem+X,Y,C,V` | `vram.c` | yes |
