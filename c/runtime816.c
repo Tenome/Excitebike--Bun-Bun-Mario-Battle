@@ -112,8 +112,10 @@ void mvp(u8 dst, u8 src)
     } while (A != 0xFFFF);
 }
 
+u32 r816_unknown_site, r816_unknown_value;
 void r816_unknown_target(u32 site, u32 value)
 {
-    (void)site; (void)value;
+    r816_unknown_site = site;
+    r816_unknown_value = value;
     r816_unresolved = 1;
 }

@@ -140,7 +140,9 @@ def main():
             if rc:
                 res['skip' if rc == 1 else 'fail'] += 1
                 if rc == 2 and first is None:
-                    first = 'lifted code reached an unknown target'
+                    uv = ctypes.c_uint32()
+                    us = dll.h_unknown(ctypes.byref(uv))
+                    first = 'lifted code reached an unknown target at $%06X (value $%X)' % (us, uv.value)
                 continue
             outw = ctypes.string_at(wram_p, 0x20000)
             out = (ctypes.c_uint16 * 7)()

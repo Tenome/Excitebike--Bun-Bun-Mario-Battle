@@ -20,6 +20,9 @@ u8 hw_read(u16 reg) { return (reg >= 0x2000 && reg < 0x6000) ? hw_table[reg - 0x
 void hw_write(u16 reg, u8 v) { if (hwlog_n < HWLOG_MAX) { hwlog_addr[hwlog_n] = reg; hwlog_val[hwlog_n++] = v; } }
 void open_write(u32 a, u8 v) { if (hwlog_n < HWLOG_MAX) { hwlog_addr[hwlog_n] = 0x80000000u | a; hwlog_val[hwlog_n++] = v; } }
 
+extern u32 r816_unknown_site, r816_unknown_value;
+R816_EXPORT u32 h_unknown(u32 *value) { *value = r816_unknown_value; return r816_unknown_site; }
+
 R816_EXPORT void h_set_rom(const u8 *p, u32 n) { rom = p; rom_size = n; }
 R816_EXPORT u8 *h_wram(void) { return wram; }
 R816_EXPORT u8 *h_hw_table(void) { return hw_table; }

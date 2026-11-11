@@ -91,7 +91,12 @@ The rest of the 1 MB is graphics, tracks, music and other data.
    faithful C over `c/runtime816.h` (`c/auto/<ver>/`, regenerated, not
    committed); `tools/difftest816.py` checks each one against the original in
    `tools/cpu816.py` from real WRAM snapshots (WRAM, registers, flags, ordered
-   hardware writes).
+   hardware writes). Stadium 1, all 409 variants, 8 cases each from real
+   WRAM snapshots: 3,005 pass, 256 skipped (the original waits on hardware),
+   11 fail. Every failure is a jump table indexed out of range by a random
+   input (for example `$80:E834` takes its index in A), not a lifting error;
+   the lifted code falls back to dispatch-by-address for pointer values
+   outside a table.
 1. Hand-lift routines to readable C, kept in `c/`. `c/s1_core.c` is the start.
 2. Use the same approach as the NES Excitebike port: test each routine
    against the recompiled or interpreted original. Compare RAM and the order
