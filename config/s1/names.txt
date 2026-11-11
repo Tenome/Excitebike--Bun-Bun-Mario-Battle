@@ -99,3 +99,7 @@
 81BB32 RivalDispatch_BB32   # state dispatch through $81:BB3D (6 states)
 81BC8A RivalDispatch_BC8A   # state dispatch through $81:BC95 (6 states)
 81BD52 RivalDispatch_BD52   # state dispatch through $81:BD5D (5 states)
+81B67F RivalSequence_B67F   # 8-step move list (actions $81:B6A3, timers $81:B6AB), then off
+81BB05 RivalSequence_BB05   # steps 1-3 of a move list (timers $81:BB2A, actions $81:BB2E)
+819F4C ApplyVelocity         # add signed 4.4 speed $02A9,X to position $0289/$028A,X (fraction $02C9)
+81B64A RivalTumble_B64A      # flip frames, move, speed counts up to 0 then next state + sound $49

@@ -77,3 +77,7 @@
 81BB32  1 1  mem+X,Y,C,V    RivalDispatch_BB32
 81BC8A  1 1  mem+X,Y,C,V    RivalDispatch_BC8A
 81BD52  1 1  mem+X,Y,C,V    RivalDispatch_BD52
+81B67F  1 1  mem+X,Y,C,V    RivalSequence_B67F
+81BB05  1 1  mem+X,Y,C,V    RivalSequence_BB05
+819F4C  1 1  mem+X,Y,C,V    ApplyVelocity
+81B64A  1 1  mem+X,Y,C,V    RivalTumble_B64A

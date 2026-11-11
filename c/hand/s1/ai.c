@@ -172,3 +172,120 @@ void RivalDispatch_BB32_m1x1(void) { dispatch_state(0xBB3D, 0x81BB3A); }
 void RivalDispatch_BC8A_m1x1(void) { dispatch_state(0xBC95, 0x81BC92); }
 
 void RivalDispatch_BD52_m1x1(void) { dispatch_state(0xBD5D, 0x81BD5A); }
+
+/*
+ * $81:B67F RivalSequence_B67F: each time timer $0369 runs out, take the next
+ * step ($0319 + 1) of an 8-step move list: action from $81:B6A3 (2-9) and
+ * timer from $81:B6AB (3 or 4 frames). After step 7 the object is switched
+ * off ($02E9,X = 0).
+ */
+void RivalSequence_B67F_m1x1(void)
+{
+    X = rd8(ABS(0x039D));
+    lda8(rd8(ABS(0x0369 + X)));
+    if ((u8)A != 0) { ret(); return; }
+    u8 step = inc8(rd8(ABS(0x0319 + X)));
+    wr8(ABS(0x0319 + X), step);
+    lda8(step);
+    cmp8(step, 0x08);
+    if (fc) {
+        wr8(ABS(0x02E9 + X), 0);                   /* sequence over */
+        ret();
+        return;
+    }
+    Y = step;
+    lda8(rd8(ABS(0xB6A3 + Y))); wr8(ABS(0x0349 + X), (u8)A);
+    lda8(rd8(ABS(0xB6AB + Y))); wr8(ABS(0x0369 + X), (u8)A);
+    ret();
+}
+
+/*
+ * $81:BB05 RivalSequence_BB05: cycle through steps 1-3 (never 0) of a
+ * 4-entry move list when timer $0369 runs out: timer from $81:BB2A
+ * (128, 50, 13, 33), action from $81:BB2E (2, 2, 3, 4).
+ */
+void RivalSequence_BB05_m1x1(void)
+{
+    X = rd8(ABS(0x039D));
+    lda8(rd8(ABS(0x0369 + X)));
+    if ((u8)A != 0) { ret(); return; }
+    u8 step = (u8)((rd8(ABS(0x0319 + X)) + 1) & 0x03);
+    lda8(step);
+    wr8(ABS(0x0319 + X), step);
+    if (step == 0) {
+        step = 1;
+        lda8(1);
+        wr8(ABS(0x0319 + X), 1);
+    }
+    Y = step;
+    lda8(rd8(ABS(0xBB2A + Y))); wr8(ABS(0x0369 + X), (u8)A);
+    lda8(rd8(ABS(0xBB2E + Y))); wr8(ABS(0x0349 + X), (u8)A);
+    ret();
+}
+
+/*
+ * $81:9F4C ApplyVelocity (M=1, X=1, RTL): add the signed 4.4 speed in
+ * $02A9,X to the object's position: the low nibble (x16) into the fraction
+ * $02C9,X, the high nibble, sign-extended, plus the carry into the 16-bit
+ * position $0289/$028A,X.
+ */
+void ApplyVelocity_m1x1(void)
+{
+    u8 v = rd8(ABS(0x02A9 + X));
+    lda8(v);
+    lda8(asl8(asl8(asl8(asl8(v)))));
+    fc = 0;
+    adc8(rd8(ABS(0x02C9 + X)));
+    wr8(ABS(0x02C9 + X), (u8)A);
+    push8(getP());                                 /* keep the fraction's carry */
+    lda8(v);
+    lda8(lsr8(lsr8(lsr8(lsr8(v)))));
+    cmp8((u8)A, 0x08);
+    ldy8(0x00);
+    if (fc) {                                      /* negative speed: sign-extend */
+        ora8(0xF0);
+        Y = dec8((u8)Y);
+    }
+    setP(pull8());
+    adc8(rd8(ABS(0x0289 + X)));
+    wr8(ABS(0x0289 + X), (u8)A);
+    lda8((u8)Y);
+    adc8(rd8(ABS(0x028A + X)));
+    wr8(ABS(0x028A + X), (u8)A);
+    retl();
+}
+
+void QueueSound_m1x1(void);
+
+/*
+ * $81:B64A RivalTumble_B64A: flip action $0349 between frames 0 and 1 every
+ * 4 frames, move by the speed $02A9 (counting up towards zero each frame);
+ * when the speed reaches zero, go to the next state ($0309 + 1) with action 2,
+ * step 0, timer 4, and play sound $49.
+ */
+void RivalTumble_B64A_m1x1(void)
+{
+    X = rd8(ABS(0x039D));
+    lda8(rd8(DP(0x63)));
+    and8(0x03);
+    if ((u8)A == 0) {
+        lda8(rd8(ABS(0x0349 + X)));
+        lda8(inc8((u8)A));
+        and8(0x01);
+        wr8(ABS(0x0349 + X), (u8)A);
+    }
+    push8(0x81); push16(0xB65F); ApplyVelocity_m1x1();
+    u8 sp = inc8(rd8(ABS(0x02A9 + X)));
+    wr8(ABS(0x02A9 + X), sp);
+    lda8(sp);
+    if (sp != 0) { ret(); return; }
+    wr8(ABS(0x0309 + X), inc8(rd8(ABS(0x0309 + X))));
+    lda8(0x02);
+    wr8(ABS(0x0349 + X), 0x02);
+    wr8(ABS(0x0319 + X), 0);
+    lda8(0x04);
+    wr8(ABS(0x0369 + X), 0x04);
+    lda8(0x49);
+    push8(0x81); push16(0xB67D); QueueSound_m1x1();
+    ret();
+}

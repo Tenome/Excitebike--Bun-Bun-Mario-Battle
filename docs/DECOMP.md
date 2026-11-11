@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 73 hand-written (17.9%), 70 of them in the port.
+407 functions in the static map; 77 hand-written (18.9%), 74 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -59,9 +59,12 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:D38E` | DrawCoinIcons | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:D3C1` | DrawSmallObject | `mem+X,Y,V` | `objects.c` | yes |
 | `$81:9761` | RivalDispatch_9761 | `mem+X,Y,C,V` | `ai.c` | yes |
+| `$81:9F4C` | ApplyVelocity | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:A01B` | LoadCourse | `mem+X,Y,C,V` | `kernel.c` | yes |
 | `$81:A1E5` | Random | `mem+A,X,Y,C,V` | `misc.c` | yes |
 | `$81:B639` | RivalDispatch_B639 | `mem+X,Y,C,V` | `ai.c` | yes |
+| `$81:B64A` | RivalTumble_B64A | `mem+X,Y,C,V` | `ai.c` | yes |
+| `$81:B67F` | RivalSequence_B67F | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:B6B3` | RivalDispatch_B6B3 | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:B7A2` | RivalDispatch_B7A2 | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:B7B9` | RivalWaitRandom_B7B9 | `mem+X,Y,C,V` | `ai.c` | yes |
@@ -77,6 +80,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$81:BA55` | RivalAlternate_BA55 | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:BA8E` | RivalWaitStep_BA8E | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:BAE8` | RivalWaitStep_BAE8 | `mem+X,Y,C,V` | `ai.c` | yes |
+| `$81:BB05` | RivalSequence_BB05 | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:BB32` | RivalDispatch_BB32 | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:BB49` | RivalWaitRandom_BB49 | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:BB70` | RivalAlternate_BB70 | `mem+X,Y,C,V` | `ai.c` | yes |
