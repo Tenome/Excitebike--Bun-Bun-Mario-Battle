@@ -126,6 +126,7 @@ void ReadJoypads_m1x1(void)
 {
     while (rd8(ABS(REG_HVBJOY)) & 1)
         WAIT_TICK();
+    fc = 0;                                 /* the wait loop's LSR leaves C = bit 0 = 0 */
     read_pad(REG_JOY1L, P1_HELD_LO, P1_PRESS_LO, P1_PREV_LO, P1_HELD_HI, P1_PRESS_HI, P1_PREV_HI);
     read_pad(REG_JOY2L, P2_HELD_LO, P2_PRESS_LO, P2_PREV_LO, P2_HELD_HI, P2_PRESS_HI, P2_PREV_HI);
     retl();
@@ -157,13 +158,20 @@ void LoadCourse_m1x1(void)
     for (int i = 0x0FFE; i >= 0; i -= 2)
         wr16(LONG(0x7F4000 + i), 0);
 
-    u16 stadium = rd16(LONG(0x81800C));
+    /* index = (Stadium * 4 + course) * 2, or Stadium * 2 + $10 for the
+     * special course; done with the original's ASL/ADC so C and V match. */
     u16 index;
     if (rd16(ABS(0x0CD7)) != 0) {
-        index = (u16)(stadium * 2 + 0x10);
+        A = asl16(rd16(LONG(0x81800C)));
+        fc = 0;
+        adc16(0x0010);
+        index = A;
     } else {
         wr16(DP(0x00), rd16(DP(0x7C)) & 0xFF);
-        index = (u16)((stadium * 4 + rd16(DP(0x00))) * 2);
+        A = asl16(asl16(rd16(LONG(0x81800C))));
+        fc = 0;
+        adc16(rd16(DP(0x00)));
+        index = A = asl16(A);
     }
     wr16(DP(0x00), rd16(LONG(0x818C6D + index)));     /* source byte count */
     u16 src = rd16(LONG(0x818C59 + index));            /* offset into $81:8C81 */
@@ -198,6 +206,7 @@ void LoadCourse_m1x1(void)
     X = src;
     Y = col;
     A = b;                                             /* last course byte, B = 0 */
+    fc = b >= 0x09;                                    /* C from the loop's CMP #$09 */
     sep(0x10);
     DB = pull8();
     retl();

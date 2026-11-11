@@ -34,6 +34,7 @@ void RunGameModeScript_m1x1(void)
         u16 handler = table_word(ABS(0xB65D), mode);
         wr8(DP(0x00), (u8)handler);
         wr8(DP(0x01), (u8)(handler >> 8));
+        fc = mode >> 7;                                /* ASL A: handlers see C = bit 7 */
         Y = (u8)((mode << 1) + 1);                     /* handlers see the dispatcher's */
         SET_A8(handler >> 8);                          /* Y and A, as in the original */
         nz8((u8)(handler >> 8));
@@ -64,6 +65,7 @@ void RunGameModeScript_m1x1(void)
         Y = y;
         SET_A8(hi);
         nz8(hi);
+        fc = entry >> 7;                               /* TYA / ASL A: always 0 here */
         if (!r816_call_pc(0x800000 | rd16(0x0000)))
             r816_unknown_target(0x808A2B, rd16(0x0000));
         return;
@@ -75,5 +77,6 @@ void RunGameModeScript_m1x1(void)
         wr8((u16)(D + a), 0);
     X = 0x8B;
     SET_A8(0);
+    fc = 1; fz = 1; fn = 0;                            /* CPX #$008B ended the loop */
     ret();
 }
