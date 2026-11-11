@@ -99,6 +99,22 @@ Like the NES Excitebike, state is kept in parallel arrays indexed by X:
 * `$7F:4000`: expanded course buffer (from `$81:A01B`), `$7F:6000` column index.
 * `$08A4`: current course (0..3); `$7C`: course counter in the schedule.
 
+### Course format
+`tools/course.py` decodes every course. One byte per track column:
+
+* bit `RUN` set (`$40` in Gen A, `$80` in Gen B): `[b][n]`, `b` repeated `n`
+  columns. The plain ground code is `$40` (A) / `$80` (B); other run codes are
+  terrain variants (A `$41-$4C`, B `$81-$8A`).
+* `$09`: also stamps five more `$09` ahead (a wide element; later bytes overwrite).
+* `$00-$3F` otherwise: one obstacle or event column. These codes are shared by
+  both generations.
+
+Courses expand to 315-393 columns (Gen A) and 338-416 (Gen B). The second
+special course is identical in both generations except for the ground code, so
+Gen A courses should convert to the Gen B engine by moving `$40-$7F` to
+`$80-$BF`. That is the cheapest route to running all 16 courses in one engine.
+Gen B also randomises some columns at race start (`$81:A18B`, mode 3).
+
 ## Build stamp and debug flags (`$81:8000`)
 * `$81:8000-$8005`: BCD build timestamp YY MM DD hh mm ss.
   S1 dump `98-03-23 13:40:41`, S2 `97-05-02 17:37:15`, S3 `97-10-23 20:53:10`,
