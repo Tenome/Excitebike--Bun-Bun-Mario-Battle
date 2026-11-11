@@ -9,9 +9,10 @@ How the 1 MB image is used. Built from three sources:
 * parsers for the formats we understand (`tools/spcblocks.py`, the course
   tables).
 
-Byte totals over 60 one-minute sessions as Stadium 1: code 28,368;
-CPU-read data 99,324; DMA-read data 507,648; padding 45,840; never read
-367,396. (Stadium 2 sessions on the same build are being added.)
+Byte totals over 120 one-minute sessions (60 as Stadium 1, 60 as Stadium 2 on
+the same build): code 28,368; CPU-read data 101,090; DMA-read data 507,648;
+padding 45,840; never read 365,630. Stadium 2 adds only its course data
+(about 1.8 KB in `$80/$81`); graphics and music are shared by both Stadiums.
 
 ## Bank by bank
 
@@ -26,9 +27,20 @@ CPU-read data 99,324; DMA-read data 507,648; padding 45,840; never read
 | `$8E-$8F` | sound driver and samples (block 0, `$8E:8000-$8F:ADE2`, driver entry ARAM `$0500`) | `spcblocks.py` |
 | `$90-$93` | four song sets (blocks 1-4, each loaded at ARAM `$C360`) | `spcblocks.py` |
 | `$94-$96` | zero-filled 4 KB blocks starting with `$AA`; never read | contents |
+| tails of `$8F-$93` | after each sound stream: mostly `$FF` with scattered cleared bits, more `$AA` blocks | contents |
 | `$97-$9C`, `$9E` | graphics / tilemaps by DMA | DMA reads |
 | `$9D` | not read as Stadium 1 (tile-like data) | — |
 | `$9F` | graphics by DMA (`$9F:8000-$EFFF`) | DMA reads |
+
+### The never-read areas
+
+The `.bs` files are dumps of the whole 1 MB memory pack, not just the game.
+The never-read areas look like stale pack contents: `$FF` (erased flash) with
+scattered cleared bits after the end of each sound stream, 4 KB blocks with an
+`$AA` marker, and tile-like data in `$8D` and `$9D`. None of it is referenced by
+code or read in 120 sessions; the port and the merge can ignore it. (The
+credits music in `$85` is the exception: it is read only on the credits path,
+which the original Stadium 1 never reaches.)
 
 ## Known structures
 
@@ -45,7 +57,6 @@ CPU-read data 99,324; DMA-read data 507,648; padding 45,840; never read
 
 ## Next
 
-* Add the Stadium 2 read maps (the same build with `$81:800C` = 1).
 * Identify the DMA'd assets (tiles, tilemaps, palettes) per scene; extract them
   with snes2asm's decoders.
 * Decode the course byte format and the CPU-read tables in `$80/$81/$8B`.
