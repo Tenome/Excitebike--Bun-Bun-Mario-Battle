@@ -149,6 +149,7 @@ void ReadJoypads_m1x1(void)
 void LoadCourse_m1x1(void)
 {
     if (rd16(LONG(0x7F4000)) != 0 && (rd16(DP(0x7D)) & 0xFF) != 0) {
+        A = rd16(DP(0x7D)) & 0xFF;
         sep(0x30);
         retl();
         return;
@@ -173,8 +174,9 @@ void LoadCourse_m1x1(void)
     push8(0x7F);                                       /* LDA #$7F / PHA / PLB */
     DB = pull8();                                      /* buffer writes use DB */
     u16 col = 0;
+    u8 b;
     do {
-        u8 b = rd8(LONG(0x818C81 + src));
+        b = rd8(LONG(0x818C81 + src));
         wr8(ABS(0x4000 + col), b);
         if (b == 0x09)
             for (int k = 1; k <= 5; k++)
@@ -196,6 +198,7 @@ void LoadCourse_m1x1(void)
     } while (rd8(DP(0x00)) != 0);
     X = src;
     Y = col;
+    A = b;                                             /* last course byte, B = 0 */
     sep(0x10);
     DB = pull8();
     retl();
@@ -292,6 +295,7 @@ void BsxPollStream_m1x1(void)
         }
     }
     wr16(BS_FRAME, frame);
+    A = frame;
     setP(pull8());
     retl();
 }

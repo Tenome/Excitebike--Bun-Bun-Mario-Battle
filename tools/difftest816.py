@@ -179,7 +179,14 @@ def main():
             want = [cpu.A, cpu.X, cpu.Y, cpu.S, cpu.D, cpu.DB, cpu.P & 0xFF]
             got = list(out)
             for nm, w_, g_ in zip(('A', 'X', 'Y', 'S', 'D', 'DB', 'P'), want, got):
-                if mode_cmp == 'mem' and nm in ('A', 'X', 'Y', 'P'):
+                base_mode, _, extra = mode_cmp.partition('+')
+                keep = set(extra.split(',')) if extra else set()
+                if base_mode == 'mem' and nm in ('A', 'X', 'Y') and nm not in keep:
+                    continue
+                if base_mode == 'mem' and nm == 'P':
+                    flagbits = sum(b for f, b in (('C', 1), ('Z', 2), ('V', 0x40), ('N', 0x80)) if f in keep)
+                    if (w_ & flagbits) != (g_ & flagbits):
+                        problems.append('flags orig %02X lifted %02X' % (w_, g_))
                     continue
                 if (w_ & mask_ax) != (g_ & mask_ax):
                     problems.append('%s orig %04X lifted %04X' % (nm, w_, g_))

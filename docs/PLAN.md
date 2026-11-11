@@ -100,8 +100,11 @@ The rest of the 1 MB is graphics, tracks, music and other data.
    (one function, same out-of-range cause).
 0b. ✅ Hand-written replacements: `c/hand/<ver>/*.c` + `hand.txt`; the lifter
    leaves those bodies out and the difftest checks them (`--hand-only`).
-   First five (DmaKick, DmaCopyToWram, DmaFillZero, QueueSound, ReadJoypads)
-   pass.
+   Eight so far (DMA helpers, QueueSound, ReadJoypads, LoadCourse,
+   BsxPollStream, RunGameModeScript) pass. `tools/liveout.py` finds which
+   registers and flags callers read after each call; `hand.txt` compares
+   exactly those (`mem+A,X,Y`), so a readable routine may drop flag results
+   nobody reads but nothing that is observable.
 1. Hand-lift routines to readable C, kept in `c/`. `c/s1_core.c` is the start.
 2. Use the same approach as the NES Excitebike port: test each routine
    against the recompiled or interpreted original. Compare RAM and the order

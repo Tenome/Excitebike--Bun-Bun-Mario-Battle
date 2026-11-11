@@ -1,11 +1,14 @@
 # Hand-written replacements for lifted routines (Stadium 1).
-# pc24  m x  compare   name
-# compare: mem = WRAM + hardware writes + S/D/DB; full = also A/X/Y and flags.
-808539  0 1  mem   DmaKick
-808541  0 1  mem   DmaCopyToWram
-808562  0 1  mem   DmaFillZero
-8082B6  1 1  mem   QueueSound
-80B4D9  1 1  mem   ReadJoypads
-81A01B  1 1  mem   LoadCourse
-81F8BB  1 1  mem   BsxPollStream
-8089ED  1 1  mem   RunGameModeScript
+# pc24  m x  compare        name
+# compare: full = WRAM, hardware writes and every register and flag;
+#          mem  = WRAM, hardware writes, S/D/DB; mem+A,X,... also the listed
+#          registers/flags (C Z N V). Use tools/liveout.py to see what the
+#          callers read after the call; that is what must match.
+808539  0 1  mem+A,X,Y     DmaKick
+808541  0 1  mem+X         DmaCopyToWram
+808562  0 1  mem+X         DmaFillZero
+8082B6  1 1  mem+A,X,Y     QueueSound
+80B4D9  1 1  mem+X,Y       ReadJoypads
+81A01B  1 1  mem+A,X,Y     LoadCourse
+81F8BB  1 1  mem+A,X,Y     BsxPollStream
+8089ED  1 1  mem+X,Y       RunGameModeScript
