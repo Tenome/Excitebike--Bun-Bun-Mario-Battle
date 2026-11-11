@@ -93,6 +93,8 @@ def main():
     wram_p = dll.h_wram()
     hwt_p = dll.h_hw_table()
     snaps = []
+    if not a.snapshots and os.path.isdir(os.path.join('build', 'snapshots', a.ver)):
+        a.snapshots = os.path.join('build', 'snapshots', a.ver, '*.bin')
     if a.snapshots:
         for f in sorted(glob.glob(a.snapshots))[:64]:
             b = open(f, 'rb').read()
