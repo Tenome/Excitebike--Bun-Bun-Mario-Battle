@@ -59,3 +59,5 @@
 808B14 Mode0E_Setup         # title: timer $88 = $0384, layers, sounds $2D/$45, title texts
 808C53 Mode02_Setup         # course card: segment from minute ($80:8C4B), card graphic DMA, "course N" tiles
 80915A SegmentNext          # next game mode, restart its setup, fade out ($1923 = -1)
+809201 EnableHudSplit       # $91 = 1: NMI also enables the H/V IRQ (HUD split)
+809206 ClearRaceState       # zero $0884-$0A12 and $80-$84, sound $2D

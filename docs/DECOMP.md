@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 33 hand-written (8.1%), 30 of them in the port.
+407 functions in the static map; 35 hand-written (8.6%), 32 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -36,6 +36,8 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:8C53` | Mode02_Setup | `mem+X,Y,C,V` | `card.c` | yes |
 | `$80:8D16` | FinishModeSetup | `mem+X,Y,C,V` | `title.c` | yes |
 | `$80:915A` | SegmentNext | `mem+X,Y,C,V` | `card.c` | yes |
+| `$80:9201` | EnableHudSplit | `mem+X,Y,C,V` | `race.c` | yes |
+| `$80:9206` | ClearRaceState | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:B226` | ClearOamBuffer | `mem+X,Y,C,V` | `frame.c` | yes |
 | `$80:B2A5` | VramQueueTiles20 | `mem+X,Y,C,V` | `vram.c` | yes |
 | `$80:B2A9` | VramQueueTiles | `mem+X,Y,C,V` | `vram.c` | yes |

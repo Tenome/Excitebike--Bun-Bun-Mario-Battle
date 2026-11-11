@@ -37,3 +37,5 @@
 808C53  1 1  mem+X,Y,C,V    Mode02_Setup
 808C2F  1 1  mem+X,Y,C,V    Mode02_SegmentCard
 80915A  1 1  mem+X,Y,C,V    SegmentNext
+809201  1 1  mem+X,Y,C,V    EnableHudSplit
+809206  1 1  mem+X,Y,C,V    ClearRaceState
