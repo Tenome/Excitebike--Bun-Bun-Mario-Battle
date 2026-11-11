@@ -1,0 +1,102 @@
+# Project plan
+
+Goal: disassemble, decompile and recompile *Excitebike: Bun Bun Mario Battle*
+(Satellaview, 1997) into a native PC port. Then merge the four Stadium
+broadcasts into one game.
+
+## What we are working with
+
+| Version | File in `orig/` | Source dump | Engine |
+|---|---|---|---|
+| Stadium 1 | `s1.bs` | Stadium 1 (6-30). The (6-29) dump is the same except for one header date byte. | Gen A |
+| Stadium 2 | `s2.bs` | Stadium 2 (5-18) | Gen A |
+| Stadium 2 rebroadcast | `s2r.bs` | Stadium 2 (7-6). It is Stadium 1 with 6 bytes changed: title digit, date, checksum, and `$81:800C` 0→1. | Gen A |
+| Stadium 3 | `s3.bs` | Stadium 3 (11-5) | Gen B |
+| Stadium 3 rebroadcast | `s3r.bs` | Stadium 3 (2-8). 11,377 bytes differ from Stadium 4, so it is built from the Stadium 4 build. | Gen B |
+| Stadium 3 bad dump | `s3b.bs` | Stadium 3 (1-11) [b]. Its header is corrupt. Reference only. | Gen B |
+| Stadium 4 | `s4.bs` | Stadium 4 (2-18). The (2-17) dump differs by one date byte. | Gen B |
+
+All images are 1 MB LoROM memory-pack images with a BS header at `$7FB0`.
+The code runs at `$80:8000`. The vectors at `$FFE4..$FFFF` point to small
+`JML` stubs at `$80:FFA0`.
+
+* **Gen A** (Stadiums 1–2): about 24 KB of code in banks `$80-$81`.
+* **Gen B** (Stadiums 3–4): about 32 KB of code in banks `$80-$82`.
+
+The rest of the 1 MB is graphics, tracks, music and other data.
+
+## Key technical facts so far
+
+* Every Satellaview hardware access sits in one library at
+  `$81:F80C-$81:FAB2` (Gen A). It uses the satellite receiver registers
+  `$2188-$2197` for the broadcast clock and the SoundLink time channel.
+* At boot, `$81:FA81` probes the receiver by writing `$AA`/`$55` to
+  `$2188` and reading them back. With no receiver it stores
+  `$7FFFE1 = 1` and the reset code skips the satellite setup. **So the game
+  does not need the BS-X BIOS or the satellite to boot.** It can run as a
+  plain LoROM cartridge, which snesrecomp supports.
+* SoundLink (live narration and voice) came over the radio stream and is not
+  in the dumps. The port will not have it unless we recreate it.
+
+## Toolchain
+
+| Tool | Where | Use |
+|---|---|---|
+| `tools/bsdis.py` (ours) | repo | Recursive 65816 disassembler that knows the BS-X layout. Tracks M/X, recognises pointer tables, reports BS-X register use. Writes `report.txt`, `listing.asm` and `code.json`. |
+| `tools/mkcfg.py` (ours) | repo | Turns `code.json` into snesrecomp `bank*.cfg` seeds. |
+| snesrecomp CLI | `E:\Claude - SNES Decomp Disassembly\snesrecomp-cli-windows-x86_64` | 65816 → C (`generate`). |
+| snesrecomp source | `E:\...\tools\snesrecomp` | Docs, runner, interpreter, co-sim, snesref. |
+| snes2asm | `E:\...\tools\snes2asm` (patched for the BS header) | WLA-DX rebuild project, asset decoders (tiles, palettes, BRR). For the byte-matching rebuild and asset extraction. |
+| DiztinGUIsh | `E:\...\DiztinGUIsh` | Interactive GUI labelling, if useful. |
+| Ghidra 12.2 | `E:\Claude Typing of the Dead\ghidra_12.2_PUBLIC` | Optional second opinion on hard routines. |
+
+## Phases
+
+### Phase 1: map the code (in progress)
+1. Find all code with `bsdis.py`, starting from the vectors and adding pointer
+   tables as they are recognised. ✅ First pass done for every version.
+2. Resolve the last indirect dispatchers. Example: the two-level script
+   table at `$80:8A2B` (`$B683` → lists of handler pointers).
+3. Confirm code coverage at run time: run the ROM in the snesrecomp
+   interpreter or a reference emulator through `snesref` and log every
+   executed PC. Add the missing roots.
+4. Name routines and RAM in `config/<ver>/names.txt` and a RAM map.
+
+### Phase 2: byte-matching disassembly
+1. Have `bsdis.py` write assembler source (ca65 or WLA-DX) for code and data.
+2. Rebuild each version byte-identically and check it in CI. The same
+   ByteMatch workflow as the NES projects.
+3. Split the data into assets: graphics (4bpp tiles), palettes, tilemaps,
+   tracks, text and SPC700 music. snes2asm's decoders help here.
+
+### Phase 3: recompile to C and boot natively
+1. Generate C with `snesrecomp generate --cfg-roots` from our cfg seeds. ✅
+   First run: 542 function variants, 533 native and 9 left to the interpreter.
+2. Scaffold a full game project with snesrecomp's `setup_project`: CMake,
+   runner, SDL3 and the launcher. Get it to the title screen.
+3. Replace the BS-X library with a C function (`hle_func`). It reports "no
+   receiver" or returns a fake clock, so time-gated content can be unlocked.
+4. Compare against an independent emulator (snesref plus a libretro core)
+   frame by frame, and fix the differences.
+
+### Phase 4: readable decompilation
+1. Hand-lift routines to readable C, kept in `c/`. `c/s1_core.c` is the start.
+2. Use the same approach as the NES Excitebike port: test each routine
+   against the recompiled or interpreted original. Compare RAM and the order
+   of hardware register writes.
+3. Turn raw RAM into named structs: riders, track, camera, items.
+
+### Phase 5: merge the Stadiums
+1. Match routines across versions by instruction signature, ignoring
+   addresses. This gives the exact code differences A↔A, B↔B and A↔B.
+2. Use the Gen B engine (Stadium 4) as the base. Load each Stadium's data
+   (tracks, characters, graphics, rules) as a content pack.
+3. Add a Stadium select and a character roster that combines all of them
+   (Mario, Luigi, Toad, Wario, Peach, Yoshi).
+4. Port extras later: widescreen, more riders, higher frame rate, mods.
+
+## Repository rules
+* `orig/` (ROMs) and `build/` (all generated output, including C made by
+  snesrecomp) are git-ignored and never committed.
+* Edit the tools and `config/`, never the generated files.
+* Push only with the owner's OK.

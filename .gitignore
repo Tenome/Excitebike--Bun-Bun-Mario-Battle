@@ -1,0 +1,7 @@
+# ROMs and anything derived from them
+orig/
+*.bs
+*.sfc
+*.smc
+build/
+__pycache__/

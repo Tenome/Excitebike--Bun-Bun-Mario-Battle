@@ -1,0 +1,15 @@
+# pc24  name        (Stadium 1 / Gen A)
+808000 Reset
+808369 InitPpuRegisters
+808539 DmaKick
+808541 DmaCopyToWram
+808562 DmaFillZero
+8085FF Nmi
+80876B NmiVramUpload
+808979 NmiOamUpload
+8089ED RunGameModeScript
+80BBDA Irq
+81F80C BsxOpenTimeChannel
+81F8BB BsxPollStream
+81FA68 BsxDetect
+81FA81 BsxProbeReceiver
