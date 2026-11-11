@@ -78,6 +78,7 @@ def main():
     ap.add_argument('--seed', type=int, default=1)
     ap.add_argument('--steps', type=int, default=20000)
     ap.add_argument('--verbose', action='store_true')
+    ap.add_argument('--poke', action='append', default=[], help='ADDR=HEX: set WRAM byte(s) before each case (DP addresses get D added)')
     ap.add_argument('--dump-fail', action='store_true', help='save the first failing case per function')
     ap.add_argument('--hand-only', action='store_true', help='test only the hand-written variants')
     a = ap.parse_args()
@@ -136,6 +137,13 @@ def main():
             p &= ~0x08  # decimal mode off unless the routine sets it
             if x.value:
                 regs[1] &= 0xFF; regs[2] &= 0xFF
+            for pk in a.poke:
+                ad, _, hx = pk.partition('=')
+                ad = int(ad, 16)
+                if ad < 0x100:
+                    ad = (ad + regs[4]) & 0xFFFF
+                for k in range(len(hx) // 2):
+                    base[ad + k] = int(hx[2 * k:2 * k + 2], 16)
             # original
             cpu = CPU(rom)
             cpu.wram[:] = base

@@ -12,3 +12,6 @@
 81A01B  1 1  mem+X,Y,C,V    LoadCourse
 81F8BB  1 1  mem+X,Y,C,V    BsxPollStream
 8089ED  1 1  mem+X,Y,C,V    RunGameModeScript
+80B3FE  1 1  mem+X,Y,C,V    VramQueueCopy
+80B2A9  1 1  mem+X,Y,C,V    VramQueueTiles
+80B2A5  1 1  mem+X,Y,C,V    VramQueueTiles20

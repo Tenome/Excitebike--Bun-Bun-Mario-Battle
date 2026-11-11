@@ -74,4 +74,8 @@ BRIDGE(HleHand_DmaCopyToWram, DmaCopyToWram_m0x1, 60)
 BRIDGE(HleHand_DmaFillZero,   DmaFillZero_m0x1,   70)
 BRIDGE(HleHand_LoadCourse,    LoadCourse_m1x1,    30000)
 BRIDGE(HleHand_BsxPollStream, BsxPollStream_m1x1, 120)
+/* c/hand/s1/vram.c */
+BRIDGE(HleHand_VramQueueCopy,    VramQueueCopy_m1x1,    1500)
+BRIDGE(HleHand_VramQueueTiles,   VramQueueTiles_m1x1,   1200)
+BRIDGE(HleHand_VramQueueTiles20, VramQueueTiles20_m1x1, 1200)
 #endif
