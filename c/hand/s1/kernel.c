@@ -200,3 +200,98 @@ void LoadCourse_m1x1(void)
     DB = pull8();
     retl();
 }
+
+/* BS-X handshake area at the top of WRAM ($7F:FFE0-$7F:FFFF). */
+#define BS_CLOCK_F0   LONG(0x7FFFF0)
+#define BS_CLOCK_F1   LONG(0x7FFFF1)
+#define BS_CLOCK_F2   LONG(0x7FFFF2)
+#define BS_CLOCK_F3   LONG(0x7FFFF3)
+#define BS_CHANNEL    LONG(0x7FFFF7)    /* 16-bit: opened time channel */
+#define BS_HOUR       LONG(0x7FFFF9)
+#define BS_FRAME      LONG(0x7FFFFA)    /* 16-bit: frames into the minute */
+#define BS_SYNCED     LONG(0x7FFFFC)    /* 16-bit: clock set from the stream */
+#define BS_MINUTE     LONG(0x7FFFFF)
+enum { BSX_STATUS = 0x2190, BSX_CTRL = 0x2191, BSX_DATA = 0x2192, BSX_ERR = 0x2193,
+       BSX_RESET = 0x2197, BSX_CHANNEL = 0x218E };
+
+/* $81:F999 (JSR, keeps A): restart the minute's frame counter; X = 1 marks
+ * "clock taken from the stream this frame". Stack traffic as the original. */
+static void restart_minute(u16 ret_addr, u8 a)
+{
+    push16(ret_addr);
+    push8(a);
+    wr16(BS_FRAME, 0);
+    X = 1;
+    pull8();
+    pull16();
+}
+
+/*
+ * $81:F8BB BsxPollStream (M=1, X=1, RTL), once per frame from the main loop.
+ *
+ * With a satellite receiver: when a packet is waiting on the opened time
+ * channel and it is a clean clock packet, copy minute, hour and the other
+ * clock bytes into the handshake area (restarting the frame counter when the
+ * minute changes or on the first packet), then re-arm the stream.
+ * Always: run the local clock. $7F:FFFA counts frames; after $0E4C (3660)
+ * frames the minute advances (and $B0 counts it). At minute 60, unless the
+ * hour is $11, write $80 to $2197 (end of broadcast: the BS-X unit takes over).
+ */
+void BsxPollStream_m1x1(void)
+{
+    push8(getP());
+    sep(0x30);
+    X = 0;
+    if (rd8(ABS(BSX_STATUS)) != 0 && rd16(ABS(BSX_CHANNEL)) == rd16(BS_CHANNEL)) {
+        if ((rd8(ABS(BSX_ERR)) & 0x0C) == 0) {
+            u8 b = 0;
+            for (int i = 0; i < 6; i++)                /* header: 5 skipped, 6th = 1 */
+                b = rd8(ABS(BSX_DATA));
+            int ok = b == 1 && rd8(ABS(BSX_DATA)) == 1;
+            if (ok) {
+                u8 z = rd8(ABS(BSX_DATA));
+                z |= rd8(ABS(BSX_DATA));
+                z |= rd8(ABS(BSX_DATA));
+                ok = z == 0;
+            }
+            if (ok) {
+                rd8(ABS(BSX_DATA));
+                u8 minute = rd8(ABS(BSX_DATA));
+                if (minute != rd8(BS_MINUTE))
+                    restart_minute(0xF913, minute);
+                wr8(BS_MINUTE, minute);
+                wr8(BS_HOUR, rd8(ABS(BSX_DATA)));
+                wr8(BS_CLOCK_F3, rd8(ABS(BSX_DATA)));
+                wr8(BS_CLOCK_F2, rd8(ABS(BSX_DATA)));
+                wr8(BS_CLOCK_F1, rd8(ABS(BSX_DATA)));
+                rd8(ABS(BSX_DATA));
+                u8 last = rd8(ABS(BSX_DATA));
+                wr8(BS_CLOCK_F0, last);
+                if (rd8(BS_SYNCED) == 0) {
+                    restart_minute(0xF946, last);
+                    wr8(BS_SYNCED, 1);
+                }
+            }
+        }
+        wr8(ABS(BSX_CTRL), 1);                     /* re-arm the stream */
+        wr8(ABS(BSX_DATA), 1);
+    }
+
+    /* local clock */
+    u16 frame = rd16(BS_FRAME);
+    if (X == 0) {
+        frame++;
+        if (frame == 0x0E4C) {
+            wr8(DP(0xB0), (u8)(rd8(DP(0xB0)) + 1));
+            u8 minute = (u8)(rd8(BS_MINUTE) + 1);
+            wr8(BS_MINUTE, minute);
+            if (minute == 0x3C && rd8(BS_HOUR) != 0x11)
+                wr8(ABS(BSX_RESET), 0x80);
+            wr16(BS_SYNCED, 0);
+            frame = 0;
+        }
+    }
+    wr16(BS_FRAME, frame);
+    setP(pull8());
+    retl();
+}
