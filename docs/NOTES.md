@@ -138,8 +138,12 @@ the minute goes up by one. Reset seeds hour 19, minute 2.
 
 * minute < 3/4: intro / rules text ("はじめに"), title with "しばらくおまちください".
 * minute 4: the race segment opens (modes `$0C`/`$0E` check `$7FFFFF >= 4`).
-* During a race (mode 3) a change of minute matched against `$80:82A7` (8
-  values) injects an event into the track buffer at `$7F:4000` (`$80:823C`).
+* During a race (mode 3) a change of minute matched against `$80:82A7`
+  (minutes 8, 9, 20, 21, 32, 33, 44, 45) drops an item onto the track
+  (`$80:823C` BroadcastEventInject): the course's item code from `$80:82AF`
+  ($2A-$2D) goes on the next plain-ground column ahead of the player
+  (`$0275` + 3), never right after obstacles $17/$19/$1B/$03/$04. These are the
+  broadcast's timed bonus items.
 * minute 60 (`$3C`): end of broadcast. Unless hour is `$11`, the game writes
   `$80` to BS-X register `$2197`, which on hardware hands control back to the
   BIOS.
