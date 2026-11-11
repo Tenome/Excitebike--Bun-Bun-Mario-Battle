@@ -122,8 +122,10 @@ Mode `$12` (`$80:9F68`) is a staff credits roll (cast: ピーチ姫, ワリオ, 
 St.GIGA staff, game staff, sound, programmers). Stadium 1 never shows it
 because its end screen jumps into the BIOS first. The port's replacement for
 `$80:9DE0` now reaches it. The credits' own Start handler (`$80:9FE0`) jumps
-into the BIOS the same way and still needs replacing (it is mid-function, so
-the whole `$80:9F68` handler needs an `hle_func`).
+into the BIOS the same way; the port replaces it (`hle_func` at the mid-function
+address, which snesrecomp treats as a hard boundary) with a console reset at
+the next frame boundary (`g_port_reset_request` in `port/src/game_rtl.c`).
+Verified: results → credits → final illustration → Start → intro with artwork.
 
 Coverage runs can tune in at any minute by poking `$7F:FFFF` (script
 `poke 1FFFF NN`); this is what the debug keys at `$81:800E` do too.

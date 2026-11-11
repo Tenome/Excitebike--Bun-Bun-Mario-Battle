@@ -35,10 +35,21 @@
 #include "game_rtl.h"
 
 #include "beam_frame_driver.h"
+#include "common_rtl.h"
+
+/* Set by port replacements (src/gen_stubs.c) that stand in for "return to the
+ * BS-X BIOS": the console is reset at the next frame boundary, which is what
+ * leaving to the BIOS menu and launching the game again amounts to. */
+int g_port_reset_request;
 
 void GameRunOneFrame(void)
 {
     snes_beam_frame_driver_run_frame();
+    if (g_port_reset_request) {
+        g_port_reset_request = 0;
+        RtlReset(1);
+        snes_beam_frame_driver_reset();
+    }
 }
 
 void GameDrawPpuFrame(void)

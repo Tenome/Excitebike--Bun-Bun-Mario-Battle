@@ -59,3 +59,31 @@ RecompReturn HleEndScreenStart(CpuState *cpu)
     cpu->master_cycles += (uint64_t)cyc * 8;
     return RECOMP_RETURN_NORMAL;
 }
+
+/*
+ * $80:9FE0  CreditsExit  (inside Mode12 / $80:9F68, reached M0X1 when the
+ * credits have finished scrolling and P1 pressed Start)
+ *
+ * Original:
+ *     SEP #$20 / SEI / STZ NMITIMEN
+ *     BS-X MMC writes ($03/$04/$07/$08:5000 = 0, $0E:5000 = $80)
+ *     LDA #$FE / STA APUIO0                  ; sound CPU back to its IPL loader
+ *     JML $10:5C3C                           ; into the BS-X BIOS
+ *
+ * Port replacement: request a console reset at the end of this frame
+ * (src/game_rtl.c), which replays the broadcast from the intro. That is what
+ * the BIOS menu followed by launching the game again amounts to. Until the
+ * frame ends the handler just returns (RTS, M=1) as its other exits do.
+ */
+extern int g_port_reset_request;
+
+RecompReturn HleCreditsExit(CpuState *cpu)
+{
+    g_port_reset_request = 1;
+    cpu->P |= CPU_P_M;                      /* SEP #$20 */
+    cpu_p_to_mirrors(cpu);
+    cpu->S = (uint16)(cpu->S + 2);          /* the mode handler's RTS frame */
+    cpu->cycles += 3 + 6;
+    cpu->master_cycles += (uint64_t)(3 + 6) * 8;
+    return RECOMP_RETURN_NORMAL;
+}
