@@ -40,6 +40,14 @@ void hw_write(u16 reg, u8 v);
 void open_write(u32 addr, u8 v);
 
 /* ---- memory ------------------------------------------------------------- */
+#ifdef R816_EXTERNAL_BUS
+/* Inside a host that owns the bus (the native port): every access goes
+ * through the host's memory map, PPU/APU registers included. */
+u8 r816_bus_read(u32 a);
+void r816_bus_write(u32 a, u8 v);
+static inline u8 rd8(u32 a) { return r816_bus_read(a & 0xFFFFFF); }
+static inline void wr8(u32 a, u8 v) { r816_bus_write(a & 0xFFFFFF, v); }
+#else
 static inline u8 rd8(u32 a)
 {
     a &= 0xFFFFFF;
@@ -68,6 +76,7 @@ static inline void wr8(u32 a, u8 v)
     else if (lb < 0x40 && o < 0x6000) hw_write(o, v);
     else open_write(a, v);
 }
+#endif
 
 static inline u16 rd16(u32 a) { return (u16)(rd8(a) | rd8(a + 1) << 8); }
 static inline void wr16(u32 a, u16 v) { wr8(a, (u8)v); wr8(a + 1, (u8)(v >> 8)); }

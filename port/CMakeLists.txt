@@ -148,6 +148,15 @@ endfunction()
 
 bunbun_game(BunbunS1SNESRecomp ${CMAKE_SOURCE_DIR}/src/gen ${CMAKE_SOURCE_DIR}/recomp
             ${CMAKE_SOURCE_DIR}/rom_identity.txt "BunBun S1-2")
+
+# Decompiled (hand-written) routines that replace recompiled ones through
+# hle_func + src/r816_bridge.c. Each one passed tools/difftest816.py.
+set(BUNBUN_C ${CMAKE_SOURCE_DIR}/../c)
+set(_bunbun_hand ${BUNBUN_C}/runtime816.c ${BUNBUN_C}/hand/s1/kernel.c)
+target_sources(BunbunS1SNESRecomp PRIVATE ${_bunbun_hand} ${CMAKE_SOURCE_DIR}/src/r816_bridge.c)
+set_source_files_properties(${_bunbun_hand} PROPERTIES
+    COMPILE_DEFINITIONS R816_EXTERNAL_BUS=1
+    INCLUDE_DIRECTORIES "${BUNBUN_C}")
 if(EXISTS ${CMAKE_SOURCE_DIR}/src/gen-genb/module_v2.c)
   add_subdirectory(genb)
 endif()

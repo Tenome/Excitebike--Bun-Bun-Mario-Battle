@@ -105,6 +105,11 @@ The rest of the 1 MB is graphics, tracks, music and other data.
    registers and flags callers read after each call; `hand.txt` compares
    exactly those (`mem+A,X,Y`), so a readable routine may drop flag results
    nobody reads but nothing that is observable.
+0c. ✅ Decompiled code in the port: `port/src/r816_bridge.c` binds the
+   runtime816 machine model to snesrecomp's CPU and bus and wraps hand
+   routines as `hle_func`s. Gen A now runs five hand-written routines
+   (QueueSound, DmaCopyToWram, DmaFillZero, LoadCourse, BsxPollStream);
+   verified by play-through to a race and an identical track buffer.
 1. Hand-lift routines to readable C, kept in `c/`. `c/s1_core.c` is the start.
 2. Use the same approach as the NES Excitebike port: test each routine
    against the recompiled or interpreted original. Compare RAM and the order
