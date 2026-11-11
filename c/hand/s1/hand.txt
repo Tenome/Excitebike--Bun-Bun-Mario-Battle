@@ -36,3 +36,4 @@
 808A9D  1 1  mem+X,Y,C,V    Mode0D_IntroText
 808C53  1 1  mem+X,Y,C,V    Mode02_Setup
 808C2F  1 1  mem+X,Y,C,V    Mode02_SegmentCard
+80915A  1 1  mem+X,Y,C,V    SegmentNext

@@ -45,5 +45,6 @@ coverage capture; `tools/covcmp.py` checks them against the static map.
 |---|---|
 | `BUNBUN_STADIUM=1\|2` | Gen A executable: play Stadium 1 or 2 |
 | `BUNBUN_STADIUM=3\|4` | Gen B executable: play Stadium 3 or 4 |
+| `BUNBUN_UNLOCK=1` | Gen A: the "played earlier episodes" unlock from BS-X memory; Wario joins the Stadium 1 player select |
 | `BUNBUN_SKIPWAIT=1` | Gen A: Start skips the title wait and the course cards (advances the broadcast clock one minute per press) |
 | `BUNBUN_GENA_ROM=<path>` + `BUNBUN_COURSES=1\|2` | Gen B executable: use Stadium 1 or 2 courses, read from your Stadium 1 dump |

@@ -90,6 +90,17 @@ Stadiums. The port selects the Stadium with `BUNBUN_STADIUM=1|2`
 (`port/src/game_rtl.c`, patches the byte in memory after verification);
 verified: Stadium 2 courses appear in the S1 build.
 
+## A cross-episode unlock in BS-X memory
+`$80:916B` (a setup step of the player select, mode 1) counts how many of the
+seven bytes at `$11:5719-$571F` are non-zero. On a Satellaview that address
+is BS-X unit memory; here it reads open bus. With two or more set, or in
+Stadium 2 (`$81:800C` = 1), it sets `$1E8B` = 2, which picks the second
+player-select handler (`$80:8DE6` instead of `$80:8D2F`, table `$80:8D2B`).
+Confirmed in the port: the second variant adds Wario to the wheel (Mario,
+Luigi, Toad, Wario; Stadium 1 normally has three). `BUNBUN_UNLOCK=1` grants
+it at the frame boundary when mode 1 starts (`port/src/game_rtl.c`), and
+Wario races in Stadium 1.
+
 ## Race state layout (first look)
 Like the NES Excitebike, state is kept in parallel arrays indexed by X:
 * `$0200-$026F`: 14 fields, stride 8, X = rider 0..7 (races have 8 riders).

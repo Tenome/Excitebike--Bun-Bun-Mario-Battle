@@ -133,6 +133,7 @@ BRIDGE(HleHand_Mode0D_IntroText, Mode0D_IntroText_m1x1, 1500)
 /* c/hand/s1/card.c (Mode02_SegmentCard tail-jumps into recompiled code) */
 BRIDGE(HleHand_Mode02_Setup,       Mode02_Setup_m1x1,       1500)
 BRIDGE(HleHand_Mode02_SegmentCard, Mode02_SegmentCard_m1x1, 40)
+BRIDGE(HleHand_SegmentNext,        SegmentNext_m1x1,        40)
 /* Not bridged: RunGameModeScript (c/hand/s1/modes.c). Its reset path makes
  * non-tail calls into recompiled routines, and a recompiled routine may yield
  * to the frame scheduler mid-call (a long one like $80:B873 does), which hand

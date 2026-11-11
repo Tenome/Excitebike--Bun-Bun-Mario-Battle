@@ -58,3 +58,4 @@
 808A6D Mode0D_Setup          # intro text: BG3 at $2A, timer $88 = $0A8C (or straight to mode 0 from minute 3)
 808B14 Mode0E_Setup         # title: timer $88 = $0384, layers, sounds $2D/$45, title texts
 808C53 Mode02_Setup         # course card: segment from minute ($80:8C4B), card graphic DMA, "course N" tiles
+80915A SegmentNext          # next game mode, restart its setup, fade out ($1923 = -1)

@@ -97,9 +97,29 @@ static void SkipWaitAfterFrame(void)
 #endif
 }
 
+/* Optional: BUNBUN_UNLOCK=1 grants the "played earlier episodes" unlock.
+ * $80:916B (player select setup, mode 1) reads seven bytes of BS-X unit
+ * memory at $11:5719; with two or more set (or in Stadium 2) it picks the
+ * second player select ($1E8B = 2, setup bytes $1547-$154A from $80:91C5),
+ * which adds Wario. There is no BS-X memory here, so do the same at the
+ * frame boundary when mode 1 starts with the first variant. Gen A only. */
+static void UnlockAfterFrame(void)
+{
+#ifndef BUNBUN_GENB
+    static int on = -1;
+    if (on < 0) { const char *e = getenv("BUNBUN_UNLOCK"); on = e && *e && *e != '0'; }
+    if (!on || g_ram[0x76] != 0x01 || g_ram[0x1E8B] != 0 || !g_snes || !g_snes->cart)
+        return;
+    g_ram[0x1E8B] = 2;
+    for (int x = 0; x < 4; x++)
+        g_ram[0x1547 + x] = g_snes->cart->rom[0x11C5 + x];   /* $80:91C5 */
+#endif
+}
+
 void GameRunOneFrame(void)
 {
     snes_beam_frame_driver_run_frame();
+    UnlockAfterFrame();
     if (SkipWaitEnabled())
         SkipWaitAfterFrame();
     if (g_port_reset_request) {

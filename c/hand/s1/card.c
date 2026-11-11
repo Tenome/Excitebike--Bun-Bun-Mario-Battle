@@ -111,3 +111,18 @@ void Mode02_SegmentCard_m1x1(void)
     if (!r816_call_pc(0x80915A))
         r816_unknown_target(0x808C3F, 0x915A);
 }
+
+/* $80:915A SegmentNext (RTS): advance to the next game mode ($76 + 1),
+ * clear sound port 3, restart the mode's setup list and fade out. ($80:915C,
+ * the same without the increment, is jumped to from mode handlers.) */
+void SegmentNext_m1x1(void)
+{
+    wr8(DP(0x76), inc8(rd8(DP(0x76))));
+    wr8(ABS(0x2143), 0);                               /* APUIO3 */
+    lda8(0x00);
+    wr8(DP(0x75), 0);
+    wr8(DP(0x77), 0);
+    lda8(0xFF);
+    wr8(ABS(0x1923), 0xFF);                            /* fade out */
+    ret();
+}
