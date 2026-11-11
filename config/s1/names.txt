@@ -46,3 +46,6 @@
 80B3FE VramQueueCopy        # [$02] source, $10 length, $00 VRAM address -> $7F:0000 queue
 8088E0 SpcUpload            # IPL upload ($BBAA handshake); X selects block via $80:88CE/D4/DA
 81A01B LoadCourse
+80B4AE StepLfsr             # 96-bit shift register $2C-$37, feedback bit1($2C) ^ bit1($2D)
+80B226 ClearOamBuffer       # hide all 128 sprites (Y = $F0) unless $1958; clear $1821-$189F
+8085A6 PackOamHighTable     # 2-bit entries $1820.. -> OAM high table $1800-$181F

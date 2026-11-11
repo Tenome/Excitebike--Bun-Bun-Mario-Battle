@@ -17,3 +17,6 @@
 80B2A5  1 1  mem+X,Y,C,V    VramQueueTiles20
 808979  1 1  mem            NmiFlushVramQueue
 80876B  1 1  mem            NmiFixedUploads
+80B4AE  1 1  mem+X,Y,C,V    StepLfsr
+80B226  1 1  mem+X,Y,C,V    ClearOamBuffer
+8085A6  1 1  mem+X,Y,C,V    PackOamHighTable
