@@ -121,9 +121,9 @@ static void queue_big_digit(u16 jsr_ret, u8 first)
     VramQueueTiles20_m1x1();
 }
 
-/* $80:D113 DrawLapNumber (RTS): when $086E (lap) is non-zero, draw it as a
- * big digit (tiles $30 + (lap - 1) * 2) at VRAM $1859. */
-void DrawLapNumber_m1x1(void)
+/* $80:D113 DrawPlace (RTS): when $086E (the player's place, 1-8) is set,
+ * draw it as a big digit (tiles $30 + (place - 1) * 2) at VRAM $1859. */
+void DrawPlace_m1x1(void)
 {
     lda8(rd8(ABS(0x086E)));
     if ((u8)A == 0) { ret(); return; }
@@ -137,9 +137,9 @@ void DrawLapNumber_m1x1(void)
     ret();
 }
 
-/* $80:D14B DrawPosition (RTS): the race position $0928 (1-8) as a big digit
- * from the tile table $80:D17D, at VRAM $1894. */
-void DrawPosition_m1x1(void)
+/* $80:D14B DrawLap (RTS): the lap number $0928 as a big digit from the
+ * tile table $80:D17D, at VRAM $1894. */
+void DrawLap_m1x1(void)
 {
     lda8(0x94); wr8(DP(0x00), 0x94);
     lda8(0x18); wr8(DP(0x01), 0x18);
@@ -149,14 +149,14 @@ void DrawPosition_m1x1(void)
     ret();
 }
 
-/* $80:9236 RaceHudInit (RTS): draw the HUD labels and position "1" once
+/* $80:9236 RaceHudInit (RTS): draw the HUD labels and "lap 1" once
  * ($0928 = 1 just for the drawing, then 0). */
 void RaceHudInit_m1x1(void)
 {
     lda8(0x01);
     wr8(ABS(0x0928), 0x01);
     push16(0x923D); DrawHudLabelB_m1x1();
-    push16(0x9240); DrawPosition_m1x1();
+    push16(0x9240); DrawLap_m1x1();
     push16(0x9243); DrawHudLabelA_m1x1();
     wr8(ABS(0x0928), 0);
     ret();
@@ -165,7 +165,7 @@ void RaceHudInit_m1x1(void)
 /*
  * $80:9248 RaceSetup (RTS): racer name (not on the special course), lap
  * state ($086E = $7D * 8, $086F-$0876 = 0), lap number, the six 128-byte
- * tables $09D3-$0CD2 filled with $3B, the first OAM entry set to an
+ * tables $09D3-$0CD2 filled with $3B, (places $086E-$0875 = $7D * 8) the first OAM entry set to an
  * off-screen sprite, and the HUD timer digits' positions $0270-$0273.
  */
 void RaceSetup_m1x1(void)
@@ -182,7 +182,7 @@ void RaceSetup_m1x1(void)
         wr8(ABS(0x086F + x), 0);
     }
     X = 0xFF;
-    push16(0x9262); DrawLapNumber_m1x1();
+    push16(0x9262); DrawPlace_m1x1();
     lda8(0x3B);
     for (int x = 0x7F; x >= 0; x--)
         for (int t = 0; t < 6; t++)
@@ -196,4 +196,95 @@ void RaceSetup_m1x1(void)
     lda8(0x0A); wr8(ABS(0x0273), 0x0A);
     lda8(0x05); wr8(ABS(0x0272), 0x05);
     ret();
+}
+
+/* Rider progress along the course (16-bit, one word per rider at $085E) and
+ * place (1-8, one word per rider at $086E; the player is rider 0). */
+
+/*
+ * $80:D0BA UpdatePlayerPlace (RTS). During a race ($086E set, $84 clear,
+ * $8E set): place = 8 minus the riders whose progress is lower than the
+ * player's (equal does not count).
+ */
+void UpdatePlayerPlace_m1x1(void)
+{
+    if (rd8(ABS(0x086E)) == 0 || rd8(DP(0x84)) != 0 || rd8(DP(0x8E)) == 0) {
+        ret();
+        return;
+    }
+    rep(0x20);
+    A = 0x0008;
+    wr16(ABS(0x086E), 0x0008);
+    u16 me = rd16(ABS(0x085E));
+    A = me;
+    for (u8 y = 0x0E; y != 0; y -= 2) {
+        Y = y;
+        u16 other = rd16(ABS(0x085E + y));
+        cmp16(me, other);
+        if (me > other)
+            wr16(ABS(0x086E), dec16(rd16(ABS(0x086E))));
+    }
+    Y = 0;
+    nz8(0);
+    sep(0x20);
+    ret();
+}
+
+/*
+ * $80:D0E5 ComputePlaces (RTS). For every rider X: place = 8 minus the
+ * riders it is ahead of: riders with lower progress, and riders with equal
+ * progress and a lower index.
+ */
+void ComputePlaces_m1x1(void)
+{
+    rep(0x20);
+    for (int x = 0x0E; x >= 0; x -= 2) {
+        X = (u16)x;
+        wr8(DP(0x00), (u8)x);
+        A = 0x0008;
+        wr16(ABS(0x086E + x), 0x0008);
+        for (int y = 0x0E; y >= 0; y -= 2) {
+            Y = (u16)y;
+            if ((u8)y == rd8(DP(0x00)))
+                continue;
+            u16 mine = rd16(ABS(0x085E + x)), theirs = rd16(ABS(0x085E + y));
+            A = mine;
+            if (mine < theirs)
+                continue;
+            if (mine == theirs && (u8)y >= rd8(DP(0x00)))
+                continue;
+            wr16(ABS(0x086E + x), dec16(rd16(ABS(0x086E + x))));
+        }
+    }
+    X = 0xFE;
+    Y = 0xFE;
+    sep(0x20);
+    ret();
+}
+
+/*
+ * $80:D38E DrawCoinIcons (RTL). One HUD coin sprite per coin collected
+ * ($1540, up to 5): sprite n (n = count .. 1) at OAM $1704 + n * 4, position
+ * from $80:D3B5 + n * 2, tile/attribute $2D88, large size.
+ */
+void DrawCoinIcons_m1x1(void)
+{
+    u8 x = (u8)(rd8(ABS(0x1540)) << 1);
+    for (; x != 0; x -= 2) {
+        X = x;
+        u8 y = (u8)(x << 1);
+        Y = y;
+        rep(0x20);
+        A = rd16(ABS(0xD3B5 + x));
+        wr16(ABS(0x1704 + y), A);                 /* X, Y position */
+        A = 0x2D88;
+        wr16(ABS(0x1706 + y), 0x2D88);            /* tile $88, attribute $2D */
+        sep(0x20);
+        Y = (u8)(x >> 1);
+        lda8(0x02);
+        wr8(ABS(0x1861 + Y), 0x02);               /* large */
+    }
+    X = 0;
+    fc = 1; fz = 1; fn = 0;                       /* the loop's CPX #0 at exit */
+    retl();
 }

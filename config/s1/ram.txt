@@ -39,3 +39,8 @@
 # Parallel arrays (field base + index), Stadium 1
 0200 8 rider_f00     14 fields $0200,$0208,...,$0268, index X = rider 0..7 (8 racers)
 0279 16 obj_f00      18 fields $0279,$0289,...,$0389, index X = object slot 0..15 (bank $81 object handlers, type dispatch $81:970D)
+085E 16 progress      rider progress along the course, one word per rider (0 = player)
+086E 16 place         rider place 1-8, one word per rider ($086E = the player's, shown in the HUD)
+0928 1 lap            current lap (HUD big digit)
+1540 1 coins          coins collected (HUD icons)
+1500 16 obj_x         small objects: X position (16-bit), $1508 Y, $1510 velocity, $1520 fraction

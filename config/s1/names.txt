@@ -64,10 +64,13 @@
 80A5B7 DrawRacerName        # racer name (29-byte records $80:A5F9 by character $1542) at VRAM $1851
 80A66D DrawHudLabelA        # tile block $80:A67E at VRAM $18D1
 80A68F DrawHudLabelB        # tile block $80:A6A5 at VRAM $1891 (unless $84)
-80D113 DrawLapNumber        # big digit lap number at VRAM $1859
-80D14B DrawPosition         # big digit race position $0928 at VRAM $1894
+80D113 DrawPlace            # big digit: the player's place $086E (1-8) at VRAM $1859
+80D14B DrawLap              # big digit: lap $0928 (tiles $80:D17D) at VRAM $1894
 809236 RaceHudInit          # HUD labels and position digit
 809248 RaceSetup            # racer name, lap state, $09D3-$0CD2 tables, HUD positions
 80D069 ClipRiderSprite      # hide halves of rider X 2x2 sprite at OAM $07 near the screen edges
 80D34A StepObjectX          # object X: pos $1500/$1501 + fraction $1520 += velocity $1510 (hi nibble signed whole, lo nibble fraction)
 80D3C1 DrawSmallObject      # object X as an animated large sprite (tiles $80:D3F3), OAM slot X*2+4
+80D0BA UpdatePlayerPlace    # $086E = 8 - riders the player is ahead of (progress $085E, 16-bit)
+80D0E5 ComputePlaces        # places $086E,X for all 8 riders from progress $085E,X (ties: lower index ahead)
+80D38E DrawCoinIcons        # $1540 coin icons in the HUD (OAM $1708.., tiles $2D88)

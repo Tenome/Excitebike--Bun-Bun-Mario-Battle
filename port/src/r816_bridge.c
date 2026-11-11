@@ -140,14 +140,17 @@ BRIDGE(HleHand_ClearRaceState,     ClearRaceState_m1x1,     2000)
 BRIDGE(HleHand_DrawRacerName,      DrawRacerName_m1x1,      800)
 BRIDGE(HleHand_DrawHudLabelA,      DrawHudLabelA_m1x1,      800)
 BRIDGE(HleHand_DrawHudLabelB,      DrawHudLabelB_m1x1,      800)
-BRIDGE(HleHand_DrawLapNumber,      DrawLapNumber_m1x1,      500)
-BRIDGE(HleHand_DrawPosition,       DrawPosition_m1x1,       500)
+BRIDGE(HleHand_DrawPlace,      DrawPlace_m1x1,      500)
+BRIDGE(HleHand_DrawLap,       DrawLap_m1x1,       500)
 BRIDGE(HleHand_RaceHudInit,        RaceHudInit_m1x1,        2000)
 BRIDGE(HleHand_RaceSetup,          RaceSetup_m1x1,          6000)
 /* c/hand/s1/objects.c */
 BRIDGE(HleHand_ClipRiderSprite,    ClipRiderSprite_m1x1,    60)
 BRIDGE(HleHand_StepObjectX,        StepObjectX_m1x1,        80)
 BRIDGE(HleHand_DrawSmallObject,    DrawSmallObject_m1x1,    80)
+BRIDGE(HleHand_UpdatePlayerPlace,  UpdatePlayerPlace_m1x1,  200)
+BRIDGE(HleHand_ComputePlaces,      ComputePlaces_m1x1,      1500)
+BRIDGE(HleHand_DrawCoinIcons,      DrawCoinIcons_m1x1,      200)
 /* Not bridged: RunGameModeScript (c/hand/s1/modes.c). Its reset path makes
  * non-tail calls into recompiled routines, and a recompiled routine may yield
  * to the frame scheduler mid-call (a long one like $80:B873 does), which hand

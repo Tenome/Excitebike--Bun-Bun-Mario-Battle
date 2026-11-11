@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 45 hand-written (11.1%), 42 of them in the port.
+407 functions in the static map; 48 hand-written (11.8%), 45 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -51,9 +51,12 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:B4AE` | StepLfsr | `mem+X,Y,C,V` | `frame.c` | yes |
 | `$80:B4D9` | ReadJoypads | `mem+X,Y,C,V` | `kernel.c` |  |
 | `$80:D069` | ClipRiderSprite | `mem+X,C,V` | `objects.c` | yes |
-| `$80:D113` | DrawLapNumber | `mem+X,Y,C,V` | `race.c` | yes |
-| `$80:D14B` | DrawPosition | `mem+X,Y,C,V` | `race.c` | yes |
+| `$80:D0BA` | UpdatePlayerPlace | `mem+X,Y,C,V` | `race.c` | yes |
+| `$80:D0E5` | ComputePlaces | `mem+X` | `race.c` | yes |
+| `$80:D113` | DrawPlace | `mem+X,Y,C,V` | `race.c` | yes |
+| `$80:D14B` | DrawLap | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:D34A` | StepObjectX | `mem+X,Y,V` | `objects.c` | yes |
+| `$80:D38E` | DrawCoinIcons | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:D3C1` | DrawSmallObject | `mem+X,Y,V` | `objects.c` | yes |
 | `$81:A01B` | LoadCourse | `mem+X,Y,C,V` | `kernel.c` | yes |
 | `$81:A1E5` | Random | `mem+A,X,Y,C,V` | `misc.c` | yes |

@@ -42,10 +42,13 @@
 80A5B7  1 1  mem+X,Y,C,V    DrawRacerName
 80A66D  1 1  mem+X,Y,C,V    DrawHudLabelA
 80A68F  1 1  mem+X,Y,C,V    DrawHudLabelB
-80D113  1 1  mem+X,Y,C,V    DrawLapNumber
-80D14B  1 1  mem+X,Y,C,V    DrawPosition
+80D113  1 1  mem+X,Y,C,V    DrawPlace
+80D14B  1 1  mem+X,Y,C,V    DrawLap
 809236  1 1  mem+X,Y,C,V    RaceHudInit
 809248  1 1  mem+X,Y,C,V    RaceSetup
 80D069  1 1  mem+X,C,V      ClipRiderSprite
 80D34A  1 1  mem+X,Y,V      StepObjectX
 80D3C1  1 1  mem+X,Y,V      DrawSmallObject
+80D0BA  1 1  mem+X,Y,C,V    UpdatePlayerPlace
+80D0E5  1 1  mem+X          ComputePlaces
+80D38E  1 1  mem+X,Y,C,V    DrawCoinIcons
