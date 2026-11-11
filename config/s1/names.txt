@@ -53,3 +53,4 @@
 80B498 TickTimers           # decrement the 23 byte timers $39-$4F each frame (and $4F-$62 every 11th)
 8084A8 ForceBlank           # INIDISP = $80 (and shadow $0819), HDMA off
 8084B7 ClearTilemaps        # VRAM $0000-$0FFF and $1800-$1BFF = tile $FC, attribute 0 (fixed-source DMA)
+808322 FadeStep             # INIDISP brightness += $1923 each frame; at 0 after a fade-out: blank, stop sound, reset scroll

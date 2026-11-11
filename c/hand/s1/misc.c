@@ -168,3 +168,113 @@ void Mode0E_TitleWait_m1x1(void)
     }
     ret();
 }
+
+void QueueSound_m1x1(void);
+
+/*
+ * $80:8322 FadeStep (M=1, X=1, RTL), each frame while $1923 (fade speed,
+ * signed) is non-zero. Brightness = INIDISP shadow low nibble + $1923:
+ *   reaches 15  -> clamp, fade-in done ($1923 = 0);
+ *   below 0     -> fade-out done: clear scroll $92-$95, $1958, $1E0C, sound
+ *                  command $80, clock redraw next frame, forced blank,
+ *                  APUIO2 and $1961-$1964 cleared, $1923 = 0.
+ */
+void FadeStep_m1x1(void)
+{
+    lda8(rd8(ABS(0x1903)));
+    and8(0x0F);
+    fc = 0;
+    adc8(rd8(ABS(0x1923)));
+    if (fn) {
+        for (int a = 0x92; a <= 0x95; a++)
+            wr8(DP(a), 0);
+        wr8(ABS(0x1958), 0);
+        wr8(ABS(0x1E0C), 0);
+        lda8(0x80);
+        push8(0x80); push16(0x8348); QueueSound_m1x1();
+        lda8(0x01);
+        wr8(ABS(0x1E84), 0x01);
+        lda8(0x80);
+        wr8(ABS(0x1903), 0x80);
+        wr8(ABS(0x2142), 0);                    /* APUIO2 */
+        for (int a = 0x1961; a <= 0x1964; a++)
+            wr8(ABS(a), 0);
+        wr8(ABS(0x1923), 0);
+    } else {
+        cmp8((u8)A, 0x0F);
+        if (fc) {
+            lda8(0x0F);
+            wr8(ABS(0x1923), 0);
+        }
+    }
+    wr8(ABS(0x1903), (u8)A);
+    retl();
+}
+
+/*
+ * $80:823C BroadcastEventInject (M=1, X=1, RTS), each frame from the main
+ * loop. In a race (mode 3, not the special course), when the broadcast minute
+ * changes ($7F:FFFF != $B7) to one of the event minutes in $80:82A7
+ * (8, 9, 20, 21, 32, 33, 44, 45), place this course's item ($80:82AF[$08A4])
+ * on the next plain-ground column ($40) ahead of the player ($0275 + 3), not
+ * right after obstacles $17/$19/$1B/$03/$04. The course wraps at the $09 goal.
+ */
+void BroadcastEventInject_m1x1(void)
+{
+    lda8(rd8(LONG(0x7FFFFF)));
+    cmp8((u8)A, rd8(ABS(0x00B7)));
+    if (fz) goto done;
+    lda8(rd8(ABS(0x0CD7)));
+    if (!fz) goto done;
+    lda8(rd8(DP(0x76)));
+    cmp8((u8)A, 0x03);
+    if (!fz) goto done;
+    {
+        int x = 7;
+        lda8(rd8(LONG(0x7FFFFF)));
+        for (; x >= 0; x--) {
+            cmp8((u8)A, rd8(ABS(0x82A7 + x)));
+            if (fz)
+                break;
+        }
+        X = (u8)x;
+        fn = 1; fz = 0;                          /* DEX left X negative */
+        if (x < 0) {
+            X = 0xFF;
+            ret();
+            return;
+        }
+    }
+    rep(0x10);
+    {
+        u16 col = (u16)(rd16(ABS(0x0275)) + 3);
+        u8 v;
+        for (;;) {
+            v = rd8(LONG(0x7F4000 + col));
+            if (v == 0x09)
+                col = 0;                         /* goal: wrap to the start */
+            col++;
+            if (v != 0x40)
+                continue;
+            u8 before = rd8(LONG(0x7F3FFE + col));
+            if (before == 0x17 || before == 0x19 || before == 0x1B ||
+                before == 0x03 || before == 0x04)
+                continue;
+            cmp8(before, 0x04);                      /* C as the last CMP leaves it */
+            lda8(before);
+            break;
+        }
+        rep(0x20);
+        Y = rd16(ABS(0x08A4)) & 0xFF;
+        A = Y;
+        sep(0x20);
+        u8 item = rd8(ABS(0x82AF + Y));
+        lda8(item);
+        wr8(LONG(0x7F3FFF + col), item);
+        wr8(ABS(0x00B0), 0);
+        X = col;
+    }
+done:
+    sep(0x10);
+    ret();
+}
