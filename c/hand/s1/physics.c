@@ -138,3 +138,64 @@ void MarkFastRider_m1x1(void)
     wr8(ABS(0x01C8 + X), 0xFF);
     ret();
 }
+
+/*
+ * $80:BFE5 ScrollRivalsRelative (RTS): for riders 7..1 that are on the course
+ * ($01D8,X != 0), move them by their own speed $0180,X minus the player's
+ * $0180 (the camera follows the player): position $0198:$0190,X and the
+ * column-relative $090C,X.
+ */
+void ScrollRivalsRelative_m1x1(void)
+{
+    ldx8(0x07);
+    do {
+        lda8(rd8(ABS(0x01D8 + X)));
+        if (!fz) {
+            lda8(rd8(ABS(0x0180 + X)));
+            fc = 0;
+            adc8(rd8(ABS(0x0190 + X)));
+            if (fc)
+                wr8(ABS(0x0198 + X), inc8(rd8(ABS(0x0198 + X))));
+            fc = 1;
+            sbc8(rd8(ABS(0x0180)));
+            wr8(ABS(0x0190 + X), (u8)A);
+            if (!fc)
+                wr8(ABS(0x0198 + X), dec8(rd8(ABS(0x0198 + X))));
+            lda8(rd8(ABS(0x090C + X)));
+            fc = 1;
+            sbc8(rd8(ABS(0x0180)));
+            wr8(ABS(0x090C + X), (u8)A);
+        }
+        X = dec8((u8)X);
+    } while (!fz);
+    ret();
+}
+
+/*
+ * $80:C3F5 RiderHeightStep (RTS), with the caller's carry: 16-bit
+ * $08EC:$08E4,X += $08FC,X; then A = $08EC,X + $01 (+ carry), and $01 =
+ * A - $08DC,X. On a carry out of the first add, $0904,X is halved; on a
+ * borrow in the subtract, $0904,X = 1. Returns A = $01 with the subtract's
+ * carry.
+ */
+void RiderHeightStep_m1x1(void)
+{
+    lda8(rd8(ABS(0x08E4 + X)));
+    adc8(rd8(ABS(0x08FC + X)));
+    wr8(ABS(0x08E4 + X), (u8)A);
+    lda8(rd8(ABS(0x08EC + X)));
+    adc8(0x00);
+    wr8(ABS(0x08EC + X), (u8)A);
+    adc8(rd8(DP(0x01)));
+    if (fc)
+        wr8(ABS(0x0904 + X), lsr8(rd8(ABS(0x0904 + X))));
+    fc = 1;
+    sbc8(rd8(ABS(0x08DC + X)));
+    wr8(DP(0x01), (u8)A);
+    if (!fc) {
+        lda8(0x01);
+        wr8(ABS(0x0904 + X), 0x01);
+    }
+    lda8(rd8(DP(0x01)));
+    ret();
+}

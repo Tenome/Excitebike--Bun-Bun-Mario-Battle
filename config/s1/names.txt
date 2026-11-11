@@ -131,3 +131,18 @@
 80DB28 ScrollFarLayer        # far layer scroll at $0180/16
 80B0C5 LaneFromY             # $08A4,X = lane 5..1 from $01F0,X
 80E8EA MarkFastRider         # $01C8,X = $FF when grounded and faster than $280
+81B94D RivalPause_B94D       # action 9 until $0379 out, then random repeat count, next state
+81BD23 RivalSequence_BD23    # move list $81:BD4A/BD4E, steps 1-3 then 2
+80CEE7 DrawRiderShadowPair   # two 8x8 sprites at $16C0/$16C4,Y
+80EAD1 PlayerOverheatWarn    # $0990 = 8; first time sound $30 + $2D
+80BFE5 ScrollRivalsRelative  # riders 7..1 move by own speed - player speed
+809E1D EndScreenTimeout      # $88 out -> queue $89:DB00 to VRAM $0300
+81BECE RivalWalkAway_BECE    # walk right 1px / 4 frames, actions $81:BF00
+80C99D RiderLaneBand         # $0958,X = band from $01F0,X vs $80:BE1D
+80E775 AnimateWheels         # wheel frame $0260,X stepped by speed
+80D7BA SetupSpriteRow15      # 15 OAM entries at $1700 from $80:D7E6/F5/D804
+81B9D5 RivalSequence_B9D5    # 7-step list $81:BA09/BA10, then random wait
+81BAAD RivalSequence_BAAD    # 3-step list $81:BAE0/BAE4, then state 2
+81BC4B RivalSequence_BC4B    # 5-step list $81:BC7E/BC84, then state 4
+809982 BsxReadSerial3        # read 3 bytes from BS-X serial to $00-$02,X
+80C3F5 RiderHeightStep       # 16-bit $08EC:$08E4 += $08FC, height vs $08DC

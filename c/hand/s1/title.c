@@ -142,3 +142,30 @@ void Mode0D_IntroText_m1x1(void)
     wr8(ABS(0x1923), dec8(rd8(ABS(0x1923))));
     ret();
 }
+
+/*
+ * $80:D7BA SetupSpriteRow15 (RTS): fill 15 OAM entries at $1700 from the
+ * tables at $80:D7F5 (X), $80:D804 (Y) and $80:D7E6 (tile + $A0), attribute
+ * $31, size bits $1860,X = 2 (large); $1958 counts up.
+ */
+void SetupSpriteRow15_m1x1(void)
+{
+    wr8(ABS(0x1958), inc8(rd8(ABS(0x1958))));
+    ldx8(0x0E);
+    do {
+        lda8((u8)X);
+        lda8(asl8((u8)A));
+        lda8(asl8((u8)A));
+        Y = (u8)A; nz8((u8)Y);
+        lda8(rd8(ABS(0xD7F5 + X))); wr8(ABS(0x1700 + Y), (u8)A);
+        lda8(rd8(ABS(0xD804 + X))); wr8(ABS(0x1701 + Y), (u8)A);
+        lda8(rd8(ABS(0xD7E6 + X)));
+        fc = 1;
+        sbc8(0x60);
+        wr8(ABS(0x1702 + Y), (u8)A);
+        lda8(0x31); wr8(ABS(0x1703 + Y), 0x31);
+        lda8(0x02); wr8(ABS(0x1860 + X), 0x02);
+        X = dec8((u8)X);
+    } while (!fn);
+    ret();
+}

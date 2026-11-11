@@ -288,3 +288,116 @@ void DrawCoinIcons_m1x1(void)
     fc = 1; fz = 1; fn = 0;                       /* the loop's CPX #0 at exit */
     retl();
 }
+
+/*
+ * $80:CEE7 DrawRiderShadowPair (RTS): two 8x8 sprites in the OAM buffer at
+ * $16C0,Y and $16C4,Y: Y = A - 7 and A - 15, X = $01B0,X + 16 and + 8,
+ * tiles $E0 and $F0.
+ */
+void DrawRiderShadowPair_m1x1(void)
+{
+    fc = 0; adc8(0xF9); wr8(ABS(0x16C0 + Y), (u8)A);
+    fc = 0; adc8(0xF8); wr8(ABS(0x16C4 + Y), (u8)A);
+    lda8(rd8(ABS(0x01B0 + X)));
+    fc = 0; adc8(0x08); wr8(ABS(0x16C5 + Y), (u8)A);
+    fc = 0; adc8(0x08); wr8(ABS(0x16C1 + Y), (u8)A);
+    lda8(0xE0); wr8(ABS(0x16C2 + Y), 0xE0);
+    lda8(0xF0); wr8(ABS(0x16C6 + Y), 0xF0);
+    ret();
+}
+
+void QueueSound_m1x1(void);
+
+/*
+ * $80:EAD1 PlayerOverheatWarn (RTS): for rider 0 only, when nothing else is
+ * going on ($0940, $60, $01E8 and $0CE0 all zero): $0990 = 8, and the first
+ * time ($1979 = 0) set $1979 = $30, play sounds $30 and $2D, clear $A2.
+ */
+void PlayerOverheatWarn_m1x1(void)
+{
+    lda8((u8)X);
+    ora8(rd8(ABS(0x0940)));
+    ora8(rd8(DP(0x60)));
+    ora8(rd8(ABS(0x01E8 + X)));
+    ora8(rd8(ABS(0x0CE0)));
+    if (!fz) { ret(); return; }
+    lda8(0x08);
+    wr8(ABS(0x0990), 0x08);
+    cmp8((u8)X, 0x00);
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABS(0x1979)));
+    if (!fz) { ret(); return; }
+    lda8(0x30);
+    wr8(ABS(0x1979), 0x30);
+    push8(0x80); push16(0xEAF5); QueueSound_m1x1();
+    lda8(0x2D);
+    push8(0x80); push16(0xEAFB); QueueSound_m1x1();
+    wr8(DP(0xA2), 0);
+    ret();
+}
+
+/*
+ * $80:C99D RiderLaneBand (RTS): $0958,X = which band of the track the rider
+ * is in by Y position $01F0,X against the 5 limits at $80:BE1D (signed
+ * compares), 0 while airborne ($01D0,X != 0) or past the last limit; bands
+ * are 2 higher when $0208,X = 1.
+ */
+void RiderLaneBand_m1x1(void)
+{
+    ldy8(0x00);
+    lda8(rd8(ABS(0x01D0 + X)));
+    if (fz) {
+        lda8(rd8(ABS(0x01F0 + X)));
+        for (;;) {
+            cmp8((u8)A, rd8(ABS(0xBE1D + Y)));
+            if (fn) break;
+            Y = inc8((u8)Y);
+            cmp8((u8)Y, 0x05);
+            if (!fn) { ldy8(0x00); break; }
+        }
+        lda8((u8)Y);
+        if (!fz) {
+            lda8(0x01);
+            cmp8(0x01, rd8(ABS(0x0208 + X)));
+            if (fz) {
+                Y = inc8((u8)Y);
+                Y = inc8((u8)Y);
+            }
+        }
+    }
+    lda8((u8)Y);
+    wr8(ABS(0x0958 + X), (u8)A);
+    ret();
+}
+
+/*
+ * $80:E775 AnimateWheels (RTS): for riders X..0, count the wheel timer
+ * $0188,X down by the speed $0180,X; each time it runs out (+8 frames) step
+ * the wheel frame $0260,X (0-63). $0240,X is cleared for every rider.
+ */
+void AnimateWheels_m1x1(void)
+{
+    do {
+        lda8(rd8(ABS(0x0180 + X)));
+        if (!fz) {
+            lda8(rd8(ABS(0x0188 + X)));
+            fc = 1;
+            sbc8(rd8(ABS(0x0180 + X)));
+            if (!fz && !fn) {
+                wr8(ABS(0x0188 + X), (u8)A);
+            } else {
+                fc = 0;
+                adc8(0x08);
+                wr8(ABS(0x0188 + X), (u8)A);
+                wr8(ABS(0x0260 + X), inc8(rd8(ABS(0x0260 + X))));
+                lda8(rd8(ABS(0x0260 + X)));
+                and8(0x3F);
+                wr8(ABS(0x0260 + X), (u8)A);
+            }
+        }
+        lda8(0x00);
+        wr8(ABS(0x0240 + X), 0x00);
+        X = dec8((u8)X);
+    } while (!fn);
+    ret();
+}

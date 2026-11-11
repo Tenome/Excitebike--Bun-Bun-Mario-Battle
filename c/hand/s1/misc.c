@@ -638,3 +638,43 @@ void MergeBsxFlags_m1x1(void)
     wr8(ABS(0x0859), tsb8(rd8(ABS(0x0859))));
     retl();
 }
+
+void VramQueueCopy_m1x1(void);
+
+/* $80:9E1D EndScreenTimeout (RTS): when the timer $88 runs out, queue the
+ * 16x17 tilemap at $89:DB00 to VRAM $0300 and set $0453 = 9. */
+void EndScreenTimeout_m1x1(void)
+{
+    u8 t = dec8(rd8(DP(0x88)));
+    wr8(DP(0x88), t);
+    if (t != 0) { ret(); return; }
+    lda8(0x00); wr8(DP(0x02), 0x00);
+    lda8(0xDB); wr8(DP(0x03), 0xDB);
+    lda8(0x89); wr8(DP(0x04), 0x89);
+    lda8(0x20); wr8(DP(0x10), 0x20);
+    lda8(0x02); wr8(DP(0x11), 0x02);
+    lda8(0x00); wr8(DP(0x00), 0x00);
+    lda8(0x03); wr8(DP(0x01), 0x03);
+    push16(0x9E3F); VramQueueCopy_m1x1();
+    lda8(0x09);
+    wr8(ABS(0x0453), 0x09);
+    ret();
+}
+
+void BsxReadSerialByte_m1x1(void);
+
+/* $80:9982 BsxReadSerial3 (RTL): select the BS-X serial device ($2199 = $81),
+ * read three bytes to $00-$02,X (direct page), deselect ($2199 = $41). */
+void BsxReadSerial3_m1x1(void)
+{
+    lda8(0x81);
+    wr8(ABS(0x2199), 0x81);
+    static const u16 rets[3] = { 0x998C, 0x9992, 0x9998 };
+    for (int i = 0; i < 3; i++) {
+        push8(0x80); push16(rets[i]); BsxReadSerialByte_m1x1();
+        wr8(DPX(i), (u8)A);
+    }
+    lda8(0x41);
+    wr8(ABS(0x2199), 0x41);
+    retl();
+}

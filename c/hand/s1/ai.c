@@ -289,3 +289,173 @@ void RivalTumble_B64A_m1x1(void)
     push8(0x81); push16(0xB67D); QueueSound_m1x1();
     ret();
 }
+
+/*
+ * $81:B94D RivalPause_B94D: action 9 while timer $0379 runs; when it is out,
+ * timer $0369 = 22 frames, repeat count $0329 = 1-4 (random), step 0, next
+ * state.
+ */
+void RivalPause_B94D_m1x1(void)
+{
+    X = rd8(ABS(0x039D));
+    lda8(rd8(ABS(0x0379 + X)));
+    if ((u8)A == 0) {
+        lda8(0x16);
+        wr8(ABS(0x0369 + X), 0x16);
+        push8(0x81); push16(0xB95D); Random_m1x1();
+        and8(0x03);
+        lda8(inc8((u8)A));
+        wr8(ABS(0x0329 + X), (u8)A);
+        wr8(ABS(0x0319 + X), 0);
+        wr8(ABS(0x0309 + X), inc8(rd8(ABS(0x0309 + X))));
+    }
+    lda8(0x09);
+    wr8(ABS(0x0349 + X), 0x09);
+    ret();
+}
+
+/*
+ * $81:BD23 RivalSequence_BD23: like RivalSequence_BB05 with the tables at
+ * $81:BD4A (timers) and $81:BD4E (actions), cycling steps 1-3 but going back
+ * to step 2 after step 3.
+ */
+void RivalSequence_BD23_m1x1(void)
+{
+    X = rd8(ABS(0x039D));
+    lda8(rd8(ABS(0x0369 + X)));
+    if ((u8)A != 0) { ret(); return; }
+    u8 step = (u8)((rd8(ABS(0x0319 + X)) + 1) & 0x03);
+    lda8(step);
+    wr8(ABS(0x0319 + X), step);
+    Y = step; nz8(step);
+    if (step == 0) {
+        step = 2;
+        lda8(2);
+        wr8(ABS(0x0319 + X), 2);
+        Y = 2;
+    }
+    lda8(rd8(ABS(0xBD4A + Y))); wr8(ABS(0x0369 + X), (u8)A);
+    lda8(rd8(ABS(0xBD4E + Y))); wr8(ABS(0x0349 + X), (u8)A);
+    ret();
+}
+
+/*
+ * $81:BECE RivalWalkAway_BECE: every 4 frames step the 4-frame cycle ($0319)
+ * and move right one pixel ($0279); at X >= $A0 go back to state 0 with a
+ * 64-frame timer. The action each frame is $81:BF00[step].
+ */
+void RivalWalkAway_BECE_m1x1(void)
+{
+    X = rd8(ABS(0x039D));
+    lda8(rd8(ABS(0x0369 + X)));
+    if ((u8)A == 0) {
+        lda8((u8)((rd8(ABS(0x0319 + X)) + 1) & 0x03));
+        wr8(ABS(0x0319 + X), (u8)A);
+        lda8(0x04);
+        wr8(ABS(0x0369 + X), 0x04);
+        u8 x = inc8(rd8(ABS(0x0279 + X)));
+        wr8(ABS(0x0279 + X), x);
+        lda8(x);
+        cmp8(x, 0xA0);
+        if (fc) {
+            wr8(ABS(0x0309 + X), 0);
+            lda8(0x40);
+            wr8(ABS(0x0369 + X), 0x40);
+        }
+    }
+    ldy8(rd8(ABS(0x0319 + X)));
+    lda8(rd8(ABS(0xBF00 + Y)));
+    wr8(ABS(0x0349 + X), (u8)A);
+    ret();
+}
+
+/* Random 64-127 (Random & $3F) + $40, called from bank $81 with the JSL return
+ * address jsl_ret (the address of the JSL's last byte). */
+static u8 random_64_127(u16 jsl_ret)
+{
+    push8(0x81); push16(jsl_ret); Random_m1x1();
+    and8(0x3F);
+    fc = 0;
+    adc8(0x40);
+    return (u8)A;
+}
+
+/*
+ * $81:B9D5 RivalSequence_B9D5: 7-step move list (timers $81:BA09, actions
+ * $81:BA10); after the last step, start again from step 0 with a random
+ * 64-127 frame timer.
+ */
+void RivalSequence_B9D5_m1x1(void)
+{
+    X = rd8(ABS(0x039D));
+    lda8(rd8(ABS(0x0369 + X)));
+    if ((u8)A != 0) { ret(); return; }
+    u8 step = inc8(rd8(ABS(0x0319 + X)));
+    lda8(step);
+    Y = step;
+    wr8(ABS(0x0319 + X), step);
+    cmp8(step, 0x07);
+    if (fc) {
+        Y = 0;
+        wr8(ABS(0x0319 + X), 0);
+        wr8(ABS(0x0369 + X), random_64_127(0xB9F1));
+    } else {
+        lda8(rd8(ABS(0xBA09 + Y)));
+        wr8(ABS(0x0369 + X), (u8)A);
+    }
+    lda8(rd8(ABS(0xBA10 + Y)));
+    wr8(ABS(0x0349 + X), (u8)A);
+    ret();
+}
+
+/*
+ * $81:BAAD RivalSequence_BAAD: 3-step move list (timers $81:BAE0, actions
+ * $81:BAE4); when the cycle wraps, go to state 2 with a random 64-127 frame
+ * wait ($0379).
+ */
+void RivalSequence_BAAD_m1x1(void)
+{
+    X = rd8(ABS(0x039D));
+    lda8(rd8(ABS(0x0369 + X)));
+    if ((u8)A != 0) { ret(); return; }
+    u8 step = (u8)((rd8(ABS(0x0319 + X)) + 1) & 0x03);
+    lda8(step);
+    wr8(ABS(0x0319 + X), step);
+    Y = step; nz8(step);
+    if (step == 0) {
+        lda8(0x02);
+        wr8(ABS(0x0309 + X), 0x02);
+        wr8(ABS(0x0379 + X), random_64_127(0xBAC9));
+        ret();
+        return;
+    }
+    lda8(rd8(ABS(0xBAE0 + Y))); wr8(ABS(0x0369 + X), (u8)A);
+    lda8(rd8(ABS(0xBAE4 + Y))); wr8(ABS(0x0349 + X), (u8)A);
+    ret();
+}
+
+/*
+ * $81:BC4B RivalSequence_BC4B: 5-step move list (timers $81:BC7E, actions
+ * $81:BC84); after it, state 4 with a random 64-127 frame wait ($0379).
+ */
+void RivalSequence_BC4B_m1x1(void)
+{
+    X = rd8(ABS(0x039D));
+    lda8(rd8(ABS(0x0369 + X)));
+    if ((u8)A != 0) { ret(); return; }
+    u8 step = inc8(rd8(ABS(0x0319 + X)));
+    lda8(step);
+    wr8(ABS(0x0319 + X), step);
+    Y = step;
+    cmp8(step, 0x06);
+    if (fc) {
+        lda8(0x04);
+        wr8(ABS(0x0309 + X), 0x04);
+        wr8(ABS(0x0379 + X), random_64_127(0xBC67));
+        ret();
+        return;
+    }
+    lda8(rd8(ABS(0xBC7E + Y))); wr8(ABS(0x0369 + X), (u8)A);
+    lda8(rd8(ABS(0xBC84 + Y))); wr8(ABS(0x0349 + X), (u8)A);
+    ret();
+}

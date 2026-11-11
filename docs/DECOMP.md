@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 105 hand-written (25.8%), 102 of them in the port.
+407 functions in the static map; 120 hand-written (29.5%), 118 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -20,7 +20,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:8369` | InitPpuRegisters | `mem+Y,C,V` | `init.c` | yes |
 | `$80:84A8` | ForceBlank | `mem+C,V` | `init.c` | yes |
 | `$80:84B7` | ClearTilemaps | `mem+C,V` | `init.c` | yes |
-| `$80:8539` | DmaKick | `mem+X,Y,C,V` | `vram.c` |  |
+| `$80:8539` | DmaKick | `mem+X,Y,C,V` | `vram.c` | yes |
 | `$80:8541` | DmaCopyToWram | `mem+V` | `kernel.c` | yes |
 | `$80:8562` | DmaFillZero | `mem+C,V` | `kernel.c` | yes |
 | `$80:8589` | InitFadeState | `mem+X,Y,C,V` | `misc.c` | yes |
@@ -42,7 +42,9 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:9236` | RaceHudInit | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:9248` | RaceSetup | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:95AE` | DrawText95C4 | `mem+Y,V` | `misc.c` | yes |
+| `$80:9982` | BsxReadSerial3 | `mem+X,Y,V` | `misc.c` | yes |
 | `$80:99A1` | BsxReadSerialByte | `mem+A,X,Y,V` | `misc.c` | yes |
+| `$80:9E1D` | EndScreenTimeout | `mem+X,Y,C,V` | `misc.c` | yes |
 | `$80:9E46` | BeginFadeInBg3 | `mem+X,Y,C,V` | `misc.c` | yes |
 | `$80:9E77` | BeginFadeIn | `mem+X,Y,C,V` | `misc.c` | yes |
 | `$80:A03F` | GrowBar087E | `mem+X,Y,V` | `misc.c` | yes |
@@ -66,8 +68,12 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:BF74` | RiderShadowY | `mem+X,Y,C,V` | `physics.c` | yes |
 | `$80:BFBA` | AddSpeedFraction | `mem+X,Y,C,V` | `misc.c` | yes |
 | `$80:BFD0` | ScrollByPlayerSpeed | `mem+X,Y` | `physics.c` | yes |
+| `$80:BFE5` | ScrollRivalsRelative | `mem+X,Y` | `physics.c` | yes |
 | `$80:C337` | Tick08CC | `mem+X,Y,C,V` | `misc.c` | yes |
+| `$80:C3F5` | RiderHeightStep | `mem+A,X,Y,C,V` | `physics.c` | yes |
 | `$80:C98F` | DivideAX | `mem+X,V` | `misc.c` | yes |
+| `$80:C99D` | RiderLaneBand | `mem+X,Y,C,V` | `race.c` | yes |
+| `$80:CEE7` | DrawRiderShadowPair | `mem+X,Y,V` | `race.c` | yes |
 | `$80:D069` | ClipRiderSprite | `mem+X,C,V` | `objects.c` | yes |
 | `$80:D0BA` | UpdatePlayerPlace | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:D0E5` | ComputePlaces | `mem+X` | `race.c` | yes |
@@ -77,12 +83,15 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:D38E` | DrawCoinIcons | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:D3C1` | DrawSmallObject | `mem+X,Y,V` | `objects.c` | yes |
 | `$80:D3FD` | ClearWords1530 | `mem+C,V` | `misc.c` | yes |
+| `$80:D7BA` | SetupSpriteRow15 | `mem+X,Y,C,V` | `title.c` | yes |
 | `$80:DA85` | DispatchBy85 | `mem+V` | `misc.c` | yes |
 | `$80:DB28` | ScrollFarLayer | `mem+V` | `physics.c` | yes |
 | `$80:DCD8` | BlankQueueRow | `mem+Y` | `misc.c` | yes |
 | `$80:E043` | AnimSourceFromFrame | `mem+X,Y,C,V` | `misc.c` | yes |
 | `$80:E3FB` | StartMode01 | `mem+X,Y,C,V` | `misc.c` | yes |
+| `$80:E775` | AnimateWheels | `mem+V` | `race.c` | yes |
 | `$80:E8EA` | MarkFastRider | `mem+A,X,Y,C,V` | `physics.c` | yes |
+| `$80:EAD1` | PlayerOverheatWarn | `mem+A,X,Y,C,V` | `race.c` | yes |
 | `$81:8C21` | BlankQueueRowPal2 | `mem+Y` | `misc.c` | yes |
 | `$81:9761` | RivalDispatch_9761 | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:97CC` | RivalCountdown_97CC | `mem+V` | `misc.c` | yes |
@@ -101,21 +110,27 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$81:B8D6` | RivalDispatch_B8D6 | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:B8ED` | RivalWaitRandom_B8ED | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:B914` | RivalAlternate_B914 | `mem+X,Y,C,V` | `ai.c` | yes |
+| `$81:B94D` | RivalPause_B94D | `mem+V` | `ai.c` | yes |
 | `$81:B9B6` | RivalWaitStep_B9B6 | `mem+X,Y,C,V` | `ai.c` | yes |
+| `$81:B9D5` | RivalSequence_B9D5 | `mem+V` | `ai.c` | yes |
 | `$81:BA17` | RivalDispatch_BA17 | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:BA2E` | RivalWaitRandom_BA2E | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:BA55` | RivalAlternate_BA55 | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:BA8E` | RivalWaitStep_BA8E | `mem+X,Y,C,V` | `ai.c` | yes |
+| `$81:BAAD` | RivalSequence_BAAD | `mem+V` | `ai.c` | yes |
 | `$81:BAE8` | RivalWaitStep_BAE8 | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:BB05` | RivalSequence_BB05 | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:BB32` | RivalDispatch_BB32 | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:BB49` | RivalWaitRandom_BB49 | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:BB70` | RivalAlternate_BB70 | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:BC2E` | RivalWaitStep_BC2E | `mem+X,Y,C,V` | `ai.c` | yes |
+| `$81:BC4B` | RivalSequence_BC4B | `mem+V` | `ai.c` | yes |
 | `$81:BC8A` | RivalDispatch_BC8A | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:BCA1` | RivalWaitRandom_BCA1 | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:BD06` | RivalWaitStep_BD06 | `mem+X,Y,C,V` | `ai.c` | yes |
+| `$81:BD23` | RivalSequence_BD23 | `mem+V` | `ai.c` | yes |
 | `$81:BD52` | RivalDispatch_BD52 | `mem+X,Y,C,V` | `ai.c` | yes |
+| `$81:BECE` | RivalWalkAway_BECE | `mem+V` | `ai.c` | yes |
 | `$81:F8BB` | BsxPollStream | `mem+X,Y,C,V` | `kernel.c` | yes |
 | `$81:F999` | ResetMinuteFrame | `mem+A,X,Y` | `misc.c` | yes |
 
