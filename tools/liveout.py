@@ -193,7 +193,7 @@ def main():
                 names[t[1]] = int(t[0], 16)
     lv = Live(code)
     for tname in targets:
-        f = names.get(tname) or int(tname, 16)
+        f = names.get(tname) or int(tname.replace("sub_", ""), 16)
         out = lv.live_out(f)
         print('%-22s sites %3d  live-out: %s' % (tname, len(lv.sites.get(f, [])),
                                                 ','.join(r for r in REGS if r in out) or '-'))

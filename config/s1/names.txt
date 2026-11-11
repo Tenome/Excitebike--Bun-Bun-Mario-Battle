@@ -49,3 +49,5 @@
 80B4AE StepLfsr             # 96-bit shift register $2C-$37, feedback bit1($2C) ^ bit1($2D)
 80B226 ClearOamBuffer       # hide all 128 sprites (Y = $F0) unless $1958; clear $1821-$189F
 8085A6 PackOamHighTable     # 2-bit entries $1820.. -> OAM high table $1800-$181F
+80819F DrawClock            # broadcast clock HH:MM (blinking colon) -> tiles $1E1E, queued every 30 frames
+80B498 TickTimers           # decrement the 23 byte timers $39-$4F each frame (and $4F-$62 every 11th)

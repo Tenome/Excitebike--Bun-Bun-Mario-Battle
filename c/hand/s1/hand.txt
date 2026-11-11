@@ -20,3 +20,8 @@
 80B4AE  1 1  mem+X,Y,C,V    StepLfsr
 80B226  1 1  mem+X,Y,C,V    ClearOamBuffer
 8085A6  1 1  mem+X,Y,C,V    PackOamHighTable
+81A1E5  1 1  mem+A,X,Y,C,V  Random
+80B498  1 1  mem+X,Y,C,V    TickTimers
+80819F  1 1  mem+X,Y,C,V    DrawClock
+808A46  1 1  mem+X,Y,C,V    Mode00_IntroWait
+808B00  1 1  mem+X,Y,C,V    Mode0E_TitleWait

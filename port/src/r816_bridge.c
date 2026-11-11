@@ -84,4 +84,10 @@ BRIDGE(HleHand_NmiFixedUploads,   NmiFixedUploads_m1x1,   600)
 BRIDGE(HleHand_StepLfsr,         StepLfsr_m1x1,         80)
 BRIDGE(HleHand_ClearOamBuffer,   ClearOamBuffer_m1x1,   1500)
 BRIDGE(HleHand_PackOamHighTable, PackOamHighTable_m1x1, 900)
+/* c/hand/s1/misc.c */
+BRIDGE(HleHand_Random,           Random_m1x1,           60)
+BRIDGE(HleHand_TickTimers,       TickTimers_m1x1,       400)
+BRIDGE(HleHand_DrawClock,        DrawClock_m1x1,        500)
+BRIDGE(HleHand_Mode00_IntroWait, Mode00_IntroWait_m1x1, 60)
+BRIDGE(HleHand_Mode0E_TitleWait, Mode0E_TitleWait_m1x1, 40)
 #endif
