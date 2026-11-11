@@ -25,3 +25,6 @@
 80819F  1 1  mem+X,Y,C,V    DrawClock
 808A46  1 1  mem+X,Y,C,V    Mode00_IntroWait
 808B00  1 1  mem+X,Y,C,V    Mode0E_TitleWait
+8084A8  1 1  mem+C,V        ForceBlank
+8084B7  1 1  mem+C,V        ClearTilemaps
+808369  1 1  mem+Y,C,V      InitPpuRegisters

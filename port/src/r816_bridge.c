@@ -112,6 +112,10 @@ BRIDGE(HleHand_TickTimers,       TickTimers_m1x1,       400)
 BRIDGE(HleHand_DrawClock,        DrawClock_m1x1,        500)
 BRIDGE(HleHand_Mode00_IntroWait, Mode00_IntroWait_m1x1, 60)
 BRIDGE(HleHand_Mode0E_TitleWait, Mode0E_TitleWait_m1x1, 40)
+/* c/hand/s1/init.c */
+BRIDGE(HleHand_ForceBlank,       ForceBlank_m1x1,       30)
+BRIDGE(HleHand_ClearTilemaps,    ClearTilemaps_m1x1,    200)
+BRIDGE(HleHand_InitPpuRegisters, InitPpuRegisters_m1x1, 600)
 /* Not bridged: RunGameModeScript (c/hand/s1/modes.c). Its reset path makes
  * non-tail calls into recompiled routines, and a recompiled routine may yield
  * to the frame scheduler mid-call (a long one like $80:B873 does), which hand

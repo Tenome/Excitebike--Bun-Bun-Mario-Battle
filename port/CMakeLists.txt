@@ -152,7 +152,7 @@ bunbun_game(BunbunS1SNESRecomp ${CMAKE_SOURCE_DIR}/src/gen ${CMAKE_SOURCE_DIR}/r
 # Decompiled (hand-written) routines that replace recompiled ones through
 # hle_func + src/r816_bridge.c. Each one passed tools/difftest816.py.
 set(BUNBUN_C ${CMAKE_SOURCE_DIR}/../c)
-set(_bunbun_hand ${BUNBUN_C}/runtime816.c ${BUNBUN_C}/hand/s1/kernel.c ${BUNBUN_C}/hand/s1/vram.c ${BUNBUN_C}/hand/s1/frame.c ${BUNBUN_C}/hand/s1/misc.c)
+set(_bunbun_hand ${BUNBUN_C}/runtime816.c ${BUNBUN_C}/hand/s1/kernel.c ${BUNBUN_C}/hand/s1/vram.c ${BUNBUN_C}/hand/s1/frame.c ${BUNBUN_C}/hand/s1/misc.c ${BUNBUN_C}/hand/s1/init.c)
 target_sources(BunbunS1SNESRecomp PRIVATE ${_bunbun_hand} ${CMAKE_SOURCE_DIR}/src/r816_bridge.c)
 set_source_files_properties(${_bunbun_hand} PROPERTIES
     COMPILE_DEFINITIONS R816_EXTERNAL_BUS=1

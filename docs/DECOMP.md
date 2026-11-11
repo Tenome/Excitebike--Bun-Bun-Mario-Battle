@@ -9,12 +9,15 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 21 hand-written (5.2%), 18 of them in the port.
+407 functions in the static map; 24 hand-written (5.9%), 21 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
 | `$80:819F` | DrawClock | `mem+X,Y,C,V` | `misc.c` | yes |
 | `$80:82B6` | QueueSound | `mem+A,X,Y,C,V` | `kernel.c` | yes |
+| `$80:8369` | InitPpuRegisters | `mem+Y,C,V` | `init.c` | yes |
+| `$80:84A8` | ForceBlank | `mem+C,V` | `init.c` | yes |
+| `$80:84B7` | ClearTilemaps | `mem+C,V` | `init.c` | yes |
 | `$80:8539` | DmaKick | `mem+X,Y,C,V` | `vram.c` |  |
 | `$80:8541` | DmaCopyToWram | `mem+V` | `kernel.c` | yes |
 | `$80:8562` | DmaFillZero | `mem+C,V` | `kernel.c` | yes |
