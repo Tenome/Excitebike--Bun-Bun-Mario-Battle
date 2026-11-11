@@ -708,6 +708,7 @@ def finish(d, args):
         json.dump({'jt': {'%06X' % site: {'table': '%06X' % t, 'targets': ['%06X' % x for x in tg]}
                           for site, (t, tg) in d.jumptables.items()},
                    'insn': {'%06X' % k: [v[0], v[1], v[2], v[3]] for k, v in d.insn.items()},
+                   'mx': {'%06X' % k: sorted([int(a) * 2 + int(b) for a, b in d.flags_at[k]]) for k in d.insn},
                    'funcs': {'%06X' % k: sorted(['M%dX%d' % (int(a), int(b)) for a, b in v])
                              for k, v in d.funcs.items()}}, f, indent=0)
     print(d.report().split('\n== Hardware')[0])

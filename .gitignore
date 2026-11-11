@@ -8,3 +8,4 @@ __pycache__/
 *.log
 port/src/gen-genb/
 port/recomp-genb/funcs.h
+c/auto/
