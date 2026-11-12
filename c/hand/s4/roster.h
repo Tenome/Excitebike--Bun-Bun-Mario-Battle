@@ -38,4 +38,20 @@ u32 roster_name(int st, int ch, u16 orig);
  * ($81:C158 + ch * 8 + rider). */
 u8 roster_winner_pose(int ch, int rider);
 
+/* Voice sample stream uploaded when ch is chosen: 0 = the original
+ * ($82:8593 with X = ch + 1), else the 24-bit address of the stream. */
+u32 roster_voice_stream(int ch);
+
+/* PLAYER SELECT carousel: portrait i (0..roster_count()-1) on the ring. */
+u8 roster_select_ring_offset(int i);           /* start angle ($80:8F64) */
+int roster_select_is_stop(u8 a0);               /* ring stops here (portrait 0's angle) */
+u8 roster_select_cursor(u8 a0);                 /* front position from a0 ($80:8CEC) */
+u8 roster_select_oam(u8 cursor, int i);         /* OAM offset, front first ($80:8CF1) */
+void roster_select_portrait(int st, int i, u8 *tile, u8 *nt, u8 *selpal);
+u8 roster_select_name_row(int st, int i);       /* name sprite row ($80:8E46 for i = 3) */
+u8 roster_select_char(u8 cursor);               /* character in front ($80:8B21) */
+/* 1 when the carousel is laid out by the roster (more than the original
+ * five): every portrait's angle then follows portrait 0's. */
+int roster_select_general(void);
+
 #endif

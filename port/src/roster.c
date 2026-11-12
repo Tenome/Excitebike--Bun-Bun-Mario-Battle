@@ -182,3 +182,111 @@ u8 roster_winner_pose(int ch, int rider)
         return g_ch[ch].pose[rider & 7];
     return rd8(LONG(0x810000 | (0xC158 + ((ch * 8 + rider) & 0xFF))));
 }
+
+/* ---- PLAYER SELECT carousel ------------------------------------------------- */
+/* With the original five characters the carousel follows the ROM tables
+ * exactly. With added characters it is laid out here: portraits 0-4 are the
+ * Stadium 4 ones (Mario, Wario, Kinopio, Yoshi, Peach), 5 is Luigi with the
+ * Stadium 3 portrait the S4 build keeps (tile $60 in the second sprite name
+ * table, palette $2C, name row 5). Ring order and stop angles are spaced
+ * evenly (steps of 2, so every stop is even). */
+typedef struct { u8 ch, tile, nt, selpal, name_row; } Portrait;
+static const Portrait kPortraits[6] = {
+    { 0, 0x40, 0, 0x20, 0 },      /* Mario */
+    { 3, 0xA6, 0, 0x26, 1 },      /* Wario */
+    { 2, 0xA0, 0, 0x24, 2 },      /* Kinopio */
+    { 1, 0x46, 0, 0x22, 3 },      /* Yoshi (Stadium 4 portrait) */
+    { 4, 0x00, 1, 0x2A, 4 },      /* Peach */
+    { 5, 0x60, 1, 0x2C, 5 },      /* Luigi (Stadium 3 portrait) */
+};
+/* ring position k -> portrait, and each portrait's ring offset */
+static const u8 kRing[6] = { 0, 1, 2, 4, 3, 5 };
+static u8 ring_stop(int k) { return (u8)(((k * 256 / 6) + 1) & ~1); }   /* 0,42,86,128,170,214 */
+
+static int general(void) { return g_count > 5; }
+
+u32 roster_voice_stream(int ch) { return ch == 5 && g_count > 5 ? EXT_LUIGI_VOICE : 0; }
+
+u8 roster_select_ring_offset(int i)
+{
+    if (!general())
+        return rd8(LONG(0x808F64 + i));
+    for (int k = 0; k < 6; k++)
+        if (kRing[k] == i)
+            return ring_stop(k);
+    return 0;
+}
+
+int roster_select_is_stop(u8 a0)
+{
+    if (!general())
+        return a0 == 0x00 || a0 == 0x34 || a0 == 0x66 || a0 == 0x9A || a0 == 0xCC;
+    for (int k = 0; k < 6; k++)
+        if ((u8)(0x100 - ring_stop(k)) == a0)
+            return 1;
+    return 0;
+}
+
+static int angle_dist(u8 a) { return a < 128 ? a : 256 - a; }
+
+/* the portrait whose angle is closest to the front (0) */
+u8 roster_select_cursor(u8 a0)
+{
+    if (!general()) {
+        for (int y = 0; y < 5; y++)
+            if (a0 >= rd8(ABS(0x8CEC + y)))
+                return (u8)y;
+        return 0;
+    }
+    int best = 0, bd = 999;
+    for (int k = 0; k < 6; k++) {
+        int d = angle_dist((u8)(a0 + ring_stop(k)));
+        if (d < bd) { bd = d; best = k; }
+    }
+    return (u8)best;
+}
+
+u8 roster_select_oam(u8 cursor, int i)
+{
+    if (!general())
+        return rd8(ABS(0x8CF1 + (u8)(cursor * 5 + i)));
+    /* front first: rank by distance from the front */
+    u8 a0 = rd8(ABS(0x1554));
+    int di = angle_dist((u8)(a0 + roster_select_ring_offset(i)));
+    int rank = 0;
+    for (int j = 0; j < 6; j++) {
+        int dj = angle_dist((u8)(a0 + roster_select_ring_offset(j)));
+        if (dj < di || (dj == di && j < i))
+            rank++;
+    }
+    return (u8)(rank * 36);
+}
+
+void roster_select_portrait(int st, int i, u8 *tile, u8 *nt, u8 *selpal)
+{
+    if (!general()) {
+        *tile = rd8(LONG((st ? 0x808D19 : 0x808D0A) + i));
+        *nt = rd8(LONG((st ? 0x808D23 : 0x808D14) + i));
+        *selpal = rd8(LONG((st ? 0x808D1E : 0x808D0F) + i));
+        return;
+    }
+    *tile = kPortraits[i % 6].tile;
+    *nt = kPortraits[i % 6].nt;
+    *selpal = kPortraits[i % 6].selpal;
+}
+
+u8 roster_select_name_row(int st, int i)
+{
+    if (!general())
+        return i == 3 ? rd8(LONG(0x808E46 + (st ? 1 : 0))) : (u8)i;
+    return kPortraits[i % 6].name_row;
+}
+
+u8 roster_select_char(u8 cursor)
+{
+    if (!general())
+        return rd8(LONG(0x808B21 + cursor));
+    return kPortraits[kRing[cursor % 6]].ch;
+}
+
+int roster_select_general(void) { return general(); }

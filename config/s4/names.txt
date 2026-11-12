@@ -29,3 +29,16 @@
 80B2DE VramQueueTiles        # queue a tile list ($02) to VRAM ($00), one record per row
 80A4DA DrawRaceHud           # race HUD labels and the player's name (per character)
 81C0F6 WinnerFigure          # result object walks in, shows the winner's pose (per character)
+8089D7 SelectMain            # PLAYER SELECT, every frame (mode 1)
+808B26 SelectTimer           # countdown seconds to VRAM $1A8F
+808B75 SelectRotate          # turn the portrait ring on left/right
+808BAE SelectDraw            # front portrait ($1579) and all portraits as sprites
+808D28 SelectHideRest        # hide all but the front portrait
+808D38 SelectSlideY          # slide the front portrait to row $198E
+808D6C SelectTransition      # slide in/out after the choice
+808DBA SelectName            # front portrait's name as sprites at $1700
+81A24B CarouselPos           # portrait X position from its angle; stop at a stop angle
+81A29C SinCos                # $00/$04 = radius $08 * cos/sin of angle X
+82862C QueueSoundB           # append sound command A to the $1400 ring
+81A304 RandomB               # random A from counters, frame and clock
+828593 SpcUploadB            # upload sample stream X to the sound CPU

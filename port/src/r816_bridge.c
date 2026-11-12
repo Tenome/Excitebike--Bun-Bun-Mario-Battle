@@ -345,4 +345,54 @@ BRIDGE(HleHand_DrawRaceHud,       DrawRaceHud_m1x1,       3000)
 BRIDGE(HleHand_VramQueueTiles20,  VramQueueTiles20_m1x1,  600)
 BRIDGE(HleHand_VramQueueTiles,    VramQueueTiles_m1x1,    600)
 BRIDGE(HleHand_WinnerFigure,      WinnerFigure_m1x1,      120)
+BRIDGE(HleHand_SelectMain,        SelectMain_m1x1,        3000)
+BRIDGE(HleHand_SelectTimer,       SelectTimer_m1x1,       600)
+BRIDGE(HleHand_SelectRotate,      SelectRotate_m1x1,      1500)
+BRIDGE(HleHand_SelectDraw,        SelectDraw_m1x1,        2500)
+BRIDGE(HleHand_SelectHideRest,    SelectHideRest_m1x1,    300)
+BRIDGE(HleHand_SelectSlideY,      SelectSlideY_m1x1,      200)
+BRIDGE(HleHand_SelectTransition,  SelectTransition_m1x1,  3000)
+BRIDGE(HleHand_SelectName,        SelectName_m1x1,        300)
+BRIDGE(HleHand_CarouselPos,       CarouselPos_m1x1,       250)
+BRIDGE(HleHand_SinCos,            SinCos_m1x1,            150)
+BRIDGE(HleHand_QueueSoundB,       QueueSoundB_m1x1,       60)
+BRIDGE(HleHand_RandomB,           RandomB_m1x1,           60)
+
+/* The Gen B sample upload ($82:8593) from the hand-written player select,
+ * through the framework's native transfer (the running sound driver's own
+ * handshake, live): the original streams and the roster's added ones. The
+ * boot-time uploads keep the original routine (the sound CPU's boot ROM is
+ * listening then, not the driver). */
+extern bool RtlUploadSpcImageFromDpLive(CpuState *cpu);
+static void spc_upload_dp(void)
+{
+    cpu_write8(&g_cpu, 0x00, 0x1978, 0);
+    to_cpu(&g_cpu, 0);
+    RtlUploadSpcImageFromDpLive(&g_cpu);
+    from_cpu(&g_cpu);
+}
+static void spc_set_dp(uint32_t stream)
+{
+    uint16_t d = D;
+    cpu_write8(&g_cpu, 0x00, (uint16_t)(d + 0), (uint8_t)stream);
+    cpu_write8(&g_cpu, 0x00, (uint16_t)(d + 1), (uint8_t)(stream >> 8));
+    cpu_write8(&g_cpu, 0x00, (uint16_t)(d + 2), (uint8_t)(stream >> 16));
+}
+void SpcUploadB_m1x1(void)
+{
+    uint8_t x = (uint8_t)X;
+    uint32_t stream = cpu_read8(&g_cpu, 0x82, (uint16_t)(0x857E + x)) |
+                      cpu_read8(&g_cpu, 0x82, (uint16_t)(0x8585 + x)) << 8 |
+                      (uint32_t)cpu_read8(&g_cpu, 0x82, (uint16_t)(0x858C + x)) << 16;
+    cpu_write8(&g_cpu, 0x00, 0x2140, 0xFF);
+    spc_set_dp(stream);
+    spc_upload_dp();
+    S++; S++; S++;                  /* RTL: drop the return frame the caller pushed */
+}
+void SpcUploadFrom(uint32_t stream)
+{
+    cpu_write8(&g_cpu, 0x00, 0x2140, 0xFF);
+    spc_set_dp(stream);
+    spc_upload_dp();
+}
 #endif
