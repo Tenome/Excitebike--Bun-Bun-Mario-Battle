@@ -206,3 +206,6 @@
 81C3BA  1 1  mem+X,Y,C,V     DrawJumpCrowd
 80B65B  1 1  mem+X,Y,C,V     StartBonusResult
 80A76C  1 1  mem+X,Y,C,V     DrawBonusPickup
+808F17  1 1  mem+X,Y,C,V     ChangeMode
+808F15  1 1  mem+X,Y,C,V     NextMode
+80AB59  1 1  mem+X,Y,C,V     RaceFinishStep

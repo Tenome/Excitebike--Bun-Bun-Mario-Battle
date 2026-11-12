@@ -65,5 +65,8 @@ int roster_select_general(void);
 
 /* Port options the hand-written routines consult (0 in the original). */
 int port_hide_clock(void);                      /* draw the broadcast clock blank */
+/* The race just run was the final ($7D). The port can run any race with the
+ * final's seven CPU rivals; such a race still ends like the free run it is. */
+int port_race_is_final(void);
 
 #endif

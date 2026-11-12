@@ -223,3 +223,6 @@
 81C3BA DrawJumpCrowd
 80B65B StartBonusResult
 80A76C DrawBonusPickup
+808F17 ChangeMode
+808F15 NextMode
+80AB59 RaceFinishStep

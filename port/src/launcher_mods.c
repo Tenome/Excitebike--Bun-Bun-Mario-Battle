@@ -55,11 +55,16 @@ static const Choice kCourses[] = {
     { "2", "Stadium 2 courses (needs data/s1.sfc)" },
 };
 static const Choice kOnOff[] = { { "1", "On" }, { "0", "Off" } };
+static const Choice kRivals[] = {
+    { "all", "Seven CPU rivals in every race" },
+    { "final", "Only in the final (original)" },
+};
 static const Opt kGameOpts[] = {
     { "flow", "Game flow", "Without the clock the port moves on as soon as a screen is done; the original waits for the satellite broadcast's schedule.", "game.flow", "menu", RECOMP_MOD_OPTION_CHOICE, kFlow, 2 },
     { "stadium", "Stadium", "Which Stadium's rules, schedule and end screen to play.", "game.stadium", "4", RECOMP_MOD_OPTION_CHOICE, kStadium, 2 },
     { "courses", "Courses", "Play the Stadium 1 or 2 courses in this engine.", "game.courses", "own", RECOMP_MOD_OPTION_CHOICE, kCourses, 3 },
     { "luigi", "Expanded roster", "Add Luigi (from data/s3.sfc) as a sixth character.", "game.luigi", "1", RECOMP_MOD_OPTION_CHOICE, kOnOff, 2 },
+    { "rivals", "CPU rivals", "The original runs the course alone and meets the seven rivals only in the final; this fills every race with them.", "game.rivals", "all", RECOMP_MOD_OPTION_CHOICE, kRivals, 2 },
 };
 static const Res kSprites[] = {
     { "mario", "Mario rider sheet", "PNG, 8 tiles wide, 4 bpp (tools/assets.py export).", "sprites.mario", "*.png", "PNG image", "file" },

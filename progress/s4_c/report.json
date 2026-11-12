@@ -1,15 +1,15 @@
 {
  "measures": {
-  "fuzzy_match_percent": 68.3983,
+  "fuzzy_match_percent": 68.5703,
   "total_code": "36930",
-  "matched_code": "13722",
-  "matched_code_percent": 37.1568,
+  "matched_code": "13849",
+  "matched_code_percent": 37.5007,
   "total_data": "0",
   "matched_data": "0",
   "matched_data_percent": 0.0,
   "total_functions": 532,
-  "matched_functions": 204,
-  "matched_functions_percent": 38.3459,
+  "matched_functions": 207,
+  "matched_functions_percent": 38.9098,
   "complete_code": "0",
   "complete_code_percent": 0.0,
   "complete_data": "0",
@@ -21,16 +21,16 @@
   {
    "name": "main/bank80",
    "measures": {
-    "fuzzy_match_percent": 67.2936,
+    "fuzzy_match_percent": 67.551,
     "total_code": "24671",
-    "matched_code": "8666",
-    "matched_code_percent": 35.1263,
+    "matched_code": "8793",
+    "matched_code_percent": 35.641,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 357,
-    "matched_functions": 121,
-    "matched_functions_percent": 33.8936,
+    "matched_functions": 124,
+    "matched_functions_percent": 34.7339,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -42,7 +42,7 @@
     {
      "name": ".text",
      "size": "24671",
-     "fuzzy_match_percent": 67.2936
+     "fuzzy_match_percent": 67.551
     }
    ],
    "functions": [
@@ -239,17 +239,17 @@
      }
     },
     {
-     "name": "sub_808F15",
+     "name": "NextMode",
      "size": "2",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8425237"
      }
     },
     {
-     "name": "sub_808F17",
+     "name": "ChangeMode",
      "size": "15",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8425239"
      }
@@ -719,9 +719,9 @@
      }
     },
     {
-     "name": "sub_80AB59",
+     "name": "RaceFinishStep",
      "size": "110",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8432473"
      }

@@ -222,9 +222,16 @@ static void ForceCharAfterFrame(void)
 #endif
 }
 
+#ifdef BUNBUN_GENB
+void RivalsAfterFrame(void);   /* src/roster.c */
+#endif
+
 void GameRunOneFrame(void)
 {
     snes_beam_frame_driver_run_frame();
+#ifdef BUNBUN_GENB
+    RivalsAfterFrame();
+#endif
     ForceCharAfterFrame();
     UnlockAfterFrame();
     if (SkipWaitEnabled())

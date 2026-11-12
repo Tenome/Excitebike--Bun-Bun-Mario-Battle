@@ -116,7 +116,11 @@ state, so you continue where you were.
 * **Mods** (stored in `bunbun.ini`):
   * *Game*: play without the broadcast clock (default) or with the original
     timing; Stadium; Stadium 1/2 courses in the Gen B engine; the expanded
-    roster (Luigi).
+    roster (Luigi); *CPU rivals*: the original runs the free-run races
+    alone and meets its seven CPU rivals only in the final, the default here
+    puts all seven in every race (the engine has eight rider slots; more
+    would need the race engine rewritten, which the decompilation is working
+    towards).
   * *Sprite swaps*: pick a PNG rider sheet per character (export the
     originals with `tools/assets.py export`).
   * *Music & sound*: pick a folder of replacement samples (WAV files named as

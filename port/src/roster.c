@@ -323,3 +323,56 @@ int port_hide_clock(void)
     if (v < 0) v = strcmp(bunbun_setting("game.flow", "menu"), "broadcast") != 0;
     return v;
 }
+
+/* CPU rivals in every race (launcher: Game > CPU rivals). The engine has
+ * eight rider slots, and the free run uses only the player's: from the
+ * course preview of a free run to the end of that race the final's flag $7D
+ * is set, which brings in the seven rivals. The race still ends like the free
+ * run it is: port_race_is_final sends it to its results, and its time-up
+ * minute (table $80:C468, entry $7C * 2 + $7D) is lent to the final's entry
+ * for the course while it runs. The flag is cleared before the results. */
+static int g_rivals_forced;
+static int g_rivals_slot = -1;
+static uint8_t g_rivals_saved;
+extern uint8_t g_ram[];                 /* WRAM (common_rtl.h) */
+
+int port_race_is_final(void)
+{
+    return g_ram[0x7D] != 0 && !g_rivals_forced;
+}
+
+static uint8_t *end_minutes(void)       /* $80:C468 in the cartridge image */
+{
+    if (!g_snes || !g_snes->cart || !g_snes->cart->rom || g_snes->cart->romSize < 0x4480)
+        return NULL;
+    return g_snes->cart->rom + 0x4468;
+}
+
+void RivalsAfterFrame(void)
+{
+    static int on = -1;
+    if (on < 0) on = strcmp(bunbun_setting("game.rivals", "all"), "all") == 0;
+    uint8_t mode = g_ram[0x76];
+    if (g_rivals_forced) {
+        if (mode == 0x18 || mode == 0x03) {
+            g_ram[0x7D] = 1;
+            return;
+        }
+        g_ram[0x7D] = 0;
+        g_rivals_forced = 0;
+        uint8_t *t = end_minutes();
+        if (t && g_rivals_slot >= 0)
+            t[g_rivals_slot] = g_rivals_saved;
+        g_rivals_slot = -1;
+    } else if (on && mode == 0x18 && g_ram[0x7D] == 0 && g_ram[0x0CD7] == 0) {
+        uint8_t *t = end_minutes();
+        int c = g_ram[0x7C];
+        if (!t || c > 7)
+            return;
+        g_rivals_slot = c * 2 + 1;
+        g_rivals_saved = t[g_rivals_slot];
+        t[g_rivals_slot] = t[c * 2];
+        g_rivals_forced = 1;
+        g_ram[0x7D] = 1;
+    }
+}

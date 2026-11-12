@@ -70,3 +70,4 @@ u8 roster_engine_char(int ch) { return (u8)ch; }
 void roster_note_choice(int ch) { (void)ch; }
 
 int port_hide_clock(void) { return 0; }
+int port_race_is_final(void) { return rd8(DP(0x7D)) != 0; }
