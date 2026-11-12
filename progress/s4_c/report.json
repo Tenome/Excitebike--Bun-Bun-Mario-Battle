@@ -1,15 +1,15 @@
 {
  "measures": {
-  "fuzzy_match_percent": 59.6209,
+  "fuzzy_match_percent": 60.9532,
   "total_code": "36930",
-  "matched_code": "7239",
-  "matched_code_percent": 19.6019,
+  "matched_code": "8223",
+  "matched_code_percent": 22.2665,
   "total_data": "0",
   "matched_data": "0",
   "matched_data_percent": 0.0,
   "total_functions": 532,
-  "matched_functions": 141,
-  "matched_functions_percent": 26.5038,
+  "matched_functions": 157,
+  "matched_functions_percent": 29.5113,
   "complete_code": "0",
   "complete_code_percent": 0.0,
   "complete_data": "0",
@@ -21,16 +21,16 @@
   {
    "name": "main/bank80",
    "measures": {
-    "fuzzy_match_percent": 58.4066,
+    "fuzzy_match_percent": 59.8739,
     "total_code": "24671",
-    "matched_code": "4281",
-    "matched_code_percent": 17.3524,
+    "matched_code": "5005",
+    "matched_code_percent": 20.287,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 357,
-    "matched_functions": 79,
-    "matched_functions_percent": 22.1289,
+    "matched_functions": 91,
+    "matched_functions_percent": 25.4902,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -42,7 +42,7 @@
     {
      "name": ".text",
      "size": "24671",
-     "fuzzy_match_percent": 58.4066
+     "fuzzy_match_percent": 59.8739
     }
    ],
    "functions": [
@@ -695,9 +695,9 @@
      }
     },
     {
-     "name": "sub_80AA94",
+     "name": "DrawCountdownSign",
      "size": "52",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8432276"
      }
@@ -839,9 +839,9 @@
      }
     },
     {
-     "name": "sub_80B059",
+     "name": "RiderAhead",
      "size": "55",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8433753"
      }
@@ -1295,9 +1295,9 @@
      }
     },
     {
-     "name": "sub_80C057",
+     "name": "SetRiderLean",
      "size": "72",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8437847"
      }
@@ -1327,9 +1327,9 @@
      }
     },
     {
-     "name": "sub_80C131",
+     "name": "StartCrash",
      "size": "66",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8438065"
      }
@@ -1575,9 +1575,9 @@
      }
     },
     {
-     "name": "sub_80CE1F",
+     "name": "SortRidersByPosition",
      "size": "62",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8441375"
      }
@@ -1631,9 +1631,9 @@
      }
     },
     {
-     "name": "sub_80CF9D",
+     "name": "QueuePlaceBadge",
      "size": "69",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8441757"
      }
@@ -1687,9 +1687,9 @@
      }
     },
     {
-     "name": "sub_80D1E6",
+     "name": "DrawRiderMarker",
      "size": "50",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8442342"
      }
@@ -1767,9 +1767,9 @@
      }
     },
     {
-     "name": "sub_80D914",
+     "name": "DrawCountdownSignB",
      "size": "52",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8444180"
      }
@@ -1887,9 +1887,9 @@
      }
     },
     {
-     "name": "sub_80DCE6",
+     "name": "AddBonusPoints",
      "size": "69",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8445158"
      }
@@ -1919,9 +1919,9 @@
      }
     },
     {
-     "name": "sub_80DDAE",
+     "name": "QueueResultsCount",
      "size": "65",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8445358"
      }
@@ -2151,9 +2151,9 @@
      }
     },
     {
-     "name": "sub_80EB83",
+     "name": "DrawCountdownLights",
      "size": "51",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448899"
      }
@@ -2335,9 +2335,9 @@
      }
     },
     {
-     "name": "sub_80F1D6",
+     "name": "SetJumpScroll",
      "size": "61",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8450518"
      }
@@ -2911,16 +2911,16 @@
   {
    "name": "main/bank81",
    "measures": {
-    "fuzzy_match_percent": 62.6705,
+    "fuzzy_match_percent": 63.851,
     "total_code": "8429",
-    "matched_code": "2136",
-    "matched_code_percent": 25.3411,
+    "matched_code": "2335",
+    "matched_code_percent": 27.702,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 137,
-    "matched_functions": 50,
-    "matched_functions_percent": 36.4964,
+    "matched_functions": 53,
+    "matched_functions_percent": 38.6861,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -2932,7 +2932,7 @@
     {
      "name": ".text",
      "size": "8429",
-     "fuzzy_match_percent": 62.6705
+     "fuzzy_match_percent": 63.851
     }
    ],
    "functions": [
@@ -3017,9 +3017,9 @@
      }
     },
     {
-     "name": "sub_819555",
+     "name": "StepFallingSprite",
      "size": "61",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8492373"
      }
@@ -3065,9 +3065,9 @@
      }
     },
     {
-     "name": "sub_8196F7",
+     "name": "DrawSpark",
      "size": "72",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8492791"
      }
@@ -3585,9 +3585,9 @@
      }
     },
     {
-     "name": "sub_81BE8E",
+     "name": "ObjectRepeat4Rest",
      "size": "66",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8502926"
      }
@@ -4041,16 +4041,16 @@
   {
    "name": "main/bank82",
    "measures": {
-    "fuzzy_match_percent": 60.7311,
+    "fuzzy_match_percent": 61.5274,
     "total_code": "3830",
-    "matched_code": "822",
-    "matched_code_percent": 21.4621,
+    "matched_code": "883",
+    "matched_code_percent": 23.0548,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 38,
-    "matched_functions": 12,
-    "matched_functions_percent": 31.5789,
+    "matched_functions": 13,
+    "matched_functions_percent": 34.2105,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -4062,7 +4062,7 @@
     {
      "name": ".text",
      "size": "3830",
-     "fuzzy_match_percent": 60.7311
+     "fuzzy_match_percent": 61.5274
     }
    ],
    "functions": [
@@ -4083,9 +4083,9 @@
      }
     },
     {
-     "name": "sub_82811D",
+     "name": "SetupHdmaChannels",
      "size": "61",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8552733"
      }

@@ -675,3 +675,507 @@ void QueueBonusDigits_m1x1(void)
     lda8(0x0C); wr8(DP(0x03), 0x0C);
     VramQueueTiles_m1x1();
 }
+
+/* $82:811D SetupHdmaChannels (RTL): HDMA channel 7 to register $0F (BG2
+ * horizontal scroll) from the table at $82:815A and channel 6 to $0D (BG1)
+ * from $82:8176, both mode $42 (indirect, two writes once), data bank 0. */
+void SetupHdmaChannels_m1x1(void)
+{
+    lda8(0x42); wr8(ABS(0x4370), 0x42);
+    lda8(0x0F); wr8(ABS(0x4371), 0x0F);
+    lda8(0x5A); wr8(ABS(0x4372), 0x5A);
+    lda8(0x81); wr8(ABS(0x4373), 0x81);
+    lda8(0x82); wr8(ABS(0x4374), 0x82);
+    lda8(0x00); wr8(ABS(0x4377), 0x00);
+    lda8(0x42); wr8(ABS(0x4360), 0x42);
+    lda8(0x0D); wr8(ABS(0x4361), 0x0D);
+    lda8(0x76); wr8(ABS(0x4362), 0x76);
+    lda8(0x81); wr8(ABS(0x4363), 0x81);
+    lda8(0x82); wr8(ABS(0x4364), 0x82);
+    lda8(0x00); wr8(ABS(0x4367), 0x00);
+    retl();
+}
+
+/* $80:B059 RiderAhead (RTS): is another rider (from $7E up to 7, not $0F)
+ * in the air state 1 ($019E), in lane $02 ($0958) and between
+ * $0196,X + table[Y] - table[Y+1] and $0196,X + table[Y] (tables at
+ * $80:B88B)? C = 1 with Y = that rider, else C = 0. */
+void RiderAhead_m1x1(void)
+{
+    lda8(rd8(ABSX(0x0196)));
+    fc = 0;
+    adc8(rd8(ABSY(0xB88B)));
+    wr8(DP(0x00), (u8)A);
+    fc = 1;
+    sbc8(rd8(ABSY(0xB88C)));
+    wr8(DP(0x01), (u8)A);
+    Y = rd8(DP(0x7E)); nz8((u8)Y);
+    do {
+        cmp8((u8)Y, rd8(DP(0x0F)));
+        if (fz) goto next;
+        lda8(rd8(ABSY(0x019E)));
+        cmp8((u8)A, 0x01);
+        if (!fz) goto next;
+        lda8(rd8(ABSY(0x0958)));
+        if (fz) goto next;
+        cmp8((u8)A, rd8(DP(0x02)));
+        if (!fz) goto next;
+        lda8(rd8(ABSY(0x0196)));
+        cmp8((u8)A, rd8(DP(0x00)));
+        if (fc) goto next;
+        cmp8((u8)A, rd8(DP(0x01)));
+        if (fc) { ret(); return; }
+    next:
+        Y = inc8((u8)Y);
+        cmp8((u8)Y, 0x08);
+    } while (!fc);
+    fc = 0;
+    ret();
+}
+
+/* $80:D1E6 DrawRiderMarker (RTL): sprite X + 1 (OAM buffer $1600) at
+ * $1500,X / $1508,X with the blinking tile from $80:D218 (by $63 bits 2-3),
+ * attribute $21, size bit 2. */
+void DrawRiderMarker_m1x1(void)
+{
+    lda8(rd8(DP(0x63)));
+    and8(0x0C);
+    lda8(lsr8((u8)A));
+    lda8(lsr8((u8)A));
+    Y = (u8)A; nz8((u8)Y);
+    lda8(rd8(ABSY(0xD218)));
+    wr8(DP(0x00), (u8)A);
+    lda8((u8)X);
+    lda8(asl8((u8)A));
+    fc = 0;
+    adc8(0x04);
+    Y = (u8)A; nz8((u8)Y);
+    lda8(rd8(DP(0x00))); wr8(ABSY(0x1602), (u8)A);
+    lda8(rd8(ABSX(0x1500))); wr8(ABSY(0x1600), (u8)A);
+    lda8(rd8(ABSX(0x1508))); wr8(ABSY(0x1601), (u8)A);
+    lda8(0x21); wr8(ABSY(0x1603), 0x21);
+    lda8((u8)Y);
+    lda8(lsr8((u8)A));
+    lda8(lsr8((u8)A));
+    Y = (u8)A; nz8((u8)Y);
+    lda8(0x02); wr8(ABSY(0x1820), 0x02);
+    retl();
+}
+
+/* $81:9555 StepFallingSprite (RTS, object Y): every 4 frames move it up
+ * and left ($0106, $010E) and step its tile $011E; at tile $9F switch it
+ * off ($0116 = 0). While racing ($01CE and $84 clear) write it to the OAM
+ * buffer $1610 + 2Y, attribute $2D. */
+void StepFallingSprite_m1x1(void)
+{
+    X = Y; nz8((u8)X);
+    lda8(rd8(DP(0x63)));
+    and8(0x03);
+    if (fz) {
+        wr8(ABSX(0x0106), dec8(rd8(ABSX(0x0106))));
+        wr8(ABSX(0x010E), dec8(rd8(ABSX(0x010E))));
+        wr8(ABSX(0x011E), dec8(rd8(ABSX(0x011E))));
+        lda8(rd8(ABSX(0x011E)));
+        cmp8((u8)A, 0x9F);
+        if (fz) { wr8(ABSX(0x0116), 0); ret(); return; }
+    }
+    lda8(rd8(ABS(0x01CE)));
+    ora8(rd8(DP(0x84)));
+    if (fz) {
+        lda8((u8)X);
+        lda8(asl8((u8)A));
+        Y = (u8)A; nz8((u8)Y);
+        lda8(rd8(ABSX(0x0106))); wr8(ABSY(0x1610), (u8)A);
+        lda8(rd8(ABSX(0x010E))); wr8(ABSY(0x1611), (u8)A);
+        lda8(rd8(ABSX(0x011E))); wr8(ABSY(0x1612), (u8)A);
+        lda8(0x2D); wr8(ABSY(0x1613), 0x2D);
+    }
+    ret();
+}
+
+/* $80:EB83 DrawCountdownLights (RTS): while $C3 is on (until the timer
+ * $8E runs out) draw six sprites in a row at X $50 + 16n, Y $50, tiles
+ * from $80:EBB6, attribute $31. */
+void DrawCountdownLights_m1x1(void)
+{
+    lda8(rd8(DP(0xC3)));
+    if (fz) { ret(); return; }
+    u8 t = dec8(rd8(DP(0x8E)));
+    wr8(DP(0x8E), t);
+    if (fz) wr8(DP(0xC3), 0);
+    push8((u8)X);
+    ldx8(0x05);
+    do {
+        lda8((u8)X);
+        lda8(asl8((u8)A));
+        lda8(asl8((u8)A));
+        Y = (u8)A; nz8((u8)Y);
+        lda8(asl8((u8)A));
+        lda8(asl8((u8)A));
+        fc = 0;
+        adc8(0x50);
+        wr8(ABSY(0x1600), (u8)A);
+        lda8(0x50); wr8(ABSY(0x1601), 0x50);
+        lda8(rd8(ABSX(0xEBB6))); wr8(ABSY(0x1602), (u8)A);
+        lda8(0x31); wr8(ABSY(0x1603), 0x31);
+        lda8(0x02); wr8(ABSX(0x1820), 0x02);
+        X = dec8((u8)X);
+    } while (!fn);
+    X = pull8(); nz8((u8)X);
+    ret();
+}
+
+/* $81:BE8E ObjectRepeat4Rest (RTS): count the step 0-3; each time it
+ * wraps count $032F down; at zero rest in state 2 with delay 10 and
+ * frame 6. */
+void ObjectRepeat4Rest_m1x1(void)
+{
+    if (object_ready()) {
+        lda8(rd8(ABSX(0x031F)));
+        lda8(inc8((u8)A));
+        and8(0x03);
+        wr8(ABSX(0x031F), (u8)A);
+        Y = (u8)A; nz8((u8)Y);
+        int rest = 0;
+        if (fz) {
+            u8 n = dec8(rd8(ABSX(0x032F)));
+            wr8(ABSX(0x032F), n);
+            rest = fz;
+        }
+        if (rest) {
+            lda8(0x02); wr8(ABSX(0x030F), 0x02);
+            lda8(0x0A); wr8(ABSX(0x036F), 0x0A);
+            lda8(0x06); wr8(ABSX(0x034F), 0x06);
+            random_rest(0xBEB9);
+            wr8(ABSX(0x037F), (u8)A);
+        } else {
+            object_frame(0xBED0, 0xBED4);
+        }
+    }
+    ret();
+}
+
+/* $80:CE1F SortRidersByPosition (RTS): $0950-$0957 = rider numbers sorted
+ * by their position $01F6 (the player uses $097C when $08C7 is set),
+ * largest first (bubble sort through $00-$07). */
+void SortRidersByPosition_m1x1(void)
+{
+    ldx8(0x07);
+    do {
+        lda8((u8)X);
+        wr8(ABSX(0x0950), (u8)A);
+        lda8(rd8(ABSX(0x01F6)));
+        wr8(DPX(0x00), (u8)A);
+        X = dec8((u8)X);
+    } while (!fn);
+    lda8(rd8(ABS(0x08C7)));
+    if (!fz) {
+        lda8(rd8(ABS(0x097C)));
+        wr8(DP(0x03), (u8)A);
+    }
+    ldx8(0x07);
+    wr8(DP(0x0D), 0x07);
+    do {
+        ldy8(0x00);
+        do {
+            X = rd8(ABSY(0x0950)); nz8((u8)X);
+            lda8(rd8(DPX(0x00)));
+            X = rd8(ABSY(0x0951)); nz8((u8)X);
+            cmp8((u8)A, rd8(DPX(0x00)));
+            if (fc) {
+                lda8(rd8(ABSY(0x0950)));
+                wr8(ABSY(0x0951), (u8)A);
+                lda8((u8)X);
+                wr8(ABSY(0x0950), (u8)A);
+            }
+            Y = inc8((u8)Y);
+            cmp8((u8)Y, rd8(DP(0x0D)));
+        } while (!fz);
+        u8 n = dec8(rd8(DP(0x0D)));
+        wr8(DP(0x0D), n);
+    } while (!fz);
+    ret();
+}
+
+/* $80:DDAE QueueResultsCount (RTS): the number $10 as two digits (tens
+ * blank when zero) in a 2x2 block at $03CF (size $22), queued at VRAM
+ * $18B9 (VramQueueTiles20). */
+void QueueResultsCount_m1x1(void)
+{
+    rep(0x20);
+    lda16(0x18B9); wr16(DP(0x00), 0x18B9);
+    lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+    sep(0x20);
+    lda8(0x22); wr8(ABS(0x03CF), 0x22);
+    ldy8(0x00);
+    lda8(rd8(DP(0x10)));
+    for (;;) {
+        cmp8((u8)A, 0x0A);
+        if (!fc) break;
+        sbc8(0x0A);
+        Y = inc8((u8)Y);
+        WAIT_TICK();
+    }
+    wr8(ABS(0x03D1), (u8)A);
+    ora8(0x10);
+    wr8(ABS(0x03D3), (u8)A);
+    lda8((u8)Y);
+    wr8(ABS(0x03D0), (u8)A);
+    ora8(0x10);
+    wr8(ABS(0x03D2), (u8)A);
+    cmp8((u8)Y, 0x00);
+    if (fz) {
+        lda8(0xFF);
+        wr8(ABS(0x03D0), 0xFF);
+        wr8(ABS(0x03D2), 0xFF);
+    }
+    push16(0xDDED); VramQueueTiles20_m1x1();
+    ret();
+}
+
+void AddScore_m1x1(void);
+
+/* Countdown sign: while $C3 (1-4) is on, copy its 8-byte sprite set from
+ * `table` + ($C3 - 1) * 8 to OAM buffer $16A0-$16A7 (both large). At 4
+ * it stays up until the timer $8A runs out. */
+static void draw_countdown_sign(u16 table)
+{
+    lda8(rd8(DP(0xC3)));
+    if (fz) return;
+    cmp8((u8)A, 0x04);
+    if (fz) {
+        lda8(rd8(DP(0x8A)));
+        if (fz) return;
+        wr8(DP(0x8A), dec8(rd8(DP(0x8A))));
+    }
+    push8((u8)X);
+    lda8(rd8(DP(0xC3)));
+    lda8(dec8((u8)A));
+    lda8(asl8((u8)A));
+    lda8(asl8((u8)A));
+    lda8(asl8((u8)A));
+    X = (u8)A; nz8((u8)X);
+    ldy8(0xA0);
+    rep(0x20);
+    do {
+        lda16(rd16(ABSX(table)));
+        wr16(ABSY(0x1600), A);
+        X = inc8((u8)X); X = inc8((u8)X);
+        Y = inc8((u8)Y); Y = inc8((u8)Y);
+        cmp8((u8)Y, 0xA8);
+    } while (!fc);
+    ldy8(0x28);
+    lda16(0x0202);
+    wr16(ABSY(0x1820), 0x0202);
+    sep(0x20);
+    X = pull8(); nz8((u8)X);
+}
+
+/* $80:AA94, $80:D914 DrawCountdownSign/B (RTS): tables $80:AAC8, $80:D948. */
+void DrawCountdownSign_m1x1(void)  { draw_countdown_sign(0xAAC8); ret(); }
+void DrawCountdownSignB_m1x1(void) { draw_countdown_sign(0xD948); ret(); }
+
+/* $80:C131 StartCrash (RTS): rider X falls (state $01EE = 2, timer $08E4
+ * = $0F) with a bounce speed $08D4/$08DC = its speed + $AF (halved when
+ * $08F4 is 2). For the player also clear $09C7 and play sound $20. */
+void StartCrash_m1x1(void)
+{
+    lda8(0x02); wr8(ABSX(0x01EE), 0x02);
+    lda8(0x0F); wr8(ABSX(0x08E4), 0x0F);
+    lda8(rd8(ABSX(0x01BE)));
+    fc = 0;
+    adc8(0xAF);
+    wr8(ABSX(0x08D4), (u8)A);
+    lda8(rd8(ABSX(0x01C6)));
+    adc8(0x00);
+    wr8(ABSX(0x08DC), (u8)A);
+    lda8(rd8(ABSX(0x08F4)));
+    cmp8((u8)A, 0x02);
+    if (fz) {
+        wr8(ABSX(0x08DC), lsr8(rd8(ABSX(0x08DC))));
+        wr8(ABSX(0x08D4), ror8(rd8(ABSX(0x08D4))));
+    }
+    lda8((u8)X);
+    if (!fz) { ret(); return; }
+    wr8(ABS(0x09C7), (u8)A);
+    lda8(0x20);
+    push8(0x80); push16(0xC164); QueueSoundB_m1x1();
+    lda8(rd8(ABSX(0x01C6)));
+    lda8(asl8((u8)A));
+    lda8(asl8((u8)A));
+    lda8(asl8((u8)A));
+    lda8(asl8((u8)A));
+    eor8(0x30);
+    if (fz) lda8(0x08);
+    ret();
+}
+
+/* $80:DCE6 AddBonusPoints (RTS): when the result $09C5 (forced 0 when
+ * $1990 >= 2) equals the target $09C9 add 1 to $1E92 ($09AD = 1); else
+ * split it into tens $09AE / units $09AF and add them to $1E93 / $1E94.
+ * Then AddScore. */
+void AddBonusPoints_m1x1(void)
+{
+    lda8(rd8(ABS(0x1990)));
+    lda8(lsr8((u8)A));
+    if (!fz) wr8(ABS(0x09C5), 0);
+    wr8(DP(0x00), 0);
+    lda8(rd8(ABS(0x09C5)));
+    cmp8((u8)A, rd8(ABS(0x09C9)));
+    if (fz) {
+        lda8(0x01); wr8(ABS(0x09AD), 0x01);
+        fc = 0;
+        adc8(rd8(ABS(0x1E92)));
+        wr8(ABS(0x1E92), (u8)A);
+    } else {
+        for (;;) {
+            cmp8((u8)A, 0x0A);
+            if (!fc) break;
+            sbc8(0x0A);
+            wr8(DP(0x00), inc8(rd8(DP(0x00))));
+            WAIT_TICK();
+        }
+        wr8(ABS(0x09AF), (u8)A);
+        fc = 0;
+        adc8(rd8(ABS(0x1E94)));
+        wr8(ABS(0x1E94), (u8)A);
+        lda8(rd8(DP(0x00)));
+        wr8(ABS(0x09AE), (u8)A);
+        fc = 0;
+        adc8(rd8(ABS(0x1E93)));
+        wr8(ABS(0x1E93), (u8)A);
+    }
+    push16(0xDD29); AddScore_m1x1();
+    ret();
+}
+
+/* $80:C057 SetRiderLean (RTS): rider X's lean $08B4 from the table at
+ * $80:BA92 by its pose $01A6 ($0A for the player standing still on the
+ * jump with $84 = 1; 6 while $020E,X is 1). */
+void SetRiderLean_m1x1(void)
+{
+    Y = rd8(ABSX(0x01A6)); nz8((u8)Y);
+    lda8(rd8(DP(0x84)));
+    cmp8((u8)A, 0x01);
+    int table = 1;
+    if (fz) {
+        lda8((u8)X);
+        ora8(rd8(ABS(0x01CE)));
+        ora8(rd8(ABS(0x01D6)));
+        ora8(rd8(ABS(0x0176)));
+        if (fz) { lda8(0x0A); table = 0; }
+    }
+    if (table) lda8(rd8(ABSY(0xBA92)));
+    wr8(ABSX(0x08B4), (u8)A);
+    lda8(rd8(ABSX(0x020E)));
+    cmp8((u8)A, 0x01);
+    if (fz) { lda8(0x06); wr8(ABSX(0x08B4), 0x06); }
+    ret();
+}
+
+/* $80:CF9D QueuePlaceBadge (RTS): the place $086E as a 2x2 block at $0CF8
+ * (digit tiles $60 + 2(place - 1), suffix tiles from $80:CFE2), size $24,
+ * then VramQueueTiles. */
+void QueuePlaceBadge_m1x1(void)
+{
+    lda8(rd8(ABS(0x086E)));
+    lda8(dec8((u8)A));
+    lda8(asl8((u8)A));
+    push8((u8)A);
+    fc = 0;
+    adc8(0x60);
+    wr8(ABS(0x0CF9), (u8)A);
+    lda8(inc8((u8)A));
+    wr8(ABS(0x0CFA), (u8)A);
+    fc = 0;
+    adc8(0x0F);
+    wr8(ABS(0x0CFD), (u8)A);
+    lda8(inc8((u8)A));
+    wr8(ABS(0x0CFE), (u8)A);
+    lda8(pull8());
+    lda8(asl8((u8)A));
+    X = (u8)A; nz8((u8)X);
+    lda8(rd8(ABSX(0xCFE2))); wr8(ABS(0x0CFB), (u8)A);
+    lda8(rd8(ABSX(0xCFE3))); wr8(ABS(0x0CFC), (u8)A);
+    lda8(rd8(ABSX(0xCFE4))); wr8(ABS(0x0CFF), (u8)A);
+    lda8(rd8(ABSX(0xCFE5))); wr8(ABS(0x0D00), (u8)A);
+    lda8(0x24); wr8(ABS(0x0CF8), 0x24);
+    lda8(0xF8); wr8(DP(0x02), 0xF8);
+    lda8(0x0C); wr8(DP(0x03), 0x0C);
+    VramQueueTiles_m1x1();
+}
+
+/* $80:F1D6 SetJumpScroll (RTL): from the player's height $01B6 and
+ * 2 - $0904: below $0130 the vertical scroll $9E = value - $30, $A2 =
+ * (value - $0130) / 2 + $8100 and $9B = $9E low; otherwise $9E = $A2 =
+ * $0100, $9B = 0. */
+void SetJumpScroll_m1x1(void)
+{
+    lda8(rd8(ABS(0x0904)));
+    eor8(0xFF);
+    lda8(inc8((u8)A));
+    lda8(inc8((u8)A));
+    wr8(DP(0x01), (u8)A);
+    lda8(rd8(ABS(0x01B6)));
+    wr8(DP(0x00), (u8)A);
+    rep(0x20);
+    lda16(rd16(DP(0x00)));
+    cmp16(A, 0x0130);
+    if (fc) {
+        lda16(0x0100);
+        wr16(DP(0x9E), 0x0100);
+        wr16(DP(0xA2), 0x0100);
+        sep(0x20);
+        wr8(DP(0x9B), 0);
+        retl();
+        return;
+    }
+    fc = 1;
+    sbc16(0x0130);
+    push16(A);
+    fc = 0;
+    adc16(0x0100);
+    wr16(DP(0x9E), A);
+    lda16(pull16());
+    lda16(lsr16(A));
+    fc = 0;
+    adc16(0x8100);
+    wr16(DP(0xA2), A);
+    sep(0x20);
+    lda8(rd8(DP(0x9E)));
+    wr8(DP(0x9B), (u8)A);
+    retl();
+}
+
+/* $81:96F7 DrawSpark (RTS, object Y): sprite at OAM buffer $1610,Y from
+ * $0106/$010E, tile and attribute from $81:966F/$81:9673 by the frame
+ * $011E (frame 0 once $0146 reaches $F0); every $0126 frames restart the
+ * frame ($012E = 1, $0126 = 4). */
+void DrawSpark_m1x1(void)
+{
+    X = Y; nz8((u8)X);
+    lda8(rd8(ABSX(0x0106))); wr8(ABSY(0x1610), (u8)A);
+    lda8(rd8(ABSX(0x010E))); wr8(ABSY(0x1611), (u8)A);
+    lda8(rd8(ABSX(0x0146)));
+    cmp8((u8)A, 0xF0);
+    if (fc) lda8(0x00);
+    else lda8(rd8(ABSX(0x011E)));
+    push8((u8)X);
+    X = (u8)A; nz8((u8)X);
+    lda8(rd8(LONGX(0x81966F))); wr8(ABSY(0x1612), (u8)A);
+    lda8(rd8(LONGX(0x819673))); wr8(ABSY(0x1613), (u8)A);
+    X = pull8(); nz8((u8)X);
+    lda8((u8)Y);
+    lda8(lsr8((u8)A));
+    lda8(lsr8((u8)A));
+    Y = (u8)A; nz8((u8)Y);
+    lda8(0x02); wr8(ABSY(0x1824), 0x02);
+    u8 t = dec8(rd8(ABSX(0x0126)));
+    wr8(ABSX(0x0126), t);
+    if (fz) {
+        lda8(0x01); wr8(ABSX(0x012E), 0x01);
+        lda8(0x04); wr8(ABSX(0x0126), 0x04);
+        wr8(ABSX(0x011E), 0);
+    }
+    ret();
+}
