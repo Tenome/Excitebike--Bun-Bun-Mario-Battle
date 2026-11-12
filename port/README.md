@@ -81,24 +81,36 @@ than mis-executing ten frames in.
 * `build/Release/BunbunS1SNESRecomp.exe` is the Stadium 1-2 engine (Gen A),
   kept for comparison and the original Stadium 1-2 experience.
 
+## Settings and mods: the launcher
+
+Starting an executable opens the launcher (tick "Skip launcher on boot" to go
+straight in). **Ctrl+L** (or Select+L3 on a pad) opens it again over the
+running game; changes that cannot apply live restart the game through a save
+state, so you continue where you were.
+
+* **Player 1 / Player 2**: keyboard or gamepad per player, and **Configure**
+  for the buttons (stored in `keybinds.ini` / `config.ini`).
+* **Settings**: display, audio, hotkeys, rewind.
+* **Mods** (stored in `bunbun.ini`):
+  * *Game*: play without the broadcast clock (default) or with the original
+    timing; Stadium; Stadium 1/2 courses in the Gen B engine; the expanded
+    roster (Luigi).
+  * *Sprite swaps*: pick a PNG rider sheet per character (export the
+    originals with `tools/assets.py export`).
+  * *Music & sound*: pick a folder of replacement samples (WAV files named as
+    `tools/sound.py export` names them).
+  * *Custom courses*: pick a course file per course (make them with
+    `tools/editor/course_editor.html`).
+  * one switch per folder in `mods/` (see `docs/MODDING.md`).
+
 ## Controls
 
-The game is a satellite broadcast: the intro, the title ("please wait"), the
-practice demo and the course cards follow the broadcast clock and ignore the
-controller in the original. In the port **Start skips them** (set
-`BUNBUN_SKIPWAIT=0` for the original timing): press Start a few times from the
-boot to reach the player select, then left/right turns the portraits and A
-chooses.
-
-* Keyboard: `keybinds.ini` beside the executable (default: arrows, Z = B,
-  X = A, A = Y, S = X, C/V = L/R, Enter = Start, Right Shift = Select).
-* Gamepads: `config.ini` `[GamepadMap]`; Xbox/PlayStation/Switch Pro pads are
-  detected automatically.
-* Which device each player uses: `config.ini` `[Controller]` `SourceP1` /
-  `SourceP2` (0 none, 1 keyboard, 2 gamepad; the launcher writes these). A
-  player set to gamepad does **not** read the keyboard.
-* Hotkeys (`config.ini` `[KeyMap]`): Alt+Enter fullscreen, Tab turbo, F1-F10
-  load state, Shift+F1-F10 save state, F12 rewind, P pause.
+Keyboard defaults (change them in the launcher): arrows, Z = B, X = A,
+A = Y, S = X, C/V = L/R, Enter = Start, Right Shift = Select. Gamepads
+(Xbox, PlayStation, Switch Pro) are detected automatically. A player set to
+gamepad does not read the keyboard. Hotkeys: Alt+Enter fullscreen, Tab turbo,
+F1-F10 load state, Shift+F1-F10 save state, F12 rewind, P pause, Ctrl+L
+launcher.
 
 ## Layout
 
