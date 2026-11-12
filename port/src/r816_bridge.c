@@ -480,6 +480,13 @@ BRIDGE(HleHand_MoveObjectX, MoveObjectX_m1x1, 70)
 BRIDGE(HleHand_QueueBestTime, QueueBestTime_m1x1, 1310)
 BRIDGE(HleHand_AccelerateRider, AccelerateRider_m1x1, 50)
 BRIDGE(HleHand_UpdateRiderDistances, UpdateRiderDistances_m1x1, 180)
+/* c/hand/s4/objects.c, part 5 */
+BRIDGE(HleHand_DrawDustPair, DrawDustPair_m1x1, 80)
+BRIDGE(HleHand_RiderOnRamp, RiderOnRamp_m1x1, 40)
+BRIDGE(HleHand_BuildJumpScore, BuildJumpScore_m1x1, 120)
+BRIDGE(HleHand_Mode09_BonusIntro, Mode09_BonusIntro_m1x1, 40)
+BRIDGE(HleHand_TrackRiderPace, TrackRiderPace_m1x1, 40)
+BRIDGE(HleHand_HideAllSprites, HideAllSprites_m1x1, 1360)
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)

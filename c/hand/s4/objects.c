@@ -1680,3 +1680,283 @@ void UpdateRiderDistances_m1x1(void)
     sep(0x20);
     ret();
 }
+
+void QueueSoundB_m0x1(void);
+void Hundreds_m1x1(void);
+
+/* $81:9592 DrawDustPair (RTS, object Y): scroll the pair left with the
+ * player's speed ($0106 and $012E -= $0186); every 4 frames step the
+ * tile $011E down, ending at $AF ($0116 = 0). While racing write both
+ * sprites (OAM buffer $1610 + 2Y and $17E0 + 2Y, attribute $2D). */
+void DrawDustPair_m1x1(void)
+{
+    X = Y; nz8((u8)X);
+    lda8(rd8(ABSX(0x0106)));
+    fc = 1; sbc8(rd8(ABS(0x0186)));
+    wr8(ABSX(0x0106), (u8)A);
+    lda8(rd8(ABSX(0x012E)));
+    fc = 1; sbc8(rd8(ABS(0x0186)));
+    wr8(ABSX(0x012E), (u8)A);
+    lda8(rd8(DP(0x63)));
+    and8(0x03);
+    if (fz) {
+        wr8(ABSX(0x011E), dec8(rd8(ABSX(0x011E))));
+        lda8(rd8(ABSX(0x011E)));
+        cmp8((u8)A, 0xAF);
+        if (fz) { wr8(ABSX(0x0116), 0); ret(); return; }
+    }
+    lda8(rd8(ABS(0x01CE)));
+    ora8(rd8(DP(0x84)));
+    if (fz) {
+        lda8((u8)X);
+        lda8(asl8((u8)A));
+        Y = (u8)A; nz8((u8)Y);
+        lda8(rd8(ABSX(0x0106))); wr8(ABSY(0x1610), (u8)A);
+        lda8(rd8(ABSX(0x010E))); wr8(ABSY(0x1611), (u8)A);
+        lda8(rd8(ABSX(0x011E))); wr8(ABSY(0x1612), (u8)A);
+        lda8(0x2D); wr8(ABSY(0x1613), 0x2D);
+        lda8(rd8(ABSX(0x012E))); wr8(ABSY(0x17E0), (u8)A);
+        lda8(rd8(ABSX(0x0136))); wr8(ABSY(0x17E1), (u8)A);
+        lda8(rd8(ABSX(0x011E))); wr8(ABSY(0x17E2), (u8)A);
+        lda8(0x2D); wr8(ABSY(0x17E3), 0x2D);
+    }
+    ret();
+}
+
+/* $80:ACD6 RiderOnRamp (RTS): from the track piece $0216,X (table
+ * $80:AD33) decide whether rider X is on a ramp ($08BC = 2) or not
+ * ($08BC = 0, only from 1). Landing the player on a big ramp in the bonus
+ * mode at height $B0 plays sound $46. For the player Z = not moving. */
+void RiderOnRamp_m1x1(void)
+{
+    Y = rd8(ABSX(0x0216)); nz8((u8)Y);
+    lda8(rd8(ABSY(0xAD33)));
+    if (fz) {
+        lda8(0x03);
+        cmp8((u8)A, rd8(ABSX(0x020E)));
+        int ramp = 0;
+        if (fz) {
+            lda8(rd8(ABSX(0x0958)));
+            cmp8((u8)A, 0x03);
+            ramp = fc;
+        }
+        if (!ramp) {
+            lda8(rd8(ABSX(0x0958)));
+            if (!fz) {
+                lda8(0x01);
+                cmp8((u8)A, rd8(ABSX(0x08BC)));
+                if (fz) { ret(); return; }
+                lda8(lsr8((u8)A));
+                wr8(ABSX(0x08BC), (u8)A);
+                ret();
+                return;
+            }
+        }
+    }
+    lda8(0x01);
+    cmp8((u8)A, rd8(ABSX(0x08BC)));
+    if (!fz) {
+        push8((u8)A);
+        lda8(rd8(DP(0x76)));
+        cmp8((u8)A, 0x09);
+        if (fz) {
+            lda8(rd8(ABSY(0xAD33)));
+            if (fn) {
+                lda8(rd8(ABS(0x08BC)));
+                if (fz) {
+                    lda8(rd8(ABS(0x01B6)));
+                    cmp8((u8)A, 0xB0);
+                    if (fz) {
+                        lda8(0x46);
+                        push8(0x80); push16(0xAD15); QueueSoundB_m1x1();
+                    }
+                }
+            }
+        }
+        lda8(pull8());
+        lda8(asl8((u8)A));
+        wr8(ABSX(0x08BC), (u8)A);
+    }
+    lda8((u8)X);
+    if (fz) {
+        lda8(rd8(ABS(0x01BE)));
+        ora8(rd8(ABS(0x01C6)));
+    }
+    ret();
+}
+
+/* $81:C9A7 BuildJumpScore (RTL): shift the score digits $03CF-$03DB right
+ * by three, then put the jump count (Hundreds of $1569) with its label
+ * tiles $4B/$4C and $5B/$5C in front; size $29. Zero distance blanks it. */
+void BuildJumpScore_m1x1(void)
+{
+    ldy8(0x05);
+    ldx8(0x0C);
+    do {
+        lda8(rd8(ABSX(0x03CF)));
+        wr8(ABSX(0x03D2), (u8)A);
+        X = dec8((u8)X);
+        Y = dec8((u8)Y);
+    } while (!fn);
+    push16(0xC9B7); Hundreds_m1x1();
+    ldx8(0x07);
+    lda8(0x4B); wr8(ABSX(0x03CF), 0x4B);
+    lda8(inc8((u8)A)); wr8(ABSX(0x03D0), (u8)A);
+    lda8((u8)Y); wr8(ABSX(0x03D1), (u8)A);
+    ldx8(0x10);
+    lda8(0x5B); wr8(ABSX(0x03CF), 0x5B);
+    lda8(inc8((u8)A)); wr8(ABSX(0x03D0), (u8)A);
+    lda8((u8)Y);
+    fc = 0; adc8(0x10);
+    wr8(ABSX(0x03D1), (u8)A);
+    lda8(0x29); wr8(ABS(0x03CF), 0x29);
+    rep(0x20);
+    lda16(rd16(ABS(0x1569)));
+    if (fz) {
+        ldx8(0xFF);
+        wr8(ABS(0x03D5), 0xFF); wr8(ABS(0x03D6), 0xFF); wr8(ABS(0x03D7), 0xFF);
+        wr8(ABS(0x03DE), 0xFF); wr8(ABS(0x03DF), 0xFF); wr8(ABS(0x03E0), 0xFF);
+        X = inc8((u8)X);
+        wr8(ABS(0x03D8), (u8)X);
+        ldx8(0x10);
+        wr8(ABS(0x03E1), 0x10);
+    }
+    sep(0x20);
+    retl();
+}
+
+/* $80:B5F8 Mode09_BonusIntro (RTS): a pre-delay $1991 first; then, once
+ * the broadcast minute reaches the table $80:B5F6 (by course $7C / 2),
+ * go to mode 9 ($1923 - 1). Otherwise count $88 down (sound $34 at $06CC,
+ * nothing above it) and zoom $A6 to $0100, then set colour math ($190D
+ * $42, COLDATA $E0). */
+void Mode09_BonusIntro_m1x1(void)
+{
+    rep(0x20);
+    lda16(rd16(ABS(0x1991)));
+    if (!fz) {
+        wr16(ABS(0x1991), dec16(rd16(ABS(0x1991))));
+    } else {
+        sep(0x20);
+        lda8(rd8(DP(0x7C)));
+        lda8(lsr8((u8)A));
+        X = (u8)A; nz8((u8)X);
+        lda8(rd8(LONG(0x7FFFFF)));
+        cmp8((u8)A, rd8(ABSX(0xB5F6)));
+        if (fc) {
+            lda8(0x09); wr8(DP(0x76), 0x09);
+            wr8(DP(0x75), 0);
+            wr8(DP(0x77), 0);
+            wr8(ABS(0x1923), dec8(rd8(ABS(0x1923))));
+            sep(0x20);
+            ret();
+            return;
+        }
+    }
+    rep(0x20);
+    lda16(rd16(ABS(0x0088)));
+    lda16(dec16(A));
+    wr16(ABS(0x0088), A);
+    if (fz) goto done;
+    cmp16(A, 0x06CC);
+    if (fz) {
+        lda16(0x0034);
+        push8(0x80); push16(0xB62D); QueueSoundB_m0x1();
+    } else if (fc) {
+        goto done;
+    }
+    lda16(rd16(DP(0xA6)));
+    cmp16(A, 0x0100);
+    if (fz) {
+        sep(0x20);
+        lda8(0x42); wr8(ABS(0x190D), 0x42);
+        lda8(0xE0); wr8(ABS(0x2132), 0xE0);
+    } else {
+        fc = 0;
+        adc16(0x0004);
+        wr16(DP(0xA6), A);
+    }
+done:
+    sep(0x20);
+    ret();
+}
+
+/* $80:FE93 TrackRiderPace (RTS): while racing, count frames $0995 and the
+ * distance $0996 (+ speed); every $3C units of distance pick the pace band
+ * from $80:F715 (frames, for X = 7..1) and in a race set the AI targets
+ * $09B0/$09B1 from $80:F71D/$80:F725. Restart both after $46 frames. */
+void TrackRiderPace_m1x1(void)
+{
+    lda8(rd8(ABS(0x0CD7)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(DP(0x92)));
+    if (fz) { ret(); return; }
+    lda8(rd8(DP(0x84)));
+    if (!fz) { ret(); return; }
+    wr8(ABS(0x0995), inc8(rd8(ABS(0x0995))));
+    lda8(rd8(ABS(0x0995)));
+    cmp8((u8)A, 0x46);
+    if (fc) {
+        lda8(0x00);
+        wr8(ABS(0x0995), 0);
+        wr8(ABS(0x0996), 0);
+        ret();
+        return;
+    }
+    lda8(rd8(ABS(0x0186)));
+    fc = 0;
+    adc8(rd8(ABS(0x0996)));
+    wr8(ABS(0x0996), (u8)A);
+    cmp8((u8)A, 0x3C);
+    if (!fc) { ret(); return; }
+    lda8(rd8(ABS(0x0996)));
+    fc = 1;
+    sbc8(0x3C);
+    wr8(ABS(0x0996), (u8)A);
+    ldx8(0x07);
+    do {
+        lda8(rd8(ABS(0x0995)));
+        cmp8((u8)A, rd8(ABSX(0xF715)));
+        if (!fc) wr8(DP(0x00), (u8)X);
+        else wr8(DP(0x01), (u8)X);
+        X = dec8((u8)X);
+    } while (!fz);
+    lda8(rd8(DP(0x7D)));
+    if (!fz) {
+        X = rd8(DP(0x00)); nz8((u8)X);
+        lda8(rd8(ABSX(0xF71D))); wr8(ABS(0x09B0), (u8)A);
+        lda8(rd8(ABSX(0xF725))); wr8(ABS(0x09B1), (u8)A);
+    }
+    lda8(0x00);
+    wr8(ABS(0x0995), 0);
+    wr8(ABS(0x0996), 0);
+    ret();
+}
+
+/* $82:8782 HideAllSprites (RTL): unless $1958 is set, move all 128
+ * sprites of the OAM buffer off screen (Y $F0) and clear the size table
+ * $1821-$189F. */
+void HideAllSprites_m1x1(void)
+{
+    static const u16 rows[] = { 0x1601, 0x1681, 0x1701, 0x1781 };
+    lda8(rd8(ABS(0x1958)));
+    if (!fz) { retl(); return; }
+    ldx8(0x00);
+    do {
+        lda8(0xF0);
+        for (int r = 0; r < 4; r++)
+            for (int k = 0; k < 8; k++)
+                wr8(ABSX(rows[r] + 4 * k), 0xF0);
+        lda8((u8)X);
+        fc = 0;
+        adc8(0x20);
+        X = (u8)A; nz8((u8)X);
+    } while (!fn);
+    lda8(0x00);
+    ldy8(0x7F);
+    do {
+        wr8(ABSY(0x1820), 0);
+        Y = dec8((u8)Y);
+    } while (!fz);
+    retl();
+}

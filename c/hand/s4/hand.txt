@@ -173,3 +173,9 @@
 80C623  1 1  mem+X,Y,C,V     QueueBestTime
 80AE33  1 1  mem+X,Y,V       AccelerateRider
 80BD88  1 1  mem+C,V         UpdateRiderDistances
+819592  1 1  mem+Y,C,V       DrawDustPair
+80ACD6  1 1  mem+X,Y,Z,V     RiderOnRamp
+81C9A7  1 1  mem+X,Y,C,V     BuildJumpScore
+80B5F8  1 1  mem+X,Y,C,V     Mode09_BonusIntro
+80FE93  1 1  mem+X,Y,C,V     TrackRiderPace
+828782  1 1  mem+X,Y,C,V     HideAllSprites

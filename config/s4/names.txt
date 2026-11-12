@@ -190,3 +190,9 @@
 80AE33 AccelerateRider
 80BD88 UpdateRiderDistances
 81CA37 QueueStadiumBadge
+819592 DrawDustPair
+80ACD6 RiderOnRamp
+81C9A7 BuildJumpScore
+80B5F8 Mode09_BonusIntro
+80FE93 TrackRiderPace
+828782 HideAllSprites
