@@ -368,6 +368,7 @@ BRIDGE(HleHand_DrawBigSprite, DrawBigSprite_m1x1, 120)
 BRIDGE(HleHand_SpawnExhaust, SpawnExhaust_m1x1, 70)
 BRIDGE(HleHand_MirrorJumpRider, MirrorJumpRider_m1x1, 240)
 BRIDGE(HleHand_VelocityDirection, VelocityDirection_m1x1, 120)
+BRIDGE(HleHand_DrawBigBall, DrawBigBall_m1x1, 90)
 #else
 /* Stadium 3-4 (Gen B) routines from c/hand/s4 */
 BRIDGE(HleHand_RiderGfxCycle,     RiderGfxCycle_m1x1,     60)

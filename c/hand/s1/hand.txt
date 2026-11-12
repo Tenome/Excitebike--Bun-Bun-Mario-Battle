@@ -155,3 +155,4 @@
 8193E2  1 1  mem+X,Y,C,V    SpawnExhaust           # from s4 8194B6
 80D198  1 1  mem+Y,C,V      MirrorJumpRider        # from s4 80D013
 819C98  1 1  mem+V          VelocityDirection      # from s4 819D71
+819D0B  1 1  mem+Y,V        DrawBigBall            # from s4 819DE4

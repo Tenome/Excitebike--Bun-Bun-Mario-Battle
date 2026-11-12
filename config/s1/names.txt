@@ -177,3 +177,4 @@
 8193E2 SpawnExhaust          # from s4 8194B6
 80D198 MirrorJumpRider       # from s4 80D013
 819C98 VelocityDirection     # from s4 819D71
+819D0B DrawBigBall           # from s4 819DE4

@@ -595,3 +595,76 @@ void VelocityDirection_m1x1(void)
     sep(0x20);
     retl();
 }
+/* $81:9D0B DrawBigBall (RTS): a 2x2 ball sprite (tiles $DD/$DE/$ED/$EE,
+ * attribute $2C) at OAM buffer $17F0 for object $03A3, from its 16-bit
+ * position $027F - 10 / $028F + 6; near the left edge (X high byte $FF)
+ * or right edge it is clipped by hiding columns and setting the size/X9
+ * bits $189C-$189F. */
+void DrawBigBall_m1x1(void)
+{
+    rep(0x20);
+    X = rd8(ABS(0x039D)); nz8((u8)X);
+    lda16(rd16(ABSX(0x0279)));
+    fc = 0; adc16(0xFFF6);
+    wr16(DP(0x00), A);
+    lda16(rd16(ABSX(0x0289)));
+    fc = 0; adc16(0x0006);
+    wr16(DP(0x02), A);
+    sep(0x20);
+    lda8(0xDD); wr8(ABS(0x17F2), 0xDD);
+    lda8(inc8((u8)A)); wr8(ABS(0x17F6), (u8)A);
+    lda8(0xED); wr8(ABS(0x17FA), 0xED);
+    lda8(inc8((u8)A)); wr8(ABS(0x17FE), (u8)A);
+    lda8(0x2C);
+    wr8(ABS(0x17F3), 0x2C); wr8(ABS(0x17F7), 0x2C);
+    wr8(ABS(0x17FB), 0x2C); wr8(ABS(0x17FF), 0x2C);
+    lda8(rd8(DP(0x00)));
+    wr8(ABS(0x17F0), (u8)A); wr8(ABS(0x17F8), (u8)A);
+    fc = 0; adc8(0x08);
+    wr8(ABS(0x17F4), (u8)A); wr8(ABS(0x17FC), (u8)A);
+    lda8(rd8(DP(0x02)));
+    wr8(ABS(0x17F1), (u8)A); wr8(ABS(0x17F5), (u8)A);
+    fc = 0; adc8(0x08);
+    wr8(ABS(0x17F9), (u8)A); wr8(ABS(0x17FD), (u8)A);
+    lda8(0x02); wr8(DP(0x04), 0x02);
+    lda8(rd8(DP(0x01)));
+    if (fz) {
+        lda8(rd8(DP(0x00)));
+        cmp8((u8)A, 0xF0);
+        if (fc) {
+            lda8(0xF0);
+            wr8(ABS(0x17F5), 0xF0); wr8(ABS(0x17FD), 0xF0);
+            lda8(rd8(DP(0x04)));
+            wr8(ABS(0x189C), (u8)A); wr8(ABS(0x189E), (u8)A);
+            ret();
+            return;
+        }
+        goto all4;
+    }
+    lda8(inc8((u8)A));
+    if (fz) {
+        lda8(rd8(DP(0x00)));
+        cmp8((u8)A, 0xE9);
+        if (fc) {
+            wr8(DP(0x04), inc8(rd8(DP(0x04))));
+            cmp8((u8)A, 0xF1);
+            if (fc) goto all4;
+            lda8(0xF0);
+            wr8(ABS(0x17F1), 0xF0); wr8(ABS(0x17F9), 0xF0);
+            lda8(rd8(DP(0x04)));
+            wr8(ABS(0x189D), (u8)A); wr8(ABS(0x189F), (u8)A);
+            ret();
+            return;
+        }
+    }
+    lda8(0xF0);
+    wr8(ABS(0x17F1), 0xF0); wr8(ABS(0x17F5), 0xF0);
+    wr8(ABS(0x17F9), 0xF0); wr8(ABS(0x17FD), 0xF0);
+    ret();
+    return;
+all4:
+    lda8(rd8(DP(0x04)));
+    wr8(ABS(0x189C), (u8)A); wr8(ABS(0x189D), (u8)A);
+    wr8(ABS(0x189E), (u8)A); wr8(ABS(0x189F), (u8)A);
+    ret();
+}
