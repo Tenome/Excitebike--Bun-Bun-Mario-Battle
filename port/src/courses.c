@@ -19,6 +19,7 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
+#include "bunbun_data.h"
 #include <string.h>
 
 #include "cpu_state.h"
@@ -50,6 +51,9 @@ void BunbunCoursesInit(void)
 {
     const char *path = getenv("BUNBUN_GENA_ROM");
     const char *set = getenv("BUNBUN_COURSES");
+    char dpath[1100];
+    if (!path && bunbun_data_path("s1.sfc", dpath, sizeof dpath))
+        path = dpath;                       /* the imported dump in data/ */
     if (!path || !set || (atoi(set) != 1 && atoi(set) != 2))
         return;
     FILE *f = fopen(path, "rb");
