@@ -85,7 +85,11 @@ static const SnesDesktopHostGame kGameHost = {
 #ifndef __ANDROID__
 #undef main   /* desktop: keep plain main() even if SDL_main.h remapped it */
 #endif
+#include "bunbun_embedded.h"
 int main(int argc, char **argv)
 {
+    /* A build with the dumps built in (port/tools/embed_roms.py) needs no ROM
+     * from the player: data/ and rom.cfg are set up from the executable. */
+    bunbun_embedded_prepare(SNESRECOMP_ROM_FILE);
     return snesrecomp_desktop_main(&kGameHost, argc, argv);
 }

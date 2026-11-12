@@ -98,6 +98,9 @@ kbd { font: 12px ui-monospace, monospace; border: 1px solid var(--line); border-
     byte per track column, up to 4088 columns. See <code>docs/MODDING.md</code>.</p>
   </section>
 </main>
+<!-- The original courses, extracted at build time beside the executable
+     (port/tools/embed_roms.py). Absent when the editor is opened on its own. -->
+<script src="editor_courses.js" onerror="void 0"></script>
 <script>
 "use strict";
 const TABLES = { A: [0x818C59, 0x818C6D, 0x818C81, 0x40], B: [0x818C62, 0x818C76, 0x818C8A, 0x80] };
@@ -366,8 +369,18 @@ function courseLabel(i) {
   const st = engine === "A" ? 1 + (i >> 2) : 3 + (i >> 2);
   return `Stadium ${st} course ${(i & 3) + 1} (index ${i})`;
 }
+/* The built-in course list (editor_courses.js) for the engine, or null. */
+function builtin() {
+  const b = window.BUNBUN_COURSES;
+  return b && b[engine] ? b[engine] : null;
+}
+function builtinCourse(i) {
+  const bin = atob(builtin()[i]), out = new Uint8Array(bin.length);
+  for (let k = 0; k < bin.length; k++) out[k] = bin.charCodeAt(k);
+  return out;
+}
 function loadCourse(i) {
-  courseIndex = i; cols = decodeCourse(i); undoStack.length = redoStack.length = 0;
+  courseIndex = i; cols = rom ? decodeCourse(i) : builtinCourse(i); undoStack.length = redoStack.length = 0;
   cursor = 0; selA = selB = -1; draw(); status(); $("save").disabled = false;
 }
 function fillCourseSel() {
@@ -376,7 +389,7 @@ function fillCourseSel() {
   s.disabled = false; s.value = courseIndex;
 }
 $("courseSel").onchange = e => loadCourse(+e.target.value);
-$("engine").onchange = e => { engine = e.target.value; buildPalette(); if (rom) { fillCourseSel(); loadCourse(courseIndex); } else draw(); };
+$("engine").onchange = e => { engine = e.target.value; buildPalette(); if (rom || builtin()) { fillCourseSel(); loadCourse(courseIndex); } else draw(); };
 $("romFile").onchange = async e => {
   const f = e.target.files[0]; if (!f) return;
   let b = new Uint8Array(await f.arrayBuffer());
@@ -401,7 +414,12 @@ $("save").onclick = () => {
   a.download = `course${courseIndex}.bin`; a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 };
-buildPalette(); draw();
+buildPalette();
+if (window.BUNBUN_COURSES) {
+  /* Opened beside the game: start on its courses, no ROM needed. */
+  engine = window.BUNBUN_COURSES.B ? "B" : "A";   /* the main game is Gen B */
+  $("engine").value = engine; buildPalette(); fillCourseSel(); loadCourse(0);
+} else draw();
 </script>
 </body>
 </html>

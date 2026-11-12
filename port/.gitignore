@@ -25,3 +25,6 @@
 /input.ini
 
 .DS_Store
+
+# ROM dumps built into the executable (port/tools/embed_roms.py)
+/src/embed/

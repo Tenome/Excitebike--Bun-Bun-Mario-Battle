@@ -9,3 +9,4 @@ __pycache__/
 port/src/gen-genb/
 port/recomp-genb/funcs.h
 c/auto/
+port/src/embed/

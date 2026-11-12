@@ -70,11 +70,33 @@ Either way the ROM is checked against the digests above before anything boots
 — a dump that could not have produced this build is refused at the door rather
 than mis-executing ten frames in.
 
+## No ROM needed after the build
+
+`tools/regen.sh` and `tools/regen_genb.sh` also run `tools/embed_roms.py`,
+which builds your dumps into the executable (`src/embed/`, git-ignored): the
+Gen A exe carries `s1.sfc`, the Gen B exe `s4.sfc`, `s3.sfc` (Luigi) and
+`s1.sfc` (Stadium 1-2 courses), found by their digests beside the `--rom`
+you pass, in `$BUNBUN_DUMPS` or in a build tree's `data/`. The built exe then
+runs from any folder with nothing supplied: on its first launch it writes its
+own boot dump to `data/` and points `rom.cfg` at it (the framework host boots
+from a file), and reads the other dumps from memory. `BUNBUN_NO_EMBED=1`
+skips this, and the exe reads `data/` as before.
+
+**An executable built this way contains the game. Keep it for yourself;
+never share or upload it.**
+
+The course editor is copied beside each exe as `editor/course_editor.html`
+together with `editor_courses.js` (every course of both engines, decoded at
+build time), so it opens straight onto the game's courses without a ROM.
+Save a course as `courseN.bin` into `mods/<name>/courses/` (or pick it on
+the Mods page) to play it.
+
 ## Which executable
 
 * `build/genb/Release/BunbunS4SNESRecomp.exe` is the main game: the Gen B
   engine with all six characters (Mario, Yoshi, Kinopio, Wario, Peach,
-  Luigi) on the player select. It needs `data/s4.sfc` and, for Luigi,
+  Luigi) on the player select. Built with the dumps embedded it needs
+  nothing else; otherwise it reads `data/s4.sfc` and, for Luigi,
   `data/s3.sfc` (`python port/tools/import_roms.py <dumps>`).
   `BUNBUN_STADIUM=3|4` picks the Stadium, `BUNBUN_COURSES=1|2` plays the
   Stadium 1 or 2 courses in it (needs `data/s1.sfc`).

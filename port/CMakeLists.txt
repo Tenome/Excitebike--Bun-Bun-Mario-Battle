@@ -54,6 +54,34 @@ function(bunbun_game tgt gendir cfgdir identity title)
       ${CMAKE_SOURCE_DIR}/src/launcher_mods.c
   )
 
+  # The player's own dumps built in (port/tools/embed_roms.py, run by the
+  # regen scripts), so the executable needs no ROM beside it; without them
+  # src/bunbun_embedded_none.c and the port reads data/. The glob re-checks
+  # at build time, so a later embed run is picked up without reconfiguring.
+  # Never share an executable built with them.
+  if(tgt STREQUAL "BunbunS4SNESRecomp")
+    set(_emb ${CMAKE_SOURCE_DIR}/src/embed/genb)
+  else()
+    set(_emb ${CMAKE_SOURCE_DIR}/src/embed/gena)
+  endif()
+  file(GLOB _emb_c CONFIGURE_DEPENDS ${_emb}/bunbun_embedded.c)
+  if(_emb_c)
+    target_sources(${tgt} PRIVATE ${_emb_c})
+  else()
+    target_sources(${tgt} PRIVATE ${CMAKE_SOURCE_DIR}/src/bunbun_embedded_none.c)
+  endif()
+  # The course editor beside the executable (editor/course_editor.html), with
+  # the original courses when they were extracted (editor_courses.js).
+  set(_ed_cmds COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:${tgt}>/editor
+               COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                       ${CMAKE_SOURCE_DIR}/../tools/editor/course_editor.html
+                       $<TARGET_FILE_DIR:${tgt}>/editor/course_editor.html)
+  if(_emb_c)
+    list(APPEND _ed_cmds COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                         ${_emb}/editor_courses.js $<TARGET_FILE_DIR:${tgt}>/editor/editor_courses.js)
+  endif()
+  add_custom_command(TARGET ${tgt} POST_BUILD ${_ed_cmds} VERBATIM)
+
   # ROM identity. rom_identity.txt is the one place the digests live: the build
   # turns it into snesrecomp_rom_identity.h (SNESRECOMP_ROM_EXPECTED_SHA256 and
   # friends) for src/main.c, and tools/regen.sh, scripts/package_release.sh and

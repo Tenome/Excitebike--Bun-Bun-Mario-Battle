@@ -93,6 +93,13 @@ if [ "$VERIFY" -eq 1 ]; then GEN_ARGS+=("${VERIFY_ARGS[@]}"); fi
 echo "== Generating src/gen =="
 "$PYTHON" "$CLI" generate "${GEN_ARGS[@]}"
 
+# Build the dumps into the executable (src/embed/genb, git-ignored), so it
+# runs with no ROM beside it; set BUNBUN_NO_EMBED=1 to skip.
+if [ -z "${BUNBUN_NO_EMBED:-}" ]; then
+  echo "== Embedding the dumps =="
+  "$PYTHON" tools/embed_roms.py genb --rom "$ROM"
+fi
+
 echo
 echo "Done. Build with:"
 echo "  cmake -S . -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build -j"

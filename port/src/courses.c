@@ -55,19 +55,22 @@ void BunbunCoursesInit(void)
     char setbuf[8];
     SDL_snprintf(setbuf, sizeof setbuf, "%d", bunbun_option("BUNBUN_COURSES", "game.courses", 0));
     const char *set = setbuf;              /* launcher: Game > Courses ("own" = 0) */
-    char dpath[1100];
-    if (!path && bunbun_data_path("s1.sfc", dpath, sizeof dpath))
-        path = dpath;                       /* the imported dump in data/ */
-    if (!path || !set || (atoi(set) != 1 && atoi(set) != 2))
+    if (!set || (atoi(set) != 1 && atoi(set) != 2))
         return;
-    FILE *f = fopen(path, "rb");
-    if (!f) { fprintf(stderr, "[bunbun] cannot open BUNBUN_GENA_ROM '%s'\n", path); return; }
-    uint8_t *rom = (uint8_t *)malloc(0x100000);
-    size_t n = rom ? fread(rom, 1, 0x100000, f) : 0;
-    fclose(f);
+    uint8_t *rom = NULL;
+    size_t n = 0;
+    if (path) {                             /* an explicit dump wins */
+        rom = SDL_LoadFile(path, &n);
+        if (!rom) { fprintf(stderr, "[bunbun] cannot open BUNBUN_GENA_ROM '%s'\n", path); return; }
+    } else {                                /* built in, else data/s1.sfc */
+        rom = bunbun_data_load_dump("s1.sfc");
+        n = rom ? 0x100000 : 0;
+        if (!rom)
+            return;
+    }
     if (n != 0x100000 || crc32_buf(rom, n) != GENA_CRC32) {
-        fprintf(stderr, "[bunbun] BUNBUN_GENA_ROM is not the expected Stadium 1 dump\n");
-        free(rom);
+        fprintf(stderr, "[bunbun] the Stadium 1 dump is not the expected one\n");
+        SDL_free(rom);
         return;
     }
     /* Gen A tables: starts $81:8C59, lengths $81:8C6D, data $81:8C81. */
@@ -92,7 +95,7 @@ void BunbunCoursesInit(void)
             }
         }
     }
-    free(rom);
+    SDL_free(rom);
     g_gena_set = atoi(set) - 1;
     fprintf(stderr, "[bunbun] using Stadium %d courses from the Gen A ROM\n", g_gena_set + 1);
 }
