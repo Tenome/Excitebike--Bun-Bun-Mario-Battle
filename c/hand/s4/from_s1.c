@@ -54,6 +54,33 @@ static void read_pad(u16 reg_lo, u8 held_lo, u8 press_lo, u8 prev_lo,
     SET_A8(pressed);
     Y = hi;
 }
+/* Add the signed 4.4 speed at speed,X to an object coordinate: the low nibble
+ * (x16) into the fraction frac,X, the high nibble, sign-extended, plus the
+ * carry into the 16-bit position pos/pos+1,X. */
+static void apply_speed(u16 speed, u16 frac, u16 pos)
+{
+    u8 v = rd8(ABS(speed + X));
+    lda8(v);
+    lda8(asl8(asl8(asl8(asl8(v)))));
+    fc = 0;
+    adc8(rd8(ABS(frac + X)));
+    wr8(ABS(frac + X), (u8)A);
+    push8(getP());                                 /* keep the fraction's carry */
+    lda8(v);
+    lda8(lsr8(lsr8(lsr8(lsr8(v)))));
+    cmp8((u8)A, 0x08);
+    ldy8(0x00);
+    if (fc) {                                      /* negative speed: sign-extend */
+        ora8(0xF0);
+        Y = dec8((u8)Y);
+    }
+    setP(pull8());
+    adc8(rd8(ABS(pos + X)));
+    wr8(ABS(pos + X), (u8)A);
+    lda8((u8)Y);
+    adc8(rd8(ABS(pos + 1 + X)));
+    wr8(ABS(pos + 1 + X), (u8)A);
+}
 /* Fill words $7F:000E..$7F:000C+last with a tile word (a blank row in the
  * VRAM queue buffer). */
 static void fill_queue_row(u8 last, u16 tile)
@@ -308,6 +335,13 @@ void ComputePlaces_m1x1(void)
     sep(0x20);
     ret();
 }
+/* $81:A025 ApplyVelocity (RTL): Y position $0289/$028A,X += speed $02A9,X
+ * (fraction $02C9,X). */
+void ApplyVelocity_m1x1(void)
+{
+    apply_speed(0x02AF, 0x02CF, 0x028F);
+    retl();
+}
 /* $80:D228 ClearWords1530 (RTL): zero the low bytes of the four words at
  * $1530-$1537 (X is preserved on the stack). */
 void ClearWords1530_m1x1(void)
@@ -335,6 +369,20 @@ void ResetMinuteFrame_m1x1(void)
 /* $80:BA66 Nop_BD39 (RTS): eight NOPs, an empty hook. */
 void Nop_BD39_m1x1(void)
 {
+    ret();
+}
+/* $80:C09F Tick08CC (RTS): count down the per-rider timer $08CC,X; it is
+ * cancelled (zeroed) while any of bits 6-7 of $0178,X are set. */
+void Tick08CC_m1x1(void)
+{
+    lda8(rd8(ABS(0x08CC + X)));
+    if (fz) { ret(); return; }
+    wr8(ABS(0x08CC + X), dec8(rd8(ABS(0x08CC + X))));
+    lda8(rd8(ABS(0x017E + X)));
+    and8(0xC0);
+    if (fz) { ret(); return; }
+    lda8(0x00);
+    wr8(ABS(0x08CC + X), 0x00);
     ret();
 }
 /* $80:C741 DivideAX (RTS): divide A by X by repeated subtraction while the
@@ -382,6 +430,44 @@ void BeginFadeIn_m1x1(void)
     wr8(ABS(0x190D), 0);
     ret();
 }
+/* $80:AB34 SendSpeedToApu (RTS): engine pitch = player speed ($01C0:$01B8)
+ * >> 3, low byte to APUIO2. */
+void SendSpeedToApu_m1x1(void)
+{
+    lda8(rd8(ABS(0x01C6)));
+    A = (u16)((A << 8) | (A >> 8));             /* XBA */
+    nz8((u8)A);
+    lda8(rd8(ABS(0x01BE)));
+    rep(0x20);
+    lda16(lsr16(lsr16(lsr16(A))));
+    sep(0x20);
+    wr8(ABS(0x2142), (u8)A);
+    ret();
+}
+/*
+ * Stadium 1: rider position and scroll arithmetic. Hand-written; ADC/SBC go
+ * through the machine model so carries chain exactly as in the original.
+ */
+#include "hand/hand.h"
+
+/*
+ * $80:BCA9 RiderShadowY (RTS): $0979,X = ($090C,X - $0190,X - 8) * 2
+ * + $01F0,X + 4, with the original's carry chaining (the second SBC and ADC
+ * use the carry of the step before).
+ */
+void RiderShadowY_m1x1(void)
+{
+    lda8(rd8(ABS(0x090C + X)));
+    fc = 1;
+    sbc8(rd8(ABS(0x0196 + X)));
+    sbc8(0x08);
+    lda8(asl8((u8)A));
+    fc = 0;
+    adc8(rd8(ABS(0x01F6 + X)));
+    adc8(0x04);
+    wr8(ABS(0x0979 + X), (u8)A);
+    ret();
+}
 /*
  * $80:A113 Add32 (RTS): the 32-bit value at $10-$13 += $04-$07. The high
  * word adds the low word's carry first ($0000 + $12 + C), then $06.
@@ -400,6 +486,19 @@ void Add32_m1x1(void)
     wr16(DP(0x12), A);
     sep(0x20);
     ret();
+}
+/* $80:D968 DispatchBy85 (RTS): tail-jump through the routine table at
+ * $80:D409 indexed by $85 (pointer kept at $00/$01, X = 0). */
+void DispatchBy85_m1x1(void)
+{
+    lda8(rd8(DP(0x85)));
+    lda8(asl8((u8)A));
+    Y = (u8)A; nz8((u8)Y);
+    lda8(rd8(ABS(0xD234 + Y))); wr8(DP(0x00), (u8)A);
+    Y = inc8((u8)Y);
+    lda8(rd8(ABS(0xD234 + Y))); wr8(DP(0x01), (u8)A);
+    ldx8(0x00);
+    r816_call_pc(0x800000u | rd16(LONG(0x000000)));
 }
 /* $80:F3C7 StartMode01 (RTS): mode 1 from step 0 with a 1800-frame timer
  * ($88), start fading out ($1923 - 1), return C = 1. */
@@ -435,6 +534,54 @@ void BsxReadSerialByte_m1x1(void)
     A = (u16)((A << 8) | (A >> 8)); nz8((u8)A);
     retl();
 }
+/* $80:9F76 GrowBar087E (RTS): while $087E < 15, count it up and redraw a
+ * symmetric bar: $0474 = old length, and the length-1 ... 1 values going
+ * out both ways from $0455+$1D/$0455+$21. */
+void GrowBar087E_m1x1(void)
+{
+    lda8(rd8(ABS(0x087E)));
+    cmp8((u8)A, 0x0F);
+    if (fz) { ret(); return; }
+    wr8(ABS(0x087E), inc8(rd8(ABS(0x087E))));
+    wr8(ABS(0x0471), (u8)A);
+    ldx8(0x1D);
+    ldy8(0x21);
+    for (;;) {
+        lda8(dec8((u8)A));
+        if (fz) break;
+        wr8(ABS(0x0452 + X), (u8)A);
+        wr8(ABS(0x0452 + Y), (u8)A);
+        Y = inc8((u8)Y); Y = inc8((u8)Y);
+        X = dec8((u8)X); X = dec8((u8)X);
+        if (fn) break;
+    }
+    ret();
+}
+/* $80:9FB6 StepColourCycle (RTS): every 14 frames ($0882 countdown), copy
+ * the next colour word of the list at $88:BC00 (index $0880, $FF = stopped)
+ * to $1C00 and flag the palette upload ($1915). */
+void StepColourCycle_m1x1(void)
+{
+    lda8(rd8(ABS(0x0880)));
+    lda8(inc8((u8)A));
+    if (!fz) {
+        lda8(rd8(ABS(0x0882)));
+        if (fz) {
+            X = rd8(ABS(0x0880));
+            rep(0x20);
+            lda16(rd16(LONGX(0x9CD000)));
+            wr16(ABS(0x1C00), A);
+            sep(0x20);
+            wr8(ABS(0x1915), inc8(rd8(ABS(0x1915))));
+            wr8(ABS(0x0880), inc8(rd8(ABS(0x0880))));
+            wr8(ABS(0x0880), inc8(rd8(ABS(0x0880))));
+            lda8(0x0E);
+            wr8(ABS(0x0882), 0x0E);
+        }
+    }
+    wr8(ABS(0x0882), dec8(rd8(ABS(0x0882))));
+    ret();
+}
 /* $80:A36B MergeBsxFlags (RTL): OR the BS-X player data bits into the
  * unlock flags: $0856 |= $11:5719|$11:571D, $0857 |= $571A|$571E,
  * $0858 |= $571B|$571F, $0859 |= ($5716 << 4) | $571C. */
@@ -452,6 +599,164 @@ void MergeBsxFlags_m1x1(void)
     ora8(rd8(LONG(0x11571C)));
     wr8(ABS(0x0859), tsb8(rd8(ABS(0x0859))));
     retl();
+}
+/*
+ * $80:B178 LaneFromY (RTS): for each of the 8 riders, $08A4,X = lane 5..1
+ * from the track Y $01F0,X: 5 above Y $10, then one lane lower per 8 pixels.
+ */
+void LaneFromY_m1x1(void)
+{
+    ldx8(0x07);
+    do {
+        ldy8(0x05);
+        lda8(rd8(ABS(0x01F6 + X)));
+        fc = 1;
+        sbc8(0x10);
+        if (!fn) {
+            for (;;) {
+                Y = dec8((u8)Y);
+                if (fz) break;
+                fc = 1;
+                sbc8(0x08);
+                if (fn) break;
+            }
+        }
+        lda8((u8)Y);
+        wr8(ABS(0x08A4 + X), (u8)A);
+        X = dec8((u8)X);
+    } while (!fn);
+    ret();
+}
+/*
+ * $80:F90C MarkFastRider (RTS): a rider on the ground ($01E8,X = 0) with
+ * $01E0,X < 7 (signed compare by N) going faster than $02:80 (speed
+ * $01C0:$01B8) gets $01C8,X = $FF.
+ */
+void MarkFastRider_m1x1(void)
+{
+    lda8(rd8(ABS(0x01EE + X)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABS(0x01E6 + X)));
+    cmp8((u8)A, 0x07);
+    if (!fn) { ret(); return; }
+    lda8(rd8(ABS(0x01C6 + X)));
+    cmp8((u8)A, 0x03);
+    if (!fc) {
+        cmp8((u8)A, 0x02);
+        if (!fz) { ret(); return; }
+        lda8(rd8(ABS(0x01BE + X)));
+        lda8(asl8((u8)A));
+        if (!fc) { ret(); return; }
+    }
+    lda8(0xFF);
+    wr8(ABS(0x01CE + X), 0xFF);
+    ret();
+}
+/*
+ * $80:CD0E DrawRiderShadowPair (RTS): two 8x8 sprites in the OAM buffer at
+ * $16C0,Y and $16C4,Y: Y = A - 7 and A - 15, X = $01B0,X + 16 and + 8,
+ * tiles $E0 and $F0.
+ */
+void DrawRiderShadowPair_m1x1(void)
+{
+    fc = 0; adc8(0xF9); wr8(ABS(0x16C0 + Y), (u8)A);
+    fc = 0; adc8(0xF8); wr8(ABS(0x16C4 + Y), (u8)A);
+    lda8(rd8(ABS(0x01B6 + X)));
+    fc = 0; adc8(0x08); wr8(ABS(0x16C5 + Y), (u8)A);
+    fc = 0; adc8(0x08); wr8(ABS(0x16C1 + Y), (u8)A);
+    lda8(0xE0); wr8(ABS(0x16C2 + Y), 0xE0);
+    lda8(0xF0); wr8(ABS(0x16C6 + Y), 0xF0);
+    ret();
+}
+/*
+ * $80:BD22 ScrollRivalsRelative (RTS): for riders 7..1 that are on the course
+ * ($01D8,X != 0), move them by their own speed $0180,X minus the player's
+ * $0180 (the camera follows the player): position $0198:$0190,X and the
+ * column-relative $090C,X.
+ */
+void ScrollRivalsRelative_m1x1(void)
+{
+    ldx8(0x07);
+    do {
+        lda8(rd8(ABS(0x01DE + X)));
+        if (!fz) {
+            lda8(rd8(ABS(0x0186 + X)));
+            fc = 0;
+            adc8(rd8(ABS(0x0196 + X)));
+            if (fc)
+                wr8(ABS(0x019E + X), inc8(rd8(ABS(0x019E + X))));
+            fc = 1;
+            sbc8(rd8(ABS(0x0186)));
+            wr8(ABS(0x0196 + X), (u8)A);
+            if (!fc)
+                wr8(ABS(0x019E + X), dec8(rd8(ABS(0x019E + X))));
+            lda8(rd8(ABS(0x090C + X)));
+            fc = 1;
+            sbc8(rd8(ABS(0x0186)));
+            wr8(ABS(0x090C + X), (u8)A);
+        }
+        X = dec8((u8)X);
+    } while (!fz);
+    ret();
+}
+/*
+ * $80:C74F RiderLaneBand (RTS): $0958,X = which band of the track the rider
+ * is in by Y position $01F0,X against the 5 limits at $80:BE1D (signed
+ * compares), 0 while airborne ($01D0,X != 0) or past the last limit; bands
+ * are 2 higher when $0208,X = 1.
+ */
+void RiderLaneBand_m1x1(void)
+{
+    ldy8(0x00);
+    lda8(rd8(ABS(0x01D6 + X)));
+    if (fz) {
+        lda8(rd8(ABS(0x01F6 + X)));
+        for (;;) {
+            cmp8((u8)A, rd8(ABS(0xBB35 + Y)));
+            if (fn) break;
+            Y = inc8((u8)Y);
+            cmp8((u8)Y, 0x05);
+            if (!fn) { ldy8(0x00); break; }
+        }
+        lda8((u8)Y);
+        if (!fz) {
+            lda8(0x01);
+            cmp8(0x01, rd8(ABS(0x020E + X)));
+            if (fz) {
+                Y = inc8((u8)Y);
+                Y = inc8((u8)Y);
+            }
+        }
+    }
+    lda8((u8)Y);
+    wr8(ABS(0x0958 + X), (u8)A);
+    ret();
+}
+/*
+ * $80:D5FD SetupSpriteRow15 (RTS): fill 15 OAM entries at $1700 from the
+ * tables at $80:D7F5 (X), $80:D804 (Y) and $80:D7E6 (tile + $A0), attribute
+ * $31, size bits $1860,X = 2 (large); $1958 counts up.
+ */
+void SetupSpriteRow15_m1x1(void)
+{
+    wr8(ABS(0x1958), inc8(rd8(ABS(0x1958))));
+    ldx8(0x0E);
+    do {
+        lda8((u8)X);
+        lda8(asl8((u8)A));
+        lda8(asl8((u8)A));
+        Y = (u8)A; nz8((u8)Y);
+        lda8(rd8(ABS(0xD638 + X))); wr8(ABS(0x1700 + Y), (u8)A);
+        lda8(rd8(ABS(0xD647 + X))); wr8(ABS(0x1701 + Y), (u8)A);
+        lda8(rd8(ABS(0xD629 + X)));
+        fc = 1;
+        sbc8(0x60);
+        wr8(ABS(0x1702 + Y), (u8)A);
+        lda8(0x31); wr8(ABS(0x1703 + Y), 0x31);
+        lda8(0x02); wr8(ABS(0x1860 + X), 0x02);
+        X = dec8((u8)X);
+    } while (!fn);
+    ret();
 }
 /*
  * $80:C173 RiderHeightStep (RTS), with the caller's carry: 16-bit
@@ -480,6 +785,41 @@ void RiderHeightStep_m1x1(void)
     }
     lda8(rd8(DP(0x01)));
     ret();
+}
+/*
+ * $81:9FCE ObjectFacing (RTL): $02D9,X = the direction of the larger of the
+ * two speed components $0299,X and $02A9,X (signed): 3/2 for $0299 positive
+ * / negative, 1/0 for $02A9; unchanged when they are equal. Y is preserved.
+ */
+void ObjectFacing_m1x1(void)
+{
+    push8((u8)Y);
+    ldy8(0x03);
+    lda8(rd8(ABS(0x029F + X)));
+    if (fn) {
+        Y = dec8((u8)Y);
+        eor8(0xFF);
+        lda8(inc8((u8)A));
+    }
+    wr8(DP(0x00), (u8)A);
+    wr8(DP(0x02), (u8)Y);
+    ldy8(0x01);
+    lda8(rd8(ABS(0x02AF + X)));
+    if (fn) {
+        Y = dec8((u8)Y);
+        eor8(0xFF);
+        lda8(inc8((u8)A));
+    }
+    cmp8((u8)A, rd8(DP(0x00)));
+    if (!fz) {
+        if (!fc)
+            ldy8(rd8(DP(0x02)));
+        lda8((u8)Y);
+        wr8(ABS(0x02DF + X), (u8)A);
+    }
+    Y = pull8();
+    nz8((u8)Y);
+    retl();
 }
 /*
  * $80:FE68 AddScore (RTS): add the six decimal digits $09AC-$09B1 to the
@@ -512,5 +852,69 @@ void AddScore_m1x1(void)
         wr8(ABS(0x09AC + X), 0x00);
         X = dec8((u8)X);
     } while (!fn);
+    ret();
+}
+/* $81:9FF7 ApplyVelocityX (RTL): X position $0279/$027A,X += speed $0299,X
+ * (fraction $02B9,X). */
+void ApplyVelocityX_m1x1(void)
+{
+    apply_speed(0x029F, 0x02BF, 0x027F);
+    retl();
+}
+/*
+ * $81:93FE SpawnPlayerSpark (RTL): start effect slot 0 at the player's
+ * position ($0190, $01B0): kind 3 ($0110), 3 frames ($0120), speeds
+ * $F8/$D0 ($0138/$0140), and set $09AD = 1.
+ */
+void SpawnPlayerSpark_m1x1(void)
+{
+    push8(DB);
+    lda8(0x81);
+    push8(0x81);
+    DB = pull8(); nz8(DB);
+    push8((u8)X);
+    ldx8(0x00);
+    lda8(rd8(ABS(0x0196))); wr8(ABS(0x0106 + X), (u8)A);
+    lda8(rd8(ABS(0x01B6))); wr8(ABS(0x010E + X), (u8)A);
+    lda8(0x00); wr8(ABS(0x011E + X), 0x00);
+    lda8(0x03); wr8(ABS(0x0116 + X), 0x03);
+    lda8(0xF8); wr8(ABS(0x013E + X), 0xF8);
+    lda8(0xD0); wr8(ABS(0x0146 + X), 0xD0);
+    lda8(0x03); wr8(ABS(0x0126 + X), 0x03);
+    wr8(ABS(0x012E + X), 0);
+    lda8(0x01); wr8(ABS(0x09AD), 0x01);
+    X = pull8(); nz8((u8)X);
+    DB = pull8(); nz8(DB);
+    retl();
+}
+/*
+ * $81:96C2 StepSpark (RTS), effect slot Y: count its frames $0120 down (kind
+ * $0110 cleared at zero), rise one pixel every other frame, and draw it as
+ * sprite (Y + 4) in the OAM buffer: tile $8E, attribute $2D, large.
+ */
+void StepSpark_m1x1(void)
+{
+    X = Y; nz8((u8)X);
+    u8 t = dec8(rd8(ABS(0x0126 + X)));
+    wr8(ABS(0x0126 + X), t);
+    if (t == 0)
+        wr8(ABS(0x0116 + X), 0);
+    lda8(rd8(ABS(0x0126 + X)));
+    lda8(lsr8((u8)A));
+    if (fc)
+        wr8(ABS(0x010E + X), dec8(rd8(ABS(0x010E + X))));
+    lda8((u8)X);
+    lda8(asl8((u8)A));
+    Y = (u8)A; nz8((u8)Y);
+    lda8(rd8(ABS(0x0106 + X))); wr8(ABS(0x1610 + Y), (u8)A);
+    lda8(rd8(ABS(0x010E + X))); wr8(ABS(0x1611 + Y), (u8)A);
+    lda8(0x8E); wr8(ABS(0x1612 + Y), 0x8E);
+    lda8(0x2D); wr8(ABS(0x1613 + Y), 0x2D);
+    lda8((u8)Y);
+    lda8(lsr8((u8)A));
+    lda8(lsr8((u8)A));
+    Y = (u8)A; nz8((u8)Y);
+    lda8(0x02);
+    wr8(ABS(0x1824 + Y), 0x02);
     ret();
 }
