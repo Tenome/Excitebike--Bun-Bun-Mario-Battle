@@ -42,6 +42,7 @@
 static uint8_t *s_rom;
 static size_t s_rom_size;
 static int s_changed;
+static size_t s_gfx_limit;      /* bytes a sheet may write (0: no limit) */
 
 /* LoROM: $BB:AAAA (AAAA >= $8000) -> file offset. */
 static long rom_offset(uint32_t snes)
@@ -223,6 +224,7 @@ static void apply_gfx(const char *dir, const char *path, const char *name, uint3
         if (!rgba) { SDL_DestroySurface(img); return; }
     }
     size_t tsize = (size_t)bpp * 8, total = (size_t)w * h * tsize;
+    if (s_gfx_limit && total > s_gfx_limit) total = s_gfx_limit;
     const char *nt = strstr(name, "_n");             /* _n<tiles>: real tile count */
     if (nt && nt[2] >= '0' && nt[2] <= '9') {
         size_t want = (size_t)strtoul(nt + 2, NULL, 10) * tsize;
@@ -432,10 +434,16 @@ static int is_dir(const char *path)
     return SDL_GetPathInfo(path, &info) && info.type == SDL_PATHTYPE_DIRECTORY;
 }
 
+static void apply_dir(const char *dir, int kind);
 static void apply_sub(const char *mod, const char *sub, int kind)
 {
     char dir[1024];
     SDL_snprintf(dir, sizeof dir, "%s/%s", mod, sub);
+    apply_dir(dir, kind);
+}
+
+static void apply_dir(const char *dir, int kind)
+{
     if (!is_dir(dir))
         return;
     Names l = list_dir(dir);
@@ -483,6 +491,48 @@ static void apply_mod(const char *mod)
 
 /* Called from GameInitialize (applying twice gives the same image). Returns
  * the number of changes made. */
+/* ---- the launcher's Mods page (bunbun.ini) ------------------------------------- */
+#include "bunbun_settings.h"
+typedef struct { const char *key; uint32_t addr; } RiderSet;
+#ifdef BUNBUN_GENB
+static const RiderSet kRiderSets[] = {
+    { "sprites.mario", 0x99C000 }, { "sprites.yoshi", 0x9A8000 }, { "sprites.kinopio", 0x9AC000 },
+    { "sprites.wario", 0x9B8000 }, { "sprites.peach", 0x98C000 }, { "sprites.luigi", 0xA08000 },
+};
+#else
+static const RiderSet kRiderSets[] = {
+    { "sprites.mario", 0x868000 }, { "sprites.luigi", 0x86C000 },
+    { "sprites.kinopio", 0x878000 }, { "sprites.wario", 0x87C000 },
+};
+#endif
+
+static void apply_launcher_settings(void)
+{
+    if (bunbun_setting_int("feature.sprites", 1)) {
+        for (size_t i = 0; i < sizeof kRiderSets / sizeof kRiderSets[0]; i++) {
+            const char *path = bunbun_setting(kRiderSets[i].key, "");
+            if (!path[0] || !SDL_GetPathInfo(path, NULL))
+                continue;
+            char dir[1024];
+            SDL_snprintf(dir, sizeof dir, "%s", path);
+            char *slash = SDL_strrchr(dir, '/'), *bslash = SDL_strrchr(dir, '\\');
+            char *cut = slash > bslash ? slash : bslash;
+            const char *name = cut ? cut + 1 : path;
+            char nm[512];
+            SDL_snprintf(nm, sizeof nm, "%s", name);
+            if (cut) *cut = 0; else dir[0] = 0;
+            s_gfx_limit = 0x4000;                       /* one 16 KB rider set */
+            apply_gfx(dir, path, nm, kRiderSets[i].addr);
+            s_gfx_limit = 0;
+        }
+    }
+    if (bunbun_setting_int("feature.sound", 1)) {
+        const char *dir = bunbun_setting("sound.folder", "");
+        if (dir[0])
+            apply_dir(dir, 3);
+    }
+}
+
 int BunbunModsFolderApply(void)
 {
     if (!g_snes || !g_snes->cart || !g_snes->cart->rom)
@@ -496,16 +546,17 @@ int BunbunModsFolderApply(void)
         SDL_snprintf(root, sizeof root, "%s", env);
     else
         SDL_snprintf(root, sizeof root, "%smods", SDL_GetBasePath() ? SDL_GetBasePath() : "");
-    if (!is_dir(root))
-        return 0;
-    Names l = list_dir(root);
-    for (int i = 0; i < l.n; i++) {
-        char mod[1100];
-        SDL_snprintf(mod, sizeof mod, "%s/%s", root, l.v[i]);
-        if (is_dir(mod) && SDL_strcasecmp(l.v[i], "preloaded") != 0)
-            apply_mod(mod);
+    if (is_dir(root)) {
+        Names l = list_dir(root);
+        for (int i = 0; i < l.n; i++) {
+            char mod[1100];
+            SDL_snprintf(mod, sizeof mod, "%s/%s", root, l.v[i]);
+            if (is_dir(mod) && SDL_strcasecmp(l.v[i], "preloaded") != 0)
+                apply_mod(mod);
+        }
+        free_names(&l);
     }
-    free_names(&l);
+    apply_launcher_settings();
     if (s_changed) {
         SDL_Log("mods: %d change(s) applied from %s", s_changed, root);
         const char *dump = getenv("BUNBUN_MODS_DUMP");  /* debugging: the patched image */
@@ -521,6 +572,21 @@ int BunbunModsFolderApply(void)
  * is zero-filled, like the original) and return 1. */
 int BunbunCustomCourse(int index, uint8_t *buf, int cap)
 {
+    if (bunbun_setting_int("feature.courses", 1)) {
+        char key[32];
+        SDL_snprintf(key, sizeof key, "course.%d", index);
+        const char *path = bunbun_setting(key, "");
+        size_t n = 0;
+        uint8_t *d = path[0] ? read_file(path, &n) : NULL;
+        if (d) {
+            if (n > (size_t)cap - 8) n = (size_t)cap - 8;
+            memset(buf, 0, (size_t)cap);
+            memcpy(buf, d, n);
+            SDL_free(d);
+            SDL_Log("mods: course %d from %s (%u columns)", index, path, (unsigned)n);
+            return 1;
+        }
+    }
     char root[1024];
     const char *env = getenv("BUNBUN_MODS");
     if (env && *env)

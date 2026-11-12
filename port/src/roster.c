@@ -22,6 +22,7 @@
 #include "runtime816.h"
 #include "roster.h"
 #include "bunbun_data.h"
+#include "bunbun_settings.h"
 
 #define MAX_CH 16
 
@@ -138,7 +139,8 @@ void RosterInit(void)
         from_rom(c);
         g_ch[c].label = labels[c];
     }
-    add_luigi();
+    if (bunbun_option("BUNBUN_LUIGI", "game.luigi", 1))   /* launcher: Game > Expanded roster */
+        add_luigi();
     g_ready = 1;
 }
 

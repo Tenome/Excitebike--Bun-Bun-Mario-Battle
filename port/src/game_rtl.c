@@ -51,6 +51,8 @@ int g_port_reset_request;
  * ROM image is patched in memory after verification; the file is untouched. */
 #include <stdlib.h>
 #include "snes/cart.h"
+#include <string.h>
+#include "bunbun_settings.h"
 void BunbunCoursesInit(void);
 int BunbunModsFolderApply(void);
 void RosterInit(void);
@@ -64,9 +66,8 @@ static void GameInitialize(void)
     static int courses_ready;
     if (!courses_ready) { courses_ready = 1; BunbunCoursesInit(); }
 #endif
-    const char *v = getenv("BUNBUN_STADIUM");
-    if (v && g_snes && g_snes->cart && g_snes->cart->rom && g_snes->cart->romSize > 0x800C) {
-        int st = atoi(v);
+    int st = bunbun_option("BUNBUN_STADIUM", "game.stadium", 0);   /* launcher: Game > Stadium */
+    if (st && g_snes && g_snes->cart && g_snes->cart->rom && g_snes->cart->romSize > 0x800C) {
 #ifdef BUNBUN_GENB
         if (st == 3 || st == 4)     /* Gen B build: 0 = Stadium 3, 1 = Stadium 4 */
             g_snes->cart->rom[0x800C] = (uint8_t)(st - 3);
@@ -92,7 +93,10 @@ static void GameInitialize(void)
 static int SkipWaitEnabled(void)
 {
     static int v = -1;
-    if (v < 0) { const char *e = getenv("BUNBUN_SKIPWAIT"); v = !(e && *e == '0'); }
+    if (v < 0) {
+        const char *e = getenv("BUNBUN_SKIPWAIT");
+        v = e && *e ? *e != '0' : strcmp(bunbun_setting("game.flow", "menu"), "broadcast") != 0;
+    }
     return v;
 }
 

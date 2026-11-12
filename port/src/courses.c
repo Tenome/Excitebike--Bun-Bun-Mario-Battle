@@ -20,6 +20,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "bunbun_data.h"
+#include "bunbun_settings.h"
+#include <SDL3/SDL.h>
 #include <string.h>
 
 #include "cpu_state.h"
@@ -50,7 +52,9 @@ static uint8_t lorom(const uint8_t *rom, uint32_t a)
 void BunbunCoursesInit(void)
 {
     const char *path = getenv("BUNBUN_GENA_ROM");
-    const char *set = getenv("BUNBUN_COURSES");
+    char setbuf[8];
+    SDL_snprintf(setbuf, sizeof setbuf, "%d", bunbun_option("BUNBUN_COURSES", "game.courses", 0));
+    const char *set = setbuf;              /* launcher: Game > Courses ("own" = 0) */
     char dpath[1100];
     if (!path && bunbun_data_path("s1.sfc", dpath, sizeof dpath))
         path = dpath;                       /* the imported dump in data/ */

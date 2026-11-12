@@ -46,6 +46,21 @@
 #define SNES_GAME_VERSION "dev"
 #endif
 
+/* The launcher's Mods page: the port's options (src/launcher_mods.c) in front
+ * of the framework's .snesmod packages. */
+#include "mod_runtime.h"
+#include "recomp_launcher.h"
+const RecompLauncherCModProvider *BunbunModsProvider(const RecompLauncherCModProvider *parent);
+static const struct RecompLauncherCModProvider *GameModsProvider(void)
+{
+    return BunbunModsProvider(snes_mod_runtime_launcher_provider_c());
+}
+/* Show the Game options on the dashboard's Quick Mods card. */
+static void GameConfigureLauncher(struct RecompLauncherCGameInfo *info)
+{
+    info->dashboard_quick_controls = 1;
+}
+
 static const SnesDesktopHostGame kGameHost = {
     .display_name        = SNES_GAME_TITLE,
     .window_title        = SNES_GAME_TITLE,
@@ -60,6 +75,11 @@ static const SnesDesktopHostGame kGameHost = {
     /* Battery-backed SRAM shows the launcher's SAVES panel. Leave NULL for a
      * title without one. The path is exe-relative. */
     .sram_path           = BUNBUN_SAVE_PREFIX "/save.srm",
+    .mods_provider       = GameModsProvider,
+    /* Ctrl+L (or Select+L3 on a pad) opens the launcher over the running
+     * game: controls, display, audio and the Mods page, without quitting. */
+    .in_game_launcher    = 1,
+    .configure_launcher  = GameConfigureLauncher,
 };
 
 #ifndef __ANDROID__
