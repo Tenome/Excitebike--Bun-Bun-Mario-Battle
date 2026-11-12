@@ -104,14 +104,25 @@ Stadium 1 courses 1-4 and 4-7 are Stadium 2; in the Gen B build 0-3 are
 Stadium 3 and 4-7 Stadium 4. 8 and 9 are the special courses. If several mods
 have the same course, the last one in name order wins.
 
-To edit, open `tools/editor/course_editor.html` in a browser (it runs
-offline, nothing is uploaded). Open your ROM to load its courses (or a course
-`.bin`), paint columns with a code, insert, delete, copy and paste, and save
+To edit, open `editor/course_editor.html` beside the built executable in a
+browser (it runs offline, nothing is uploaded). It opens straight onto the
+game's courses (`editor_courses.js`, extracted at build time) and draws the
+track with the game's own graphics (`editor_graphics.js`, captured by
+`python port/tools/editor_graphics.py` after a build: it runs the Gen B
+executable headless on the course preview with test courses and cuts each
+code's picture out of the scrolling track). Without those files, open your
+ROM to load its courses (or a course `.bin`). Paint columns with a code, insert, delete, copy and paste, and save
 `courseN.bin`. Column codes: `40` plain ground in Gen A (`80` in Gen B),
 `41` `43`-`45` fast ground, `42` `46` `4F` slow ground, `4D` `4E` hazards, `47`-`4C` markers, `00`-`3F` obstacles and events (`09` is a wide
 element that covers six columns). Code names you type are kept in the
 browser. `python tools/course.py s1 --dump` writes the original courses as
 `build/s1/courseN.bin` in the same format.
+
+Both engines play these files: the Gen B build moves a Gen A course (ground
+codes `40`-`7F`) to its own codes (`80`-`BF`) on load. In the preview a
+column of plain ground is 16 pixels wide and most posts 8, ramps more; the
+editor keeps one cell per column and draws each code's picture at its own
+column.
 
 ## Debugging
 

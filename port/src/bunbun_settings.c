@@ -18,10 +18,16 @@ static char s_key[MAX_KEYS][64];
 static char s_val[MAX_KEYS][512];
 static int s_n, s_loaded;
 
+/* bunbun.ini beside the executable; BUNBUN_SETTINGS names another file (the
+ * tools use it to run the game without touching the player's settings). */
 static void path_of(char *out, size_t cap)
 {
+    const char *env = getenv("BUNBUN_SETTINGS");
     const char *base = SDL_GetBasePath();
-    SDL_snprintf(out, cap, "%sbunbun.ini", base ? base : "");
+    if (env && *env)
+        SDL_snprintf(out, cap, "%s", env);
+    else
+        SDL_snprintf(out, cap, "%sbunbun.ini", base ? base : "");
 }
 
 static void trim(char *s)

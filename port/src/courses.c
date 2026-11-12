@@ -100,6 +100,8 @@ void BunbunCoursesInit(void)
     fprintf(stderr, "[bunbun] using Stadium %d courses from the Gen A ROM\n", g_gena_set + 1);
 }
 
+int BunbunCustomCourse(int index, uint8_t *buf, int cap);   /* src/mods_folder.c */
+
 /* $81:A130 (M0X0, X = course index * 2, DB = $80, D = $0000). */
 RecompReturn HleCourseLoad(CpuState *cpu)
 {
@@ -141,6 +143,25 @@ RecompReturn HleCourseLoad(CpuState *cpu)
         x++;
         y++;
         n--;
+    }
+    /* A custom course (launcher: Mods > Courses, or mods/<name>/courses/
+     * courseN.bin; N = 0-3 Stadium 3, 4-7 Stadium 4, 8 the special course)
+     * replaces the expanded buffer. A file made for the Gen A engine (ground
+     * codes $40-$7F and none of $80-$BF) is moved to Gen B's codes. */
+    {
+        extern uint8_t g_ram[];
+        uint8_t *track = &g_ram[0x14000];                       /* $7F:4000 */
+        int n_a = 0, n_b = 0;
+        if (BunbunCustomCourse(idx < 8 ? (int)idx : 8, track, 0x1000)) {
+            for (int k = 0; k < 0x1000; k++) {
+                n_a += track[k] >= 0x40 && track[k] < 0x80;
+                n_b += track[k] >= 0x80 && track[k] < 0xC0;
+            }
+            if (n_a && !n_b)
+                for (int k = 0; k < 0x1000; k++)
+                    if (track[k] >= 0x40 && track[k] < 0x80)
+                        track[k] = (uint8_t)(track[k] + 0x40);
+        }
     }
     /* Leave the state the original leaves at $81:A18B: M=1 X=0, DB=$7F with
      * the caller's DB pushed (PHB at $81:A143), $00 = 0, $02 = last run byte. */

@@ -80,6 +80,13 @@ function(bunbun_game tgt gendir cfgdir identity title)
     list(APPEND _ed_cmds COMMAND ${CMAKE_COMMAND} -E copy_if_different
                          ${_emb}/editor_courses.js $<TARGET_FILE_DIR:${tgt}>/editor/editor_courses.js)
   endif()
+  # The track's own graphics for the editor (port/tools/editor_graphics.py,
+  # captured from the Gen B game; the codes are shared, so both use them).
+  file(GLOB _ed_gfx CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/src/embed/genb/editor_graphics.js)
+  if(_ed_gfx)
+    list(APPEND _ed_cmds COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                         ${_ed_gfx} $<TARGET_FILE_DIR:${tgt}>/editor/editor_graphics.js)
+  endif()
   add_custom_command(TARGET ${tgt} POST_BUILD ${_ed_cmds} VERBATIM)
 
   # ROM identity. rom_identity.txt is the one place the digests live: the build
