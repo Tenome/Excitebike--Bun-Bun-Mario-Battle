@@ -1,15 +1,15 @@
 {
  "measures": {
-  "fuzzy_match_percent": 56.381,
+  "fuzzy_match_percent": 57.1839,
   "total_code": "36930",
-  "matched_code": "4846",
-  "matched_code_percent": 13.1221,
+  "matched_code": "5439",
+  "matched_code_percent": 14.7279,
   "total_data": "0",
   "matched_data": "0",
   "matched_data_percent": 0.0,
   "total_functions": 532,
-  "matched_functions": 82,
-  "matched_functions_percent": 15.4135,
+  "matched_functions": 102,
+  "matched_functions_percent": 19.1729,
   "complete_code": "0",
   "complete_code_percent": 0.0,
   "complete_data": "0",
@@ -21,16 +21,16 @@
   {
    "name": "main/bank80",
    "measures": {
-    "fuzzy_match_percent": 56.4448,
+    "fuzzy_match_percent": 57.0528,
     "total_code": "24671",
-    "matched_code": "3313",
-    "matched_code_percent": 13.4287,
+    "matched_code": "3613",
+    "matched_code_percent": 14.6447,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 357,
-    "matched_functions": 54,
-    "matched_functions_percent": 15.1261,
+    "matched_functions": 64,
+    "matched_functions_percent": 17.9272,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -42,7 +42,7 @@
     {
      "name": ".text",
      "size": "24671",
-     "fuzzy_match_percent": 56.4448
+     "fuzzy_match_percent": 57.0528
     }
    ],
    "functions": [
@@ -383,9 +383,9 @@
      }
     },
     {
-     "name": "sub_809879",
+     "name": "BsxReadHeader3",
      "size": "31",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8427641"
      }
@@ -471,9 +471,9 @@
      }
     },
     {
-     "name": "sub_809C58",
+     "name": "SetupJumpScreen",
      "size": "33",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8428632"
      }
@@ -1159,9 +1159,9 @@
      }
     },
     {
-     "name": "sub_80BC41",
+     "name": "RiderStartLane",
      "size": "26",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8436801"
      }
@@ -1759,9 +1759,9 @@
      }
     },
     {
-     "name": "sub_80D8EF",
+     "name": "CheckBonusTime",
      "size": "33",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8444143"
      }
@@ -1791,9 +1791,9 @@
      }
     },
     {
-     "name": "sub_80DA0E",
+     "name": "ScrollBySpeed16",
      "size": "28",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8444430"
      }
@@ -1959,9 +1959,9 @@
      }
     },
     {
-     "name": "sub_80DF55",
+     "name": "SetBgTileBase",
      "size": "26",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8445781"
      }
@@ -1975,9 +1975,9 @@
      }
     },
     {
-     "name": "sub_80E4A9",
+     "name": "SetupCourseScreen",
      "size": "34",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8447145"
      }
@@ -2015,9 +2015,9 @@
      }
     },
     {
-     "name": "sub_80E74D",
+     "name": "CheckCourseTime",
      "size": "32",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8447821"
      }
@@ -2175,9 +2175,9 @@
      }
     },
     {
-     "name": "sub_80ECD8",
+     "name": "ScrollBySpeed16B",
      "size": "28",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8449240"
      }
@@ -2287,9 +2287,9 @@
      }
     },
     {
-     "name": "sub_80F048",
+     "name": "StopWhenStill",
      "size": "29",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8450120"
      }
@@ -2911,16 +2911,16 @@
   {
    "name": "main/bank81",
    "measures": {
-    "fuzzy_match_percent": 54.9709,
+    "fuzzy_match_percent": 56.4124,
     "total_code": "8429",
-    "matched_code": "838",
-    "matched_code_percent": 9.9419,
+    "matched_code": "1081",
+    "matched_code_percent": 12.8248,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 137,
-    "matched_functions": 20,
-    "matched_functions_percent": 14.5985,
+    "matched_functions": 28,
+    "matched_functions_percent": 20.438,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -2932,7 +2932,7 @@
     {
      "name": ".text",
      "size": "8429",
-     "fuzzy_match_percent": 54.9709
+     "fuzzy_match_percent": 56.4124
     }
    ],
    "functions": [
@@ -3353,9 +3353,9 @@
      }
     },
     {
-     "name": "sub_81B929",
+     "name": "StepObjectScript",
      "size": "36",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8501545"
      }
@@ -3481,9 +3481,9 @@
      }
     },
     {
-     "name": "sub_81BC60",
+     "name": "ObjectAdvanceOr4",
      "size": "31",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8502368"
      }
@@ -3521,9 +3521,9 @@
      }
     },
     {
-     "name": "sub_81BD38",
+     "name": "ObjectAdvanceOr5",
      "size": "31",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8502584"
      }
@@ -3593,9 +3593,9 @@
      }
     },
     {
-     "name": "sub_81BED8",
+     "name": "ObjectAdvance9",
      "size": "29",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8503000"
      }
@@ -3633,9 +3633,9 @@
      }
     },
     {
-     "name": "sub_81BFB0",
+     "name": "ObjectAdvanceC0",
      "size": "29",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8503216"
      }
@@ -3873,9 +3873,9 @@
      }
     },
     {
-     "name": "sub_81C724",
+     "name": "StepJumpBanner",
      "size": "31",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8505124"
      }
@@ -3897,9 +3897,9 @@
      }
     },
     {
-     "name": "sub_81C7C3",
+     "name": "ClearOnBonusTiles",
      "size": "29",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8505283"
      }
@@ -3961,9 +3961,9 @@
      }
     },
     {
-     "name": "sub_81CA05",
+     "name": "Hundreds",
      "size": "27",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8505861"
      }
@@ -4041,16 +4041,16 @@
   {
    "name": "main/bank82",
    "measures": {
-    "fuzzy_match_percent": 59.0731,
+    "fuzzy_match_percent": 59.7258,
     "total_code": "3830",
-    "matched_code": "695",
-    "matched_code_percent": 18.1462,
+    "matched_code": "745",
+    "matched_code_percent": 19.4517,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 38,
-    "matched_functions": 8,
-    "matched_functions_percent": 21.0526,
+    "matched_functions": 10,
+    "matched_functions_percent": 26.3158,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -4062,7 +4062,7 @@
     {
      "name": ".text",
      "size": "3830",
-     "fuzzy_match_percent": 59.0731
+     "fuzzy_match_percent": 59.7258
     }
    ],
    "functions": [
@@ -4219,9 +4219,9 @@
      }
     },
     {
-     "name": "sub_8286EB",
+     "name": "TickTimers",
      "size": "22",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8554219"
      }
@@ -4299,9 +4299,9 @@
      }
     },
     {
-     "name": "sub_828CD4",
+     "name": "ReadStreamWord",
      "size": "28",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8555732"
      }

@@ -225,19 +225,321 @@ void AddBcdDigits_m1x1(void)
 
 /* Object $03A3: when its counter $037F is zero, set the delay $036F, clear
  * the timer $031F, step the state $030F and set $034F to `next`; otherwise
- * clear $034F. */
-static void object_advance(u8 delay, u8 next)
+ * set $034F to `wait` (STZ when it is zero). */
+static void object_advance_or(u8 delay, u8 next, u8 wait)
 {
     X = rd8(ABS(0x03A3)); nz8((u8)X);
     lda8(rd8(ABSX(0x037F)));
-    if (!fz) { wr8(ABSX(0x034F), 0); return; }
+    if (!fz) {
+        if (wait) lda8(wait);
+        wr8(ABSX(0x034F), wait);
+        return;
+    }
     lda8(delay); wr8(ABSX(0x036F), delay);
     wr8(ABSX(0x031F), 0);
     wr8(ABSX(0x030F), inc8(rd8(ABSX(0x030F))));
     lda8(next); wr8(ABSX(0x034F), next);
 }
 
+static void object_advance(u8 delay, u8 next) { object_advance_or(delay, next, 0); }
+
 /* $81:BAC3, $81:BB23, $81:BD92 ObjectAdvance8/20/80 (RTS). */
 void ObjectAdvance8_m1x1(void)  { object_advance(0x08, 0x06); ret(); }
 void ObjectAdvance20_m1x1(void) { object_advance(0x20, 0x03); ret(); }
 void ObjectAdvance80_m1x1(void) { object_advance(0x80, 0x02); ret(); }
+/* $81:BED8, $81:BFB0 ObjectAdvance9/C0 (RTS). */
+void ObjectAdvance9_m1x1(void)  { object_advance(0x09, 0x03); ret(); }
+void ObjectAdvanceC0_m1x1(void) { object_advance(0xC0, 0x04); ret(); }
+/* $81:BC60, $81:BD38 ObjectAdvanceOr4/Or5 (RTS): as above, but while the
+ * counter runs $034F is 4 or 5. */
+void ObjectAdvanceOr4_m1x1(void) { object_advance_or(0x15, 0x03, 0x04); ret(); }
+void ObjectAdvanceOr5_m1x1(void) { object_advance_or(0x08, 0x06, 0x05); ret(); }
+
+/* $82:86EB TickTimers (RTL): count the bytes $39+X down to zero, X = $16..0
+ * each frame and $29..0 every eleventh frame (divider $38). */
+void TickTimers_m1x1(void)
+{
+    ldx8(0x16);
+    u8 d = dec8(rd8(DP(0x38)));
+    wr8(DP(0x38), d);
+    if (fn) {
+        lda8(0x0A); wr8(DP(0x38), 0x0A);
+        ldx8(0x29);
+    }
+    do {
+        lda8(rd8(DPX(0x39)));
+        if (!fz)
+            wr8(DPX(0x39), dec8(rd8(DPX(0x39))));
+        X = dec8((u8)X);
+    } while (!fn);
+    retl();
+}
+
+void BsxReadSerialByte_m1x1(void);
+
+/* $80:9879 BsxReadHeader3 (RTL): with BS-X $2199 = $81 read three serial
+ * bytes into $00-$02, then set $2199 back to $41. */
+void BsxReadHeader3_m1x1(void)
+{
+    lda8(0x81); wr8(ABS(0x2199), 0x81);
+    push8(0x80); push16(0x9883); BsxReadSerialByte_m1x1(); wr8(DP(0x00), (u8)A);
+    push8(0x80); push16(0x9889); BsxReadSerialByte_m1x1(); wr8(DP(0x01), (u8)A);
+    push8(0x80); push16(0x988F); BsxReadSerialByte_m1x1(); wr8(DP(0x02), (u8)A);
+    lda8(0x41); wr8(ABS(0x2199), 0x41);
+    retl();
+}
+
+/* $80:E74D CheckCourseTime (RTS): in the course's last broadcast minute
+ * ($80:E76D by course $7C), once the frame count reaches $0708 set $CA. */
+void CheckCourseTime_m1x1(void)
+{
+    X = rd8(DP(0x7C)); nz8((u8)X);
+    lda8(rd8(LONG(0x7FFFFF)));
+    cmp8((u8)A, rd8(ABSX(0xE76D)));
+    if (fz) {
+        rep(0x20);
+        lda16(rd16(LONG(0x7FFFFA)));
+        cmp16(A, 0x0708);
+        if (fc) {
+            sep(0x20);
+            lda8(0x01); wr8(ABS(0x00CA), 0x01);
+        }
+    }
+    sep(0x20);
+    ret();
+}
+
+/* $80:F048 StopWhenStill (RTS): when the speed bytes $01BE, $01C6 and $01CE
+ * are all zero: $CD = 1, $CF = $20, set bit 0 of $63, $01B6 = $B0. */
+void StopWhenStill_m1x1(void)
+{
+    lda8(rd8(ABS(0x01BE)));
+    ora8(rd8(ABS(0x01C6)));
+    ora8(rd8(ABS(0x01CE)));
+    if (fz) {
+        lda8(0x01); wr8(DP(0xCD), 0x01);
+        lda8(0x20); wr8(DP(0xCF), 0x20);
+        lda8(0x01);
+        u8 m = rd8(DP(0x63));
+        fz = (m & 0x01) == 0;
+        wr8(DP(0x63), m | 0x01);
+        lda8(0xB0); wr8(ABS(0x01B6), 0xB0);
+    }
+    ret();
+}
+
+/* $81:C7C3 ClearOnBonusTiles (RTL): for object X on track row $1F with tile
+ * $3B-$3D under it, clear $020E,X and $08BC,X. */
+void ClearOnBonusTiles_m1x1(void)
+{
+    lda8(rd8(ABSX(0x021E)));
+    cmp8((u8)A, 0x1F);
+    if (fz) {
+        lda8(rd8(ABSX(0x0216)));
+        cmp8((u8)A, 0x3B);
+        if (!fz) cmp8((u8)A, 0x3C);
+        if (!fz) cmp8((u8)A, 0x3D);
+        if (fz) {
+            wr8(ABSX(0x020E), 0);
+            wr8(ABSX(0x08BC), 0);
+        }
+    }
+    retl();
+}
+
+void SetJumpBanner_m1x1(void);
+
+/* $81:C724 StepJumpBanner (RTL): while the banner is on ($199A) count its
+ * timer $199B down (raising it, $199C - 1, while the timer is $20 or more)
+ * and redraw it; at zero switch it off. */
+void StepJumpBanner_m1x1(void)
+{
+    lda8(rd8(ABS(0x199A)));
+    if (fz) { retl(); return; }
+    lda8(rd8(ABS(0x199B)));
+    if (fz) {
+        wr8(ABS(0x199A), 0);
+        retl();
+        return;
+    }
+    cmp8((u8)A, 0x20);
+    if (fc)
+        wr8(ABS(0x199C), dec8(rd8(ABS(0x199C))));
+    wr8(ABS(0x199B), dec8(rd8(ABS(0x199B))));
+    push16(0xC741); SetJumpBanner_m1x1();
+    retl();
+}
+
+/* $80:D8EF CheckBonusTime (RTS): in broadcast minute $1E or $37, once the
+ * frame count reaches $0708 set $CA. */
+void CheckBonusTime_m1x1(void)
+{
+    lda8(rd8(LONG(0x7FFFFF)));
+    cmp8((u8)A, 0x1E);
+    if (!fz) cmp8((u8)A, 0x37);
+    if (fz) {
+        rep(0x20);
+        lda16(rd16(LONG(0x7FFFFA)));
+        cmp16(A, 0x0708);
+        if (fc) {
+            sep(0x20);
+            lda8(0x01); wr8(ABS(0x00CA), 0x01);
+        }
+    }
+    sep(0x20);
+    ret();
+}
+
+/* $81:CA05 Hundreds (RTS, entered with M either way): Y = the word $1569
+ * divided by 200 (at least 1); A keeps the remainder. */
+static void hundreds(void)
+{
+    rep(0x20);
+    ldy8(0x00);
+    lda16(rd16(ABS(0x1569)));
+    for (;;) {
+        cmp16(A, 0x00C8);
+        if (!fc) break;
+        Y = inc8((u8)Y);
+        fc = 1;
+        sbc16(0x00C8);
+        WAIT_TICK();
+    }
+    sep(0x20);
+    cmp8((u8)Y, 0x00);
+    if (fz) Y = inc8((u8)Y);
+    ret();
+}
+void Hundreds_m1x1(void) { hundreds(); }
+void Hundreds_m0x1(void) { hundreds(); }
+
+/* $80:9C58 SetupJumpScreen (RTS): $0450 = 8, $1905/$1906 = 2, BGMODE $25,
+ * $79 = $75 = 1, $77 = 0, $A2 = 8. */
+void SetupJumpScreen_m1x1(void)
+{
+    lda8(0x08); wr8(ABS(0x0450), 0x08);
+    lda8(0x02); wr8(ABS(0x1905), 0x02); wr8(ABS(0x1906), 0x02);
+    lda8(0x25); wr8(ABS(0x2105), 0x25);
+    lda8(0x01); wr8(DP(0x79), 0x01); wr8(DP(0x75), 0x01);
+    lda8(lsr8((u8)A)); wr8(DP(0x77), (u8)A);
+    lda8(0x08); wr8(ABS(0x00A2), 0x08);
+    ret();
+}
+
+/* $80:BC41 RiderStartLane (RTS): for rider X with $56,X clear: rider 0
+ * waits for $0940 (returns while it is set); others get $3D,X = X * 8 +
+ * $1C. Then count $01D6,X up. */
+void RiderStartLane_m1x1(void)
+{
+    lda8(rd8(DPX(0x56)));
+    if (!fz) { ret(); return; }
+    lda8((u8)X);
+    if (fz) {
+        lda8(rd8(ABS(0x0940)));
+        if (!fz) { ret(); return; }
+    } else {
+        lda8((u8)X);
+        lda8(asl8((u8)A));
+        lda8(asl8((u8)A));
+        lda8(asl8((u8)A));
+        adc8(0x1C);
+        wr8(DPX(0x3D), (u8)A);
+    }
+    wr8(ABSX(0x01D6), inc8(rd8(ABSX(0x01D6))));
+    ret();
+}
+
+/* $80:DA0E, $80:ECD8 ScrollBySpeed16 (RTS): fraction $0994 += speed $0186
+ * * 16 (the carry out of the shifts goes in), carry into $93; when $93
+ * wraps flip the half $91. */
+static void scroll_by_speed16(void)
+{
+    lda8(rd8(ABS(0x0186)));
+    lda8(asl8((u8)A));
+    lda8(asl8((u8)A));
+    lda8(asl8((u8)A));
+    lda8(asl8((u8)A));
+    adc8(rd8(ABS(0x0994)));
+    wr8(ABS(0x0994), (u8)A);
+    lda8(rd8(DP(0x93)));
+    adc8(0x00);
+    wr8(DP(0x93), (u8)A);
+    if (fc) {
+        lda8(rd8(DP(0x91)));
+        eor8(0x01);
+        wr8(DP(0x91), (u8)A);
+    }
+    ret();
+}
+void ScrollBySpeed16_m1x1(void)  { scroll_by_speed16(); }
+void ScrollBySpeed16B_m1x1(void) { scroll_by_speed16(); }
+
+/* $80:DF55 SetBgTileBase (RTL): $0086 = ($63 & $30) << 5 + $E000. */
+void SetBgTileBase_m1x1(void)
+{
+    rep(0x20);
+    lda16(rd16(DP(0x63)));
+    and16(0x0030);
+    lda16(asl16(A)); lda16(asl16(A)); lda16(asl16(A)); lda16(asl16(A)); lda16(asl16(A));
+    fc = 0; adc16(0x2000);
+    fc = 0; adc16(0xC000);
+    wr16(ABS(0x0086), A);
+    sep(0x20);
+    retl();
+}
+
+/* $80:E4A9 SetupCourseScreen (RTS): $09C2 = $85 / 4; BG1SC = $1900 = 3,
+ * BG2SC = $43, BG12NBA = $55, $01FE = $30, $1958 = 0. */
+void SetupCourseScreen_m1x1(void)
+{
+    lda8(rd8(DP(0x85)));
+    lda8(lsr8((u8)A));
+    lda8(lsr8((u8)A));
+    wr8(ABS(0x09C2), (u8)A);
+    lda8(0x03); wr8(ABS(0x2107), 0x03); wr8(ABS(0x1900), 0x03);
+    lda8(0x43); wr8(ABS(0x2108), 0x43);
+    lda8(0x55); wr8(ABS(0x210B), 0x55);
+    lda8(0x30); wr8(ABS(0x01FE), 0x30);
+    wr8(ABS(0x1958), 0);
+    ret();
+}
+
+/* $81:B929 StepObjectScript (RTS): for object $03A3, when its delay $036F
+ * is zero step $031F; past 7 clear $02EF, else load $034F and the next
+ * delay from the tables at $81:B94D and $81:B955. */
+void StepObjectScript_m1x1(void)
+{
+    X = rd8(ABS(0x03A3)); nz8((u8)X);
+    lda8(rd8(ABSX(0x036F)));
+    if (!fz) { ret(); return; }
+    wr8(ABSX(0x031F), inc8(rd8(ABSX(0x031F))));
+    lda8(rd8(ABSX(0x031F)));
+    cmp8((u8)A, 0x08);
+    if (fc) { wr8(ABSX(0x02EF), 0); ret(); return; }
+    Y = (u8)A; nz8((u8)Y);
+    lda8(rd8(ABSY(0xB94D))); wr8(ABSX(0x034F), (u8)A);
+    lda8(rd8(ABSY(0xB955))); wr8(ABSX(0x036F), (u8)A);
+    ret();
+}
+
+/* $82:8CD4 ReadStreamWord (M=1, X=0, RTS): two stream bytes, the first in
+ * the high byte of A (same pointer rules as ReadStreamByte). */
+static void stream_step(void)
+{
+    u32 p = rd16(DP(0x08)) | ((u32)rd8(DP(0x0A)) << 16);
+    lda8(rd8(p & 0xFFFFFF));
+    X = inc16(X);
+    if (fz) {
+        ldx16(0x8000);
+        wr8(DP(0x0A), inc8(rd8(DP(0x0A))));
+    }
+    wr16(DP(0x08), X);
+}
+void ReadStreamWord_m1x0(void)
+{
+    X = rd16(DP(0x08)); nz16(X);
+    stream_step();
+    A = (u16)((A >> 8) | (A << 8)); nz8((u8)A);
+    stream_step();
+    ret();
+}
