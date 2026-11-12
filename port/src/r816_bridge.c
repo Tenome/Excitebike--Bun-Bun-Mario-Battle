@@ -167,6 +167,21 @@ int r816_call_pc(uint32_t pc24)
         return g_tail_pending ? g_tail_result : RECOMP_RETURN_NORMAL; \
     }
 
+/* As BRIDGE, with the cycle cost worked out before the call (for routines
+ * that do real work only on some frames). */
+#define BRIDGE_DYN(hle_name, hand_fn, cycles_expr)        \
+    void hand_fn(void);                                   \
+    RecompReturn hle_name(CpuState *cpu)                  \
+    {                                                     \
+        uint32 cyc_;                                      \
+        from_cpu(cpu);                                    \
+        g_tail_pending = 0;                               \
+        cyc_ = (uint32)(cycles_expr);                     \
+        hand_fn();                                        \
+        to_cpu(cpu, cyc_);                                \
+        return g_tail_pending ? g_tail_result : RECOMP_RETURN_NORMAL; \
+    }
+
 #ifndef BUNBUN_GENB
 /* Stadium 1-2 (Gen A) routines from c/hand/s1/kernel.c */
 BRIDGE(HleHand_QueueSound,    QueueSound_m1x1,    60)
@@ -490,11 +505,21 @@ BRIDGE(HleHand_HideAllSprites, HideAllSprites_m1x1, 1360)
 /* c/hand/s4/objects.c, part 6 */
 BRIDGE(HleHand_CheckLaneTile, CheckLaneTile_m1x1, 45)
 BRIDGE(HleHand_DrawJumpRiderSprites, DrawJumpRiderSprites_m1x1, 130)
-BRIDGE(HleHand_FadeSkyColours, FadeSkyColours_m1x1, 230)
+BRIDGE_DYN(HleHand_FadeSkyColours, FadeSkyColours_m1x1,
+           (g_ram[0x63] & 7) ? 15 : 15 + 45 * 4)
 BRIDGE(HleHand_DrawBigSprite, DrawBigSprite_m1x1, 120)
 BRIDGE(HleHand_QueueBonusCount, QueueBonusCount_m1x1, 1320)
 BRIDGE(HleHand_SpawnExhaust, SpawnExhaust_m1x1, 70)
 BRIDGE(HleHand_RiderAtFinish, RiderAtFinish_m1x1, 60)
+/* c/hand/s4/objects.c, part 7 */
+BRIDGE(HleHand_BuildScoreDigits, BuildScoreDigits_m0x1, 230)
+/* every 8th frame: about 40 units per colour from $B9 down */
+BRIDGE_DYN(HleHand_FadePalette, FadePalette_m1x1,
+           (g_ram[0x63] & 7) ? 20 : 20 + 40 * (g_ram[0xB9] / 2 + 1))
+BRIDGE(HleHand_MirrorJumpRider, MirrorJumpRider_m1x1, 240)
+BRIDGE(HleHand_PlaceMinuteMarker, PlaceMinuteMarker_m1x1, 40)
+BRIDGE(HleHand_RiderPose, RiderPose_m1x1, 40)
+BRIDGE(HleHand_ReadJumpTrack, ReadJumpTrack_m1x1, 60)
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)

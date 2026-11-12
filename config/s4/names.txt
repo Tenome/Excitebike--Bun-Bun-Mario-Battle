@@ -203,3 +203,9 @@
 80D7AB QueueBonusCount
 8194B6 SpawnExhaust
 80BBCF RiderAtFinish
+80F15F BuildScoreDigits
+819A9B FadePalette
+80D013 MirrorJumpRider
+828701 PlaceMinuteMarker
+80CB78 RiderPose
+80D97C ReadJumpTrack

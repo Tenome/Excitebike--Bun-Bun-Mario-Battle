@@ -186,3 +186,9 @@
 80D7AB  1 1  mem+V           QueueBonusCount
 8194B6  1 1  mem+X,Y,C,V     SpawnExhaust
 80BBCF  1 1  mem+X,Y,C,V     RiderAtFinish
+80F15F  0 1  mem+X,Y,C,V     BuildScoreDigits
+819A9B  1 1  mem+V           FadePalette
+80D013  1 1  mem+Y,C,V       MirrorJumpRider
+828701  1 1  mem+X,Y,C,V     PlaceMinuteMarker
+80CB78  1 1  mem+A,X,V       RiderPose
+80D97C  1 1  mem+V           ReadJumpTrack

@@ -2290,3 +2290,334 @@ stop:
     }
     ret();
 }
+
+/* $80:F15F BuildScoreDigits (M=0, RTS): the word A as five decimal digits
+ * at $03D0-$03D4 (leading zeros blank $FF), the lower row (+$10) at
+ * $03D6-$03DA, $03D5 = 0, $03DB = $10, size $26 at $03CF. */
+void BuildScoreDigits_m0x1(void)
+{
+    static const u16 pow10[3] = { 10000, 1000, 100 };
+    for (int i = 0; i < 3; i++) {
+        ldy8(0x00);
+        for (;;) {
+            cmp16(A, pow10[i]);
+            if (!fc) break;
+            sbc16(pow10[i]);
+            Y = inc8((u8)Y);
+            WAIT_TICK();
+        }
+        wr8(ABS(0x03D0 + i), (u8)Y);
+    }
+    ldy8(0x00);
+    sep(0x20);
+    for (;;) {
+        cmp8((u8)A, 0x0A);
+        if (!fc) break;
+        sbc8(0x0A);
+        Y = inc8((u8)Y);
+        WAIT_TICK();
+    }
+    wr8(ABS(0x03D3), (u8)Y);
+    wr8(ABS(0x03D4), (u8)A);
+    wr8(ABS(0x03D5), 0);
+    lda8(0x10); wr8(ABS(0x03DB), 0x10);
+    ldy8(0x00);
+    wr8(DP(0x00), 0);
+    do {
+        lda8(rd8(ABSY(0x03D0)));
+        if (fz && rd8(DP(0x00)) == 0) {
+            lda8(rd8(DP(0x00)));
+            lda8(0xFF);
+            wr8(ABSY(0x03D0), 0xFF);
+            wr8(ABSY(0x03D6), 0xFF);
+        } else {
+            lda8(rd8(ABSY(0x03D0)));
+            ora8(0x10);
+            wr8(ABSY(0x03D6), (u8)A);
+            wr8(DP(0x00), inc8(rd8(DP(0x00))));
+        }
+        Y = inc8((u8)Y);
+        cmp8((u8)Y, 0x05);
+    } while (!fc);
+    lda8(0x26); wr8(ABS(0x03CF), 0x26);
+    ret();
+}
+
+/* Step one colour field of the word $1C00,X towards the target word at
+ * `targets`,X (mask `m`, unit `u`). */
+static void fade_to(u16 m, u16 targets, u16 u)
+{
+    lda16(rd16(ABSX(0x1C00)));
+    and16(m);
+    cmp16(A, rd16(ABSX(targets)));
+    if (fz) return;
+    int down = fc;
+    lda16(rd16(ABSX(0x1C00)));
+    if (down) { fc = 1; sbc16(u); }
+    else { fc = 0; adc16(u); }
+    wr16(ABSX(0x1C00), A);
+}
+
+/* $81:9A9B FadePalette (RTL): every 8 frames move the colours $1C00 +
+ * $B9 down to 0 (skipping each palette's colour 0) one step towards the
+ * targets at $81:9B15 / $81:9B2D / $81:9B45 (blue, green, red), and flag
+ * the palette upload ($1915). */
+void FadePalette_m1x1(void)
+{
+    lda8(rd8(DP(0x63)));
+    and8(0x07);
+    if (fz) {
+        X = rd8(DP(0xB9)); nz8((u8)X);
+        rep(0x20);
+        do {
+            lda16((u16)X);
+            and16(0x0007);
+            if (!fz) {
+                fade_to(0x7C00, 0x9B15, 0x0400);
+                fade_to(0x03E0, 0x9B2D, 0x0020);
+                fade_to(0x001F, 0x9B45, 0x0001);
+            }
+            X = dec8((u8)X);
+            X = dec8((u8)X);
+        } while (!fn);
+        sep(0x20);
+    }
+    wr8(ABS(0x1915), inc8(rd8(ABS(0x1915))));
+    retl();
+}
+
+/* $80:D013 MirrorJumpRider (RTS): copy the player's four sprites (OAM
+ * buffer $1600 + $04) to $1700 + $04 as the shadow at X $090C, Y $90 -
+ * $0979 (all large), then make the originals tiles $C8-$CE with
+ * attribute bit 0 set. */
+void MirrorJumpRider_m1x1(void)
+{
+    Y = rd8(ABS(0x0004)); nz8((u8)Y);
+    ldx8(0x10);
+    do {
+        lda8(rd8(ABSY(0x1600)));
+        wr8(ABSY(0x1700), (u8)A);
+        Y = inc8((u8)Y);
+        X = dec8((u8)X);
+    } while (!fz);
+    Y = rd8(ABS(0x0004)); nz8((u8)Y);
+    lda8(rd8(ABS(0x090C)));
+    wr8(ABSY(0x1700), (u8)A); wr8(ABSY(0x1708), (u8)A);
+    fc = 0; adc8(0x10);
+    wr8(ABSY(0x1704), (u8)A); wr8(ABSY(0x170C), (u8)A);
+    lda8(0x90);
+    fc = 1; sbc8(rd8(ABS(0x0979)));
+    wr8(ABSY(0x1701), (u8)A); wr8(ABSY(0x1705), (u8)A);
+    fc = 0; adc8(0x10);
+    wr8(ABSY(0x1709), (u8)A); wr8(ABSY(0x170D), (u8)A);
+    lda8((u8)Y);
+    lda8(lsr8((u8)A));
+    lda8(lsr8((u8)A));
+    fc = 0; adc8(0x40);
+    Y = (u8)A; nz8((u8)Y);
+    lda8(0x02);
+    wr8(ABSY(0x1820), 0x02); wr8(ABSY(0x1821), 0x02);
+    wr8(ABSY(0x1822), 0x02); wr8(ABSY(0x1823), 0x02);
+    Y = rd8(ABS(0x0004)); nz8((u8)Y);
+    lda8(rd8(ABSY(0x1603)));
+    ora8(0x01);
+    wr8(ABSY(0x1603), (u8)A); wr8(ABSY(0x1607), (u8)A);
+    wr8(ABSY(0x160B), (u8)A); wr8(ABSY(0x160F), (u8)A);
+    lda8(0xC8); wr8(ABSY(0x1602), 0xC8);
+    lda8(inc8((u8)A)); lda8(inc8((u8)A)); wr8(ABSY(0x1606), (u8)A);
+    lda8(inc8((u8)A)); lda8(inc8((u8)A)); wr8(ABSY(0x160A), (u8)A);
+    lda8(inc8((u8)A)); lda8(inc8((u8)A)); wr8(ABSY(0x160E), (u8)A);
+    ret();
+}
+
+/* $82:8701 PlaceMinuteMarker (RTL): in a race (mode 3, $0CD7 clear) when
+ * the broadcast minute changes ($BF) to one of the eight in $82:8773,
+ * find the next free stretch of the track buffer $7F:4000 after the
+ * player ($027B + 3; a column $80 not preceded by tiles $17/$19/$1B/$03/
+ * $04, wrapping at 9) and drop the item from $82:877B by lane mode $08A4
+ * there; clear $B8. */
+void PlaceMinuteMarker_m1x1(void)
+{
+    push8(DB);
+    lda8(0x82);
+    push8(0x82);
+    DB = pull8(); nz8(DB);
+    lda8(rd8(LONG(0x7FFFFF)));
+    cmp8((u8)A, rd8(ABS(0x00BF)));
+    if (fz) goto out;
+    lda8(rd8(ABS(0x0CD7)));
+    if (!fz) goto out;
+    lda8(rd8(DP(0x76)));
+    cmp8((u8)A, 0x03);
+    if (!fz) goto out;
+    ldx8(0x07);
+    lda8(rd8(LONG(0x7FFFFF)));
+    for (;;) {
+        cmp8((u8)A, rd8(ABSX(0x8773)));
+        if (fz) break;
+        X = dec8((u8)X);
+        if (fn) { DB = pull8(); nz8(DB); retl(); return; }
+    }
+    rep(0x10);
+    X = rd16(ABS(0x027B)); nz16(X);
+    X = inc16(X); X = inc16(X); X = inc16(X);
+    for (;;) {
+        lda8(rd8(LONGX(0x7F4000)));
+        cmp8((u8)A, 0x09);
+        if (fz) { X = 0x0000; nz16(X); }
+        X = inc16(X);
+        cmp8((u8)A, 0x80);
+        WAIT_TICK();
+        if (!fz) continue;
+        lda8(rd8(LONGX(0x7F3FFE)));
+        cmp8((u8)A, 0x17); if (fz) continue;
+        cmp8((u8)A, 0x19); if (fz) continue;
+        cmp8((u8)A, 0x1B); if (fz) continue;
+        cmp8((u8)A, 0x03); if (fz) continue;
+        cmp8((u8)A, 0x04); if (fz) continue;
+        break;
+    }
+    rep(0x20);
+    lda16(rd16(ABS(0x08A4)));
+    and16(0x00FF);
+    Y = A; nz16(Y);
+    sep(0x20);
+    lda8(rd8(ABSY(0x877B)));
+    wr8(LONGX(0x7F3FFF), (u8)A);
+    wr8(ABS(0x00B8), 0);
+out:
+    sep(0x10);
+    DB = pull8(); nz8(DB);
+    retl();
+}
+
+/* $80:CB78 RiderPose (RTS): returns A = the sprite pose for rider X
+ * ($0E = extra flags): a waving pose | $10 at the finish or start
+ * ($01D6), the crash and fall poses $13-$15, or its lean $01E6. */
+void RiderPose_m1x1(void)
+{
+    wr8(DP(0x0E), 0);
+    lda8(rd8(ABSX(0x01D6)));
+    int special = fz;
+    if (!fz) { cmp8((u8)A, 0x05); special = fz; }
+    if (!special) {
+        ldy8(0x06);
+        lda8(rd8(ABSX(0x099E)));
+        if (fz) ldy8(0x02);
+        lda8((u8)Y);
+        Y = rd8(DPX(0x56)); nz8((u8)Y);
+        if (!fz) { Y = dec8((u8)Y); lda8((u8)Y); }
+        ora8(0x10);
+        ret();
+        return;
+    }
+    Y = rd8(DP(0x84)); nz8((u8)Y);
+    Y = dec8((u8)Y);
+    if (fz) {
+        lda8(rd8(ABSX(0x01E6)));
+        cmp8((u8)A, 0x0A);
+        if (fz) { ldy8(0x02); wr8(DP(0x0E), 0x02); ret(); return; }
+    }
+    lda8(rd8(ABSX(0x01CE)));
+    ora8(rd8(ABSX(0x01EE)));
+    if (!fz) goto lean;
+    lda8(rd8(ABSX(0x0176)));
+    if (!fz) {
+        cmp8((u8)A, 0x0D);
+        if (!fz) goto lean;
+        lda8(rd8(ABSX(0x01F6)));
+        cmp8((u8)A, 0x20);
+    }
+    lda8(rd8(ABSX(0x01BE)));
+    ora8(rd8(ABSX(0x01C6)));
+    if (fz) {
+        wr8(DP(0x0E), inc8(rd8(DP(0x0E))));
+        goto lean;
+    }
+    lda8(rd8(ABSX(0x01E6)));
+    cmp8((u8)A, 0x06);
+    if (!fz) goto lean;
+    ldy8(0x14);
+    lda8(rd8(ABSX(0x01AE)));
+    if (!fz) {
+        if (fn) Y = inc8((u8)Y);
+        lda8((u8)Y);
+        ret();
+        return;
+    }
+    lda8(rd8(DP(0x63)));
+    and8(0x02);
+    if (!fz) { lda8(0x13); ret(); return; }
+lean:
+    lda8(rd8(ABSX(0x01E6)));
+    ret();
+}
+
+/* $80:D97C ReadJumpTrack (RTS): for the player's wheel column $0266:
+ * count landing points ($0A93 at each new column while airborne or
+ * crashed) into $09C5, take the height $0A13 while on the ground, and the
+ * tile $09D3 into $0216. Tiles below $28 end the course once ($099C, $84,
+ * $1990 = 1, sound $2B); tile flags $0A53 turn the column into $3B tiles
+ * (or $45 while airborne); tile $84 becomes $FC on the ground. */
+void ReadJumpTrack_m1x1(void)
+{
+    X = rd8(ABS(0x0266)); nz8((u8)X);
+    lda8(rd8(ABS(0x09C7)));
+    ora8(rd8(ABS(0x01EE)));
+    if (!fz) {
+        lda8(rd8(ABS(0x0266)));
+        cmp8((u8)A, rd8(ABS(0x09C8)));
+        if (!fz) {
+            wr8(ABS(0x09C8), (u8)A);
+            lda8(rd8(ABSX(0x0A93)));
+            fc = 0; adc8(rd8(ABS(0x09C5)));
+            wr8(ABS(0x09C5), (u8)A);
+        }
+    }
+    lda8(rd8(ABS(0x01CE)));
+    if (fz) {
+        lda8(rd8(ABSX(0x0A13)));
+        wr8(ABS(0x09C4), (u8)A);
+    }
+    lda8(rd8(ABSX(0x09D3)));
+    wr8(ABS(0x0216), (u8)A);
+    cmp8((u8)A, 0x28);
+    if (!fc) {
+        lda8(rd8(ABS(0x099C)));
+        if (fz) {
+            lda8(0x01);
+            wr8(ABS(0x099C), 0x01);
+            wr8(DP(0x84), 0x01);
+            wr8(ABS(0x1990), 0x01);
+            lda8(0x2B);
+            push8(0x80); push16(0xD9C5); QueueSoundB_m1x1();
+        }
+        ret();
+        return;
+    }
+    lda8(rd8(ABSX(0x0A53)));
+    if (!fz) {
+        lda8(rd8(ABS(0x09C7)));
+        ora8(rd8(ABS(0x01EE)));
+        if (!fz) {
+            lda8(0x45); wr8(ABS(0x0216), 0x45);
+            ret();
+            return;
+        }
+        lda8(rd8(ABSX(0x09D3)));
+        and8(0x40);
+        if (!fz) { ret(); return; }
+        wr8(ABSX(0x0A53), 0);
+        lda8(0x3B);
+        wr8(ABSX(0x0B53), 0x3B); wr8(ABSX(0x0B93), 0x3B); wr8(ABSX(0x0BD3), 0x3B);
+        wr8(ABSX(0x0C13), 0x3B); wr8(ABSX(0x0C53), 0x3B); wr8(ABSX(0x0C93), 0x3B);
+        wr8(ABS(0x021E), 0x3B);
+    }
+    lda8(rd8(ABSX(0x09D3)));
+    cmp8((u8)A, 0x84);
+    if (fz) {
+        lda8(rd8(ABS(0x09C7)));
+        if (fz) { lda8(0xFC); wr8(ABS(0x0216), 0xFC); }
+    }
+    ret();
+}
