@@ -42,3 +42,4 @@
 82862C QueueSoundB           # append sound command A to the $1400 ring
 81A304 RandomB               # random A from counters, frame and clock
 828593 SpcUploadB            # upload sample stream X to the sound CPU
+8081A9 DrawClockB            # broadcast clock HH:MM at VRAM $1842 (hidden in the clock-free port)

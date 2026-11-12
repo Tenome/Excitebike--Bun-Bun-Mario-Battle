@@ -63,4 +63,7 @@ u8 roster_select_char(u8 cursor);               /* character in front ($80:8B21)
  * five): every portrait's angle then follows portrait 0's. */
 int roster_select_general(void);
 
+/* Port options the hand-written routines consult (0 in the original). */
+int port_hide_clock(void);                      /* draw the broadcast clock blank */
+
 #endif

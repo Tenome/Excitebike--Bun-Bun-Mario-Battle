@@ -356,6 +356,7 @@ BRIDGE(HleHand_SelectName,        SelectName_m1x1,        300)
 BRIDGE(HleHand_CarouselPos,       CarouselPos_m1x1,       250)
 BRIDGE(HleHand_SinCos,            SinCos_m1x1,            150)
 BRIDGE(HleHand_QueueSoundB,       QueueSoundB_m1x1,       60)
+BRIDGE(HleHand_DrawClockB,        DrawClockB_m1x1,        800)
 BRIDGE(HleHand_RandomB,           RandomB_m1x1,           60)
 
 /* The Gen B sample upload ($82:8593) from the hand-written player select,

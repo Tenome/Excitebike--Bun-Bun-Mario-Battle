@@ -314,3 +314,12 @@ u8 roster_select_char(u8 cursor)
 }
 
 int roster_select_general(void) { return general(); }
+
+/* The broadcast clock is hidden when the game plays without it (launcher:
+ * Game > Game flow). */
+int port_hide_clock(void)
+{
+    static int v = -1;
+    if (v < 0) v = strcmp(bunbun_setting("game.flow", "menu"), "broadcast") != 0;
+    return v;
+}

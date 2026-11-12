@@ -21,3 +21,4 @@
 81A304  1 1  mem+A,X,Y,C,V  RandomB
 81A304  1 0  mem+A,X,Y,C,V  RandomB
 828593  1 1  mem+X,Y,C,V    SpcUploadB
+8081A9  1 1  mem+X,Y,C,V    DrawClockB
