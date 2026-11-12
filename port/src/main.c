@@ -28,8 +28,6 @@
 #include "host_main.h"
 #include "game_rtl.h"
 #include "snesrecomp_rom_identity.h"  /* generated from rom_identity.txt */
-#include "bunbun_data.h"
-#include <string.h>
 
 #ifndef __ANDROID__
 #define SDL_MAIN_HANDLED 1
@@ -69,24 +67,5 @@ static const SnesDesktopHostGame kGameHost = {
 #endif
 int main(int argc, char **argv)
 {
-    /* Run from the game's own data folder: when tools/import_roms.py has put
-     * the dump in data/ and no ROM was named on the command line, use it, so
-     * the player never has to point at the original file again. */
-    int named = 0;
-    for (int i = 1; i < argc; i++)
-        if (strcmp(argv[i], "--rom") == 0)
-            named = 1;
-    char path[1100];
-    if (!named && bunbun_data_path(SNESRECOMP_ROM_FILE, path, sizeof path)) {
-        static char *args[64];
-        int n = 0;
-        args[n++] = argv[0];
-        args[n++] = "--rom";
-        args[n++] = path;
-        for (int i = 1; i < argc && n < 63; i++)
-            args[n++] = argv[i];
-        args[n] = NULL;
-        return snesrecomp_desktop_main(&kGameHost, n, args);
-    }
     return snesrecomp_desktop_main(&kGameHost, argc, argv);
 }

@@ -5,7 +5,8 @@
 
 Each file is identified by its SHA-256 (any name, .bs/.sfc/.smc; a 512-byte
 copier header is removed) and copied as data/s1.sfc, data/s3.sfc or
-data/s4.sfc beside every built executable (port/build/Release and
+data/s4.sfc beside every built executable, and rom.cfg is pointed at the
+executable's own dump so the launcher opens on it (port/build/Release and
 port/build/genb/Release by default, or the --to folders). After this the
 executables start without being given a ROM, and the originals can move.
 
@@ -52,6 +53,12 @@ def main():
             with open(os.path.join(out, name), 'wb') as f:
                 f.write(data)
         print('%s: %s -> data/%s in %d folder(s)' % (path, what, name, len(dirs)))
+        # the launcher opens on the dump named in rom.cfg (S1 exe: s1, Gen B exe: s4)
+        for d in dirs:
+            want = 's4.sfc' if os.path.basename(os.path.normpath(os.path.join(d, '..'))) == 'genb' else 's1.sfc'
+            if name == want:
+                with open(os.path.join(d, 'rom.cfg'), 'w') as f:
+                    f.write(os.path.abspath(os.path.join(d, 'data', name)) + '\n')
         found += 1
     if not found:
         sys.exit(1)
