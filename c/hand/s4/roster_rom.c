@@ -22,3 +22,14 @@ u32 roster_rider_palette(int st, int var, int ch, int i)
     u16 x = (u16)(((st ? 100 : 0) + (var ? 50 : 0) + ch * 10) & 0xFF) + i * 2;
     return 0x820000 | rd16(LONG(0x820000 | (0x8A08 + x)));
 }
+
+u32 roster_name(int st, int ch, u16 orig)
+{
+    (void)st; (void)ch;
+    return 0x800000 | orig;
+}
+
+u8 roster_winner_pose(int ch, int rider)
+{
+    return rd8(LONG(0x810000 | (0xC158 + ((ch * 8 + rider) & 0xFF))));
+}

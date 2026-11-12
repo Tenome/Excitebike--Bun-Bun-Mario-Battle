@@ -2,3 +2,7 @@
 828965  1 1  mem+X,Y,C,V    RiderGfxCycle
 8287FD  1 1  mem+X,Y,C,V    RiderSpriteSets
 82899B  1 1  mem+X,Y,C,V    LoadRiderPalettes
+80B2DA  1 1  mem+A,X,Y,C,V   VramQueueTiles20
+80B2DE  1 1  mem+X,Y,C,Z,N,V   VramQueueTiles
+80A4DA  1 1  mem+Y,V        DrawRaceHud
+81C0F6  1 1  mem+V          WinnerFigure

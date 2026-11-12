@@ -53,8 +53,12 @@ int g_port_reset_request;
 #include "snes/cart.h"
 void BunbunCoursesInit(void);
 int BunbunModsFolderApply(void);
+void RosterInit(void);
 static void GameInitialize(void)
 {
+#ifdef BUNBUN_GENB
+    RosterInit();                /* expanded roster: extended image + added characters */
+#endif
     BunbunModsFolderApply();     /* mods/ folder: graphics, palettes, patches */
 #ifdef BUNBUN_GENB
     static int courses_ready;
@@ -118,9 +122,22 @@ static void UnlockAfterFrame(void)
 #endif
 }
 
+/* Testing aid: BUNBUN_FORCE_CHAR=n keeps the player's character at n (Gen B
+ * $154F) until the player select can offer the added characters. */
+static void ForceCharAfterFrame(void)
+{
+#ifdef BUNBUN_GENB
+    static int ch = -2;
+    if (ch == -2) { const char *e = getenv("BUNBUN_FORCE_CHAR"); ch = e && *e ? atoi(e) : -1; }
+    if (ch >= 0)
+        g_ram[0x154F] = (uint8_t)ch;
+#endif
+}
+
 void GameRunOneFrame(void)
 {
     snes_beam_frame_driver_run_frame();
+    ForceCharAfterFrame();
     UnlockAfterFrame();
     if (SkipWaitEnabled())
         SkipWaitAfterFrame();

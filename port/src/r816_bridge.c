@@ -341,4 +341,8 @@ BRIDGE(HleHand_BsxCheckSerial, BsxCheckSerial_m1x1, 400)
 BRIDGE(HleHand_RiderGfxCycle,     RiderGfxCycle_m1x1,     60)
 BRIDGE(HleHand_RiderSpriteSets,   RiderSpriteSets_m1x1,   600)
 BRIDGE(HleHand_LoadRiderPalettes, LoadRiderPalettes_m1x1, 1200)
+BRIDGE(HleHand_DrawRaceHud,       DrawRaceHud_m1x1,       3000)
+BRIDGE(HleHand_VramQueueTiles20,  VramQueueTiles20_m1x1,  600)
+BRIDGE(HleHand_VramQueueTiles,    VramQueueTiles_m1x1,    600)
+BRIDGE(HleHand_WinnerFigure,      WinnerFigure_m1x1,      120)
 #endif

@@ -29,4 +29,13 @@ u8 roster_rider_bank(int ch, int var, int slot);
  * ($82:8A08 + st * 100 + var * 50 + ch * 10 + i * 2, bank $82). */
 u32 roster_rider_palette(int st, int var, int ch, int i);
 
+/* 24-bit address of the racer name, a 15-byte tile list ($80:A598 +
+ * ch * 15, Stadium 4 + $4B; first byte = size, then the tile numbers).
+ * orig is the bank $80 pointer the original computed (it uses the hardware
+ * multiplier); the original characters keep it. */
+u32 roster_name(int st, int ch, u16 orig);
+/* Pose of the winning rider at the end of a race of character ch
+ * ($81:C158 + ch * 8 + rider). */
+u8 roster_winner_pose(int ch, int rider);
+
 #endif

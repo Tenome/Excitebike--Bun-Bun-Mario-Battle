@@ -25,3 +25,7 @@
 828965 RiderGfxCycle         # every other frame queue the next animation strip to VRAM $4F00
 8287FD RiderSpriteSets       # rider sprite slot sources $1E12-$1E18, banks $1550-$1553 (per character)
 82899B LoadRiderPalettes     # five rider palettes of the character to $1D20 (per Stadium, variant)
+80B2DA VramQueueTiles20      # VramQueueTiles with attribute $20
+80B2DE VramQueueTiles        # queue a tile list ($02) to VRAM ($00), one record per row
+80A4DA DrawRaceHud           # race HUD labels and the player's name (per character)
+81C0F6 WinnerFigure          # result object walks in, shows the winner's pose (per character)
