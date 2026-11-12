@@ -1,0 +1,4 @@
+# Gen B (Stadium 3-4) routines written by hand. Columns: pc  M X  compare  name
+828965  1 1  mem+X,Y,C,V    RiderGfxCycle
+8287FD  1 1  mem+X,Y,C,V    RiderSpriteSets
+82899B  1 1  mem+X,Y,C,V    LoadRiderPalettes

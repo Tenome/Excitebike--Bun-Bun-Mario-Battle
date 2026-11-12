@@ -22,3 +22,6 @@
 808000 Reset
 808256 Nmi
 80B88F Irq
+828965 RiderGfxCycle         # every other frame queue the next animation strip to VRAM $4F00
+8287FD RiderSpriteSets       # rider sprite slot sources $1E12-$1E18, banks $1550-$1553 (per character)
+82899B LoadRiderPalettes     # five rider palettes of the character to $1D20 (per Stadium, variant)

@@ -205,6 +205,9 @@ def main():
             if lw != ow:
                 k = next((k for k in range(min(len(lw), len(ow))) if lw[k] != ow[k]), min(len(lw), len(ow)))
                 problems.append('hw writes differ at #%d (orig %d, lifted %d writes)' % (k, len(ow), len(lw)))
+                if os.environ.get('DIFFTEST_SHOW_HW'):
+                    print('   orig  ', ' '.join('%06X=%02X' % w for w in ow[max(0, k - 3):k + 4]))
+                    print('   lifted', ' '.join('%06X=%02X' % w for w in lw[max(0, k - 3):k + 4]))
             if problems:
                 res['fail'] += 1
                 if first is None:

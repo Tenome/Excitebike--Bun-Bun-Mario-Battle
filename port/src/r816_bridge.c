@@ -336,4 +336,9 @@ BRIDGE(HleHand_BsxCheckSerial, BsxCheckSerial_m1x1, 400)
  * to the frame scheduler mid-call (a long one like $80:B873 does), which hand
  * C cannot resume. Rule: bridge only routines whose calls stay inside
  * hand-written code. */
+#else
+/* Stadium 3-4 (Gen B) routines from c/hand/s4 */
+BRIDGE(HleHand_RiderGfxCycle,     RiderGfxCycle_m1x1,     60)
+BRIDGE(HleHand_RiderSpriteSets,   RiderSpriteSets_m1x1,   600)
+BRIDGE(HleHand_LoadRiderPalettes, LoadRiderPalettes_m1x1, 1200)
 #endif
