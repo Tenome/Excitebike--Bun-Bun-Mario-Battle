@@ -1,15 +1,15 @@
 {
  "measures": {
-  "fuzzy_match_percent": 52.9353,
+  "fuzzy_match_percent": 53.9372,
   "total_code": "36930",
-  "matched_code": "2301",
-  "matched_code_percent": 6.2307,
+  "matched_code": "3041",
+  "matched_code_percent": 8.2345,
   "total_data": "0",
   "matched_data": "0",
   "matched_data_percent": 0.0,
   "total_functions": 532,
-  "matched_functions": 20,
-  "matched_functions_percent": 3.7594,
+  "matched_functions": 26,
+  "matched_functions_percent": 4.8872,
   "complete_code": "0",
   "complete_code_percent": 0.0,
   "complete_data": "0",
@@ -21,16 +21,16 @@
   {
    "name": "main/bank80",
    "measures": {
-    "fuzzy_match_percent": 52.6468,
+    "fuzzy_match_percent": 54.0594,
     "total_code": "24671",
-    "matched_code": "1439",
-    "matched_code_percent": 5.8328,
+    "matched_code": "2136",
+    "matched_code_percent": 8.6579,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 357,
-    "matched_functions": 11,
-    "matched_functions_percent": 3.0812,
+    "matched_functions": 16,
+    "matched_functions_percent": 4.4818,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -42,14 +42,14 @@
     {
      "name": ".text",
      "size": "24671",
-     "fuzzy_match_percent": 52.6468
+     "fuzzy_match_percent": 54.0594
     }
    ],
    "functions": [
     {
-     "name": "sub_8081A9",
+     "name": "DrawClockB",
      "size": "165",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8421801"
      }
@@ -1471,25 +1471,25 @@
      }
     },
     {
-     "name": "sub_80C776",
+     "name": "RiderCollisions",
      "size": "371",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8439670"
      }
     },
     {
-     "name": "sub_80C989",
+     "name": "Reach20",
      "size": "7",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8440201"
      }
     },
     {
-     "name": "sub_80C990",
+     "name": "Reach2",
      "size": "7",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8440208"
      }
@@ -1647,9 +1647,9 @@
      }
     },
     {
-     "name": "sub_80D08A",
+     "name": "CollectCoin",
      "size": "147",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8441994"
      }
@@ -2911,16 +2911,16 @@
   {
    "name": "main/bank81",
    "measures": {
-    "fuzzy_match_percent": 51.8745,
+    "fuzzy_match_percent": 52.1296,
     "total_code": "8429",
-    "matched_code": "316",
-    "matched_code_percent": 3.749,
+    "matched_code": "359",
+    "matched_code_percent": 4.2591,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 137,
-    "matched_functions": 4,
-    "matched_functions_percent": 2.9197,
+    "matched_functions": 5,
+    "matched_functions_percent": 3.6496,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -2932,7 +2932,7 @@
     {
      "name": ".text",
      "size": "8429",
-     "fuzzy_match_percent": 51.8745
+     "fuzzy_match_percent": 52.1296
     }
    ],
    "functions": [
@@ -3865,9 +3865,9 @@
      }
     },
     {
-     "name": "sub_81C6F9",
+     "name": "CoinMilestone",
      "size": "43",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8505081"
      }

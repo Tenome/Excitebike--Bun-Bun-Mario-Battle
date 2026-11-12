@@ -22,3 +22,8 @@
 81A304  1 0  mem+A,X,Y,C,V  RandomB
 828593  1 1  mem+X,Y,C,V    SpcUploadB
 8081A9  1 1  mem+X,Y,C,V    DrawClockB
+80C989  1 1  mem+A,X,Y,V    Reach20
+80C990  1 1  mem+A,X,Y,V    Reach2
+81C6F9  1 1  mem+X          CoinMilestone
+80D08A  1 1  mem+X,Y,V      CollectCoin
+80C776  1 1  mem+X,Y,C,V    RiderCollisions

@@ -43,3 +43,8 @@
 81A304 RandomB               # random A from counters, frame and clock
 828593 SpcUploadB            # upload sample stream X to the sound CPU
 8081A9 DrawClockB            # broadcast clock HH:MM at VRAM $1842 (hidden in the clock-free port)
+80C989 Reach20               # A + $14 below $E7
+80C990 Reach2                # A + 2 below $E7
+81C6F9 CoinMilestone         # 100/200 coins bonus display, sound $2B
+80D08A CollectCoin           # coin effect slot, coin count, combo score
+80C776 RiderCollisions       # rider-to-rider bumps: crash sounds and voices, coins
