@@ -108,7 +108,7 @@ To edit, open `tools/editor/course_editor.html` in a browser (it runs
 offline, nothing is uploaded). Open your ROM to load its courses (or a course
 `.bin`), paint columns with a code, insert, delete, copy and paste, and save
 `courseN.bin`. Column codes: `40` plain ground in Gen A (`80` in Gen B),
-`41`-`4C` ground variants, `00`-`3F` obstacles and events (`09` is a wide
+`41` `43`-`45` fast ground, `42` `46` `4F` slow ground, `4D` `4E` hazards, `47`-`4C` markers, `00`-`3F` obstacles and events (`09` is a wide
 element that covers six columns). Code names you type are kept in the
 browser. `python tools/course.py s1 --dump` writes the original courses as
 `build/s1/courseN.bin` in the same format.

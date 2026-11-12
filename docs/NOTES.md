@@ -367,9 +367,13 @@ custom course (`mods/.../courses/course0.bin`) and the race was captured
 | `2A`-`2D` | the items the broadcast drops in (`$80:82AF`) |
 | `2E`-`3F` | nothing visible, race unchanged |
 
-The run codes `41`-`4F` (8-column runs) draw like plain ground but change
-the riding (4 to 56 of 63 frames differ): surfaces with effects, not yet
-measured. The editor (`tools/editor/course_editor.html`) carries these as
+The run codes `41`-`4F` draw like plain ground but change the riding.
+Measured with 110-column runs and the same input script (`projects/codes3`,
+player speed `$01C0:$01B8`, crash flag `$01E8`), against plain ground `40`
+(average speed 188): `41` `43` `44` `45` let the rider travel much further
+(average 501); `42` `46` are strong slowdowns (49), `4F` a slowdown (72);
+`4D` `4E` make the rider fall (crash flag on ~145 frames); `47`-`4C` ride
+like plain ground (the markers at the start and finish). The editor (`tools/editor/course_editor.html`) carries these as
 default names.
 
 ## Rider palettes and voices (Gen A)
