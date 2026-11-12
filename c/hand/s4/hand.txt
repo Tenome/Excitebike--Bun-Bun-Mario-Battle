@@ -198,3 +198,7 @@
 81A1C8  1 1  mem+X,Y,C,V     RivalEngineSound
 80B435  1 1  mem+X,Y,C,V     QueueTileRows
 80AE97  1 1  mem+X,V         BrakeRider
+80B38B  1 1  mem+X,Y,C,V     QueueTileBlock
+80CE96  1 1  mem+X,Y,C,V     PlaceRiderShadow
+80E4CB  1 1  mem+X,Y,C,V     ShowJumpResult
+819DE4  1 1  mem+Y,V         DrawBigBall

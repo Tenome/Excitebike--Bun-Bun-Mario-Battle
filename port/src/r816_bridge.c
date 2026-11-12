@@ -546,6 +546,20 @@ BRIDGE(HleHand_RivalEngineSound, RivalEngineSound_m1x1, 320)
 BRIDGE_DYN(HleHand_QueueTileRows, QueueTileRows_m1x1,
            30 + ((g_ram[0x11] ? g_ram[0x11] : 256) * (60 + 22 * g_ram[0x10])))
 BRIDGE(HleHand_BrakeRider, BrakeRider_m1x1, 40)
+/* c/hand/s4/objects.c, part 9 */
+/* header byte at DB:($02): rows << 4 | words; about 60 units a row and 22
+ * a word */
+static uint32 tile_block_cost(void)
+{
+    uint16 p = (uint16)(r816_bus_read((uint16)(D + 2)) | r816_bus_read((uint16)(D + 3)) << 8);
+    uint8 h = r816_bus_read(((uint32)DB << 16) | p);
+    uint32 rows = (h >> 4) ? (h >> 4) : 16, words = (h & 15) ? (h & 15) : 16;
+    return 30 + rows * (60 + 22 * words);
+}
+BRIDGE_DYN(HleHand_QueueTileBlock, QueueTileBlock_m1x1, tile_block_cost())
+BRIDGE(HleHand_PlaceRiderShadow, PlaceRiderShadow_m1x1, 50)
+BRIDGE(HleHand_ShowJumpResult, ShowJumpResult_m1x1, 1540)
+BRIDGE(HleHand_DrawBigBall, DrawBigBall_m1x1, 90)
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)

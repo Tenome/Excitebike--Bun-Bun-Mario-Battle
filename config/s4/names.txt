@@ -215,3 +215,7 @@
 81A1C8 RivalEngineSound
 80B435 QueueTileRows
 80AE97 BrakeRider
+80B38B QueueTileBlock
+80CE96 PlaceRiderShadow
+80E4CB ShowJumpResult
+819DE4 DrawBigBall
