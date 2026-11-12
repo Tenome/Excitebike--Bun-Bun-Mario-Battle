@@ -463,6 +463,23 @@ BRIDGE(HleHand_SetRiderLean, SetRiderLean_m1x1, 35)
 BRIDGE(HleHand_QueuePlaceBadge, QueuePlaceBadge_m1x1, 1270)
 BRIDGE(HleHand_SetJumpScroll, SetJumpScroll_m1x1, 60)
 BRIDGE(HleHand_DrawSpark, DrawSpark_m1x1, 60)
+/* c/hand/s4/objects.c, part 4 */
+BRIDGE(HleHand_StartPracticeMode, StartPracticeMode_m1x1, 120)
+BRIDGE(HleHand_DrawJumpRank, DrawJumpRank_m1x1, 50)
+BRIDGE(HleHand_StepFade, StepFade_m1x1, 50)
+BRIDGE(HleHand_Mode17_BonusIntro, Mode17_BonusIntro_m1x1, 40)
+BRIDGE(HleHand_RiderAtStart, RiderAtStart_m1x1, 45)
+BRIDGE(HleHand_DrawStar, DrawStar_m1x1, 60)
+BRIDGE(HleHand_SpawnDustPuff, SpawnDustPuff_m1x1, 70)
+BRIDGE(HleHand_ClearRaceState, ClearRaceState_m1x1, 8360)
+BRIDGE(HleHand_ReadBroadcastDate, ReadBroadcastDate_m1x1, 100)
+BRIDGE(HleHand_MoveObjectX, MoveObjectX_m1x1, 70)
+/* QueueRaceTime ($80:C5B0) passes difftest but is not hooked: it runs
+ * every race frame close to the frame deadline, and as one uninterruptible
+ * call it moved the race start by two frames in the menu-flow run. */
+BRIDGE(HleHand_QueueBestTime, QueueBestTime_m1x1, 1310)
+BRIDGE(HleHand_AccelerateRider, AccelerateRider_m1x1, 50)
+BRIDGE(HleHand_UpdateRiderDistances, UpdateRiderDistances_m1x1, 180)
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)

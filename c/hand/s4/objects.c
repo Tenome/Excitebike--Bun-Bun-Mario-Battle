@@ -1179,3 +1179,504 @@ void DrawSpark_m1x1(void)
     }
     ret();
 }
+
+void SetupHdmaChannels_m1x1(void);
+
+/* $80:9D37 StartPracticeMode (RTS): BG1SC = $1900 = 1, BG2SC 9, $1905 =
+ * $17, $86/$87 = 0, the HDMA scroll channels, BG3SC $2B, BG12NBA $44,
+ * BG34NBA 1, step $1923 and $75, timer $88 = $0708, $190D = $E3. */
+void StartPracticeMode_m1x1(void)
+{
+    lda8(0x01); wr8(ABS(0x2107), 0x01); wr8(ABS(0x1900), 0x01);
+    lda8(0x09); wr8(ABS(0x2108), 0x09);
+    lda8(0x17); wr8(ABS(0x1905), 0x17);
+    wr8(DP(0x86), 0);
+    wr8(DP(0x87), 0);
+    push8(0x80); push16(0x9D50); SetupHdmaChannels_m1x1();
+    lda8(0x2B); wr8(ABS(0x2109), 0x2B);
+    lda8(0x44); wr8(ABS(0x210B), 0x44);
+    lda8(0x01); wr8(ABS(0x210C), 0x01);
+    wr8(ABS(0x1923), inc8(rd8(ABS(0x1923))));
+    wr8(DP(0x75), inc8(rd8(DP(0x75))));
+    rep(0x20);
+    lda16(0x0708); wr16(DP(0x88), 0x0708);
+    sep(0x20);
+    lda8(0xE3); wr8(ABS(0x190D), 0xE3);
+    ret();
+}
+
+/* $80:E771 DrawJumpRank (RTS): in jump state 2 ($C7) show the rank sprite
+ * (tile from $80:E7BB by $156B, negative ranks as 0) at X $38: it rises
+ * from Y $A0 to $80, then stays for $40 frames ($8E). */
+void DrawJumpRank_m1x1(void)
+{
+    lda8(rd8(DP(0xC7)));
+    cmp8((u8)A, 0x02);
+    if (!fz) { ret(); return; }
+    lda8(rd8(DP(0xD2)));
+    if (fz) {
+        lda8(rd8(ABS(0x156B)));
+        if (fn) wr8(ABS(0x156B), 0);
+        wr8(DP(0xD2), inc8(rd8(DP(0xD2))));
+        lda8(0xA0); wr8(DP(0xD3), 0xA0);
+        lda8(0x40); wr8(DP(0x8E), 0x40);
+    }
+    lda8(rd8(DP(0xD3)));
+    cmp8((u8)A, 0x80);
+    if (fc) {
+        wr8(DP(0xD3), dec8(rd8(DP(0xD3))));
+    } else {
+        lda8(rd8(DP(0x8E)));
+        if (fz) { ret(); return; }
+        wr8(DP(0x8E), dec8(rd8(DP(0x8E))));
+    }
+    lda8(0x38); wr8(ABS(0x1700), 0x38);
+    lda8(rd8(DP(0xD3))); wr8(ABS(0x1701), (u8)A);
+    Y = rd8(ABS(0x156B)); nz8((u8)Y);
+    lda8(rd8(ABSY(0xE7BB))); wr8(ABS(0x1702), (u8)A);
+    lda8(0x21); wr8(ABS(0x1703), 0x21);
+    lda8(0x02); wr8(ABS(0x1860), 0x02);
+    ret();
+}
+
+/* $82:8698 StepFade (RTL): brightness $1903 low nibble += fade step
+ * $1923, clamped at $0F (ending the fade). Below zero the screen is dark:
+ * reset the scroll, sound and race flags, play sound $80, $1903 = $80. */
+void StepFade_m1x1(void)
+{
+    lda8(rd8(ABS(0x1903)));
+    and8(0x0F);
+    fc = 0;
+    adc8(rd8(ABS(0x1923)));
+    if (fn) {
+        wr8(DP(0x9A), 0); wr8(DP(0x9B), 0); wr8(DP(0x9C), 0); wr8(DP(0x9D), 0);
+        wr8(ABS(0x1958), 0);
+        wr8(ABS(0x1E0C), 0);
+        lda8(0x80);
+        push8(0x82); push16(0x86BE); QueueSoundB_m1x1();
+        lda8(0x01); wr8(ABS(0x1E84), 0x01);
+        lda8(0x80); wr8(ABS(0x1903), 0x80);
+        wr8(ABS(0x2142), 0);
+        for (u16 a = 0x1961; a <= 0x1964; a++)
+            wr8(ABS(a), 0);
+        wr8(ABS(0x00CA), 0);
+        wr8(ABS(0x0086), 0);
+        wr8(ABS(0x0087), 0);
+        wr8(ABS(0x1E0C), 0);
+    } else {
+        cmp8((u8)A, 0x0F);
+        if (!fc) { wr8(ABS(0x1903), (u8)A); retl(); return; }
+        lda8(0x0F);
+    }
+    wr8(ABS(0x1923), 0);
+    wr8(ABS(0x1903), (u8)A);
+    retl();
+}
+
+/* $80:B7A0 Mode17_BonusIntro (RTS): count the word timer $88 down (sound
+ * $34 at $06CC); below that zoom $A6 up by 4 to $0100, then set colour
+ * math ($190D $41, COLDATA $E0) and wait for a press. At zero or on a
+ * press leave the mode (JMP $80:8F15); otherwise $1905 = $17. */
+void Mode17_BonusIntro_m1x1(void)
+{
+    rep(0x20);
+    lda16(rd16(ABS(0x0088)));
+    lda16(dec16(A));
+    wr16(ABS(0x0088), A);
+    if (fz) goto leave;
+    cmp16(A, 0x06CC);
+    if (fz) {
+        sep(0x20);
+        lda8(0x34);
+        push8(0x80); push16(0xB7BB); QueueSoundB_m1x1();
+    } else if (fc) {
+        goto keep;
+    }
+    rep(0x20);
+    lda16(rd16(DP(0xA6)));
+    cmp16(A, 0x0100);
+    if (fz) {
+        sep(0x20);
+        lda8(0x41); wr8(ABS(0x190D), 0x41);
+        lda8(0xE0); wr8(ABS(0x2132), 0xE0);
+        lda8(rd8(DP(0x21)));
+        ora8(rd8(DP(0x26)));
+        if (!fz) goto leave;
+        ret();
+        return;
+    }
+    fc = 0;
+    adc16(0x0004);
+    wr16(DP(0xA6), A);
+keep:
+    sep(0x20);
+    lda8(0x17); wr8(ABS(0x1905), 0x17);
+    ret();
+    return;
+leave:
+    sep(0x20);
+    r816_call_pc(0x808F15);
+}
+
+/* $80:BC5B RiderAtStart (RTS): rider X at the start line ($3D,X clear):
+ * riders other than the player are flagged as started ($01AE); once a
+ * rider moves (or is off its start column $80:BACF) it is flagged too,
+ * and riders from column 8 on (the player always) clear $01D6. A rival
+ * not in the air also gets $199E = 1 and a random boost from $80:F6AB. */
+void RiderAtStart_m1x1(void)
+{
+    lda8(rd8(DPX(0x3D)));
+    if (!fz) { ret(); return; }
+    lda8((u8)X);
+    if (!fz) { lda8(0x01); wr8(ABSX(0x01AE), 0x01); }
+    lda8(rd8(ABSX(0x01C6)));
+    ora8(rd8(ABSX(0x01AE)));
+    if (fz) {
+        lda8(rd8(ABSX(0x01F6)));
+        cmp8((u8)A, rd8(ABSX(0xBACF)));
+        if (fz) { ret(); return; }
+    }
+    lda8(0x01); wr8(ABSX(0x01AE), 0x01);
+    lda8((u8)X);
+    if (!fz) {
+        lda8(rd8(ABSX(0x01F6)));
+        cmp8((u8)A, 0x08);
+        if (!fc) { ret(); return; }
+    }
+    lda8(0x00); wr8(ABSX(0x01D6), 0x00);
+    cmp8((u8)X, 0x00);
+    if (fz) { ret(); return; }
+    lda8(rd8(ABSX(0x019E)));
+    cmp8((u8)A, 0x01);
+    if (fz) { ret(); return; }
+    lda8(0x01); wr8(ABSX(0x199E), 0x01);
+    push8(0x80); push16(0xBC9E); RandomB_m1x1();
+    and8(0x03);
+    Y = (u8)A; nz8((u8)Y);
+    lda8(rd8(ABSY(0xF6AB))); wr8(ABSX(0x19A6), (u8)A);
+    ret();
+}
+
+/* $81:9677 DrawStar (RTS, object Y): sprite at OAM buffer $1610 + 2Y
+ * from $0106/$010E, tile from $81:96BF by frame $011E, attribute $2B;
+ * every 4 frames step the frame, and after frame 2 move on ($012E + 1)
+ * with a $40-frame wait. */
+void DrawStar_m1x1(void)
+{
+    X = Y; nz8((u8)X);
+    lda8((u8)X);
+    lda8(asl8((u8)A));
+    Y = (u8)A; nz8((u8)Y);
+    lda8(rd8(ABSX(0x0106))); wr8(ABSY(0x1610), (u8)A);
+    lda8(rd8(ABSX(0x010E))); wr8(ABSY(0x1611), (u8)A);
+    lda8(rd8(ABSX(0x011E)));
+    push8((u8)X);
+    X = (u8)A; nz8((u8)X);
+    lda8(rd8(LONGX(0x8196BF))); wr8(ABSY(0x1612), (u8)A);
+    lda8(0x2B); wr8(ABSY(0x1613), 0x2B);
+    X = pull8(); nz8((u8)X);
+    lda8((u8)Y);
+    lda8(lsr8((u8)A));
+    lda8(lsr8((u8)A));
+    Y = (u8)A; nz8((u8)Y);
+    lda8(0x02); wr8(ABSY(0x1824), 0x02);
+    u8 t = dec8(rd8(ABSX(0x0126)));
+    wr8(ABSX(0x0126), t);
+    if (fz) {
+        lda8(0x04); wr8(ABSX(0x0126), 0x04);
+        wr8(ABSX(0x011E), inc8(rd8(ABSX(0x011E))));
+        lda8(rd8(ABSX(0x011E)));
+        cmp8((u8)A, 0x03);
+        if (fc) {
+            wr8(ABSX(0x012E), inc8(rd8(ABSX(0x012E))));
+            lda8(0x40); wr8(ABSX(0x0126), 0x40);
+        }
+    }
+    ret();
+}
+
+/* $81:9436 SpawnDustPuff (RTL): find a free effect slot (6, 4, 2 by
+ * $0116) and, unless the dust table at $81:9476 says $80+ for frame $1961,
+ * place a puff (tile $A7) at the player ($0196 / $01B6) offset by the
+ * tables $81:9476 / $81:9496 minus 3. */
+void SpawnDustPuff_m1x1(void)
+{
+    push8(DB);
+    lda8(0x81);
+    push8(0x81);
+    DB = pull8(); nz8(DB);
+    push8((u8)X);
+    ldx8(0x06);
+    do {
+        lda8(rd8(ABSX(0x0116)));
+        if (fz) {
+            Y = rd8(ABS(0x1961)); nz8((u8)Y);
+            lda8(rd8(ABSY(0x9476)));
+            if (!fn) {
+                fc = 1; sbc8(0x03);
+                fc = 0; adc8(rd8(ABS(0x0196)));
+                wr8(ABSX(0x0106), (u8)A);
+                lda8(rd8(ABSY(0x9496)));
+                fc = 1; sbc8(0x03);
+                fc = 0; adc8(rd8(ABS(0x01B6)));
+                wr8(ABSX(0x010E), (u8)A);
+                lda8(0xA7); wr8(ABSX(0x011E), 0xA7);
+                lda8(0x01); wr8(ABSX(0x0116), 0x01);
+            }
+            X = pull8(); nz8((u8)X);
+            DB = pull8(); nz8(DB);
+            retl();
+            return;
+        }
+        X = dec8((u8)X);
+        X = dec8((u8)X);
+    } while (!fz);
+    X = pull8(); nz8((u8)X);
+    DB = pull8(); nz8(DB);
+    retl();
+}
+
+/* $80:8FA6 ClearRaceState (RTS): zero $0884-$09B1, $09B2-$0CD3, $80-$84
+ * and $197A-$19FF, with sound $2D in between. */
+void ClearRaceState_m1x1(void)
+{
+    rep(0x10);
+    for (X = 0x0884; X < 0x09B2; X++)
+        wr8(DPX(0x00), 0);
+    cmp16(X, 0x09B2);
+    sep(0x10);
+    lda8(0x09); wr8(DP(0x01), 0x09);
+    lda8(0xB2); wr8(DP(0x00), 0xB2);
+    rep(0x10);
+    lda8(0x00);
+    for (int y = 0x0321; y >= 0; y--)
+        wr8((((u32)DB << 16) + rd16(DP(0x00)) + y) & 0xFFFFFF, 0);
+    Y = 0xFFFF; nz16(Y);
+    sep(0x10);
+    ldx8(0x03);
+    do {
+        wr8(DPX(0x80), (u8)A);
+        X = dec8((u8)X);
+    } while (!fn);
+    wr8(DP(0x84), (u8)A);
+    lda8(0x2D);
+    push8(0x80); push16(0x8FD9); QueueSoundB_m1x1();
+    rep(0x10);
+    lda8(0x7A); wr8(DP(0x00), 0x7A);
+    lda8(0x19); wr8(DP(0x01), 0x19);
+    lda8(0x00);
+    for (int y = 0x0085; y >= 0; y--)
+        wr8((((u32)DB << 16) + rd16(DP(0x00)) + y) & 0xFFFFFF, 0);
+    Y = 0xFFFF; nz16(Y);
+    sep(0x10);
+    ret();
+}
+
+/* Two decimal digits of `v`: the units ORed into `lo`, the tens into
+ * `hi`. */
+static void or_digits(u8 v, u16 hi, u16 lo)
+{
+    ldy8(0x00);
+    lda8(v);
+    for (;;) {
+        cmp8((u8)A, 0x0A);
+        if (!fc) break;
+        sbc8(0x0A);
+        Y = inc8((u8)Y);
+        WAIT_TICK();
+    }
+    ora8(rd8(ABS(lo)));
+    wr8(ABS(lo), (u8)A);
+    lda8((u8)Y);
+    ora8(rd8(ABS(hi)));
+    wr8(ABS(hi), (u8)A);
+}
+
+/* $80:A129 ReadBroadcastDate (RTL): merge the three BS-X bytes at
+ * $11:572C-$11:572E as two-digit pairs into $0854-$0859. */
+void ReadBroadcastDate_m1x1(void)
+{
+    or_digits(rd8(LONG(0x11572C)), 0x0854, 0x0855);
+    or_digits(rd8(LONG(0x11572D)), 0x0856, 0x0857);
+    or_digits(rd8(LONG(0x11572E)), 0x0858, 0x0859);
+    retl();
+}
+
+/* $81:9744 MoveObjectX (RTL): add the signed velocity nibbles of $013E,X
+ * (low nibble as fraction, high nibble as whole pixels) to the 8.8
+ * position $014E/$0106-$0107. Returns A = carry + whole step. */
+void MoveObjectX_m1x1(void)
+{
+    lda8(rd8(ABSX(0x013E)));
+    lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A));
+    wr8(DP(0x01), (u8)A);
+    lda8(rd8(ABSX(0x013E)));
+    lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
+    cmp8((u8)A, 0x08);
+    if (fc) ora8(0xF0);
+    wr8(DP(0x00), (u8)A);
+    ldy8(0x00);
+    cmp8((u8)A, 0x00);
+    if (fn) Y = dec8((u8)Y);
+    wr8(DP(0x02), (u8)Y);
+    lda8(rd8(ABSX(0x014E)));
+    fc = 0;
+    adc8(rd8(DP(0x01)));
+    wr8(ABSX(0x014E), (u8)A);
+    lda8(0x00);
+    lda8(rol8((u8)A));
+    push8((u8)A);
+    lda8(ror8((u8)A));
+    lda8(rd8(ABSX(0x0106)));
+    adc8(rd8(DP(0x00)));
+    wr8(ABSX(0x0106), (u8)A);
+    lda8(rd8(ABSX(0x0107)));
+    adc8(rd8(DP(0x02)));
+    wr8(ABSX(0x0107), (u8)A);
+    lda8(pull8());
+    fc = 0;
+    adc8(rd8(DP(0x00)));
+    retl();
+}
+
+/* Time display "M'SS''FF" at $03CF (size $27) from minutes `m`, seconds
+ * `s` and frames `f`: digits via the tables $80:C470/$80:C4AC, separator
+ * tiles $47/$48 and the lower row (+$10). `last_add` picks the final
+ * operation for the last lower tile (ORA or ADC $10). */
+static void build_time(u16 m, u16 s, u16 f, int last_add)
+{
+    rep(0x20);
+    lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+    X = rd8(ABS(f)); nz8((u8)X);
+    lda16(rd16(ABSX(0xC470)));
+    lda16(asl16(A));
+    X = (u8)A; nz8((u8)X);
+    lda16(rd16(ABSX(0xC4AC))); wr16(ABS(0x03D5), A);
+    lda16(rd16(ABS(s)));
+    lda16(asl16(A));
+    X = (u8)A; nz8((u8)X);
+    lda16(rd16(ABSX(0xC4AC))); wr16(ABS(0x03D2), A);
+    sep(0x20);
+    lda8(rd8(ABS(m))); wr8(ABS(0x03D0), (u8)A);
+    lda8(0x27); wr8(ABS(0x03CF), 0x27);
+    rep(0x20);
+    lda16(rd16(ABS(0x03D0)));
+    and16(0x00FF);
+    ora16(0x4700);
+    wr16(ABS(0x03D0), A);
+    ora16(0xFF10);
+    wr16(ABS(0x03D7), A);
+    lda16(rd16(ABS(0x03D2)));
+    ora16(0x1010);
+    wr16(ABS(0x03D9), A);
+    lda16(rd16(ABS(0x03D4)));
+    and16(0xFF00);
+    ora16(0x0048);
+    wr16(ABS(0x03D4), A);
+    ora16(0x10FF);
+    wr16(ABS(0x03DB), A);
+    sep(0x20);
+    lda8(rd8(ABS(0x03D6)));
+    if (last_add) { fc = 0; adc8(0x10); } else ora8(0x10);
+    wr8(ABS(0x03DD), (u8)A);
+}
+
+/* $80:C5B0 QueueRaceTime (RTS): the race clock $03AE-$03B0, then
+ * VramQueueTiles. $80:C623 QueueBestTime (RTS): the record $083A-$083C,
+ * then VramQueueTiles20. */
+void QueueRaceTime_m1x1(void) { build_time(0x03AE, 0x03AF, 0x03B0, 0); VramQueueTiles_m1x1(); }
+void QueueBestTime_m1x1(void) { build_time(0x083A, 0x083B, 0x083C, 1); VramQueueTiles20_m1x1(); }
+
+/* $80:AE33 AccelerateRider (RTS): the player's ($7F) speed $01BE/$01C6
+ * gains the step from $80:B864 (or $80:B86D in a race below page 2),
+ * capped at $80:B883/$80:B886 for rider 0. A rider with $019E negative
+ * is set to speed $0480 ($0580 when the player has not crashed). */
+void AccelerateRider_m1x1(void)
+{
+    cmp8((u8)X, rd8(DP(0x7F)));
+    if (fz) {
+        lda8(rd8(DP(0x76)));
+        cmp8((u8)A, 0x03);
+        int alt = 0;
+        if (fz) {
+            lda8(rd8(DP(0x9D)));
+            cmp8((u8)A, 0x02);
+            alt = !fc;
+        }
+        lda8(rd8(ABSY(alt ? 0xB86D : 0xB864)));
+        fc = 0;
+        adc8(rd8(ABSX(0x01BE)));
+        wr8(ABSX(0x01BE), (u8)A);
+        if (fc) wr8(ABSX(0x01C6), inc8(rd8(ABSX(0x01C6))));
+        lda8((u8)X);
+        if (fz) {
+            lda8(rd8(ABSX(0x01C6)));
+            cmp8((u8)A, rd8(ABSY(0xB886)));
+            int cap = 0;
+            if (fz) {
+                lda8(rd8(ABSX(0x01BE)));
+                cmp8((u8)A, rd8(ABSY(0xB883)));
+                cap = fc;
+            } else {
+                cap = fc;
+            }
+            if (cap) {
+                lda8(rd8(ABSY(0xB883))); wr8(ABSX(0x01BE), (u8)A);
+                lda8(rd8(ABSY(0xB886))); wr8(ABSX(0x01C6), (u8)A);
+            }
+        }
+    }
+    lda8(rd8(ABSX(0x019E)));
+    if (fn) {
+        lda8(rd8(ABS(0x01EE)));
+        lda8(fz ? 0x05 : 0x04);
+        wr8(ABSX(0x01C6), (u8)A);
+        lda8(0x80); wr8(ABSX(0x01BE), 0x80);
+    }
+    ret();
+}
+
+/* $80:BD88 UpdateRiderDistances (RTS): in a race ($7D, $92 set, $84
+ * clear) the word distances $085E + 2X for riders 7..0: on-screen riders
+ * ($01DE) from their position $0196/$019E + scroll $9C - $0100; others
+ * add their speed $0D01 to the fraction $015E and the carry. */
+void UpdateRiderDistances_m1x1(void)
+{
+    lda8(rd8(DP(0x7D)));
+    if (fz) { ret(); return; }
+    lda8(rd8(DP(0x92)));
+    if (fz) { ret(); return; }
+    lda8(rd8(DP(0x84)));
+    if (!fz) { ret(); return; }
+    rep(0x20);
+    ldy8(0x0E);
+    ldx8(0x07);
+    do {
+        lda16(rd16(ABSX(0x01DE)));
+        and16(0x00FF);
+        if (!fz) {
+            lda16(rd16(ABSX(0x0196))); wr16(DP(0x00), A);
+            lda16(rd16(ABSX(0x019E))); wr16(DP(0x01), A);
+            lda16(rd16(DP(0x00)));
+            fc = 0; adc16(rd16(DP(0x9C)));
+            fc = 1; sbc16(0x0100);
+            wr16(ABSY(0x085E), A);
+        } else {
+            lda16(rd16(ABSY(0x015E)));
+            fc = 0; adc16(rd16(ABSY(0x0D01)));
+            push16(A);
+            and16(0x00FF);
+            wr16(ABSY(0x015E), A);
+            lda16(pull16());
+            A = (u16)((A >> 8) | (A << 8)); nz8((u8)A);
+            and16(0x00FF);
+            fc = 0; adc16(rd16(ABSY(0x085E)));
+            wr16(ABSY(0x085E), A);
+        }
+        X = dec8((u8)X);
+        Y = dec8((u8)Y);
+        Y = dec8((u8)Y);
+    } while (!fn);
+    sep(0x20);
+    ret();
+}

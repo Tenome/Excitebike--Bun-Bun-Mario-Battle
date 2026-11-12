@@ -159,3 +159,17 @@
 80CF9D  1 1  mem+X,Y,C,V     QueuePlaceBadge
 80F1D6  1 1  mem+X,Y,C,V     SetJumpScroll
 8196F7  1 1  mem+Y,C,V       DrawSpark
+809D37  1 1  mem+X,Y,C,V     StartPracticeMode
+80E771  1 1  mem+X,Y,V       DrawJumpRank
+828698  1 1  mem+X,Y,C,V     StepFade
+80B7A0  1 1  mem+X,Y,C,V     Mode17_BonusIntro
+80BC5B  1 1  mem+X,Y,C,V     RiderAtStart
+819677  1 1  mem+Y,C,V       DrawStar
+819436  1 1  mem+X,Y,V       SpawnDustPuff
+808FA6  1 1  mem+X,Y,C,V     ClearRaceState
+80A129  1 1  mem+Y           ReadBroadcastDate
+819744  1 1  mem+X,V         MoveObjectX
+80C5B0  1 1  mem+X,Y,C,V     QueueRaceTime
+80C623  1 1  mem+X,Y,C,V     QueueBestTime
+80AE33  1 1  mem+X,Y,V       AccelerateRider
+80BD88  1 1  mem+C,V         UpdateRiderDistances

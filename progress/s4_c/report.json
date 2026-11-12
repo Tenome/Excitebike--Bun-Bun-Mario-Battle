@@ -1,15 +1,15 @@
 {
  "measures": {
-  "fuzzy_match_percent": 60.9532,
+  "fuzzy_match_percent": 62.479,
   "total_code": "36930",
-  "matched_code": "8223",
-  "matched_code_percent": 22.2665,
+  "matched_code": "9350",
+  "matched_code_percent": 25.3182,
   "total_data": "0",
   "matched_data": "0",
   "matched_data_percent": 0.0,
   "total_functions": 532,
-  "matched_functions": 157,
-  "matched_functions_percent": 29.5113,
+  "matched_functions": 171,
+  "matched_functions_percent": 32.1429,
   "complete_code": "0",
   "complete_code_percent": 0.0,
   "complete_data": "0",
@@ -21,16 +21,16 @@
   {
    "name": "main/bank80",
    "measures": {
-    "fuzzy_match_percent": 59.8739,
+    "fuzzy_match_percent": 61.5763,
     "total_code": "24671",
-    "matched_code": "5005",
-    "matched_code_percent": 20.287,
+    "matched_code": "5845",
+    "matched_code_percent": 23.6918,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 357,
-    "matched_functions": 91,
-    "matched_functions_percent": 25.4902,
+    "matched_functions": 101,
+    "matched_functions_percent": 28.2913,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -42,7 +42,7 @@
     {
      "name": ".text",
      "size": "24671",
-     "fuzzy_match_percent": 59.8739
+     "fuzzy_match_percent": 61.5763
     }
    ],
    "functions": [
@@ -279,9 +279,9 @@
      }
     },
     {
-     "name": "sub_808FA6",
+     "name": "ClearRaceState",
      "size": "75",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8425382"
      }
@@ -503,9 +503,9 @@
      }
     },
     {
-     "name": "sub_809D37",
+     "name": "StartPracticeMode",
      "size": "61",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8428855"
      }
@@ -599,9 +599,9 @@
      }
     },
     {
-     "name": "sub_80A129",
+     "name": "ReadBroadcastDate",
      "size": "85",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8429865"
      }
@@ -767,9 +767,9 @@
      }
     },
     {
-     "name": "sub_80AE33",
+     "name": "AccelerateRider",
      "size": "96",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8433203"
      }
@@ -1047,9 +1047,9 @@
      }
     },
     {
-     "name": "sub_80B7A0",
+     "name": "Mode17_BonusIntro",
      "size": "76",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8435616"
      }
@@ -1167,9 +1167,9 @@
      }
     },
     {
-     "name": "sub_80BC5B",
+     "name": "RiderAtStart",
      "size": "78",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8436827"
      }
@@ -1239,9 +1239,9 @@
      }
     },
     {
-     "name": "sub_80BD88",
+     "name": "UpdateRiderDistances",
      "size": "84",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8437128"
      }
@@ -1415,9 +1415,9 @@
      }
     },
     {
-     "name": "sub_80C5B0",
+     "name": "QueueRaceTime",
      "size": "105",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8439216"
      }
@@ -1431,9 +1431,9 @@
      }
     },
     {
-     "name": "sub_80C623",
+     "name": "QueueBestTime",
      "size": "106",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8439331"
      }
@@ -2023,9 +2023,9 @@
      }
     },
     {
-     "name": "sub_80E771",
+     "name": "DrawJumpRank",
      "size": "74",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8447857"
      }
@@ -2911,16 +2911,16 @@
   {
    "name": "main/bank81",
    "measures": {
-    "fuzzy_match_percent": 63.851,
+    "fuzzy_match_percent": 65.0611,
     "total_code": "8429",
-    "matched_code": "2335",
-    "matched_code_percent": 27.702,
+    "matched_code": "2539",
+    "matched_code_percent": 30.1222,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 137,
-    "matched_functions": 53,
-    "matched_functions_percent": 38.6861,
+    "matched_functions": 56,
+    "matched_functions_percent": 40.8759,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -2932,7 +2932,7 @@
     {
      "name": ".text",
      "size": "8429",
-     "fuzzy_match_percent": 63.851
+     "fuzzy_match_percent": 65.0611
     }
    ],
    "functions": [
@@ -2985,9 +2985,9 @@
      }
     },
     {
-     "name": "sub_819436",
+     "name": "SpawnDustPuff",
      "size": "64",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8492086"
      }
@@ -3049,9 +3049,9 @@
      }
     },
     {
-     "name": "sub_819677",
+     "name": "DrawStar",
      "size": "72",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8492663"
      }
@@ -3081,9 +3081,9 @@
      }
     },
     {
-     "name": "sub_819744",
+     "name": "MoveObjectX",
      "size": "68",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8492868"
      }
@@ -3977,7 +3977,7 @@
      }
     },
     {
-     "name": "sub_81CA37",
+     "name": "QueueStadiumBadge",
      "size": "89",
      "fuzzy_match_percent": 50.0,
      "metadata": {
@@ -4041,16 +4041,16 @@
   {
    "name": "main/bank82",
    "measures": {
-    "fuzzy_match_percent": 61.5274,
+    "fuzzy_match_percent": 62.611,
     "total_code": "3830",
-    "matched_code": "883",
-    "matched_code_percent": 23.0548,
+    "matched_code": "966",
+    "matched_code_percent": 25.2219,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 38,
-    "matched_functions": 13,
-    "matched_functions_percent": 34.2105,
+    "matched_functions": 14,
+    "matched_functions_percent": 36.8421,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -4062,7 +4062,7 @@
     {
      "name": ".text",
      "size": "3830",
-     "fuzzy_match_percent": 61.5274
+     "fuzzy_match_percent": 62.611
     }
    ],
    "functions": [
@@ -4211,9 +4211,9 @@
      }
     },
     {
-     "name": "sub_828698",
+     "name": "StepFade",
      "size": "83",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8554136"
      }
