@@ -520,6 +520,15 @@ BRIDGE(HleHand_MirrorJumpRider, MirrorJumpRider_m1x1, 240)
 BRIDGE(HleHand_PlaceMinuteMarker, PlaceMinuteMarker_m1x1, 40)
 BRIDGE(HleHand_RiderPose, RiderPose_m1x1, 40)
 BRIDGE(HleHand_ReadJumpTrack, ReadJumpTrack_m1x1, 60)
+/* c/hand/s4/objects.c, part 8 */
+BRIDGE(HleHand_VelocityDirection, VelocityDirection_m1x1, 120)
+BRIDGE(HleHand_PackSpriteSizes, PackSpriteSizes_m1x1, 840)
+BRIDGE(HleHand_RecordCourseTime, RecordCourseTime_m1x1, 1410)
+BRIDGE(HleHand_RivalEngineSound, RivalEngineSound_m1x1, 320)
+/* $11 rows of $10 tile words: about 60 units a row and 22 a word */
+BRIDGE_DYN(HleHand_QueueTileRows, QueueTileRows_m1x1,
+           30 + ((g_ram[0x11] ? g_ram[0x11] : 256) * (60 + 22 * g_ram[0x10])))
+BRIDGE(HleHand_BrakeRider, BrakeRider_m1x1, 40)
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)

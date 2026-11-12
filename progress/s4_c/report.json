@@ -1,15 +1,15 @@
 {
  "measures": {
-  "fuzzy_match_percent": 65.3358,
+  "fuzzy_match_percent": 66.4121,
   "total_code": "36930",
-  "matched_code": "11460",
-  "matched_code_percent": 31.0317,
+  "matched_code": "12255",
+  "matched_code_percent": 33.1844,
   "total_data": "0",
   "matched_data": "0",
   "matched_data_percent": 0.0,
   "total_functions": 532,
-  "matched_functions": 190,
-  "matched_functions_percent": 35.7143,
+  "matched_functions": 196,
+  "matched_functions_percent": 36.8421,
   "complete_code": "0",
   "complete_code_percent": 0.0,
   "complete_data": "0",
@@ -21,16 +21,16 @@
   {
    "name": "main/bank80",
    "measures": {
-    "fuzzy_match_percent": 64.0975,
+    "fuzzy_match_percent": 65.0379,
     "total_code": "24671",
-    "matched_code": "7089",
-    "matched_code_percent": 28.7341,
+    "matched_code": "7553",
+    "matched_code_percent": 30.6149,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 357,
-    "matched_functions": 112,
-    "matched_functions_percent": 31.3725,
+    "matched_functions": 115,
+    "matched_functions_percent": 32.2129,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -42,7 +42,7 @@
     {
      "name": ".text",
      "size": "24671",
-     "fuzzy_match_percent": 64.0975
+     "fuzzy_match_percent": 65.0379
     }
    ],
    "functions": [
@@ -783,9 +783,9 @@
      }
     },
     {
-     "name": "sub_80AE97",
+     "name": "BrakeRider",
      "size": "168",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8433303"
      }
@@ -983,9 +983,9 @@
      }
     },
     {
-     "name": "sub_80B435",
+     "name": "QueueTileRows",
      "size": "153",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8434741"
      }
@@ -1447,9 +1447,9 @@
      }
     },
     {
-     "name": "sub_80C692",
+     "name": "RecordCourseTime",
      "size": "143",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8439442"
      }
@@ -2911,16 +2911,16 @@
   {
    "name": "main/bank81",
    "measures": {
-    "fuzzy_match_percent": 68.7923,
+    "fuzzy_match_percent": 70.2278,
     "total_code": "8429",
-    "matched_code": "3168",
-    "matched_code_percent": 37.5845,
+    "matched_code": "3410",
+    "matched_code_percent": 40.4556,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 137,
-    "matched_functions": 62,
-    "matched_functions_percent": 45.2555,
+    "matched_functions": 64,
+    "matched_functions_percent": 46.7153,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -2932,7 +2932,7 @@
     {
      "name": ".text",
      "size": "8429",
-     "fuzzy_match_percent": 68.7923
+     "fuzzy_match_percent": 70.2278
     }
    ],
    "functions": [
@@ -3201,9 +3201,9 @@
      }
     },
     {
-     "name": "sub_819D71",
+     "name": "VelocityDirection",
      "size": "111",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8494449"
      }
@@ -3281,9 +3281,9 @@
      }
     },
     {
-     "name": "sub_81A1C8",
+     "name": "RivalEngineSound",
      "size": "131",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8495560"
      }
@@ -4041,16 +4041,16 @@
   {
    "name": "main/bank82",
    "measures": {
-    "fuzzy_match_percent": 65.705,
+    "fuzzy_match_percent": 66.8668,
     "total_code": "3830",
-    "matched_code": "1203",
-    "matched_code_percent": 31.4099,
+    "matched_code": "1292",
+    "matched_code_percent": 33.7337,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 38,
-    "matched_functions": 16,
-    "matched_functions_percent": 42.1053,
+    "matched_functions": 17,
+    "matched_functions_percent": 44.7368,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -4062,7 +4062,7 @@
     {
      "name": ".text",
      "size": "3830",
-     "fuzzy_match_percent": 65.705
+     "fuzzy_match_percent": 66.8668
     }
    ],
    "functions": [
@@ -4187,9 +4187,9 @@
      }
     },
     {
-     "name": "sub_828525",
+     "name": "PackSpriteSizes",
      "size": "89",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8553765"
      }

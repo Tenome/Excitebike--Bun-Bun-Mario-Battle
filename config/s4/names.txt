@@ -209,3 +209,9 @@
 828701 PlaceMinuteMarker
 80CB78 RiderPose
 80D97C ReadJumpTrack
+819D71 VelocityDirection
+828525 PackSpriteSizes
+80C692 RecordCourseTime
+81A1C8 RivalEngineSound
+80B435 QueueTileRows
+80AE97 BrakeRider

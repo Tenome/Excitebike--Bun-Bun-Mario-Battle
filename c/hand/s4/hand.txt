@@ -192,3 +192,9 @@
 828701  1 1  mem+X,Y,C,V     PlaceMinuteMarker
 80CB78  1 1  mem+A,X,V       RiderPose
 80D97C  1 1  mem+V           ReadJumpTrack
+819D71  1 1  mem+V           VelocityDirection
+828525  1 1  mem+X,Y,C,V     PackSpriteSizes
+80C692  1 1  mem+X,Y,C,V     RecordCourseTime
+81A1C8  1 1  mem+X,Y,C,V     RivalEngineSound
+80B435  1 1  mem+X,Y,C,V     QueueTileRows
+80AE97  1 1  mem+X,V         BrakeRider

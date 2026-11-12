@@ -2621,3 +2621,338 @@ void ReadJumpTrack_m1x1(void)
     }
     ret();
 }
+
+void QueueRaceTime_m1x1(void);
+void QueueBestTime_m1x1(void);
+
+/* $81:9D71 VelocityDirection (RTL): the 8-way direction ($02DF,X, 0-7)
+ * of the velocity $029F/$02AF,X from its signs (table $81:9DE0) and which
+ * component dominates. */
+void VelocityDirection_m1x1(void)
+{
+    rep(0x20);
+    wr16(DP(0x04), 0);
+    wr16(DP(0x06), 0);
+    lda16(rd16(ABSX(0x029F)));
+    if (fn) {
+        eor16(0xFFFF);
+        lda16(inc16(A));
+        wr16(DP(0x04), inc16(rd16(DP(0x04))));
+    }
+    wr16(DP(0x00), A);
+    lda16(rd16(ABSX(0x02AF)));
+    if (fn) {
+        eor16(0xFFFF);
+        lda16(inc16(A));
+        wr16(DP(0x06), inc16(rd16(DP(0x06))));
+    }
+    wr16(DP(0x02), A);
+    lda16(rd16(DP(0x04)));
+    fc = 0;
+    adc16(rd16(DP(0x06)));
+    lda16(lsr16(A));
+    if (fc) {
+        lda16(rd16(DP(0x00)));
+        push16(A);
+        lda16(rd16(DP(0x02)));
+        wr16(DP(0x00), A);
+        lda16(pull16());
+        wr16(DP(0x02), A);
+    }
+    lda16(rd16(DP(0x00)));
+    cmp16(A, 0x0020);
+    if (!fz) {
+        for (int i = 0; i < 6; i++) lda16(lsr16(A));
+    } else {
+        lda16(rd16(DP(0x02)));
+        cmp16(A, 0x0020);
+        int one = fz;
+        if (!one) {
+            for (int i = 0; i < 6; i++) lda16(lsr16(A));
+            one = fc;
+        }
+        lda16(one ? 0x0001 : 0x0002);
+    }
+    wr16(DP(0x08), A);
+    lda16(rd16(DP(0x04)));
+    lda16(asl16(A));
+    ora16(rd16(DP(0x06)));
+    Y = (u8)A; nz8((u8)Y);
+    lda16(rd16(ABSY(0x9DE0)));
+    fc = 0;
+    adc16(rd16(DP(0x08)));
+    and16(0x0007);
+    wr16(ABSX(0x02DF), A);
+    sep(0x20);
+    retl();
+}
+
+/* $82:8525 PackSpriteSizes (RTL): pack the size bytes $1820-$189F (one
+ * per sprite, 2 bits used) four to a byte into the OAM high table
+ * $1800-$181F (D = $1800 while it works). */
+void PackSpriteSizes_m1x1(void)
+{
+    push16(D);
+    lda8(0x18);
+    A = (u16)((A >> 8) | (A << 8)); nz8((u8)A);
+    lda8(0x00);
+    D = A; nz16(D);
+    ldy8(0x1C);
+    do {
+        for (int k = 0; k < 4; k++) {
+            lda8((u8)Y);
+            lda8(asl8((u8)A));
+            lda8(asl8((u8)A));
+            X = (u8)A; nz8((u8)X);
+            u8 o = (u8)(0x20 + 4 * k);
+            lda8(rd8(DPX(o + 3)));
+            lda8(asl8((u8)A)); lda8(asl8((u8)A)); ora8(rd8(DPX(o + 2)));
+            lda8(asl8((u8)A)); lda8(asl8((u8)A)); ora8(rd8(DPX(o + 1)));
+            lda8(asl8((u8)A)); lda8(asl8((u8)A)); ora8(rd8(DPX(o)));
+            wr8(ABSY(0x1800 + k), (u8)A);
+        }
+        Y = dec8((u8)Y); Y = dec8((u8)Y); Y = dec8((u8)Y); Y = dec8((u8)Y);
+    } while (!fn);
+    D = pull16(); nz16(D);
+    retl();
+}
+
+/* $80:C692 RecordCourseTime (RTL): store the race time $03AE-$03B0 for
+ * Stadium course $0928 at $0819 + 3(course - 2); a faster time than the
+ * best $083A-$083C becomes the record ($084C = course - 1) and is shown
+ * as the race time, else the best is shown (VRAM $18D7, attribute $24).
+ * Outside the jump ($84 clear) the race time is cleared. */
+void RecordCourseTime_m1x1(void)
+{
+    push8((u8)X);
+    push8((u8)Y);
+    lda8(0xFF); wr8(DP(0xCB), 0xFF);
+    wr8(DP(0xCC), 0);
+    lda8(rd8(ABS(0x0928)));
+    lda8(dec8((u8)A));
+    lda8(dec8((u8)A));
+    wr8(DP(0x00), (u8)A);
+    lda8(asl8((u8)A));
+    fc = 0;
+    adc8(rd8(DP(0x00)));
+    X = (u8)A; nz8((u8)X);
+    lda8(rd8(ABS(0x03AE))); wr8(ABSX(0x0819), (u8)A);
+    lda8(rd8(ABS(0x03AF))); wr8(ABSX(0x081A), (u8)A);
+    lda8(rd8(ABS(0x03B0))); wr8(ABSX(0x081B), (u8)A);
+    int record = 0;
+    for (int i = 0; i < 3; i++) {
+        lda8(rd8(ABS(0x083A + i)));
+        cmp8((u8)A, rd8(ABS(0x03AE + i)));
+        if (!fc) break;
+        if (!fz) { record = 1; break; }
+    }
+    if (record) {
+        lda8(rd8(ABS(0x03AE))); wr8(ABS(0x083A), (u8)A);
+        lda8(rd8(ABS(0x03AF))); wr8(ABS(0x083B), (u8)A);
+        lda8(rd8(ABS(0x03B0))); wr8(ABS(0x083C), (u8)A);
+        lda8(rd8(ABS(0x0928)));
+        lda8(dec8((u8)A));
+        wr8(ABS(0x084C), (u8)A);
+    }
+    lda8(0xD7); wr8(DP(0x00), 0xD7);
+    lda8(0x18); wr8(DP(0x01), 0x18);
+    lda8(0x24); wr8(DP(0x0F), 0x24);
+    if (record) { push16(0xC710); QueueRaceTime_m1x1(); }
+    else        { push16(0xC6FF); QueueBestTime_m1x1(); }
+    lda8(rd8(DP(0x84)));
+    if (fz) {
+        wr8(ABS(0x03AE), 0);
+        wr8(ABS(0x03AF), 0);
+        wr8(ABS(0x03B0), 0);
+    }
+    Y = pull8(); nz8((u8)Y);
+    X = pull8(); nz8((u8)X);
+    retl();
+}
+
+/* $81:A1C8 RivalEngineSound (RTL): unless fading, find the rival nearest
+ * to the player by distance ($085E words), send its signed distance / 2
+ * (APUIO1) and, when it is within $80 of the scroll $9C, its speed / 8
+ * (APUIO3, else 0) for the second engine voice. */
+void RivalEngineSound_m1x1(void)
+{
+    lda8(rd8(ABS(0x1923)));
+    if (!fz) { retl(); return; }
+    ldx8(0x07);
+    ldy8(0x0E);
+    do {
+        rep(0x20);
+        lda16(rd16(ABS(0x085E)));
+        wr16(DP(0x00), A);
+        lda16(rd16(ABSY(0x085E)));
+        fc = 1;
+        sbc16(rd16(DP(0x00)));
+        wr16(ABSY(0x0010), A);
+        if (fn) { eor16(0xFFFF); lda16(inc16(A)); }
+        wr16(ABSY(0x0000), A);
+        sep(0x20);
+        Y = dec8((u8)Y);
+        Y = dec8((u8)Y);
+        X = dec8((u8)X);
+    } while (!fz);
+    rep(0x20);
+    lda16(0x000E);
+    wr16(DP(0x10), 0x000E);
+    ldx8(0x0C);
+    lda16(rd16(DP(0x0E)));
+    do {
+        cmp16(A, rd16(DPX(0x00)));
+        if (fc) {
+            wr8(DP(0x10), (u8)X);
+            lda16(rd16(DPX(0x00)));
+        }
+        X = dec8((u8)X);
+        X = dec8((u8)X);
+    } while (!fz);
+    sep(0x20);
+    X = rd8(DP(0x10)); nz8((u8)X);
+    lda8(rd8(DPX(0x00)));
+    lda8(lsr8((u8)A));
+    Y = rd8(ABSX(0x0011)); nz8((u8)Y);
+    if (fn) { eor8(0xFF); lda8(inc8((u8)A)); }
+    wr8(ABS(0x2141), (u8)A);
+    rep(0x20);
+    lda16(rd16(ABSX(0x085E)));
+    fc = 1;
+    sbc16(rd16(ABS(0x009C)));
+    if (fn) { eor16(0xFFFF); lda16(inc16(A)); }
+    cmp16(A, 0x0080);
+    if (fc) {
+        lda16(0x0000);
+    } else {
+        sep(0x20);
+        lda8((u8)X);
+        lda8(lsr8((u8)A));
+        X = (u8)A; nz8((u8)X);
+        lda8(rd8(ABSX(0x01C6)));
+        A = (u16)((A >> 8) | (A << 8)); nz8((u8)A);
+        lda8(rd8(ABSX(0x01BE)));
+        rep(0x20);
+        lda16(lsr16(A)); lda16(lsr16(A)); lda16(lsr16(A));
+    }
+    sep(0x20);
+    wr8(ABS(0x2143), (u8)A);
+    retl();
+}
+
+/* $80:B435 QueueTileRows (RTS): queue $11 rows of $10 tile words from the
+ * long pointer $02 (consecutive) for VRAM $00, $00 + $20, ...: each a DMA
+ * record at the queue end $7F:0000 (mode 1 to $2118, source in bank $7F,
+ * $10 * 2 bytes). */
+void QueueTileRows_m1x1(void)
+{
+    push8((u8)X);
+    push8((u8)Y);
+    ldy8(0x00);
+    lda8(rd8(DP(0x10)));
+    lda8(asl8((u8)A));
+    wr8(DP(0x08), (u8)A);
+    wr8(DP(0x09), 0);
+    for (;;) {
+        rep(0x30);
+        lda16(rd16(LONG(0x7F0000)));
+        X = A; nz16(X);
+        sep(0x20);
+        lda8(0x80); wr8(LONGX(0x7F0002), 0x80);
+        lda8(0x01); wr8(LONGX(0x7F0003), 0x01);
+        lda8(0x18); wr8(LONGX(0x7F0004), 0x18);
+        rep(0x20);
+        lda16(X);
+        fc = 0;
+        adc16(0x000C);
+        wr16(LONGX(0x7F0005), A);
+        sep(0x20);
+        lda8(0x7F); wr8(LONGX(0x7F0007), 0x7F);
+        lda8(rd8(DP(0x01))); wr8(LONGX(0x7F0001), (u8)A);
+        lda8(rd8(DP(0x00))); wr8(LONGX(0x7F0000), (u8)A);
+        lda8(rd8(DP(0x10)));
+        wr8(DP(0x06), (u8)A);
+        lda8(asl8((u8)A));
+        wr8(LONGX(0x7F0008), (u8)A);
+        lda8(0x00); wr8(LONGX(0x7F0009), 0x00);
+        do {
+            u32 p = rd16(DP(0x02)) | ((u32)rd8(DP(0x04)) << 16);
+            lda8(rd8((p + Y) & 0xFFFFFF));
+            wr8(LONGX(0x7F000C), (u8)A);
+            Y = inc16(Y);
+            lda8(rd8((p + Y) & 0xFFFFFF));
+            wr8(LONGX(0x7F000D), (u8)A);
+            X = inc16(X);
+            X = inc16(X);
+            Y = inc16(Y);
+            u8 n = dec8(rd8(DP(0x06)));
+            wr8(DP(0x06), n);
+        } while (!fz);
+        rep(0x20);
+        lda16(rd16(LONG(0x7F0000)));
+        X = A; nz16(X);
+        fc = 0; adc16(0x000C);
+        fc = 0; adc16(rd16(DP(0x08)));
+        wr16(LONG(0x7F0000), A);
+        wr16(LONGX(0x7F000A), A);
+        sep(0x20);
+        fc = 0;
+        lda8(0x20);
+        adc8(rd8(DP(0x00)));
+        wr8(DP(0x00), (u8)A);
+        lda8(0x00);
+        adc8(rd8(DP(0x01)));
+        wr8(DP(0x01), (u8)A);
+        u8 r = dec8(rd8(DP(0x11)));
+        wr8(DP(0x11), r);
+        if (fz) break;
+    }
+    sep(0x10);
+    Y = pull8(); nz8((u8)Y);
+    X = pull8(); nz8((u8)X);
+    ret();
+}
+
+/* $80:AE97 BrakeRider (RTS): rider X slows down by the step $80:B876,Y
+ * (the caller's Y), unless it is already slower than $80:B881 (by crash
+ * state), the player is on the jump with $85 set, or (below page 2) it is
+ * a rival. */
+void BrakeRider_m1x1(void)
+{
+    wr8(DP(0x00), (u8)Y);
+    lda8(rd8(ABSX(0x01C6)));
+    if (fz) {
+        lda8(rd8(ABSX(0x01EE)));
+        lda8(lsr8((u8)A));
+        Y = (u8)A; nz8((u8)Y);
+        lda8(rd8(ABSX(0x01BE)));
+        cmp8((u8)A, rd8(ABSY(0xB881)));
+        if (!fc) { ret(); return; }
+    }
+    Y = rd8(DP(0x00)); nz8((u8)Y);
+    lda8(rd8(ABS(0x0176)));
+    cmp8((u8)A, 0x18);
+    if (fz) {
+        lda8(rd8(DP(0x85)));
+        if (!fz) { ret(); return; }
+    }
+    lda8(rd8(DP(0x9D)));
+    cmp8((u8)A, 0x02);
+    if (!fc) {
+        cmp8((u8)X, 0x00);
+        if (!fz) { ret(); return; }
+    }
+    lda8(rd8(ABSX(0x01BE)));
+    fc = 1;
+    sbc8(rd8(ABSY(0xB876)));
+    wr8(ABSX(0x01BE), (u8)A);
+    if (fc) { ret(); return; }
+    lda8(rd8(ABSX(0x01C6)));
+    if (!fz) {
+        wr8(ABSX(0x01C6), dec8(rd8(ABSX(0x01C6))));
+        ret();
+        return;
+    }
+    wr8(ABSX(0x01BE), (u8)A);
+    ret();
+}
