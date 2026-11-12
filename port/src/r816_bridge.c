@@ -351,6 +351,23 @@ BRIDGE(HleHand_BsxCheckSerial, BsxCheckSerial_m1x1, 400)
  * to the frame scheduler mid-call (a long one like $80:B873 does), which hand
  * C cannot resume. Rule: bridge only routines whose calls stay inside
  * hand-written code. */
+/* carried over from Stadium 4 (c/hand/s1/from_s4.c) */
+BRIDGE(HleHand_SinCos, SinCos_m1x1, 150)
+BRIDGE(HleHand_Reach20, Reach20_m1x1, 20)
+BRIDGE(HleHand_Reach2, Reach2_m1x1, 20)
+BRIDGE(HleHand_RiderStartLane, RiderStartLane_m1x1, 25)
+BRIDGE(HleHand_StepFallingSprite, StepFallingSprite_m1x1, 60)
+BRIDGE(HleHand_SortRidersByPosition, SortRidersByPosition_m1x1, 700)
+BRIDGE(HleHand_SetRiderLean, SetRiderLean_m1x1, 35)
+BRIDGE(HleHand_DrawSpark, DrawSpark_m1x1, 60)
+BRIDGE(HleHand_SpawnDustPuff, SpawnDustPuff_m1x1, 70)
+BRIDGE(HleHand_MoveObjectX, MoveObjectX_m1x1, 70)
+BRIDGE(HleHand_DrawDustPair, DrawDustPair_m1x1, 80)
+BRIDGE_DYN(HleHand_FadeSkyColours, FadeSkyColours_m1x1, (g_ram[0x63] & 7) ? 15 : 15 + 45 * 4)
+BRIDGE(HleHand_DrawBigSprite, DrawBigSprite_m1x1, 120)
+BRIDGE(HleHand_SpawnExhaust, SpawnExhaust_m1x1, 70)
+BRIDGE(HleHand_MirrorJumpRider, MirrorJumpRider_m1x1, 240)
+BRIDGE(HleHand_VelocityDirection, VelocityDirection_m1x1, 120)
 #else
 /* Stadium 3-4 (Gen B) routines from c/hand/s4 */
 BRIDGE(HleHand_RiderGfxCycle,     RiderGfxCycle_m1x1,     60)

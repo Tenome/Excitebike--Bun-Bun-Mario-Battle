@@ -2,6 +2,7 @@
 """Carry hand-written routines over to another version when the code is identical.
 
     python tools/port_hand.py s1 s4 [--out c/hand/s4/from_s1.c]
+    python tools/port_hand.py s4 s1 [--operands]   (the other way)
 
 Follows the cross-version function maps (build/xm/s1_s2.txt, s2_s3.txt,
 s3_s4.txt) from each routine in c/hand/<src>/hand.txt to its counterpart and
@@ -21,12 +22,15 @@ import re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-def load_map(f):
+def load_map(f, reverse=False):
     m = {}
     for line in open(f):
         t = line.split()
         if len(t) >= 3 and t[0] != '------' and t[1] != '------':
-            m[t[0]] = t[1]
+            if reverse:
+                m[t[1]] = t[0]
+            else:
+                m[t[0]] = t[1]
     return m
 
 
@@ -77,7 +81,9 @@ def operand_map(src_ins, dst_ins):
 def extract_functions(src):
     """name -> (text with the comment above it, body); static helpers too."""
     out = {}
-    pat = re.compile(r'^((?:/\*(?:.|\n)*?\*/\n)?)((?:static )?(?:inline )?(?:void|u8|u16|u32|int) (\w+)\([^)]*\)\n\{\n(?:.|\n)*?\n\})', re.M)
+    # only a comment directly above the function goes with it (not one that
+    # runs on into the file's #include lines)
+    pat = re.compile(r'^((?:/\*(?:(?!\*/)(?:.|\n))*\*/\n)?)((?:static )?(?:inline )?(?:void|u8|u16|u32|int) (\w+)\([^)]*\)\n\{\n(?:.|\n)*?\n\})', re.M)
     for m in pat.finditer(src):
         out[m.group(3)] = (m.group(1) + m.group(2), m.group(2))
     return out
@@ -89,9 +95,12 @@ def main():
     ap.add_argument('dst')
     ap.add_argument('--out')
     ap.add_argument('--operands', action='store_true', help='also routines that differ only in data addresses')
+    ap.add_argument('--skip', nargs='*', default=[], help='routines to leave out (e.g. ones difftest cannot run)')
     a = ap.parse_args()
-    chain = {('s1', 's4'): ['s1_s2', 's2_s3', 's3_s4']}[(a.src, a.dst)]
-    maps = [load_map(os.path.join(ROOT, 'build', 'xm', c + '.txt')) for c in chain]
+    chain = {('s1', 's4'): ['s1_s2', 's2_s3', 's3_s4'],
+             ('s4', 's1'): ['-s3_s4', '-s2_s3', '-s1_s2']}[(a.src, a.dst)]
+    maps = [load_map(os.path.join(ROOT, 'build', 'xm', c.lstrip('-') + '.txt'), c.startswith('-'))
+            for c in chain]
     hand = []
     for line in open(os.path.join(ROOT, 'c', 'hand', a.src, 'hand.txt')):
         t = line.split('#')[0].split()
@@ -127,7 +136,7 @@ def main():
             d = m.get(d)
             if not d:
                 break
-        if not d or name in dst_hand or d.upper() in dst_pcs:
+        if not d or name in dst_hand or d.upper() in dst_pcs or name in a.skip:
             continue
         try:
             x, _ = routine_bytes(a.src, int(pc, 16))
@@ -148,6 +157,11 @@ def main():
         if fname not in srcs:
             continue
         text, body = srcs[fname]
+        uses = body + ''.join(srcs[h][1] for h in re.findall(r'\b(\w+)\(', body)
+                              if h in srcs and srcs[h][1].startswith('static'))
+        if re.search(r'\b(?:roster|port)_\w+\(', uses):
+            print('skip %s: uses the Gen B roster or port hooks' % name)
+            continue
         calls = set(re.findall(r'\b(\w+)_m\dx\d\(\)', body)) - {name}
         if any(c not in names_ok for c in calls):
             print('skip %s: calls %s' % (name, ', '.join(sorted(c for c in calls if c not in names_ok))))

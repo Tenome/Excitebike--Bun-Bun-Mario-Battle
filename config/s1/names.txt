@@ -161,3 +161,19 @@
 8195EE StepSpark             # effect slot Y: count down, rise, draw tile $8E
 80D038 ClearMidScreenRiders    # clear riders crossing mid-screen, clip sprites
 80A0AA BsxCheckSerial        # BS-X serial read, $2197 = $80 when ready
+81A17D SinCos                # from s4 81A29C
+80CB39 Reach20               # from s4 80C989
+80CB40 Reach2                # from s4 80C990
+80BF29 RiderStartLane        # from s4 80BC41
+819481 StepFallingSprite     # from s4 819555
+80CFFA SortRidersByPosition  # from s4 80CE1F
+80C2EF SetRiderLean          # from s4 80C057
+819623 DrawSpark             # from s4 8196F7
+819362 SpawnDustPuff         # from s4 819436
+819670 MoveObjectX           # from s4 819744
+8194BE DrawDustPair          # from s4 819592
+819957 FadeSkyColours        # from s4 819A27
+80B17B DrawBigSprite         # from s4 80B22B
+8193E2 SpawnExhaust          # from s4 8194B6
+80D198 MirrorJumpRider       # from s4 80D013
+819C98 VelocityDirection     # from s4 819D71

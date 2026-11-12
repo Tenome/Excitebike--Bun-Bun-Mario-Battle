@@ -1,15 +1,15 @@
 {
  "measures": {
-  "fuzzy_match_percent": 61.8136,
+  "fuzzy_match_percent": 63.9443,
   "total_code": "27972",
-  "matched_code": "7263",
-  "matched_code_percent": 25.9653,
+  "matched_code": "8455",
+  "matched_code_percent": 30.2267,
   "total_data": "0",
   "matched_data": "0",
   "matched_data_percent": 0.0,
   "total_functions": 407,
-  "matched_functions": 135,
-  "matched_functions_percent": 33.1695,
+  "matched_functions": 151,
+  "matched_functions_percent": 37.1007,
   "complete_code": "0",
   "complete_code_percent": 0.0,
   "complete_data": "0",
@@ -21,16 +21,16 @@
   {
    "name": "main/bank80",
    "measures": {
-    "fuzzy_match_percent": 60.6359,
+    "fuzzy_match_percent": 61.5616,
     "total_code": "21606",
-    "matched_code": "5154",
-    "matched_code_percent": 23.8545,
+    "matched_code": "5554",
+    "matched_code_percent": 25.7058,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 306,
-    "matched_functions": 85,
-    "matched_functions_percent": 27.7778,
+    "matched_functions": 92,
+    "matched_functions_percent": 30.0654,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -42,7 +42,7 @@
     {
      "name": ".text",
      "size": "21606",
-     "fuzzy_match_percent": 60.6359
+     "fuzzy_match_percent": 61.5616
     }
    ],
    "functions": [
@@ -983,9 +983,9 @@
      }
     },
     {
-     "name": "sub_80B17B",
+     "name": "DrawBigSprite",
      "size": "107",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8434043"
      }
@@ -1183,9 +1183,9 @@
      }
     },
     {
-     "name": "sub_80BF29",
+     "name": "RiderStartLane",
      "size": "26",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8437545"
      }
@@ -1311,9 +1311,9 @@
      }
     },
     {
-     "name": "sub_80C2EF",
+     "name": "SetRiderLean",
      "size": "72",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8438511"
      }
@@ -1487,17 +1487,17 @@
      }
     },
     {
-     "name": "sub_80CB39",
+     "name": "Reach20",
      "size": "7",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8440633"
      }
     },
     {
-     "name": "sub_80CB40",
+     "name": "Reach2",
      "size": "7",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8440640"
      }
@@ -1567,9 +1567,9 @@
      }
     },
     {
-     "name": "sub_80CFFA",
+     "name": "SortRidersByPosition",
      "size": "62",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8441850"
      }
@@ -1623,9 +1623,9 @@
      }
     },
     {
-     "name": "sub_80D198",
+     "name": "MirrorJumpRider",
      "size": "119",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8442264"
      }
@@ -2503,16 +2503,16 @@
   {
    "name": "main/bank81",
    "measures": {
-    "fuzzy_match_percent": 65.8106,
+    "fuzzy_match_percent": 72.0311,
     "total_code": "6366",
-    "matched_code": "2109",
-    "matched_code_percent": 33.1291,
+    "matched_code": "2901",
+    "matched_code_percent": 45.5702,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 101,
-    "matched_functions": 50,
-    "matched_functions_percent": 49.505,
+    "matched_functions": 59,
+    "matched_functions_percent": 58.4158,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -2524,7 +2524,7 @@
     {
      "name": ".text",
      "size": "6366",
-     "fuzzy_match_percent": 65.8106
+     "fuzzy_match_percent": 72.0311
     }
    ],
    "functions": [
@@ -2577,17 +2577,17 @@
      }
     },
     {
-     "name": "sub_819362",
+     "name": "SpawnDustPuff",
      "size": "64",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8491874"
      }
     },
     {
-     "name": "sub_8193E2",
+     "name": "SpawnExhaust",
      "size": "98",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8492002"
      }
@@ -2609,17 +2609,17 @@
      }
     },
     {
-     "name": "sub_819481",
+     "name": "StepFallingSprite",
      "size": "61",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8492161"
      }
     },
     {
-     "name": "sub_8194BE",
+     "name": "DrawDustPair",
      "size": "98",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8492222"
      }
@@ -2657,9 +2657,9 @@
      }
     },
     {
-     "name": "sub_819623",
+     "name": "DrawSpark",
      "size": "72",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8492579"
      }
@@ -2673,9 +2673,9 @@
      }
     },
     {
-     "name": "sub_819670",
+     "name": "MoveObjectX",
      "size": "68",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8492656"
      }
@@ -2769,9 +2769,9 @@
      }
     },
     {
-     "name": "sub_819957",
+     "name": "FadeSkyColours",
      "size": "116",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8493399"
      }
@@ -2793,9 +2793,9 @@
      }
     },
     {
-     "name": "sub_819C98",
+     "name": "VelocityDirection",
      "size": "111",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8494232"
      }
@@ -2889,9 +2889,9 @@
      }
     },
     {
-     "name": "sub_81A17D",
+     "name": "SinCos",
      "size": "104",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8495485"
      }
