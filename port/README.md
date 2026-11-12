@@ -1,74 +1,63 @@
-# BunBun S1 Recomp
+# Excitebike: Bun Bun Mario Battle — native port
 
-A native recompilation of **BunBun S1** (JPN), built on
-[snesrecomp](https://github.com/RetroPortingToolKit/snesrecomp).
-
-_Add a short description here._
-
-
+A native PC version of the Satellaview game *Excitebike: Bun Bun Mario
+Battle* (1997), recompiled from your own dumps with
+[snesrecomp](https://github.com/RetroPortingToolKit/snesrecomp) and partly
+replaced by hand-decompiled C. See the [project README](../README.md) for an
+overview and screenshots.
 
 > **You must legally own a copy of the game.** No ROM data is distributed with
-> this project, in the repository or in any release. The recompiled C is
-> generated locally from your own copy and is never committed.
+> this project, in the repository or in any release. The recompiled C, the
+> embedded dumps and the editor graphics are generated locally from your own
+> copy and are never committed.
 
 ## Status
 
-Scaffolded on 2026-11-11 — **not yet a working port.** The layout, build,
-regeneration pipeline, CI, and packaging are wired up; the game does not run
-until the host work in `src/game_rtl.c` is done. See
-[Porting from here](#porting-from-here).
+Playable from boot to the end screen in both engines: title, player select,
+course preview, races, results, the final and the jump contest. On top of the
+original: a six-character roster, CPU rivals in every race, a clock-free
+flow with skip buttons, a launcher with a Mods page, sprite, sound and course
+mods, and a course editor. 207 of the 532 Stadium 3–4 routines and 152 of
+the 407 Stadium 1–2 routines run as hand-written C.
 
 ## ROM identity
 
-| | |
-|---|---|
-| File | `s1.sfc` |
-| Publisher | — |
-| Developer | — |
-| Year | — |
-| Mapping | lorom |
-| Region | JPN (Japan) |
-| Coprocessor | unknown |
-| CRC32 | `6e6d087c` |
-| SHA-256 | `a22163ddd3d07f01101e885297568d1863db0639e5b1b97fc84dff253dee2089` |
+| | Stadium 1–2 engine (Gen A) | Stadium 3–4 engine (Gen B) |
+|---|---|---|
+| Executable | `BunbunS1SNESRecomp` | `BunbunS4SNESRecomp` |
+| Boots from | `s1.sfc` (Stadium 1) | `s4.sfc` (Stadium 4) |
+| CRC32 | `6e6d087c` | `c747fc3b` |
+| SHA-256 | `a22163dd...dee2089` | `d689aacf...de00ea` |
+| Also uses | — | `s3.sfc` (Luigi), `s1.sfc` (Stadium 1–2 courses) |
 
-`tools/regen.sh` refuses to run against anything else, so a mismatched
-revision fails immediately instead of producing subtly wrong output.
+Full digests: `rom_identity.txt`, `rom_identity_genb.txt` and
+`port/tools/embed_roms.py`. LoROM, 1 MB, Japan. The regen scripts refuse any
+other dump.
 
 ## Build
 
 ```sh
 git submodule update --init --recursive
-bash tools/regen.sh --rom /path/to/s1.sfc
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
-cmake --build build -j
+bash tools/regen.sh      --rom /path/to/s1.sfc --cfg-roots   # Gen A: src/gen
+bash tools/regen_genb.sh --rom /path/to/s4.sfc --cfg-roots   # Gen B: src/gen-genb
+cmake -S . -B build
+cmake --build build --config Release
+python tools/editor_graphics.py                              # editor graphics (optional)
 ```
 
-The ROM does not have to live in the repository — keeping it on your own
-drive is the better habit, and `SNESRECOMP_ROM` sets the path once for a
-shell. Without either, `tools/regen.sh` finds `s1.sfc` at the repo root,
-then the path the setup wizard recorded in `rom.cfg`; `.gitignore` blocks
-both from ever being committed.
-
-`tools/regen.sh` verifies the ROM, generates `src/gen/*.c`, and re-syncs
-`recomp/funcs.h`. Re-run it whenever you change anything under `recomp/`.
+The regen scripts verify the dump, generate the recompiled C
+(`src/gen*/`), re-sync `recomp*/funcs.h` and embed your dumps
+(`src/embed/`). Re-run them after changing anything under `recomp*/` (for
+example a new `hle_func` line). `SNESRECOMP_ROM` can name the dump once for a
+shell instead of `--rom`.
 
 ## Run
 
-```sh
-./build/BunbunS1SNESRecomp                     # launcher picks the ROM
-./build/BunbunS1SNESRecomp /path/to/s1.sfc # or name it and skip the launcher
-```
-
-With no ROM on the command line the build opens the recomp-ui launcher: a ROM
-picker with a verification badge, plus display / audio / input settings. Your
-choice is cached in `rom.cfg` beside the executable, so the next launch opens
-on it and "Skip launcher on boot" makes it immediate. If the launcher is not
-built in (`--no-recomp-ui`), the host falls back to a native file picker.
-
-Either way the ROM is checked against the digests above before anything boots
-— a dump that could not have produced this build is refused at the door rather
-than mis-executing ten frames in.
+Start `build/genb/Release/BunbunS4SNESRecomp.exe` (the main game) or
+`build/Release/BunbunS1SNESRecomp.exe`. The launcher opens first: settings,
+controls and the Mods page; "Skip launcher on boot" goes straight into the
+game. `--no-launcher` does the same from the command line, and
+`--script <file>` plays back scripted input (the regression tests use it).
 
 ## No ROM needed after the build
 
@@ -125,8 +114,8 @@ state, so you continue where you were.
     originals with `tools/assets.py export`).
   * *Music & sound*: pick a folder of replacement samples (WAV files named as
     `tools/sound.py export` names them).
-  * *Custom courses*: pick a course file per course (make them with
-    `tools/editor/course_editor.html`).
+  * *Custom courses*: pick a course file per course (make them with the
+    course editor, `editor/course_editor.html` beside the executable).
   * one switch per folder in `mods/` (see `docs/MODDING.md`).
 
 ## Controls
@@ -149,34 +138,30 @@ launcher.
 
 | Path | What lives there |
 |---|---|
-| `recomp/` | Analysis input: `bank*.cfg`, `symbols.toml`, generated `funcs.h` |
-| `rom_identity.txt` | ROM digests — read by the build, `tools/regen.sh` and CI |
-| `src/` | Host code you own: `main.c`, `game_rtl.c` |
-| `src/gen/` | Generated C. Never committed — regenerate locally |
-| `snesrecomp/` | Framework submodule (owns `lib/recomp-net`, `lib/retcomm-rbengine`) |
-| `tools/` | `regen.sh` — the ROM → C pipeline |
-| `scripts/` | `package_release.sh` — player-facing zip |
-| `framework_pins.txt` | Exact framework commits this project was scaffolded against |
+| `src/main.c` | The host shim: title identity, launcher hooks, the built-in dumps |
+| `src/game_rtl.c` | Frame driver, the clock-free flow and skip buttons |
+| `src/roster.c` | The six-character roster and CPU rivals in every race |
+| `src/courses.c`, `src/mods_folder.c` | Course loading, custom courses, sprite and sound mods |
+| `src/launcher_mods.c`, `src/bunbun_settings.c` | The Mods page and `bunbun.ini` |
+| `src/r816_bridge.c` | Puts the hand-written C (`../c/hand/`) in place of recompiled routines |
+| `src/bunbun_data.c`, `src/bunbun_embedded*` | The dumps: built in, or from `data/` |
+| `recomp/`, `recomp-genb/` | Analysis input per engine: `bank*.cfg` (`hle_func` lines name the hand-written routines) |
+| `src/gen/`, `src/gen-genb/`, `src/embed/` | Generated from your dumps. Never committed |
+| `tools/` | `regen*.sh`, `embed_roms.py`, `editor_graphics.py`, `import_roms.py` |
+| `snesrecomp/`, `recomp-ui/` | Framework and launcher submodules |
 
-## Porting from here
+## How the port works
 
-The scaffold stops where the game-specific work starts. In rough order:
-
-1. **Make it boot.** `src/game_rtl.c` holds the frame driver. It starts on
-   the framework's beam-aligned driver (`snesrecomp/runner/src/beam_frame_driver.h`):
-   one frame per PPU field, interrupts taken where the beam latches them,
-   the field rasterized from the raster journal. A title whose main loop it
-   does not fit replaces those calls with its own driver.
-2. **Name things.** Add entries to `recomp/symbols.toml` as you identify
-   routines, then re-run `tools/regen.sh`. Set `emit = true` to promote one
-   into ahead-of-time analysis; leave it false to keep it interpreted.
-   Regen synchronizes the marked blocks in each bank cfg, creating missing
-   configs. Only proven variants become AOT code. See `recomp/README.md`.
-3. **Resolve dispatch misses.** After every run, deal with unresolved
-   indirect targets before anything else — they are the reason a port
-   diverges, and they are cheap to fix early.
-4. **Never synthesise a result** to get past uncovered code, and never edit
-   `src/gen/` by hand. Fix the config or the framework and regenerate.
+The framework recompiles every routine of the game into C ahead of time and
+runs it on a cycle-counted model of the SNES (PPU, APU, DMA, the BS-X
+registers). Routines the decompilation has written by hand
+(`../c/hand/s1`, `../c/hand/s4`) replace the recompiled ones: each passes
+`../tools/difftest816.py` against the original code first, then
+`src/r816_bridge.c` hooks it in with a cycle estimate so frame timing stays
+the original's. Port features (roster, rivals, flow, mods) hook in at the
+same seams, mostly through the hand-written routines, so the original
+behaviour stays available behind an option. After every change the race and
+jump-contest runs are compared frame by frame with the previous build.
 
 ## Multiplayer
 

@@ -9,8 +9,8 @@ course 4 (Stadium 4 course 1):
 
   ground     plain ground only (the background every code is cut from)
   calibrate  code $02 every 16 columns (column -> pixel mapping)
-  catalog N  codes 16N..16N+15, one every 16 columns (the preview shows the
-             first ~360 columns, so the 64 codes take four runs)
+  catalog N  eight codes, each followed by a marker post (the preview shows
+             only its first ~5700 pixels)
 
 Each run's frames are stitched into a strip using the preview scroll
 ($9C/$9D, which moves the picture exactly). Where a catalog strip differs
@@ -23,7 +23,7 @@ Writes editor_graphics.js (window.BUNBUN_GFX) into each --out directory
 executables). Everything written is derived from the player's own ROM;
 never commit or share it.
 
-Needs Pillow and numpy. Takes a few minutes (six real-time runs).
+Needs Pillow and numpy. Takes a few minutes (nine real-time runs).
 """
 import argparse
 import base64
@@ -111,7 +111,8 @@ def marker_course(codes):
         else:
             b += bytes([c]) + bytes([GROUND] * PRE)
         b += bytes([0x02]) + bytes([GROUND] * POST)
-    return b + bytes([GROUND] * 40)
+    # longer than the preview shows, or it loops the course (lap after lap)
+    return b + bytes([GROUND] * max(40, 420 - len(b)))
 
 
 def diff_mask(strip, ground):
@@ -159,7 +160,7 @@ def main():
                                                   recursive=True)))
     work = tempfile.mkdtemp(prefix='bunbun_gfx_')
     try:
-        print('editor_graphics: capturing the course preview (six runs)')
+        print('editor_graphics: capturing the course preview (nine runs)')
         ground, _ = run(a.exe, work, 'ground', [GROUND] * 400)
         cal, _ = run(a.exe, work, 'calibrate', calibration_course())
         cm = diff_mask(cal, ground)
@@ -174,7 +175,12 @@ def main():
         # $00 ends a course; $30-$3F act like it in the preview and, like
         # $2E-$2F, draw nothing in a race (docs/NOTES.md)
         all_codes = list(range(0x01, 0x30))
-        groups = [all_codes[k:k + 12] for k in range(0, len(all_codes), 12)]
+        # eight per run: ramps advance the track further than a column, and the
+        # preview shows only the first ~5700 pixels
+        # $09 (the finish gate) ends the lap: the track loops back to column 0
+        # after it, so it goes last, on its own
+        all_codes.remove(0x09)
+        groups = [all_codes[k:k + 8] for k in range(0, len(all_codes), 8)] + [[0x09]]
         for n, group in enumerate(groups):
             strip, seen = run(a.exe, work, 'catalog%d' % n, marker_course(group))
             m = diff_mask(strip, ground)
@@ -186,9 +192,11 @@ def main():
                 a_k = prev + A02 + (POST + (6 if c == 0x09 else 1) - 1) * G
                 a_k = prev + A02 + POST * G         # the code's own column
                 lo_m = int(a_k + PRE * G - 24)
-                mk, _ = find_post(strip, tmpl, lo_m, lo_m + 320)
-                if mk is None or mk + 16 > len(seen) or not seen[int(a_k - 4 * G):mk].all():
-                    break                          # the preview ended
+                mk, sad = find_post(strip, tmpl, lo_m, lo_m + 320)
+                if (mk is None or mk + 16 > len(seen) or not seen[int(a_k - 4 * G):mk].all()
+                        or sad > 40 * tmpl[1].sum()):
+                    print('  catalog%d: stopped before code %02X (the preview ended)' % (n, c))
+                    break                          # no clean marker: the preview ended
                 advance['%02X' % c] = round(mk - a_k - PRE * G, 1)
                 lo, hi = int(a_k - 4 * G), int(mk - 3)
                 sub = m[:, lo:hi]

@@ -352,12 +352,13 @@ names, the select wheel) and the sprite palettes per character.
 
 Each code `00`-`3F` was placed alone at column 31 of Stadium 1 course 1 in a
 custom course (`mods/.../courses/course0.bin`) and the race was captured
-(`projects/codes`, 63 runs). What appears:
+(`projects/codes`, 63 runs). What appears (the course preview draws the same; there a plain-ground
+column is 16 pixels wide and a post 8, ramps 24-80):
 
 | Codes | Object |
 |---|---|
 | `01` `05` `06` `07` `08` `0A` `0B` `14` `21` `23` | ramps of different sizes and slopes (`14` a huge wall ramp, `21` a slope, `23` a long down slope) |
-| `09` | start/finish gate with the LAP sign (the loader writes it to six columns) |
+| `09` | finish gate with the LAP sign (the loader writes it to six columns). Every original course ends with it: it closes the lap, and the track (and the course preview) loops back to column 0 after it, so nothing placed after it is ever reached |
 | `0C` `0D` | puddles (upper / lower rows) |
 | `0E` | crystal spike |
 | `02`-`04` `11`-`13` `15`-`1C` `1F` `20` `22` | posts, poles, blocks and barriers in different rows |
