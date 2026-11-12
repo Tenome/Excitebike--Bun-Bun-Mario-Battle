@@ -105,6 +105,13 @@ state, so you continue where you were.
 
 ## Controls
 
+Skipping (Game flow "Play without the broadcast clock", the default): Start
+through the intro and title to PUSH START, then Start for the player select;
+after choosing a character, A or Start skips the countdown; Start skips the
+course preview and the results; A or Start skips cards and rules screens;
+**Select ends a race** early and moves on. With "Original broadcast timing"
+every screen waits for the broadcast schedule as on the Satellaview.
+
 Keyboard defaults (change them in the launcher): arrows, Z = B, X = A,
 A = Y, S = X, C/V = L/R, Enter = Start, Right Shift = Select. Gamepads
 (Xbox, PlayStation, Switch Pro) are detected automatically. A player set to

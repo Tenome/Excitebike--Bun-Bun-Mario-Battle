@@ -88,8 +88,11 @@ static void GameInitialize(void)
  *   Both: the intro text (mode $0D) runs on its own timer $88; Start sets
  *         it to 1 so the intro ends.
  *   Gen A: mode $0E title wait, $02 course card.
- *   Gen B: mode $00 title (until minute 4), $0C practice demo before minute 6
- *          (at 6 it shows PUSH START and Start opens the player select). */
+ *   Gen B: Start on the title or the practice demo goes to minute 6 (PUSH
+ *          START, then the player select); after choosing, A/Start skips the
+ *          select countdown; Start skips the course preview ($18, through the
+ *          developers' debug skip, also on the results $04); A/Start skips
+ *          cards ($02) and rules ($13, $17, $15); Select ends a race. */
 static int SkipWaitEnabled(void)
 {
     static int v = -1;
@@ -100,26 +103,87 @@ static int SkipWaitEnabled(void)
     return v;
 }
 
+/* Jump to just before the next broadcast minute: whatever the current screen
+ * waits for (a frame within the minute or the minute itself) comes within a
+ * second. */
+static void ClockToMinuteEnd(void)
+{
+    uint16 frame = (uint16)(g_ram[0x1FFFA] | g_ram[0x1FFFB] << 8);
+    if (frame < 3600) {
+        g_ram[0x1FFFA] = (uint8)3600;
+        g_ram[0x1FFFB] = (uint8)(3600 >> 8);
+    }
+}
+
+static void ClockToMinute(uint8 minute)
+{
+    g_ram[0x1FFFF] = minute;
+    g_ram[0x1FFFA] = 0;
+    g_ram[0x1FFFB] = 0;
+}
+
+#ifdef BUNBUN_GENB
+/* Gen B: the minute each race segment ends (free runs and finals). */
+static const uint8 kRaceEnds[] = { 11, 16, 22, 27, 36, 41, 47, 52 };
+#endif
+
+/* Gen B course preview (mode $18) and results ($04): the developers' own skip
+ * -- with the debug flag $81:800E set, Start ends them ($81:C29A -> $81:C3B1,
+ * $80:95CE, $80:971D). The flag is raised only while one of them is on
+ * screen (elsewhere it also skips the player select and lets L/R move the
+ * clock). */
+static void PreviewSkipFlag(uint8 mode)
+{
+#ifdef BUNBUN_GENB
+    static int orig = -1;
+    if (!g_snes || !g_snes->cart || !g_snes->cart->rom)
+        return;
+    uint8 *flag = &g_snes->cart->rom[0x800E];       /* $81:800E */
+    if (orig < 0) orig = *flag;
+    *flag = (mode == 0x18 || mode == 0x04) ? 1 : (uint8)orig;
+#else
+    (void)mode;
+#endif
+}
+
 static void SkipWaitAfterFrame(void)
 {
-    uint8 mode = g_ram[0x76], pressed = g_ram[0x21], minute = g_ram[0x1FFFF];
-    if (!(pressed & 0x10) || minute >= 59)
+    uint8 mode = g_ram[0x76], minute = g_ram[0x1FFFF];
+    PreviewSkipFlag(mode);
+    uint8 start = g_ram[0x21] & 0x10, select = g_ram[0x21] & 0x20, a = g_ram[0x26] & 0x80;
+    if (minute >= 59)
         return;
     if (mode == 0x0D) {             /* intro text: end it (its own timer $88) */
-        g_ram[0x88] = 1;
-        g_ram[0x89] = 0;
+        if (start) { g_ram[0x88] = 1; g_ram[0x89] = 0; }
         return;
     }
 #ifndef BUNBUN_GENB
-    int skip = mode == 0x0E || mode == 0x02;
+    if (start && (mode == 0x0E || mode == 0x02))
+        ClockToMinute((uint8)(minute + 1));
 #else
-    int skip = (mode == 0x00 && minute < 4) || (mode == 0x0C && minute < 6);
-#endif
-    if (skip) {
-        g_ram[0x1FFFF] = (uint8)(minute + 1);
-        g_ram[0x1FFFA] = 0;
-        g_ram[0x1FFFB] = 0;
+    if (mode == 0x00 && minute < 6) {           /* title: straight to PUSH START */
+        if (start) ClockToMinute(6);
+    } else if (mode == 0x0C && minute < 6) {    /* practice demo */
+        if (start) ClockToMinute(6);
+    } else if (mode == 0x01) {                  /* player select */
+        /* after the choice ($198B) the original waits out the countdown */
+        if ((start || a) && g_ram[0x198B] && !g_ram[0x198D]) {
+            g_ram[0x88] = 1;
+            g_ram[0x89] = 0;
+        }
+    } else if (mode == 0x02 || mode == 0x13 ||
+               mode == 0x17 || mode == 0x15) {   /* course preview, results, cards, rules */
+        if (start || a) ClockToMinuteEnd();
+    } else if (mode == 0x03) {                  /* race: Select ends it */
+        if (select)
+            for (unsigned i = 0; i < sizeof kRaceEnds; i++)
+                if (kRaceEnds[i] > minute) {
+                    ClockToMinute((uint8)(kRaceEnds[i] - 1));
+                    ClockToMinuteEnd();
+                    break;
+                }
     }
+#endif
 }
 
 /* Optional: BUNBUN_UNLOCK=1 grants the "played earlier episodes" unlock.
