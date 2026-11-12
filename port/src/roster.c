@@ -144,10 +144,28 @@ void RosterInit(void)
 
 int roster_count(void) { return g_count; }
 
+/* ---- added characters ride on an original index ---------------------------- */
+#define ALT_CHAR 0x7E15FE           /* free work RAM: the real character, 0 = none */
+static const u8 kEngineChar[MAX_CH] = { 0, 1, 2, 3, 4, 1 };   /* Luigi rides as Yoshi */
+
+u8 roster_engine_char(int ch) { return ch >= 0 && ch < g_count ? kEngineChar[ch] : (u8)ch; }
+
+void roster_note_choice(int ch) { wr8(LONG(ALT_CHAR), (u8)(ch >= 5 ? ch : 0)); }
+
+/* $154F as the routines read it -> the roster character */
+static int real_char(int ch)
+{
+    u8 alt = rd8(LONG(ALT_CHAR));
+    if (alt >= 5 && alt < g_count && kEngineChar[alt] == ch)
+        return alt;
+    return ch;
+}
+
 /* Characters 0-4 answer from the ROM as the original indexes it (also for
  * out-of-range indexes the original would read), added ones from the roster. */
 u16 roster_rider_offset(int ch, int var, int slotx)
 {
+    ch = real_char(ch);
     if (ch >= 5 && ch < g_count)
         return g_ch[ch].off[var ? 1 : 0][(slotx >> 1) & 3];
     return rd16(LONG(0x820000 | ((var ? 0x8918 : 0x88F0) + ((ch * 8 + slotx) & 0xFF))));
@@ -155,6 +173,7 @@ u16 roster_rider_offset(int ch, int var, int slotx)
 
 u8 roster_rider_bank(int ch, int var, int slot)
 {
+    ch = real_char(ch);
     if (ch >= 5 && ch < g_count)
         return g_ch[ch].bank[var ? 1 : 0][slot & 3];
     return rd8(LONG(0x820000 | ((var ? 0x88DC : 0x88C8) + ((ch * 4 + slot) & 0xFF))));
@@ -162,6 +181,7 @@ u8 roster_rider_bank(int ch, int var, int slot)
 
 u32 roster_rider_palette(int st, int var, int ch, int i)
 {
+    ch = real_char(ch);
     if (ch >= 5 && ch < g_count)
         return g_ch[ch].pal[st ? 1 : 0][var ? 1 : 0][i % 5];
     u16 x = (u16)(((st ? 100 : 0) + (var ? 50 : 0) + ch * 10) & 0xFF) + i * 2;
@@ -170,6 +190,7 @@ u32 roster_rider_palette(int st, int var, int ch, int i)
 
 u32 roster_name(int st, int ch, u16 orig)
 {
+    ch = real_char(ch);
     (void)st;
     if (ch >= 5 && ch < g_count)
         return g_ch[ch].name;
@@ -178,6 +199,7 @@ u32 roster_name(int st, int ch, u16 orig)
 
 u8 roster_winner_pose(int ch, int rider)
 {
+    ch = real_char(ch);
     if (ch >= 5 && ch < g_count)
         return g_ch[ch].pose[rider & 7];
     return rd8(LONG(0x810000 | (0xC158 + ((ch * 8 + rider) & 0xFF))));

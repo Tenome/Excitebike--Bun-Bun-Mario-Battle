@@ -129,8 +129,13 @@ static void ForceCharAfterFrame(void)
 #ifdef BUNBUN_GENB
     static int ch = -2;
     if (ch == -2) { const char *e = getenv("BUNBUN_FORCE_CHAR"); ch = e && *e ? atoi(e) : -1; }
-    if (ch >= 0)
+    if (ch >= 5) {                  /* added characters ride on Yoshi's index */
+        g_ram[0x154F] = 1;
+        g_ram[0x15FE] = (uint8_t)ch;
+    } else if (ch >= 0) {
         g_ram[0x154F] = (uint8_t)ch;
+        g_ram[0x15FE] = 0;
+    }
 #endif
 }
 

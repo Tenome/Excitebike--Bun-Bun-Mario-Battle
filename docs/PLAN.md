@@ -151,8 +151,9 @@ quality-of-life improvements.
 
 | Feature | Status |
 |---|---|
+| Runs without the ROM | ✅ `port/tools/import_roms.py` copies the dumps into `data/` beside the exes once; the exe starts from there. |
 | Mods folder (`docs/MODDING.md`) | ✅ `port/src/mods_folder.c`: IPS, raw `rom/` overlays, `gfx/` PNG tile sheets, `pal/` palettes, `sound/` WAV→BRR samples, `courses/` custom courses. Verified in a race (recoloured rider set; WAV replacement ~38 dB SNR). |
 | Asset export | ✅ `tools/assets.py` (catalogue from the port's DMA log, PNG export, round-trip check), `tools/sound.py` (every BRR sample to WAV). |
 | Course editor | ✅ first version: `tools/editor/course_editor.html` (offline page: opens the ROM or a course file, paint/insert/delete/copy, undo, saves `courseN.bin`). Next: name the column codes from in-game experiments, draw the obstacles with the game's own tiles. |
-| Full roster | Mapped (NOTES "Characters across the Stadiums"): Mario, Luigi, Toad, Wario (Gen A), Peach and Yoshi (Gen B, Yoshi only in the S4 dump). Next: a sixth rider set in free ROM and longer per-character tables in the Gen B engine. |
+| Full roster | ✅ All six characters in the Gen B exe: Mario, Yoshi, Kinopio, Wario, Peach and Luigi, selectable on a six-portrait PLAYER SELECT (c/hand/s4/select.c, port/src/roster.c). Luigi's rider set and voice samples come from data/s3.sfc into an extended 4 MB image; he rides on Yoshi's engine index, the roster tracks the real character ($15FE). Next: let Luigi and Yoshi meet in one race (decompile the remaining index users: collision voices $80:C776, results $81:9926, $80:924C). |
 | More riders per race | Not started. Races run 8 riders with 4 streamed sprite slots. |

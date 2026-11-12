@@ -20,6 +20,15 @@
 
 /* Number of selectable characters. */
 int roster_count(void);
+/* The engine keeps an added character on the index of the original one it
+ * plays like (Luigi rides as character 1, Yoshi's slot), so every routine
+ * that still indexes the original tables keeps working; the roster
+ * remembers which character it really is in a byte of free work RAM
+ * ($15FE, unused by the original). roster_engine_char gives the index for
+ * $154F; roster_note_choice records the choice. The roster functions below
+ * take $154F as read and resolve the real character themselves. */
+u8 roster_engine_char(int ch);
+void roster_note_choice(int ch);
 /* Rider animation set of sprite slot s in a race of character ch: word
  * offset (frame base; slotx = s * 2, the byte index the original uses in
  * its 8-byte record) and ROM bank ($82:88F0/$82:8918, $82:88C8/$82:88DC). */

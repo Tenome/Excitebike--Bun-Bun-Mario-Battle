@@ -609,8 +609,10 @@ void SelectMain_m1x1(void)
     {
         X = rd8(ABS(0x1579));
         u8 ch = roster_select_char(X);
-        lda8(ch);
-        wr8(ABS(0x154F), ch);
+        u8 ech = roster_engine_char(ch);
+        lda8(ech);
+        wr8(ABS(0x154F), ech);
+        roster_note_choice(ch);
         wr8(ABS(0x4200), 0);
         rep(0x20);
         for (int x = 0x3E; x >= 0; x -= 2) {

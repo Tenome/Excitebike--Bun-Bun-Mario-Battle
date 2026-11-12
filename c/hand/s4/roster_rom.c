@@ -65,3 +65,6 @@ u8 roster_select_name_row(int st, int i) { return i == 3 ? rd8(LONG(0x808E46 + (
 u8 roster_select_char(u8 cursor) { return rd8(LONG(0x808B21 + cursor)); }
 
 int roster_select_general(void) { return 0; }
+
+u8 roster_engine_char(int ch) { return (u8)ch; }
+void roster_note_choice(int ch) { (void)ch; }
