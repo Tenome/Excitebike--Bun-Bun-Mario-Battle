@@ -179,3 +179,10 @@
 80B5F8  1 1  mem+X,Y,C,V     Mode09_BonusIntro
 80FE93  1 1  mem+X,Y,C,V     TrackRiderPace
 828782  1 1  mem+X,Y,C,V     HideAllSprites
+81C75E  1 1  mem+X,Y,V       CheckLaneTile
+80E7C1  1 1  mem+X,Y,V       DrawJumpRiderSprites
+819A27  1 1  mem+V           FadeSkyColours
+80B22B  1 1  mem+X,Y,V       DrawBigSprite
+80D7AB  1 1  mem+V           QueueBonusCount
+8194B6  1 1  mem+X,Y,C,V     SpawnExhaust
+80BBCF  1 1  mem+X,Y,C,V     RiderAtFinish

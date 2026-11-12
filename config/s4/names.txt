@@ -196,3 +196,10 @@
 80B5F8 Mode09_BonusIntro
 80FE93 TrackRiderPace
 828782 HideAllSprites
+81C75E CheckLaneTile
+80E7C1 DrawJumpRiderSprites
+819A27 FadeSkyColours
+80B22B DrawBigSprite
+80D7AB QueueBonusCount
+8194B6 SpawnExhaust
+80BBCF RiderAtFinish

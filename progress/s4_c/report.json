@@ -1,15 +1,15 @@
 {
  "measures": {
-  "fuzzy_match_percent": 63.3076,
+  "fuzzy_match_percent": 64.342,
   "total_code": "36930",
-  "matched_code": "9962",
-  "matched_code_percent": 26.9754,
+  "matched_code": "10726",
+  "matched_code_percent": 29.0441,
   "total_data": "0",
   "matched_data": "0",
   "matched_data_percent": 0.0,
   "total_functions": 532,
-  "matched_functions": 177,
-  "matched_functions_percent": 33.2707,
+  "matched_functions": 184,
+  "matched_functions_percent": 34.5865,
   "complete_code": "0",
   "complete_code_percent": 0.0,
   "complete_data": "0",
@@ -21,16 +21,16 @@
   {
    "name": "main/bank80",
    "measures": {
-    "fuzzy_match_percent": 62.1783,
+    "fuzzy_match_percent": 63.0882,
     "total_code": "24671",
-    "matched_code": "6142",
-    "matched_code_percent": 24.8956,
+    "matched_code": "6591",
+    "matched_code_percent": 26.7156,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 357,
-    "matched_functions": 104,
-    "matched_functions_percent": 29.1317,
+    "matched_functions": 108,
+    "matched_functions_percent": 30.2521,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -42,7 +42,7 @@
     {
      "name": ".text",
      "size": "24671",
-     "fuzzy_match_percent": 62.1783
+     "fuzzy_match_percent": 63.0882
     }
    ],
    "functions": [
@@ -919,9 +919,9 @@
      }
     },
     {
-     "name": "sub_80B22B",
+     "name": "DrawBigSprite",
      "size": "107",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8434219"
      }
@@ -1151,9 +1151,9 @@
      }
     },
     {
-     "name": "sub_80BBCF",
+     "name": "RiderAtFinish",
      "size": "114",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8436687"
      }
@@ -1743,9 +1743,9 @@
      }
     },
     {
-     "name": "sub_80D7AB",
+     "name": "QueueBonusCount",
      "size": "112",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8443819"
      }
@@ -2031,9 +2031,9 @@
      }
     },
     {
-     "name": "sub_80E7C1",
+     "name": "DrawJumpRiderSprites",
      "size": "116",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8447937"
      }
@@ -2911,16 +2911,16 @@
   {
    "name": "main/bank81",
    "measures": {
-    "fuzzy_match_percent": 66.2,
+    "fuzzy_match_percent": 68.0686,
     "total_code": "8429",
-    "matched_code": "2731",
-    "matched_code_percent": 32.4,
+    "matched_code": "3046",
+    "matched_code_percent": 36.1371,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 137,
-    "matched_functions": 58,
-    "matched_functions_percent": 42.3358,
+    "matched_functions": 61,
+    "matched_functions_percent": 44.5255,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -2932,7 +2932,7 @@
     {
      "name": ".text",
      "size": "8429",
-     "fuzzy_match_percent": 66.2
+     "fuzzy_match_percent": 68.0686
     }
    ],
    "functions": [
@@ -2993,9 +2993,9 @@
      }
     },
     {
-     "name": "sub_8194B6",
+     "name": "SpawnExhaust",
      "size": "98",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8492214"
      }
@@ -3177,9 +3177,9 @@
      }
     },
     {
-     "name": "sub_819A27",
+     "name": "FadeSkyColours",
      "size": "116",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8493607"
      }
@@ -3889,9 +3889,9 @@
      }
     },
     {
-     "name": "sub_81C75E",
+     "name": "CheckLaneTile",
      "size": "101",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8505182"
      }
