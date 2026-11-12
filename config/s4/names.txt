@@ -2,8 +2,6 @@
 8083D2 NmiVramUpload    # from config/s3/names.txt (same)
 808535 NmiOamUpload    # from config/s3/names.txt (same)
 8085A9 RunGameModeScript    # from config/s3/names.txt (same)
-808603 Mode00_IntroWait    # from config/s3/names.txt (same)
-8086E4 Mode0E_TitleWait    # from config/s3/names.txt (same)
 80889B Mode02_SegmentCard    # from config/s3/names.txt (same)
 8098B2 Mode0F_EndScreen    # from config/s3/names.txt (same)
 809CD1 EndScreenStart    # from config/s3/names.txt (same)
@@ -17,8 +15,6 @@
 81F8BB BsxPollStream    # from config/s3/names.txt (same)
 81FA68 BsxDetect    # from config/s3/names.txt (same)
 81FA81 BsxProbeReceiver    # from config/s3/names.txt (same)
-828000 ReadJoypads    # from config/s3/names.txt (same)
-828232 DmaFillZero    # from config/s3/names.txt (same)
 808000 Reset
 808256 Nmi
 80B88F Irq
@@ -48,3 +44,25 @@
 81C6F9 CoinMilestone         # 100/200 coins bonus display, sound $2B
 80D08A CollectCoin           # coin effect slot, coin count, combo score
 80C776 RiderCollisions       # rider-to-rider bumps: crash sounds and voices, coins
+828232 DmaFillZero           # from s1 808562
+828000 ReadJoypads           # from s1 80B4D9
+808535 NmiFlushVramQueue     # from s1 808979
+80B4CE StepLfsr              # from s1 80B4AE
+808603 Mode00_IntroWait      # from s1 808A46
+8086E4 Mode0E_TitleWait      # from s1 808B00
+8089C8 FinishModeSetup       # from s1 808D16
+80D16E StepObjectX           # from s1 80D34A
+80CF5D ComputePlaces         # from s1 80D0E5
+80D228 ClearWords1530        # from s1 80D3FD
+81F999 ResetMinuteFrame      # from s1 81F999
+80BA66 Nop_BD39              # from s1 80BD39
+80C741 DivideAX              # from s1 80C98F
+80DBC6 BlankQueueRow         # from s1 80DCD8
+818C2A BlankQueueRowPal2     # from s1 818C21
+809DA6 BeginFadeIn           # from s1 809E77
+80A113 Add32                 # from s1 80A1A6
+80F3C7 StartMode01           # from s1 80E3FB
+809898 BsxReadSerialByte     # from s1 8099A1
+80A36B MergeBsxFlags         # from s1 80A41C
+80C173 RiderHeightStep       # from s1 80C3F5
+80FE68 AddScore              # from s1 80EDC4
