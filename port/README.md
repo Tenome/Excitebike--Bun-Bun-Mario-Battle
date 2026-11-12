@@ -70,6 +70,36 @@ Either way the ROM is checked against the digests above before anything boots
 — a dump that could not have produced this build is refused at the door rather
 than mis-executing ten frames in.
 
+## Which executable
+
+* `build/genb/Release/BunbunS4SNESRecomp.exe` is the main game: the Gen B
+  engine with all six characters (Mario, Yoshi, Kinopio, Wario, Peach,
+  Luigi) on the player select. It needs `data/s4.sfc` and, for Luigi,
+  `data/s3.sfc` (`python port/tools/import_roms.py <dumps>`).
+  `BUNBUN_STADIUM=3|4` picks the Stadium, `BUNBUN_COURSES=1|2` plays the
+  Stadium 1 or 2 courses in it (needs `data/s1.sfc`).
+* `build/Release/BunbunS1SNESRecomp.exe` is the Stadium 1-2 engine (Gen A),
+  kept for comparison and the original Stadium 1-2 experience.
+
+## Controls
+
+The game is a satellite broadcast: the intro, the title ("please wait"), the
+practice demo and the course cards follow the broadcast clock and ignore the
+controller in the original. In the port **Start skips them** (set
+`BUNBUN_SKIPWAIT=0` for the original timing): press Start a few times from the
+boot to reach the player select, then left/right turns the portraits and A
+chooses.
+
+* Keyboard: `keybinds.ini` beside the executable (default: arrows, Z = B,
+  X = A, A = Y, S = X, C/V = L/R, Enter = Start, Right Shift = Select).
+* Gamepads: `config.ini` `[GamepadMap]`; Xbox/PlayStation/Switch Pro pads are
+  detected automatically.
+* Which device each player uses: `config.ini` `[Controller]` `SourceP1` /
+  `SourceP2` (0 none, 1 keyboard, 2 gamepad; the launcher writes these). A
+  player set to gamepad does **not** read the keyboard.
+* Hotkeys (`config.ini` `[KeyMap]`): Alt+Enter fullscreen, Tab turbo, F1-F10
+  load state, Shift+F1-F10 save state, F12 rewind, P pause.
+
 ## Layout
 
 | Path | What lives there |

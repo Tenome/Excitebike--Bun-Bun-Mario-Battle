@@ -77,30 +77,45 @@ static void GameInitialize(void)
     }
 }
 
-/* Optional: BUNBUN_SKIPWAIT=1 lets P1 Start skip the broadcast's waiting
- * screens (the title's "please wait" and the 2-minute course cards, where the
- * SoundLink narration used to play) by advancing the broadcast clock one
- * minute: $7F:FFFF = minute, $7F:FFFA/B = frame within the minute. The game's
- * own schedule checks then move on. Gen A modes: $0E title wait, $02 course
- * card. (The intro text, mode $0D, scrolls on its own timer; advancing the
- * clock there would skip whole courses, so it is left alone.) */
+/* Start skips the broadcast's waiting segments (on by default;
+ * BUNBUN_SKIPWAIT=0 turns it off). The game is a satellite broadcast: the
+ * intro, the title ("please wait"), the practice demo and the course cards
+ * run on the broadcast clock and ignore the controller, so without this a
+ * player waits minutes before anything answers. Start advances the broadcast
+ * clock one minute ($7F:FFFF = minute, $7F:FFFA/B = frame within it) and the
+ * game's own schedule moves on.
+ *   Both: the intro text (mode $0D) runs on its own timer $88; Start sets
+ *         it to 1 so the intro ends.
+ *   Gen A: mode $0E title wait, $02 course card.
+ *   Gen B: mode $00 title (until minute 4), $0C practice demo before minute 6
+ *          (at 6 it shows PUSH START and Start opens the player select). */
 static int SkipWaitEnabled(void)
 {
     static int v = -1;
-    if (v < 0) { const char *e = getenv("BUNBUN_SKIPWAIT"); v = e && *e && *e != '0'; }
+    if (v < 0) { const char *e = getenv("BUNBUN_SKIPWAIT"); v = !(e && *e == '0'); }
     return v;
 }
 
 static void SkipWaitAfterFrame(void)
 {
+    uint8 mode = g_ram[0x76], pressed = g_ram[0x21], minute = g_ram[0x1FFFF];
+    if (!(pressed & 0x10) || minute >= 59)
+        return;
+    if (mode == 0x0D) {             /* intro text: end it (its own timer $88) */
+        g_ram[0x88] = 1;
+        g_ram[0x89] = 0;
+        return;
+    }
 #ifndef BUNBUN_GENB
-    uint8 mode = g_ram[0x76], pressed = g_ram[0x21];
-    if ((mode == 0x0E || mode == 0x02) && (pressed & 0x10) && g_ram[0x1FFFF] < 59) {
-        g_ram[0x1FFFF]++;
+    int skip = mode == 0x0E || mode == 0x02;
+#else
+    int skip = (mode == 0x00 && minute < 4) || (mode == 0x0C && minute < 6);
+#endif
+    if (skip) {
+        g_ram[0x1FFFF] = (uint8)(minute + 1);
         g_ram[0x1FFFA] = 0;
         g_ram[0x1FFFB] = 0;
     }
-#endif
 }
 
 /* Optional: BUNBUN_UNLOCK=1 grants the "played earlier episodes" unlock.
