@@ -1,0 +1,4404 @@
+{
+ "measures": {
+  "fuzzy_match_percent": 100.0,
+  "total_code": "27972",
+  "matched_code": "27972",
+  "matched_code_percent": 100.0,
+  "total_data": "1020604",
+  "matched_data": "1020604",
+  "matched_data_percent": 100.0,
+  "total_functions": 407,
+  "matched_functions": 407,
+  "matched_functions_percent": 100.0,
+  "complete_code": "27972",
+  "complete_code_percent": 100.0,
+  "complete_data": "1020604",
+  "complete_data_percent": 100.0,
+  "total_units": 34,
+  "complete_units": 34
+ },
+ "units": [
+  {
+   "name": "main/bank80",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": "21606",
+    "matched_code": "21606",
+    "matched_code_percent": 100.0,
+    "total_data": "0",
+    "matched_data": "0",
+    "matched_data_percent": 0.0,
+    "total_functions": 306,
+    "matched_functions": 306,
+    "matched_functions_percent": 100.0,
+    "complete_code": "21606",
+    "complete_code_percent": 100.0,
+    "complete_data": "0",
+    "complete_data_percent": 0.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".text",
+     "size": "21606",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [
+    {
+     "name": "DrawClock",
+     "size": "157",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8421791"
+     }
+    },
+    {
+     "name": "BroadcastEventInject",
+     "size": "107",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8421948"
+     }
+    },
+    {
+     "name": "QueueSound",
+     "size": "27",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8422070"
+     }
+    },
+    {
+     "name": "FadeStep",
+     "size": "71",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8422178"
+     }
+    },
+    {
+     "name": "InitPpuRegisters",
+     "size": "281",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8422249"
+     }
+    },
+    {
+     "name": "ForceBlank",
+     "size": "15",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8422568"
+     }
+    },
+    {
+     "name": "ClearTilemaps",
+     "size": "130",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8422583"
+     }
+    },
+    {
+     "name": "DmaKick",
+     "size": "8",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8422713"
+     }
+    },
+    {
+     "name": "DmaCopyToWram",
+     "size": "33",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8422721"
+     }
+    },
+    {
+     "name": "DmaFillZero",
+     "size": "39",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8422754"
+     }
+    },
+    {
+     "name": "InitFadeState",
+     "size": "29",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8422793"
+     }
+    },
+    {
+     "name": "PackOamHighTable",
+     "size": "453",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8422822"
+     }
+    },
+    {
+     "name": "NmiFixedUploads",
+     "size": "355",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8423275"
+     }
+    },
+    {
+     "name": "SpcUpload",
+     "size": "153",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8423648"
+     }
+    },
+    {
+     "name": "NmiFlushVramQueue",
+     "size": "116",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8423801"
+     }
+    },
+    {
+     "name": "RunGameModeScript",
+     "size": "89",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8423917"
+     }
+    },
+    {
+     "name": "Mode00_IntroWait",
+     "size": "39",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8424006"
+     }
+    },
+    {
+     "name": "Mode0D_Setup",
+     "size": "48",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8424045"
+     }
+    },
+    {
+     "name": "Mode0D_IntroText",
+     "size": "96",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8424093"
+     }
+    },
+    {
+     "name": "sub_808AFD",
+     "size": "3",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8424189"
+     }
+    },
+    {
+     "name": "Mode0E_TitleWait",
+     "size": "20",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8424192"
+     }
+    },
+    {
+     "name": "Mode0E_Setup",
+     "size": "107",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8424212"
+     }
+    },
+    {
+     "name": "Mode02_SegmentCard",
+     "size": "20",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8424495"
+     }
+    },
+    {
+     "name": "Mode02_Setup",
+     "size": "175",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8424531"
+     }
+    },
+    {
+     "name": "sub_808D0C",
+     "size": "10",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8424716"
+     }
+    },
+    {
+     "name": "FinishModeSetup",
+     "size": "15",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8424726"
+     }
+    },
+    {
+     "name": "Mode01",
+     "size": "6",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8424741"
+     }
+    },
+    {
+     "name": "sub_808D2F",
+     "size": "183",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8424751"
+     }
+    },
+    {
+     "name": "sub_808DE6",
+     "size": "186",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8424934"
+     }
+    },
+    {
+     "name": "sub_808EA0",
+     "size": "87",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8425120"
+     }
+    },
+    {
+     "name": "sub_808EF7",
+     "size": "50",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8425207"
+     }
+    },
+    {
+     "name": "sub_808F2D",
+     "size": "270",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8425261"
+     }
+    },
+    {
+     "name": "sub_809053",
+     "size": "126",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8425555"
+     }
+    },
+    {
+     "name": "SegmentNext",
+     "size": "17",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8425818"
+     }
+    },
+    {
+     "name": "sub_80916B",
+     "size": "90",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8425835"
+     }
+    },
+    {
+     "name": "sub_8091CD",
+     "size": "38",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8425933"
+     }
+    },
+    {
+     "name": "EnableHudSplit",
+     "size": "5",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8425985"
+     }
+    },
+    {
+     "name": "ClearRaceState",
+     "size": "48",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8425990"
+     }
+    },
+    {
+     "name": "RaceHudInit",
+     "size": "18",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8426038"
+     }
+    },
+    {
+     "name": "RaceSetup",
+     "size": "88",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8426056"
+     }
+    },
+    {
+     "name": "sub_8092A0",
+     "size": "722",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8426144"
+     }
+    },
+    {
+     "name": "DrawText95C4",
+     "size": "22",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8426926"
+     }
+    },
+    {
+     "name": "Mode04_FreeRunSchedule",
+     "size": "143",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8427160"
+     }
+    },
+    {
+     "name": "sub_80973F",
+     "size": "192",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8427327"
+     }
+    },
+    {
+     "name": "sub_8097FF",
+     "size": "171",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8427519"
+     }
+    },
+    {
+     "name": "sub_8098B2",
+     "size": "144",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8427698"
+     }
+    },
+    {
+     "name": "sub_809942",
+     "size": "64",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8427842"
+     }
+    },
+    {
+     "name": "BsxReadSerial3",
+     "size": "31",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8427906"
+     }
+    },
+    {
+     "name": "BsxReadSerialByte",
+     "size": "26",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8427937"
+     }
+    },
+    {
+     "name": "Mode0F_EndScreen",
+     "size": "21",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8427963"
+     }
+    },
+    {
+     "name": "sub_8099E7",
+     "size": "97",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8428007"
+     }
+    },
+    {
+     "name": "sub_809A52",
+     "size": "53",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8428114"
+     }
+    },
+    {
+     "name": "sub_809A87",
+     "size": "114",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8428167"
+     }
+    },
+    {
+     "name": "sub_809AF9",
+     "size": "83",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8428281"
+     }
+    },
+    {
+     "name": "sub_809B4C",
+     "size": "116",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8428364"
+     }
+    },
+    {
+     "name": "sub_809BC8",
+     "size": "69",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8428488"
+     }
+    },
+    {
+     "name": "sub_809C0D",
+     "size": "246",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8428557"
+     }
+    },
+    {
+     "name": "sub_809D07",
+     "size": "60",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8428807"
+     }
+    },
+    {
+     "name": "sub_809D43",
+     "size": "154",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8428867"
+     }
+    },
+    {
+     "name": "EndScreenStart",
+     "size": "61",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8429024"
+     }
+    },
+    {
+     "name": "EndScreenTimeout",
+     "size": "41",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8429085"
+     }
+    },
+    {
+     "name": "BeginFadeInBg3",
+     "size": "40",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8429126"
+     }
+    },
+    {
+     "name": "Mode10_Ending",
+     "size": "9",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8429166"
+     }
+    },
+    {
+     "name": "BeginFadeIn",
+     "size": "23",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8429175"
+     }
+    },
+    {
+     "name": "Mode11",
+     "size": "29",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8429198"
+     }
+    },
+    {
+     "name": "sub_809EAB",
+     "size": "124",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8429227"
+     }
+    },
+    {
+     "name": "Mode12_AfterEnd",
+     "size": "215",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8429416"
+     }
+    },
+    {
+     "name": "GrowBar087E",
+     "size": "33",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8429631"
+     }
+    },
+    {
+     "name": "StepColourCycle",
+     "size": "43",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8429695"
+     }
+    },
+    {
+     "name": "BsxCheckSerial",
+     "size": "18",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8429738"
+     }
+    },
+    {
+     "name": "sub_80A0BC",
+     "size": "82",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8429756"
+     }
+    },
+    {
+     "name": "sub_80A10E",
+     "size": "152",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8429838"
+     }
+    },
+    {
+     "name": "Add32",
+     "size": "22",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8429990"
+     }
+    },
+    {
+     "name": "sub_80A1BC",
+     "size": "117",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8430012"
+     }
+    },
+    {
+     "name": "sub_80A231",
+     "size": "127",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8430129"
+     }
+    },
+    {
+     "name": "sub_80A2B0",
+     "size": "155",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8430256"
+     }
+    },
+    {
+     "name": "EepromReadWords",
+     "size": "60",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8430411"
+     }
+    },
+    {
+     "name": "EepromSendCommand",
+     "size": "37",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8430471"
+     }
+    },
+    {
+     "name": "sub_80A3AC",
+     "size": "112",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8430508"
+     }
+    },
+    {
+     "name": "MergeBsxFlags",
+     "size": "49",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8430620"
+     }
+    },
+    {
+     "name": "SumBytes0850",
+     "size": "17",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8430680"
+     }
+    },
+    {
+     "name": "FinalSchedule",
+     "size": "170",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8430846"
+     }
+    },
+    {
+     "name": "sub_80A5AC",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8431020"
+     }
+    },
+    {
+     "name": "DrawRacerName",
+     "size": "61",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8431031"
+     }
+    },
+    {
+     "name": "DrawHudLabelA",
+     "size": "17",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8431213"
+     }
+    },
+    {
+     "name": "DrawHudLabelB",
+     "size": "22",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8431247"
+     }
+    },
+    {
+     "name": "sub_80A6B2",
+     "size": "218",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8431282"
+     }
+    },
+    {
+     "name": "sub_80A7AF",
+     "size": "192",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8431535"
+     }
+    },
+    {
+     "name": "sub_80A89C",
+     "size": "270",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8431772"
+     }
+    },
+    {
+     "name": "Mode03_Race",
+     "size": "179",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8432058"
+     }
+    },
+    {
+     "name": "sub_80AA78",
+     "size": "52",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8432248"
+     }
+    },
+    {
+     "name": "SendSpeedToApu",
+     "size": "18",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8432408"
+     }
+    },
+    {
+     "name": "sub_80AB2A",
+     "size": "19",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8432426"
+     }
+    },
+    {
+     "name": "sub_80AB3D",
+     "size": "93",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8432445"
+     }
+    },
+    {
+     "name": "sub_80AB9A",
+     "size": "6",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8432538"
+     }
+    },
+    {
+     "name": "sub_80ABA0",
+     "size": "55",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8432544"
+     }
+    },
+    {
+     "name": "sub_80ABD7",
+     "size": "197",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8432599"
+     }
+    },
+    {
+     "name": "sub_80AC9C",
+     "size": "93",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8432796"
+     }
+    },
+    {
+     "name": "AccelerateRider",
+     "size": "54",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8433145"
+     }
+    },
+    {
+     "name": "sub_80AE2F",
+     "size": "4",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8433199"
+     }
+    },
+    {
+     "name": "sub_80AE33",
+     "size": "147",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8433203"
+     }
+    },
+    {
+     "name": "sub_80AEC6",
+     "size": "65",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8433350"
+     }
+    },
+    {
+     "name": "sub_80AF07",
+     "size": "69",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8433415"
+     }
+    },
+    {
+     "name": "sub_80AF4C",
+     "size": "37",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8433484"
+     }
+    },
+    {
+     "name": "sub_80AF71",
+     "size": "32",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8433521"
+     }
+    },
+    {
+     "name": "sub_80AF91",
+     "size": "3",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8433553"
+     }
+    },
+    {
+     "name": "sub_80AF94",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8433556"
+     }
+    },
+    {
+     "name": "sub_80AF9F",
+     "size": "54",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8433567"
+     }
+    },
+    {
+     "name": "sub_80AFD5",
+     "size": "20",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8433621"
+     }
+    },
+    {
+     "name": "sub_80AFE9",
+     "size": "9",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8433641"
+     }
+    },
+    {
+     "name": "sub_80AFF2",
+     "size": "9",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8433650"
+     }
+    },
+    {
+     "name": "sub_80AFFB",
+     "size": "26",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8433659"
+     }
+    },
+    {
+     "name": "sub_80B015",
+     "size": "26",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8433685"
+     }
+    },
+    {
+     "name": "sub_80B02F",
+     "size": "150",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8433711"
+     }
+    },
+    {
+     "name": "LaneFromY",
+     "size": "28",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8433861"
+     }
+    },
+    {
+     "name": "sub_80B0E1",
+     "size": "52",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8433889"
+     }
+    },
+    {
+     "name": "sub_80B158",
+     "size": "35",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8434008"
+     }
+    },
+    {
+     "name": "sub_80B17B",
+     "size": "107",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8434043"
+     }
+    },
+    {
+     "name": "sub_80B21D",
+     "size": "9",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8434205"
+     }
+    },
+    {
+     "name": "ClearOamBuffer",
+     "size": "123",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8434214"
+     }
+    },
+    {
+     "name": "sub_80B2A1",
+     "size": "4",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8434337"
+     }
+    },
+    {
+     "name": "VramQueueTiles20",
+     "size": "4",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8434341"
+     }
+    },
+    {
+     "name": "VramQueueTiles",
+     "size": "337",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8434345"
+     }
+    },
+    {
+     "name": "VramQueueCopy",
+     "size": "154",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8434686"
+     }
+    },
+    {
+     "name": "TickTimers",
+     "size": "22",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8434840"
+     }
+    },
+    {
+     "name": "StepLfsr",
+     "size": "43",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8434862"
+     }
+    },
+    {
+     "name": "ReadJoypads",
+     "size": "95",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8434905"
+     }
+    },
+    {
+     "name": "sub_80B538",
+     "size": "189",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8435000"
+     }
+    },
+    {
+     "name": "ModeNop",
+     "size": "2",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8435369"
+     }
+    },
+    {
+     "name": "sub_80B702",
+     "size": "153",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8435458"
+     }
+    },
+    {
+     "name": "sub_80B79B",
+     "size": "72",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8435611"
+     }
+    },
+    {
+     "name": "sub_80B873",
+     "size": "328",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8435827"
+     }
+    },
+    {
+     "name": "sub_80BC55",
+     "size": "12",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8436821"
+     }
+    },
+    {
+     "name": "sub_80BC61",
+     "size": "108",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8436833"
+     }
+    },
+    {
+     "name": "sub_80BCCD",
+     "size": "108",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8436941"
+     }
+    },
+    {
+     "name": "Nop_BD39",
+     "size": "9",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8437049"
+     }
+    },
+    {
+     "name": "sub_80BE22",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8437282"
+     }
+    },
+    {
+     "name": "sub_80BE2D",
+     "size": "1",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8437293"
+     }
+    },
+    {
+     "name": "sub_80BE2E",
+     "size": "16",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8437294"
+     }
+    },
+    {
+     "name": "sub_80BE3E",
+     "size": "44",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8437310"
+     }
+    },
+    {
+     "name": "sub_80BE6A",
+     "size": "77",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8437354"
+     }
+    },
+    {
+     "name": "sub_80BEB7",
+     "size": "114",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8437431"
+     }
+    },
+    {
+     "name": "sub_80BF29",
+     "size": "26",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8437545"
+     }
+    },
+    {
+     "name": "RiderStartCheck",
+     "size": "49",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8437571"
+     }
+    },
+    {
+     "name": "RiderShadowY",
+     "size": "20",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8437620"
+     }
+    },
+    {
+     "name": "sub_80BF88",
+     "size": "30",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8437640"
+     }
+    },
+    {
+     "name": "AddSpeedFraction",
+     "size": "22",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8437690"
+     }
+    },
+    {
+     "name": "ScrollByPlayerSpeed",
+     "size": "21",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8437712"
+     }
+    },
+    {
+     "name": "ScrollRivalsRelative",
+     "size": "45",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8437733"
+     }
+    },
+    {
+     "name": "sub_80C012",
+     "size": "57",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8437778"
+     }
+    },
+    {
+     "name": "sub_80C04B",
+     "size": "84",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8437835"
+     }
+    },
+    {
+     "name": "sub_80C09F",
+     "size": "141",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8437919"
+     }
+    },
+    {
+     "name": "sub_80C12C",
+     "size": "83",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8438060"
+     }
+    },
+    {
+     "name": "ClearRiderState",
+     "size": "66",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8438151"
+     }
+    },
+    {
+     "name": "sub_80C1C9",
+     "size": "59",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8438217"
+     }
+    },
+    {
+     "name": "sub_80C225",
+     "size": "185",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8438309"
+     }
+    },
+    {
+     "name": "sub_80C2DE",
+     "size": "3",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8438494"
+     }
+    },
+    {
+     "name": "sub_80C2E1",
+     "size": "14",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8438497"
+     }
+    },
+    {
+     "name": "sub_80C2EF",
+     "size": "72",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8438511"
+     }
+    },
+    {
+     "name": "Tick08CC",
+     "size": "21",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8438583"
+     }
+    },
+    {
+     "name": "sub_80C34C",
+     "size": "47",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8438604"
+     }
+    },
+    {
+     "name": "sub_80C37B",
+     "size": "56",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8438651"
+     }
+    },
+    {
+     "name": "sub_80C3B3",
+     "size": "66",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8438707"
+     }
+    },
+    {
+     "name": "RiderHeightStep",
+     "size": "40",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8438773"
+     }
+    },
+    {
+     "name": "sub_80C41D",
+     "size": "88",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8438813"
+     }
+    },
+    {
+     "name": "sub_80C475",
+     "size": "142",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8438901"
+     }
+    },
+    {
+     "name": "sub_80C503",
+     "size": "43",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8439043"
+     }
+    },
+    {
+     "name": "sub_80C52E",
+     "size": "208",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8439086"
+     }
+    },
+    {
+     "name": "sub_80C5FE",
+     "size": "6",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8439294"
+     }
+    },
+    {
+     "name": "sub_80C604",
+     "size": "80",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8439300"
+     }
+    },
+    {
+     "name": "sub_80C654",
+     "size": "114",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8439380"
+     }
+    },
+    {
+     "name": "sub_80C7DC",
+     "size": "15",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8439772"
+     }
+    },
+    {
+     "name": "sub_80C7EB",
+     "size": "26",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8439787"
+     }
+    },
+    {
+     "name": "sub_80C805",
+     "size": "114",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8439813"
+     }
+    },
+    {
+     "name": "sub_80C877",
+     "size": "114",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8439927"
+     }
+    },
+    {
+     "name": "sub_80C8E9",
+     "size": "5",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8440041"
+     }
+    },
+    {
+     "name": "sub_80C8EE",
+     "size": "129",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8440046"
+     }
+    },
+    {
+     "name": "DivideAX",
+     "size": "14",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8440207"
+     }
+    },
+    {
+     "name": "RiderLaneBand",
+     "size": "39",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8440221"
+     }
+    },
+    {
+     "name": "sub_80C9C4",
+     "size": "341",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8440260"
+     }
+    },
+    {
+     "name": "sub_80CB39",
+     "size": "7",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8440633"
+     }
+    },
+    {
+     "name": "sub_80CB40",
+     "size": "7",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8440640"
+     }
+    },
+    {
+     "name": "sub_80CB47",
+     "size": "84",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8440647"
+     }
+    },
+    {
+     "name": "sub_80CC38",
+     "size": "5",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8440888"
+     }
+    },
+    {
+     "name": "sub_80CC3D",
+     "size": "121",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8440893"
+     }
+    },
+    {
+     "name": "sub_80CCE1",
+     "size": "83",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8441057"
+     }
+    },
+    {
+     "name": "sub_80CD54",
+     "size": "116",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8441172"
+     }
+    },
+    {
+     "name": "sub_80CDF6",
+     "size": "115",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8441334"
+     }
+    },
+    {
+     "name": "DrawRiderShadowPair",
+     "size": "38",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8441575"
+     }
+    },
+    {
+     "name": "sub_80CF0D",
+     "size": "229",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8441613"
+     }
+    },
+    {
+     "name": "sub_80CFFA",
+     "size": "62",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8441850"
+     }
+    },
+    {
+     "name": "ClearMidScreenRiders",
+     "size": "49",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8441912"
+     }
+    },
+    {
+     "name": "ClipRiderSprite",
+     "size": "81",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8441961"
+     }
+    },
+    {
+     "name": "UpdatePlayerPlace",
+     "size": "43",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8442042"
+     }
+    },
+    {
+     "name": "ComputePlaces",
+     "size": "46",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8442085"
+     }
+    },
+    {
+     "name": "DrawPlace",
+     "size": "56",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8442131"
+     }
+    },
+    {
+     "name": "DrawLap",
+     "size": "50",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8442187"
+     }
+    },
+    {
+     "name": "sub_80D198",
+     "size": "119",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8442264"
+     }
+    },
+    {
+     "name": "sub_80D20F",
+     "size": "130",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8442383"
+     }
+    },
+    {
+     "name": "sub_80D29F",
+     "size": "64",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8442527"
+     }
+    },
+    {
+     "name": "sub_80D31F",
+     "size": "38",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8442655"
+     }
+    },
+    {
+     "name": "sub_80D345",
+     "size": "5",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8442693"
+     }
+    },
+    {
+     "name": "StepObjectX",
+     "size": "68",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8442698"
+     }
+    },
+    {
+     "name": "DrawCoinIcons",
+     "size": "41",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8442766"
+     }
+    },
+    {
+     "name": "DrawSmallObject",
+     "size": "50",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8442817"
+     }
+    },
+    {
+     "name": "sub_80D3F7",
+     "size": "6",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8442871"
+     }
+    },
+    {
+     "name": "ClearWords1530",
+     "size": "12",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8442877"
+     }
+    },
+    {
+     "name": "sub_80D7B2",
+     "size": "8",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8443826"
+     }
+    },
+    {
+     "name": "SetupSpriteRow15",
+     "size": "44",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8443834"
+     }
+    },
+    {
+     "name": "sub_80D813",
+     "size": "218",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8443923"
+     }
+    },
+    {
+     "name": "sub_80D8FB",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8444155"
+     }
+    },
+    {
+     "name": "sub_80D906",
+     "size": "120",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8444166"
+     }
+    },
+    {
+     "name": "Mode09",
+     "size": "179",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8444286"
+     }
+    },
+    {
+     "name": "sub_80DA31",
+     "size": "52",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8444465"
+     }
+    },
+    {
+     "name": "DispatchBy85",
+     "size": "20",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8444549"
+     }
+    },
+    {
+     "name": "sub_80DA99",
+     "size": "143",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8444569"
+     }
+    },
+    {
+     "name": "ScrollFarLayer",
+     "size": "28",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8444712"
+     }
+    },
+    {
+     "name": "sub_80DB44",
+     "size": "43",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8444740"
+     }
+    },
+    {
+     "name": "sub_80DB6F",
+     "size": "26",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8444783"
+     }
+    },
+    {
+     "name": "sub_80DB89",
+     "size": "260",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8444809"
+     }
+    },
+    {
+     "name": "sub_80DC8D",
+     "size": "75",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8445069"
+     }
+    },
+    {
+     "name": "BlankQueueRow",
+     "size": "18",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8445144"
+     }
+    },
+    {
+     "name": "sub_80DCEA",
+     "size": "25",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8445162"
+     }
+    },
+    {
+     "name": "sub_80DD03",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8445187"
+     }
+    },
+    {
+     "name": "sub_80DD0E",
+     "size": "116",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8445198"
+     }
+    },
+    {
+     "name": "sub_80DD82",
+     "size": "37",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8445314"
+     }
+    },
+    {
+     "name": "sub_80DDA7",
+     "size": "8",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8445351"
+     }
+    },
+    {
+     "name": "sub_80DDAF",
+     "size": "73",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8445359"
+     }
+    },
+    {
+     "name": "sub_80DDF8",
+     "size": "1",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8445432"
+     }
+    },
+    {
+     "name": "sub_80DDF9",
+     "size": "14",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8445433"
+     }
+    },
+    {
+     "name": "Mode0A",
+     "size": "20",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8445447"
+     }
+    },
+    {
+     "name": "sub_80DE23",
+     "size": "122",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8445475"
+     }
+    },
+    {
+     "name": "sub_80DEB3",
+     "size": "63",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8445619"
+     }
+    },
+    {
+     "name": "sub_80DF01",
+     "size": "248",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8445697"
+     }
+    },
+    {
+     "name": "CheckEndingMinute",
+     "size": "63",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8445956"
+     }
+    },
+    {
+     "name": "AnimSourceFromFrame",
+     "size": "22",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8446019"
+     }
+    },
+    {
+     "name": "sub_80E059",
+     "size": "99",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8446041"
+     }
+    },
+    {
+     "name": "sub_80E29D",
+     "size": "14",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8446621"
+     }
+    },
+    {
+     "name": "sub_80E2AB",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8446635"
+     }
+    },
+    {
+     "name": "sub_80E2B6",
+     "size": "99",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8446646"
+     }
+    },
+    {
+     "name": "Mode0C",
+     "size": "91",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8446745"
+     }
+    },
+    {
+     "name": "sub_80E374",
+     "size": "3",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8446836"
+     }
+    },
+    {
+     "name": "sub_80E377",
+     "size": "93",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8446839"
+     }
+    },
+    {
+     "name": "sub_80E3D4",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8446932"
+     }
+    },
+    {
+     "name": "sub_80E3DF",
+     "size": "15",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8446943"
+     }
+    },
+    {
+     "name": "sub_80E3EE",
+     "size": "4",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8446958"
+     }
+    },
+    {
+     "name": "sub_80E3F2",
+     "size": "9",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8446962"
+     }
+    },
+    {
+     "name": "StartMode01",
+     "size": "22",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8446971"
+     }
+    },
+    {
+     "name": "sub_80E411",
+     "size": "210",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8446993"
+     }
+    },
+    {
+     "name": "sub_80E4FC",
+     "size": "79",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8447228"
+     }
+    },
+    {
+     "name": "sub_80E773",
+     "size": "2",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8447859"
+     }
+    },
+    {
+     "name": "AnimateWheels",
+     "size": "47",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8447861"
+     }
+    },
+    {
+     "name": "sub_80E7A4",
+     "size": "8",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8447908"
+     }
+    },
+    {
+     "name": "sub_80E7AC",
+     "size": "136",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8447916"
+     }
+    },
+    {
+     "name": "sub_80E834",
+     "size": "125",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448052"
+     }
+    },
+    {
+     "name": "sub_80E8B1",
+     "size": "3",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448177"
+     }
+    },
+    {
+     "name": "sub_80E8B4",
+     "size": "5",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448180"
+     }
+    },
+    {
+     "name": "sub_80E8B9",
+     "size": "28",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448185"
+     }
+    },
+    {
+     "name": "sub_80E8D5",
+     "size": "10",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448213"
+     }
+    },
+    {
+     "name": "sub_80E8DF",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448223"
+     }
+    },
+    {
+     "name": "MarkFastRider",
+     "size": "35",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448234"
+     }
+    },
+    {
+     "name": "sub_80E90D",
+     "size": "2",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448269"
+     }
+    },
+    {
+     "name": "sub_80E90F",
+     "size": "15",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448271"
+     }
+    },
+    {
+     "name": "sub_80E91E",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448286"
+     }
+    },
+    {
+     "name": "sub_80E929",
+     "size": "7",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448297"
+     }
+    },
+    {
+     "name": "sub_80E930",
+     "size": "9",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448304"
+     }
+    },
+    {
+     "name": "sub_80E939",
+     "size": "14",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448313"
+     }
+    },
+    {
+     "name": "sub_80E947",
+     "size": "5",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448327"
+     }
+    },
+    {
+     "name": "sub_80E94C",
+     "size": "12",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448332"
+     }
+    },
+    {
+     "name": "sub_80E958",
+     "size": "29",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448344"
+     }
+    },
+    {
+     "name": "sub_80E975",
+     "size": "14",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448373"
+     }
+    },
+    {
+     "name": "sub_80E983",
+     "size": "37",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448387"
+     }
+    },
+    {
+     "name": "sub_80E9A8",
+     "size": "9",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448424"
+     }
+    },
+    {
+     "name": "sub_80E9B1",
+     "size": "16",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448433"
+     }
+    },
+    {
+     "name": "sub_80E9C1",
+     "size": "43",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448449"
+     }
+    },
+    {
+     "name": "sub_80E9F3",
+     "size": "105",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448499"
+     }
+    },
+    {
+     "name": "sub_80EA6A",
+     "size": "96",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448618"
+     }
+    },
+    {
+     "name": "PlayerOverheatWarn",
+     "size": "46",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448721"
+     }
+    },
+    {
+     "name": "sub_80EAFF",
+     "size": "5",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448767"
+     }
+    },
+    {
+     "name": "sub_80EB04",
+     "size": "8",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448772"
+     }
+    },
+    {
+     "name": "sub_80EB0C",
+     "size": "25",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448780"
+     }
+    },
+    {
+     "name": "sub_80EB25",
+     "size": "10",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448805"
+     }
+    },
+    {
+     "name": "sub_80EB2F",
+     "size": "5",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448815"
+     }
+    },
+    {
+     "name": "sub_80EB34",
+     "size": "5",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448820"
+     }
+    },
+    {
+     "name": "sub_80EB39",
+     "size": "71",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448825"
+     }
+    },
+    {
+     "name": "sub_80EB80",
+     "size": "14",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448896"
+     }
+    },
+    {
+     "name": "sub_80EB8E",
+     "size": "39",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448910"
+     }
+    },
+    {
+     "name": "sub_80EBB5",
+     "size": "12",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448949"
+     }
+    },
+    {
+     "name": "sub_80EBC1",
+     "size": "18",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448961"
+     }
+    },
+    {
+     "name": "sub_80EBD3",
+     "size": "12",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448979"
+     }
+    },
+    {
+     "name": "sub_80EBDF",
+     "size": "261",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448991"
+     }
+    },
+    {
+     "name": "sub_80ECE4",
+     "size": "94",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8449252"
+     }
+    },
+    {
+     "name": "sub_80ED42",
+     "size": "84",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8449346"
+     }
+    },
+    {
+     "name": "sub_80ED96",
+     "size": "28",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8449430"
+     }
+    },
+    {
+     "name": "sub_80EDB2",
+     "size": "4",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8449458"
+     }
+    },
+    {
+     "name": "sub_80EDB6",
+     "size": "10",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8449462"
+     }
+    },
+    {
+     "name": "sub_80EDC0",
+     "size": "4",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8449472"
+     }
+    },
+    {
+     "name": "AddScore",
+     "size": "43",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8449476"
+     }
+    },
+    {
+     "name": "sub_80EDEF",
+     "size": "105",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8449519"
+     }
+    },
+    {
+     "name": "sub_80EE58",
+     "size": "4",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8449624"
+     }
+    },
+    {
+     "name": "sub_80EE5C",
+     "size": "12",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8449628"
+     }
+    },
+    {
+     "name": "sub_80EE68",
+     "size": "54",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8449640"
+     }
+    },
+    {
+     "name": "sub_80FFA0",
+     "size": "1",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8454048"
+     }
+    },
+    {
+     "name": "sub_80FFA1",
+     "size": "4",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8454049"
+     }
+    },
+    {
+     "name": "sub_80FFA5",
+     "size": "4",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8454053"
+     }
+    },
+    {
+     "name": "sub_80FFA9",
+     "size": "4",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8454057"
+     }
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "source_path": "build/s1/asm/bank80.s"
+   }
+  },
+  {
+   "name": "main/bank81",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": "6366",
+    "matched_code": "6366",
+    "matched_code_percent": 100.0,
+    "total_data": "0",
+    "matched_data": "0",
+    "matched_data_percent": 0.0,
+    "total_functions": 101,
+    "matched_functions": 101,
+    "matched_functions_percent": 100.0,
+    "complete_code": "6366",
+    "complete_code_percent": 100.0,
+    "complete_data": "0",
+    "complete_data_percent": 0.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".text",
+     "size": "6366",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [
+    {
+     "name": "sub_818A42",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8489538"
+     }
+    },
+    {
+     "name": "sub_818A4D",
+     "size": "405",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8489549"
+     }
+    },
+    {
+     "name": "sub_818BE2",
+     "size": "63",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8489954"
+     }
+    },
+    {
+     "name": "BlankQueueRowPal2",
+     "size": "18",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8490017"
+     }
+    },
+    {
+     "name": "sub_818C33",
+     "size": "38",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8490035"
+     }
+    },
+    {
+     "name": "SpawnPlayerSpark",
+     "size": "56",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8491818"
+     }
+    },
+    {
+     "name": "sub_819362",
+     "size": "64",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8491874"
+     }
+    },
+    {
+     "name": "sub_8193E2",
+     "size": "98",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8492002"
+     }
+    },
+    {
+     "name": "sub_819464",
+     "size": "20",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8492132"
+     }
+    },
+    {
+     "name": "sub_819480",
+     "size": "1",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8492160"
+     }
+    },
+    {
+     "name": "sub_819481",
+     "size": "61",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8492161"
+     }
+    },
+    {
+     "name": "sub_8194BE",
+     "size": "98",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8492222"
+     }
+    },
+    {
+     "name": "sub_819520",
+     "size": "8",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8492320"
+     }
+    },
+    {
+     "name": "sub_819530",
+     "size": "107",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8492336"
+     }
+    },
+    {
+     "name": "sub_8195A3",
+     "size": "72",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8492451"
+     }
+    },
+    {
+     "name": "StepSpark",
+     "size": "53",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8492526"
+     }
+    },
+    {
+     "name": "sub_819623",
+     "size": "72",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8492579"
+     }
+    },
+    {
+     "name": "sub_81966B",
+     "size": "5",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8492651"
+     }
+    },
+    {
+     "name": "sub_819670",
+     "size": "68",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8492656"
+     }
+    },
+    {
+     "name": "sub_8196B4",
+     "size": "96",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8492724"
+     }
+    },
+    {
+     "name": "sub_819714",
+     "size": "64",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8492820"
+     }
+    },
+    {
+     "name": "sub_819754",
+     "size": "1",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8492884"
+     }
+    },
+    {
+     "name": "sub_819755",
+     "size": "12",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8492885"
+     }
+    },
+    {
+     "name": "RivalDispatch_9761",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8492897"
+     }
+    },
+    {
+     "name": "sub_819778",
+     "size": "84",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8492920"
+     }
+    },
+    {
+     "name": "RivalCountdown_97CC",
+     "size": "22",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8493004"
+     }
+    },
+    {
+     "name": "sub_8197E2",
+     "size": "73",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8493026"
+     }
+    },
+    {
+     "name": "sub_81982B",
+     "size": "39",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8493099"
+     }
+    },
+    {
+     "name": "sub_819852",
+     "size": "228",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8493138"
+     }
+    },
+    {
+     "name": "sub_819956",
+     "size": "1",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8493398"
+     }
+    },
+    {
+     "name": "sub_819957",
+     "size": "116",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8493399"
+     }
+    },
+    {
+     "name": "sub_8199CB",
+     "size": "122",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8493515"
+     }
+    },
+    {
+     "name": "sub_819A8D",
+     "size": "57",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8493709"
+     }
+    },
+    {
+     "name": "sub_819C98",
+     "size": "111",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8494232"
+     }
+    },
+    {
+     "name": "sub_819D0B",
+     "size": "187",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8494347"
+     }
+    },
+    {
+     "name": "sub_819DC6",
+     "size": "155",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8494534"
+     }
+    },
+    {
+     "name": "sub_819E61",
+     "size": "148",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8494689"
+     }
+    },
+    {
+     "name": "ObjectFacing",
+     "size": "41",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8494837"
+     }
+    },
+    {
+     "name": "ApplyVelocityX",
+     "size": "46",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8494878"
+     }
+    },
+    {
+     "name": "ApplyVelocity",
+     "size": "46",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8494924"
+     }
+    },
+    {
+     "name": "sub_819F7A",
+     "size": "18",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8494970"
+     }
+    },
+    {
+     "name": "sub_819F8C",
+     "size": "143",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8494988"
+     }
+    },
+    {
+     "name": "LoadCourse",
+     "size": "154",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8495131"
+     }
+    },
+    {
+     "name": "sub_81A0B5",
+     "size": "113",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8495285"
+     }
+    },
+    {
+     "name": "sub_81A126",
+     "size": "87",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8495398"
+     }
+    },
+    {
+     "name": "sub_81A17D",
+     "size": "104",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8495485"
+     }
+    },
+    {
+     "name": "Random",
+     "size": "35",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8495589"
+     }
+    },
+    {
+     "name": "SetHdmaPreset",
+     "size": "203",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8496672"
+     }
+    },
+    {
+     "name": "sub_81A961",
+     "size": "1",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8497505"
+     }
+    },
+    {
+     "name": "RivalDispatch_B639",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8500793"
+     }
+    },
+    {
+     "name": "RivalTumble_B64A",
+     "size": "52",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8500810"
+     }
+    },
+    {
+     "name": "sub_81B67E",
+     "size": "1",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8500862"
+     }
+    },
+    {
+     "name": "RivalSequence_B67F",
+     "size": "36",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8500863"
+     }
+    },
+    {
+     "name": "RivalDispatch_B6B3",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8500915"
+     }
+    },
+    {
+     "name": "sub_81B6C2",
+     "size": "111",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8500930"
+     }
+    },
+    {
+     "name": "sub_81B731",
+     "size": "113",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8501041"
+     }
+    },
+    {
+     "name": "RivalDispatch_B7A2",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8501154"
+     }
+    },
+    {
+     "name": "RivalWaitRandom_B7B9",
+     "size": "39",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8501177"
+     }
+    },
+    {
+     "name": "RivalAlternate_B7E0",
+     "size": "53",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8501216"
+     }
+    },
+    {
+     "name": "RivalWaitStep_B819",
+     "size": "29",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8501273"
+     }
+    },
+    {
+     "name": "RivalSequence_B836",
+     "size": "55",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8501302"
+     }
+    },
+    {
+     "name": "RivalWaitStep_B879",
+     "size": "29",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8501369"
+     }
+    },
+    {
+     "name": "RivalSequence_B896",
+     "size": "54",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8501398"
+     }
+    },
+    {
+     "name": "RivalDispatch_B8D6",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8501462"
+     }
+    },
+    {
+     "name": "RivalWaitRandom_B8ED",
+     "size": "39",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8501485"
+     }
+    },
+    {
+     "name": "RivalAlternate_B914",
+     "size": "53",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8501524"
+     }
+    },
+    {
+     "name": "RivalPause_B94D",
+     "size": "41",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8501581"
+     }
+    },
+    {
+     "name": "RivalCycle_B976",
+     "size": "56",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8501622"
+     }
+    },
+    {
+     "name": "RivalWaitStep_B9B6",
+     "size": "31",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8501686"
+     }
+    },
+    {
+     "name": "RivalSequence_B9D5",
+     "size": "52",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8501717"
+     }
+    },
+    {
+     "name": "RivalDispatch_BA17",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8501783"
+     }
+    },
+    {
+     "name": "RivalWaitRandom_BA2E",
+     "size": "39",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8501806"
+     }
+    },
+    {
+     "name": "RivalAlternate_BA55",
+     "size": "53",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8501845"
+     }
+    },
+    {
+     "name": "RivalWaitStep_BA8E",
+     "size": "31",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8501902"
+     }
+    },
+    {
+     "name": "RivalSequence_BAAD",
+     "size": "51",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8501933"
+     }
+    },
+    {
+     "name": "RivalWaitStep_BAE8",
+     "size": "29",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8501992"
+     }
+    },
+    {
+     "name": "RivalSequence_BB05",
+     "size": "37",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502021"
+     }
+    },
+    {
+     "name": "RivalDispatch_BB32",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502066"
+     }
+    },
+    {
+     "name": "RivalWaitRandom_BB49",
+     "size": "39",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502089"
+     }
+    },
+    {
+     "name": "RivalAlternate_BB70",
+     "size": "53",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502128"
+     }
+    },
+    {
+     "name": "RivalBlink_BBA9",
+     "size": "59",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502185"
+     }
+    },
+    {
+     "name": "sub_81BBE4",
+     "size": "66",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502244"
+     }
+    },
+    {
+     "name": "RivalWaitStep_BC2E",
+     "size": "29",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502318"
+     }
+    },
+    {
+     "name": "RivalSequence_BC4B",
+     "size": "51",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502347"
+     }
+    },
+    {
+     "name": "RivalDispatch_BC8A",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502410"
+     }
+    },
+    {
+     "name": "RivalWaitRandom_BCA1",
+     "size": "39",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502433"
+     }
+    },
+    {
+     "name": "RivalCycle_BCC8",
+     "size": "54",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502472"
+     }
+    },
+    {
+     "name": "RivalWaitStep_BD06",
+     "size": "29",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502534"
+     }
+    },
+    {
+     "name": "RivalSequence_BD23",
+     "size": "39",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502563"
+     }
+    },
+    {
+     "name": "RivalDispatch_BD52",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502610"
+     }
+    },
+    {
+     "name": "sub_81BD67",
+     "size": "7",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502631"
+     }
+    },
+    {
+     "name": "sub_81BD6E",
+     "size": "101",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502638"
+     }
+    },
+    {
+     "name": "sub_81BDDB",
+     "size": "101",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502747"
+     }
+    },
+    {
+     "name": "sub_81BE4C",
+     "size": "96",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502860"
+     }
+    },
+    {
+     "name": "RivalWalkAway_BECE",
+     "size": "50",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502990"
+     }
+    },
+    {
+     "name": "BsxOpenTimeChannel",
+     "size": "72",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8517644"
+     }
+    },
+    {
+     "name": "BsxPollStream",
+     "size": "222",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8517819"
+     }
+    },
+    {
+     "name": "ResetMinuteFrame",
+     "size": "16",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8518041"
+     }
+    },
+    {
+     "name": "sub_81F9C8",
+     "size": "160",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8518088"
+     }
+    },
+    {
+     "name": "BsxDetect",
+     "size": "25",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8518248"
+     }
+    },
+    {
+     "name": "BsxProbeReceiver",
+     "size": "50",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8518273"
+     }
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "source_path": "build/s1/asm/bank81.s"
+   }
+  },
+  {
+   "name": "data/bank80",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": "0",
+    "matched_code": "0",
+    "matched_code_percent": 0.0,
+    "total_data": "11162",
+    "matched_data": "11162",
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0,
+    "complete_code": "0",
+    "complete_code_percent": 0.0,
+    "complete_data": "11162",
+    "complete_data_percent": 100.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".data",
+     "size": "11162",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "source_path": "build/s1/asm"
+   }
+  },
+  {
+   "name": "data/bank81",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": "0",
+    "matched_code": "0",
+    "matched_code_percent": 0.0,
+    "total_data": "26402",
+    "matched_data": "26402",
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0,
+    "complete_code": "0",
+    "complete_code_percent": 0.0,
+    "complete_data": "26402",
+    "complete_data_percent": 100.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".data",
+     "size": "26402",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "source_path": "build/s1/asm"
+   }
+  },
+  {
+   "name": "data/bank82",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": "0",
+    "matched_code": "0",
+    "matched_code_percent": 0.0,
+    "total_data": "32768",
+    "matched_data": "32768",
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0,
+    "complete_code": "0",
+    "complete_code_percent": 0.0,
+    "complete_data": "32768",
+    "complete_data_percent": 100.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".data",
+     "size": "32768",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "source_path": "build/s1/asm"
+   }
+  },
+  {
+   "name": "data/bank83",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": "0",
+    "matched_code": "0",
+    "matched_code_percent": 0.0,
+    "total_data": "32768",
+    "matched_data": "32768",
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0,
+    "complete_code": "0",
+    "complete_code_percent": 0.0,
+    "complete_data": "32768",
+    "complete_data_percent": 100.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".data",
+     "size": "32768",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "source_path": "build/s1/asm"
+   }
+  },
+  {
+   "name": "data/bank84",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": "0",
+    "matched_code": "0",
+    "matched_code_percent": 0.0,
+    "total_data": "32768",
+    "matched_data": "32768",
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0,
+    "complete_code": "0",
+    "complete_code_percent": 0.0,
+    "complete_data": "32768",
+    "complete_data_percent": 100.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".data",
+     "size": "32768",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "source_path": "build/s1/asm"
+   }
+  },
+  {
+   "name": "data/bank85",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": "0",
+    "matched_code": "0",
+    "matched_code_percent": 0.0,
+    "total_data": "32768",
+    "matched_data": "32768",
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0,
+    "complete_code": "0",
+    "complete_code_percent": 0.0,
+    "complete_data": "32768",
+    "complete_data_percent": 100.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".data",
+     "size": "32768",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "source_path": "build/s1/asm"
+   }
+  },
+  {
+   "name": "data/bank86",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": "0",
+    "matched_code": "0",
+    "matched_code_percent": 0.0,
+    "total_data": "32768",
+    "matched_data": "32768",
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0,
+    "complete_code": "0",
+    "complete_code_percent": 0.0,
+    "complete_data": "32768",
+    "complete_data_percent": 100.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".data",
+     "size": "32768",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "source_path": "build/s1/asm"
+   }
+  },
+  {
+   "name": "data/bank87",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": "0",
+    "matched_code": "0",
+    "matched_code_percent": 0.0,
+    "total_data": "32768",
+    "matched_data": "32768",
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0,
+    "complete_code": "0",
+    "complete_code_percent": 0.0,
+    "complete_data": "32768",
+    "complete_data_percent": 100.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".data",
+     "size": "32768",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "source_path": "build/s1/asm"
+   }
+  },
+  {
+   "name": "data/bank88",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": "0",
+    "matched_code": "0",
+    "matched_code_percent": 0.0,
+    "total_data": "32768",
+    "matched_data": "32768",
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0,
+    "complete_code": "0",
+    "complete_code_percent": 0.0,
+    "complete_data": "32768",
+    "complete_data_percent": 100.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".data",
+     "size": "32768",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "source_path": "build/s1/asm"
+   }
+  },
+  {
+   "name": "data/bank89",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": "0",
+    "matched_code": "0",
+    "matched_code_percent": 0.0,
+    "total_data": "32768",
+    "matched_data": "32768",
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0,
+    "complete_code": "0",
+    "complete_code_percent": 0.0,
+    "complete_data": "32768",
+    "complete_data_percent": 100.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".data",
+     "size": "32768",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "source_path": "build/s1/asm"
+   }
+  },
+  {
+   "name": "data/bank8A",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": "0",
+    "matched_code": "0",
+    "matched_code_percent": 0.0,
+    "total_data": "32768",
+    "matched_data": "32768",
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0,
+    "complete_code": "0",
+    "complete_code_percent": 0.0,
+    "complete_data": "32768",
+    "complete_data_percent": 100.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".data",
+     "size": "32768",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "source_path": "build/s1/asm"
+   }
+  },
+  {
+   "name": "data/bank8B",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": "0",
+    "matched_code": "0",
+    "matched_code_percent": 0.0,
+    "total_data": "32768",
+    "matched_data": "32768",
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0,
+    "complete_code": "0",
+    "complete_code_percent": 0.0,
+    "complete_data": "32768",
+    "complete_data_percent": 100.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".data",
+     "size": "32768",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "source_path": "build/s1/asm"
+   }
+  },
+  {
+   "name": "data/bank8C",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": "0",
+    "matched_code": "0",
+    "matched_code_percent": 0.0,
+    "total_data": "32768",
+    "matched_data": "32768",
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0,
+    "complete_code": "0",
+    "complete_code_percent": 0.0,
+    "complete_data": "32768",
+    "complete_data_percent": 100.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".data",
+     "size": "32768",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "source_path": "build/s1/asm"
+   }
+  },
+  {
+   "name": "data/bank8D",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": "0",
+    "matched_code": "0",
+    "matched_code_percent": 0.0,
+    "total_data": "32768",
+    "matched_data": "32768",
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0,
+    "complete_code": "0",
+    "complete_code_percent": 0.0,
+    "complete_data": "32768",
+    "complete_data_percent": 100.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".data",
+     "size": "32768",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "source_path": "build/s1/asm"
+   }
+  },
+  {
+   "name": "data/bank8E",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": "0",
+    "matched_code": "0",
+    "matched_code_percent": 0.0,
+    "total_data": "32768",
+    "matched_data": "32768",
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0,
+    "complete_code": "0",
+    "complete_code_percent": 0.0,
+    "complete_data": "32768",
+    "complete_data_percent": 100.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".data",
+     "size": "32768",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "source_path": "build/s1/asm"
+   }
+  },
+  {
+   "name": "data/bank8F",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": "0",
+    "matched_code": "0",
+    "matched_code_percent": 0.0,
+    "total_data": "32768",
+    "matched_data": "32768",
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0,
+    "complete_code": "0",
+    "complete_code_percent": 0.0,
+    "complete_data": "32768",
+    "complete_data_percent": 100.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".data",
+     "size": "32768",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "source_path": "build/s1/asm"
+   }
+  },
+  {
+   "name": "data/bank90",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": "0",
+    "matched_code": "0",
+    "matched_code_percent": 0.0,
+    "total_data": "32768",
+    "matched_data": "32768",
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0,
+    "complete_code": "0",
+    "complete_code_percent": 0.0,
+    "complete_data": "32768",
+    "complete_data_percent": 100.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".data",
+     "size": "32768",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "source_path": "build/s1/asm"
+   }
+  },
+  {
+   "name": "data/bank91",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": "0",
+    "matched_code": "0",
+    "matched_code_percent": 0.0,
+    "total_data": "32768",
+    "matched_data": "32768",
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0,
+    "complete_code": "0",
+    "complete_code_percent": 0.0,
+    "complete_data": "32768",
+    "complete_data_percent": 100.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".data",
+     "size": "32768",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "source_path": "build/s1/asm"
+   }
+  },
+  {
+   "name": "data/bank92",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": "0",
+    "matched_code": "0",
+    "matched_code_percent": 0.0,
+    "total_data": "32768",
+    "matched_data": "32768",
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0,
+    "complete_code": "0",
+    "complete_code_percent": 0.0,
+    "complete_data": "32768",
+    "complete_data_percent": 100.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".data",
+     "size": "32768",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "source_path": "build/s1/asm"
+   }
+  },
+  {
+   "name": "data/bank93",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": "0",
+    "matched_code": "0",
+    "matched_code_percent": 0.0,
+    "total_data": "32768",
+    "matched_data": "32768",
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0,
+    "complete_code": "0",
+    "complete_code_percent": 0.0,
+    "complete_data": "32768",
+    "complete_data_percent": 100.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".data",
+     "size": "32768",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "source_path": "build/s1/asm"
+   }
+  },
+  {
+   "name": "data/bank94",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": "0",
+    "matched_code": "0",
+    "matched_code_percent": 0.0,
+    "total_data": "32768",
+    "matched_data": "32768",
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0,
+    "complete_code": "0",
+    "complete_code_percent": 0.0,
+    "complete_data": "32768",
+    "complete_data_percent": 100.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".data",
+     "size": "32768",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "source_path": "build/s1/asm"
+   }
+  },
+  {
+   "name": "data/bank95",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": "0",
+    "matched_code": "0",
+    "matched_code_percent": 0.0,
+    "total_data": "32768",
+    "matched_data": "32768",
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0,
+    "complete_code": "0",
+    "complete_code_percent": 0.0,
+    "complete_data": "32768",
+    "complete_data_percent": 100.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".data",
+     "size": "32768",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "source_path": "build/s1/asm"
+   }
+  },
+  {
+   "name": "data/bank96",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": "0",
+    "matched_code": "0",
+    "matched_code_percent": 0.0,
+    "total_data": "32768",
+    "matched_data": "32768",
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0,
+    "complete_code": "0",
+    "complete_code_percent": 0.0,
+    "complete_data": "32768",
+    "complete_data_percent": 100.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".data",
+     "size": "32768",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "source_path": "build/s1/asm"
+   }
+  },
+  {
+   "name": "data/bank97",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": "0",
+    "matched_code": "0",
+    "matched_code_percent": 0.0,
+    "total_data": "32768",
+    "matched_data": "32768",
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0,
+    "complete_code": "0",
+    "complete_code_percent": 0.0,
+    "complete_data": "32768",
+    "complete_data_percent": 100.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".data",
+     "size": "32768",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "source_path": "build/s1/asm"
+   }
+  },
+  {
+   "name": "data/bank98",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": "0",
+    "matched_code": "0",
+    "matched_code_percent": 0.0,
+    "total_data": "32768",
+    "matched_data": "32768",
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0,
+    "complete_code": "0",
+    "complete_code_percent": 0.0,
+    "complete_data": "32768",
+    "complete_data_percent": 100.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".data",
+     "size": "32768",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "source_path": "build/s1/asm"
+   }
+  },
+  {
+   "name": "data/bank99",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": "0",
+    "matched_code": "0",
+    "matched_code_percent": 0.0,
+    "total_data": "32768",
+    "matched_data": "32768",
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0,
+    "complete_code": "0",
+    "complete_code_percent": 0.0,
+    "complete_data": "32768",
+    "complete_data_percent": 100.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".data",
+     "size": "32768",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "source_path": "build/s1/asm"
+   }
+  },
+  {
+   "name": "data/bank9A",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": "0",
+    "matched_code": "0",
+    "matched_code_percent": 0.0,
+    "total_data": "32768",
+    "matched_data": "32768",
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0,
+    "complete_code": "0",
+    "complete_code_percent": 0.0,
+    "complete_data": "32768",
+    "complete_data_percent": 100.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".data",
+     "size": "32768",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "source_path": "build/s1/asm"
+   }
+  },
+  {
+   "name": "data/bank9B",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": "0",
+    "matched_code": "0",
+    "matched_code_percent": 0.0,
+    "total_data": "32768",
+    "matched_data": "32768",
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0,
+    "complete_code": "0",
+    "complete_code_percent": 0.0,
+    "complete_data": "32768",
+    "complete_data_percent": 100.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".data",
+     "size": "32768",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "source_path": "build/s1/asm"
+   }
+  },
+  {
+   "name": "data/bank9C",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": "0",
+    "matched_code": "0",
+    "matched_code_percent": 0.0,
+    "total_data": "32768",
+    "matched_data": "32768",
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0,
+    "complete_code": "0",
+    "complete_code_percent": 0.0,
+    "complete_data": "32768",
+    "complete_data_percent": 100.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".data",
+     "size": "32768",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "source_path": "build/s1/asm"
+   }
+  },
+  {
+   "name": "data/bank9D",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": "0",
+    "matched_code": "0",
+    "matched_code_percent": 0.0,
+    "total_data": "32768",
+    "matched_data": "32768",
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0,
+    "complete_code": "0",
+    "complete_code_percent": 0.0,
+    "complete_data": "32768",
+    "complete_data_percent": 100.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".data",
+     "size": "32768",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "source_path": "build/s1/asm"
+   }
+  },
+  {
+   "name": "data/bank9E",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": "0",
+    "matched_code": "0",
+    "matched_code_percent": 0.0,
+    "total_data": "32768",
+    "matched_data": "32768",
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0,
+    "complete_code": "0",
+    "complete_code_percent": 0.0,
+    "complete_data": "32768",
+    "complete_data_percent": 100.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".data",
+     "size": "32768",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "source_path": "build/s1/asm"
+   }
+  },
+  {
+   "name": "data/bank9F",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": "0",
+    "matched_code": "0",
+    "matched_code_percent": 0.0,
+    "total_data": "32768",
+    "matched_data": "32768",
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0,
+    "complete_code": "0",
+    "complete_code_percent": 0.0,
+    "complete_data": "32768",
+    "complete_data_percent": 100.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".data",
+     "size": "32768",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "source_path": "build/s1/asm"
+   }
+  }
+ ],
+ "version": 2,
+ "categories": []
+}

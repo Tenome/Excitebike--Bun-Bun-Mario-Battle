@@ -1,0 +1,34 @@
+name: Progress report
+
+# The ROMs cannot be on GitHub, so the objdiff-format reports are generated
+# locally and committed:
+#   python tools/report.py s1        (s2, s3, s4)  assembly: byte-exact rebuild
+#   python tools/report.py s1 --c    (s4)          C: hand-written and lifted routines
+# This job publishes them as the artifacts s1_report ... s4_report and
+# s1_c_report, s4_c_report, which ByteMatch (https://bytematch.dev/) reads from
+# CI runs on master. The reports hold routine names, addresses, sizes and match
+# percentages only (no game bytes).
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: [s1, s2, s3, s4, s1_c, s4_c]
+    env:
+      VERSION: ${{ matrix.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check the report
+        run: python3 -c "import json; r=json.load(open('progress/${VERSION}/report.json')); m=r['measures']; print(m['matched_functions'], 'of', m['total_functions'], 'routines,', m['matched_code_percent'], '% of code matched,', m['fuzzy_match_percent'], '% fuzzy')"
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.VERSION }}_report
+          path: progress/${{ env.VERSION }}/report.json
