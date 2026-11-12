@@ -202,3 +202,7 @@
 80CE96  1 1  mem+X,Y,C,V     PlaceRiderShadow
 80E4CB  1 1  mem+X,Y,C,V     ShowJumpResult
 819DE4  1 1  mem+Y,V         DrawBigBall
+80DE5E  1 1  mem+X,Y,C,V     BonusResultStep
+81C3BA  1 1  mem+X,Y,C,V     DrawJumpCrowd
+80B65B  1 1  mem+X,Y,C,V     StartBonusResult
+80A76C  1 1  mem+X,Y,C,V     DrawBonusPickup

@@ -3254,3 +3254,294 @@ all4:
     wr8(ABS(0x189E), (u8)A); wr8(ABS(0x189F), (u8)A);
     ret();
 }
+
+/* $80:DE5E BonusResultStep (RTS): when the timer $88 runs out keep the
+ * best count ($1E88 = max with $09C5); with fewer than 10 tries left
+ * ($1E87) queue the result banner ($80:DF26 at VRAM $1950) and the count
+ * box at VRAM $1956 ("1 0000" for a full score $09C9, else the count with
+ * blank leading digits), then wait $0180 frames and step $77. */
+void BonusResultStep_m1x1(void)
+{
+    u8 t = dec8(rd8(DP(0x88)));
+    wr8(DP(0x88), t);
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABS(0x09C5)));
+    cmp8((u8)A, rd8(ABS(0x1E88)));
+    if (fc) wr8(ABS(0x1E88), (u8)A);
+    lda8(rd8(ABS(0x1E87)));
+    int show = 1;
+    if (!fn) { cmp8((u8)A, 0x0A); show = !fc; }
+    if (show) {
+        rep(0x20);
+        lda16(0x1950); wr16(DP(0x00), 0x1950);
+        lda16(0xDF26); wr16(DP(0x02), 0xDF26);
+        sep(0x20);
+        push16(0xDE8C); VramQueueTiles20_m1x1();
+        rep(0x20);
+        lda16(0x1956); wr16(DP(0x00), 0x1956);
+        lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+        sep(0x20);
+        lda8(0x00);
+        wr8(ABS(0x03D0), 0x00);
+        wr8(ABS(0x03D0), inc8(rd8(ABS(0x03D0))));
+        for (u16 a = 0x03D1; a <= 0x03D4; a++) wr8(ABS(a), 0x00);
+        lda8(0x10);
+        wr8(ABS(0x03D5), 0x10);
+        wr8(ABS(0x03D5), inc8(rd8(ABS(0x03D5))));
+        for (u16 a = 0x03D6; a <= 0x03D9; a++) wr8(ABS(a), 0x10);
+        lda8(rd8(ABS(0x09C5)));
+        cmp8((u8)A, rd8(ABS(0x09C9)));
+        if (!fz) {
+            lda8(0xFF);
+            wr8(ABS(0x03D0), 0xFF);
+            wr8(ABS(0x03D5), 0xFF);
+            ldy8(0x00);
+            lda8(rd8(ABS(0x09C5)));
+            for (;;) {
+                cmp8((u8)A, 0x0A);
+                if (!fc) break;
+                sbc8(0x0A);
+                Y = inc8((u8)Y);
+                WAIT_TICK();
+            }
+            wr8(ABS(0x03D2), (u8)A);
+            ora8(0x10); wr8(ABS(0x03D7), (u8)A);
+            lda8((u8)Y);
+            wr8(ABS(0x03D1), (u8)A);
+            ora8(0x10); wr8(ABS(0x03D6), (u8)A);
+            lda8(rd8(ABS(0x03D1)));
+            if (fz) {
+                lda8(0xFF);
+                wr8(ABS(0x03D1), 0xFF); wr8(ABS(0x03D6), 0xFF);
+                lda8(rd8(ABS(0x03D2)));
+                if (fz) {
+                    lda8(0xFF);
+                    wr8(ABS(0x03D2), 0xFF); wr8(ABS(0x03D3), 0xFF);
+                    wr8(ABS(0x03D7), 0xFF); wr8(ABS(0x03D8), 0xFF);
+                }
+            }
+        }
+        lda8(0x25); wr8(ABS(0x03CF), 0x25);
+        push16(0xDF19); VramQueueTiles20_m1x1();
+    }
+    rep(0x20);
+    lda16(0x0180); wr16(DP(0x88), 0x0180);
+    sep(0x20);
+    wr8(DP(0x77), inc8(rd8(DP(0x77))));
+    ret();
+}
+
+/* $81:C3BA DrawJumpCrowd (RTS): the jump-contest flags. At the start
+ * ($3C = 1) begin the countdown ($C3 + 1, $8A = $40 unless $92 is set) and
+ * set $92 = 1, $3C = 2. Before the run ($92 clear) every 16 frames of $3C
+ * ping the APU. Then draw the eight flag poles ($0936 - scroll $9A, Y from
+ * $81:C461, tile $E1-$E3 by $3C, attribute $3F) or retire ones that left
+ * the screen ($025E = 1); with $54 set, $3C = $B5. */
+void DrawJumpCrowd_m1x1(void)
+{
+    lda8(rd8(DP(0x3C)));
+    cmp8((u8)A, 0x01);
+    if (fz) {
+        lda8(rd8(DP(0x92)));
+        if (fz) {
+            wr8(DP(0xC3), inc8(rd8(DP(0xC3))));
+            lda8(0x40); wr8(DP(0x8A), 0x40);
+        }
+        lda8(0x01); wr8(DP(0x92), 0x01);
+        lda8(0x02); wr8(DP(0x3C), 0x02);
+    } else {
+        Y = rd8(DP(0x92)); nz8((u8)Y);
+        if (!fz) { ret(); return; }
+        Y = rd8(DP(0x63)); nz8((u8)Y);
+        and8(0x0F);
+        if (fz) { ldy8(0x01); wr8(ABS(0x2142), 0x01); }
+    }
+    ldy8(0xE1);
+    lda8(rd8(DP(0x3C)));
+    cmp8((u8)A, 0x10);
+    if (!fc) {
+        ldy8(0xE2);
+        cmp8((u8)A, 0x08);
+        if (!fc) ldy8(0xE3);
+    }
+    wr8(DP(0x00), (u8)Y);
+    ldy8(0x07);
+    do {
+        lda8(rd8(ABSY(0x025E)));
+        if (fz) {
+            wr8(DP(0x08), 0);
+            lda8(rd8(ABSY(0x0936)));
+            fc = 1;
+            sbc8(rd8(ABS(0x009A)));
+            wr8(DP(0x01), (u8)A);
+            cmp8((u8)A, 0xF0);
+            if (fc) {
+                cmp8((u8)A, 0xF9);
+                if (fc) wr8(DP(0x08), inc8(rd8(DP(0x08))));
+                lda8(0x01);
+                wr8(ABSY(0x025E), 0x01);
+            } else {
+                lda8((u8)Y);
+                lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A));
+                X = (u8)A; nz8((u8)X);
+                lda8(rd8(ABSY(0xC461)));
+                wr8(ABSX(0x17A1), (u8)A);
+                fc = 0; adc8(0x08);
+                wr8(ABSX(0x17A5), (u8)A);
+                lda8(rd8(DP(0x00)));
+                wr8(ABSX(0x17A2), (u8)A);
+                ora8(0x10);
+                wr8(ABSX(0x17A6), (u8)A);
+                lda8(0x3F);
+                wr8(ABSX(0x17A3), 0x3F); wr8(ABSX(0x17A7), 0x3F);
+                lda8(rd8(DP(0x01)));
+                wr8(ABSX(0x17A0), (u8)A); wr8(ABSX(0x17A4), (u8)A);
+                lda8((u8)X);
+                lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
+                X = (u8)A; nz8((u8)X);
+                lda8(rd8(DP(0x08)));
+                wr8(ABSX(0x1888), (u8)A);
+            }
+        }
+        Y = dec8((u8)Y);
+    } while (!fn);
+    lda8(rd8(DP(0x54)));
+    if (!fz) { lda8(0xB5); wr8(DP(0x3C), 0xB5); }
+    ret();
+}
+
+/* $80:B65B StartBonusResult (RTS): screen setup as in practice mode (BG
+ * maps, $1905 = $17, the HDMA scroll channels), the try count $1E95 at
+ * VRAM $1957, and when any bonus points were scored ($1E92-$1E94) their
+ * total as up to three digits at VRAM $19B3; colour math ($190D $41,
+ * COLDATA $E0) and sound 3. */
+void StartBonusResult_m1x1(void)
+{
+    lda8(0x01); wr8(ABS(0x2107), 0x01); wr8(ABS(0x1900), 0x01);
+    lda8(0x09); wr8(ABS(0x2108), 0x09);
+    lda8(0x17); wr8(ABS(0x1905), 0x17);
+    wr8(DP(0x86), 0);
+    wr8(DP(0x87), 0);
+    push8(0x80); push16(0xB674); SetupHdmaChannels_m1x1();
+    lda8(0x1A); wr8(ABS(0x2109), 0x1A);
+    lda8(0x44); wr8(ABS(0x210B), 0x44);
+    lda8(0x01); wr8(ABS(0x210C), 0x01);
+    lda8(rd8(ABS(0x1E95)));
+    wr8(ABS(0x03D0), (u8)A);
+    ora8(0x10); wr8(ABS(0x03D1), (u8)A);
+    lda8(0x21); wr8(ABS(0x03CF), 0x21);
+    rep(0x20);
+    lda16(0x1957); wr16(DP(0x00), 0x1957);
+    lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+    sep(0x20);
+    push16(0xB6A4); VramQueueTiles20_m1x1();
+    lda8(rd8(ABS(0x1E92)));
+    ora8(rd8(ABS(0x1E93)));
+    ora8(rd8(ABS(0x1E94)));
+    if (!fz) {
+        lda8(rd8(ABS(0x1E94)));
+        ldy8(0x00);
+        for (;;) { cmp8((u8)A, 0x0A); if (!fc) break; sbc8(0x0A); Y = inc8((u8)Y); WAIT_TICK(); }
+        wr8(ABS(0x03D2), (u8)A);
+        ora8(0x10); wr8(ABS(0x03D6), (u8)A);
+        lda8((u8)Y);
+        fc = 0; adc8(rd8(ABS(0x1E93)));
+        ldy8(0x00);
+        for (;;) { cmp8((u8)A, 0x0A); if (!fc) break; sbc8(0x0A); Y = inc8((u8)Y); WAIT_TICK(); }
+        wr8(ABS(0x03D1), (u8)A);
+        ora8(0x10); wr8(ABS(0x03D5), (u8)A);
+        lda8((u8)Y);
+        fc = 0; adc8(rd8(ABS(0x1E92)));
+        wr8(ABS(0x03D0), (u8)A);
+        ora8(0x10); wr8(ABS(0x03D4), (u8)A);
+        lda8(0x00); wr8(ABS(0x03D3), 0x00);
+        ora8(0x10); wr8(ABS(0x03D7), (u8)A);
+        lda8(rd8(ABS(0x03D0)));
+        if (fz) {
+            lda8(0xFF);
+            wr8(ABS(0x03D0), 0xFF); wr8(ABS(0x03D4), 0xFF);
+            lda8(rd8(ABS(0x03D1)));
+            if (fz) {
+                lda8(0xFF);
+                wr8(ABS(0x03D1), 0xFF); wr8(ABS(0x03D5), 0xFF);
+            }
+        }
+        lda8(0x24); wr8(ABS(0x03CF), 0x24);
+        rep(0x20);
+        lda16(0x19B3); wr16(DP(0x00), 0x19B3);
+        lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+        sep(0x20);
+        push16(0xB724); VramQueueTiles20_m1x1();
+    }
+    lda8(0x41); wr8(ABS(0x190D), 0x41);
+    lda8(0xE0); wr8(ABS(0x2132), 0xE0);
+    lda8(0x03);
+    push8(0x80); push16(0xB734); QueueSoundB_m1x1();
+    ret();
+}
+
+/* Queue the 2-tile pair `t0`/`t1` (tables by $B7) for the track column
+ * $0266 - $10 into the BG map at `bases` ($80:A84F by 2 * $B7). */
+static void queue_bonus_tiles(u16 t0, u16 t1)
+{
+    rep(0x20);
+    lda16(rd16(ABS(0x0266)));
+    fc = 1; sbc16(rd16(DP(0x10)));
+    and16(0x0020);
+    for (int i = 0; i < 5; i++) lda16(asl16(A));
+    wr16(DP(0x00), A);
+    lda16(rd16(ABS(0x0266)));
+    fc = 1; sbc16(rd16(DP(0x10)));
+    and16(0x001F);
+    fc = 0; adc16(rd16(DP(0x00)));
+    fc = 0; adc16(rd16(ABSX(0xA84F)));
+    wr16(DP(0x00), A);
+    lda16(0x0018); wr16(DP(0x02), 0x0018);
+    sep(0x20);
+    X = rd8(DP(0xB7)); nz8((u8)X);
+    lda8(0x21); wr8(DP(0x18), 0x21);
+    lda8(rd8(ABSX(t0))); wr8(DP(0x19), (u8)A);
+    lda8(rd8(ABSX(t1))); wr8(DP(0x1A), (u8)A);
+    lda8(0x08); wr8(DP(0x0F), 0x08);
+}
+
+/* $80:A76C DrawBonusPickup (RTL): when an item was hit ($B7), redraw the
+ * two map cells behind it (one or two columns back by the tile under the
+ * player, $80:A831 rows and $80:A82C markers) with the tiles from
+ * $80:A83B/$80:A840 and $80:A845/$80:A84A, then clear $B7. */
+void DrawBonusPickup_m1x1(void)
+{
+    push8((u8)X);
+    lda8(rd8(DP(0xB7)));
+    if (fz) { X = pull8(); nz8((u8)X); retl(); return; }
+    wr8(DP(0x10), 0);
+    wr8(DP(0x11), 0);
+    lda8(rd8(DP(0xB7)));
+    lda8(asl8((u8)A));
+    X = (u8)A; nz8((u8)X);
+    rep(0x20);
+    lda16(rd16(ABSX(0xA831)));
+    wr16(DP(0x00), A);
+    sep(0x20);
+    Y = rd8(ABS(0x0266)); nz8((u8)Y);
+    lda8(rd8((((u32)DB << 16) + rd16(DP(0x00)) + Y) & 0xFFFFFF));
+    Y = rd8(ABS(0x00B7)); nz8((u8)Y);
+    cmp8((u8)A, rd8(ABSY(0xA82C)));
+    if (!fz) {
+        cmp8((u8)A, 0x3C);
+        if (!fz) cmp8((u8)A, 0x3B);
+        if (fz) wr8(DP(0x10), inc8(rd8(DP(0x10))));
+    }
+    wr8(DP(0x10), inc8(rd8(DP(0x10))));
+    queue_bonus_tiles(0xA83B, 0xA840);
+    push16(0xA7DF); VramQueueTiles_m1x1();
+    wr8(DP(0x10), dec8(rd8(DP(0x10))));
+    lda8(rd8(DP(0xB7)));
+    lda8(asl8((u8)A));
+    X = (u8)A; nz8((u8)X);
+    queue_bonus_tiles(0xA845, 0xA84A);
+    push16(0xA827); VramQueueTiles_m1x1();
+    wr8(DP(0xB7), 0);
+    X = pull8(); nz8((u8)X);
+    retl();
+}

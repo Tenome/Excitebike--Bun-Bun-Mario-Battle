@@ -561,6 +561,11 @@ BRIDGE_DYN(HleHand_QueueTileBlock, QueueTileBlock_m1x1, tile_block_cost())
 BRIDGE(HleHand_PlaceRiderShadow, PlaceRiderShadow_m1x1, 50)
 BRIDGE(HleHand_ShowJumpResult, ShowJumpResult_m1x1, 1540)
 BRIDGE(HleHand_DrawBigBall, DrawBigBall_m1x1, 90)
+/* c/hand/s4/objects.c, part 10 */
+BRIDGE_DYN(HleHand_BonusResultStep, BonusResultStep_m1x1, g_ram[0x88] == 1 ? 2600 : 10)
+BRIDGE(HleHand_DrawJumpCrowd, DrawJumpCrowd_m1x1, 250)
+BRIDGE(HleHand_StartBonusResult, StartBonusResult_m1x1, 2700)
+BRIDGE_DYN(HleHand_DrawBonusPickup, DrawBonusPickup_m1x1, g_ram[0xB7] ? 2600 : 15)
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)

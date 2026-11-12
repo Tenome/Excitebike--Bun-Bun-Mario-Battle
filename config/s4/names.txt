@@ -219,3 +219,7 @@
 80CE96 PlaceRiderShadow
 80E4CB ShowJumpResult
 819DE4 DrawBigBall
+80DE5E BonusResultStep
+81C3BA DrawJumpCrowd
+80B65B StartBonusResult
+80A76C DrawBonusPickup

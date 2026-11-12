@@ -1,15 +1,15 @@
 {
  "measures": {
-  "fuzzy_match_percent": 67.345,
+  "fuzzy_match_percent": 68.3983,
   "total_code": "36930",
-  "matched_code": "12944",
-  "matched_code_percent": 35.0501,
+  "matched_code": "13722",
+  "matched_code_percent": 37.1568,
   "total_data": "0",
   "matched_data": "0",
   "matched_data_percent": 0.0,
   "total_functions": 532,
-  "matched_functions": 200,
-  "matched_functions_percent": 37.594,
+  "matched_functions": 204,
+  "matched_functions_percent": 38.3459,
   "complete_code": "0",
   "complete_code_percent": 0.0,
   "complete_data": "0",
@@ -21,16 +21,16 @@
   {
    "name": "main/bank80",
    "measures": {
-    "fuzzy_match_percent": 66.0553,
+    "fuzzy_match_percent": 67.2936,
     "total_code": "24671",
-    "matched_code": "8055",
-    "matched_code_percent": 32.6497,
+    "matched_code": "8666",
+    "matched_code_percent": 35.1263,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 357,
-    "matched_functions": 118,
-    "matched_functions_percent": 33.0532,
+    "matched_functions": 121,
+    "matched_functions_percent": 33.8936,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -42,7 +42,7 @@
     {
      "name": ".text",
      "size": "24671",
-     "fuzzy_match_percent": 66.0553
+     "fuzzy_match_percent": 67.2936
     }
    ],
    "functions": [
@@ -671,9 +671,9 @@
      }
     },
     {
-     "name": "sub_80A76C",
+     "name": "DrawBonusPickup",
      "size": "192",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8431468"
      }
@@ -1023,9 +1023,9 @@
      }
     },
     {
-     "name": "sub_80B65B",
+     "name": "StartBonusResult",
      "size": "219",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8435291"
      }
@@ -1943,9 +1943,9 @@
      }
     },
     {
-     "name": "sub_80DE5E",
+     "name": "BonusResultStep",
      "size": "200",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8445534"
      }
@@ -2911,16 +2911,16 @@
   {
    "name": "main/bank81",
    "measures": {
-    "fuzzy_match_percent": 71.3371,
+    "fuzzy_match_percent": 72.3277,
     "total_code": "8429",
-    "matched_code": "3597",
-    "matched_code_percent": 42.6741,
+    "matched_code": "3764",
+    "matched_code_percent": 44.6554,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 137,
-    "matched_functions": 65,
-    "matched_functions_percent": 47.4453,
+    "matched_functions": 66,
+    "matched_functions_percent": 48.1752,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -2932,7 +2932,7 @@
     {
      "name": ".text",
      "size": "8429",
-     "fuzzy_match_percent": 71.3371
+     "fuzzy_match_percent": 72.3277
     }
    ],
    "functions": [
@@ -3753,9 +3753,9 @@
      }
     },
     {
-     "name": "sub_81C3BA",
+     "name": "DrawJumpCrowd",
      "size": "167",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8504250"
      }
