@@ -363,6 +363,28 @@ BRIDGE(HleHand_Reach2,            Reach2_m1x1,            20)
 BRIDGE(HleHand_CollectCoin,       CollectCoin_m1x1,       400)
 BRIDGE(HleHand_CoinMilestone,     CoinMilestone_m1x1,     100)
 BRIDGE(HleHand_RandomB,           RandomB_m1x1,           60)
+/* small Gen B leaves (c/hand/s4/leaves.c). The cycle figure is charged at 8
+ * master cycles each, while code in the FastROM banks ($80+) runs at 6, so
+ * a routine called in a hot loop needs (CPU cycles * 6 / 8): ReadStreamByte
+ * (25 CPU cycles, once per byte of the graphics decompressor) is 19; at 20
+ * or more the decompressor ends a frame late and the race drifts. */
+BRIDGE(HleHand_QueueNameplate, QueueNameplate_m1x1, 1240)
+BRIDGE(HleHand_QueueResultsRow, QueueResultsRow_m1x1, 40)
+BRIDGE(HleHand_FadeApuVolume, FadeApuVolume_m1x1, 30)
+BRIDGE(HleHand_ReadStreamByte, ReadStreamByte_m1x0, 19)
+BRIDGE(HleHand_AddSpeedToX, AddSpeedToX_m1x1, 40)
+BRIDGE(HleHand_BlankQueueRowB, BlankQueueRowB_m1x1, 250)
+BRIDGE(HleHand_StepAnimTimer, StepAnimTimer_m1x1, 40)
+BRIDGE(HleHand_DispatchBy85B, DispatchBy85B_m1x1, 40)
+BRIDGE(HleHand_ScrollByPlayerSpeed, ScrollByPlayerSpeed_m1x1, 35)
+BRIDGE(HleHand_EndAtBonusMinute, EndAtBonusMinute_m1x1, 25)
+BRIDGE(HleHand_ScrollJumpRider, ScrollJumpRider_m1x1, 40)
+BRIDGE(HleHand_DispatchByDistance, DispatchByDistance_m1x1, 90)
+BRIDGE(HleHand_SetJumpBanner, SetJumpBanner_m1x1, 40)
+BRIDGE(HleHand_AddBcdDigits, AddBcdDigits_m1x1, 150)
+BRIDGE(HleHand_ObjectAdvance8, ObjectAdvance8_m1x1, 45)
+BRIDGE(HleHand_ObjectAdvance20, ObjectAdvance20_m1x1, 45)
+BRIDGE(HleHand_ObjectAdvance80, ObjectAdvance80_m1x1, 45)
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)

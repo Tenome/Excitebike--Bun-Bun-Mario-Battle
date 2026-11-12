@@ -83,3 +83,20 @@
 819FF7 ApplyVelocityX        # from s1 819F1E
 8193FE SpawnPlayerSpark      # from s1 81932A
 8196C2 StepSpark             # from s1 8195EE
+80DE3D QueueNameplate
+80A650 QueueResultsRow
+81C64E FadeApuVolume
+828CC5 ReadStreamByte
+80BCF3 AddSpeedToX
+80EE8B BlankQueueRowB
+8198A0 StepAnimTimer
+80EBBC DispatchBy85B
+80BD0D ScrollByPlayerSpeed
+80DFB9 EndAtBonusMinute
+81C5B5 ScrollJumpRider
+81C608 DispatchByDistance
+81C743 SetJumpBanner
+80954E AddBcdDigits
+81BAC3 ObjectAdvance8
+81BB23 ObjectAdvance20
+81BD92 ObjectAdvance80

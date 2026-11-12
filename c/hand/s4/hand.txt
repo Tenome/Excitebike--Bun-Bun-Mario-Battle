@@ -66,3 +66,20 @@
 819FF7  1 1  mem+X,V        ApplyVelocityX         # from s1 819F1E
 8193FE  1 1  mem+X,C,V      SpawnPlayerSpark       # from s1 81932A
 8196C2  1 1  mem+Y,C,V      StepSpark              # from s1 8195EE
+80DE3D  1 1  mem+X,Y,V      QueueNameplate
+80A650  1 1  mem+X,Y,C,V    QueueResultsRow
+81C64E  1 1  mem+X,Y,C,V    FadeApuVolume
+828CC5  1 0  mem+A,Y        ReadStreamByte
+80BCF3  1 1  mem+X,Y,C,V    AddSpeedToX
+80EE8B  1 1  mem+Y          BlankQueueRowB
+8198A0  1 1  mem+V          StepAnimTimer
+80EBBC  1 1  mem+X,Y,V      DispatchBy85B
+80BD0D  1 1  mem+X,Y,C,V    ScrollByPlayerSpeed
+80DFB9  1 1  mem+X,Y,C,V    EndAtBonusMinute
+81C5B5  1 1  mem+V          ScrollJumpRider
+81C608  1 1  mem+X,Y,C,V    DispatchByDistance
+81C743  1 1  mem+X,Y,C,V    SetJumpBanner
+80954E  1 1  mem+Y,V        AddBcdDigits
+81BAC3  1 1  mem+V          ObjectAdvance8
+81BB23  1 1  mem+V          ObjectAdvance20
+81BD92  1 1  mem+V          ObjectAdvance80
