@@ -441,6 +441,9 @@ BRIDGE(HleHand_ShowBestTime, ShowBestTime_m1x1, 1320)
 BRIDGE(HleHand_ConfettiStep, ConfettiStep_m1x1, 250)
 BRIDGE(HleHand_SpawnObject, SpawnObject_m1x1, 200)
 BRIDGE(HleHand_PodiumWalkIn, PodiumWalkIn_m1x1, 40)
+BRIDGE(HleHand_FrameSequenceA, FrameSequenceA_m1x1, 40)
+BRIDGE(HleHand_FrameSequenceB, FrameSequenceB_m1x1, 40)
+BRIDGE(HleHand_ReleaseBalloons, ReleaseBalloons_m1x1, 50)
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */

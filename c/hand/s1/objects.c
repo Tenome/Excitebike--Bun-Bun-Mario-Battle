@@ -1773,3 +1773,106 @@ void PodiumWalkIn_m1x1(void)
     wr8(ABSX(0x0349), (u8)A);
     ret();
 }
+
+/* $81:BD6E / $81:BDDB: Stadium 1's frame sequences (Stadium 4's $81:C018 /
+ * $81:C085 with the object arrays 6 bytes lower, slot $039D). */
+static void frame_sequence1(u8 count, u16 times, u8 spawn, u16 dy,
+                            u16 frames, u16 back)
+{
+    X = rd8(ABS(0x039D)); nz8((u8)X);
+    lda8(rd8(ABSX(0x0369)));
+    if (fz) {
+        lda8(rd8(ABSX(0x0319)));
+        lda8(inc8((u8)A));
+        cmp8((u8)A, count);
+        if (fc) {
+            lda8(0x04); wr8(ABSX(0x0309), 0x04);
+            lda8(0x08); wr8(ABSX(0x0369), 0x08);
+            wr8(ABSX(0x0319), 0);
+            ret();
+            return;
+        }
+        wr8(ABSX(0x0319), (u8)A);
+        Y = (u8)A; nz8((u8)Y);
+        lda8(rd8(ABSY(times)));
+        wr8(ABSX(0x0369), (u8)A);
+        lda8(rd8(ABSX(0x0319)));
+        cmp8((u8)A, spawn);
+        if (fz) {
+            push8((u8)Y);
+            rep(0x20);
+            lda16(rd16(ABSX(0x0279)));
+            fc = 1; sbc16(0x0016);
+            wr16(DP(0x00), A);
+            lda16(rd16(ABSX(0x0289)));
+            fc = 1; sbc16(dy);
+            wr16(DP(0x02), A);
+            sep(0x20);
+            ldy8(0x08);
+            push8(0x81); push16(back); SpawnObject_m1x1();
+            Y = rd8(DP(0x0E)); nz8((u8)Y);
+            lda8(0x01); wr8(ABSY(0x0319), 0x01);
+            lda8(0x04); wr8(ABSY(0x0329), 0x04);
+            Y = pull8(); nz8((u8)Y);
+        }
+    }
+    Y = rd8(ABSX(0x0319)); nz8((u8)Y);
+    lda8(rd8(ABSY(frames)));
+    wr8(ABSX(0x0349), (u8)A);
+    ret();
+}
+
+void FrameSequenceA_m1x1(void) { frame_sequence1(0x04, 0xBDD7, 0x02, 0x001C, 0xBDD3, 0xBDAB); }
+void FrameSequenceB_m1x1(void) { frame_sequence1(0x06, 0xBE46, 0x03, 0x0018, 0xBE40, 0xBE18); }
+
+/* $81:B731 ReleaseBalloons (RTS): Stadium 4's $81:B9DB with Stadium 1's
+ * object arrays and QueueSound / Random. */
+void ReleaseBalloons_m1x1(void)
+{
+    X = rd8(ABS(0x039D)); nz8((u8)X);
+    lda8(rd8(ABS(0x086E)));
+    cmp8((u8)A, 0x04);
+    if (fc) {
+        lda8(rd8(ABSX(0x0339)));
+        if (!fz) { ret(); return; }
+    } else {
+        lda8(rd8(DP(0x8A)));
+        if (fz) {
+            lda8(rd8(ABSX(0x0339)));
+            if (fz) {
+                lda8(0x2B);
+                push8(0x81); push16(0xB750); QueueSound_m1x1();
+            }
+        }
+    }
+    rep(0x20);
+    wr16(DP(0x8A), inc16(rd16(DP(0x8A))));
+    sep(0x20);
+    lda8(rd8(DP(0x8B)));
+    and8(0x01);
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABSX(0x0369)));
+    if (!fz) { ret(); return; }
+    wr8(ABSX(0x0339), inc8(rd8(ABSX(0x0339))));
+    push8(0x81); push16(0xB768); Random_m1x1();
+    and8(0x3F);
+    fc = 0; adc8(0x20);
+    wr8(ABSX(0x0369), (u8)A);
+    ldy8(0x09);
+    push8(0x81); push16(0xB776); SpawnObject_m1x1();
+    if (fc) { ret(); return; }
+    X = rd8(DP(0x0E)); nz8((u8)X);
+    push8(0x81); push16(0xB77E); Random_m1x1();
+    and8(0x7F);
+    fc = 0; adc8(0x40);
+    wr8(ABSX(0x0279), (u8)A);
+    lda8(0xD0); wr8(ABSX(0x0289), 0xD0);
+    lda8(0x48);
+    push8(0x81); push16(0xB791); QueueSound_m1x1();
+    push8(0x81); push16(0xB795); Random_m1x1();
+    and8(0x0F);
+    fc = 0; adc8(0xB6);
+    wr8(ABSX(0x02A9), (u8)A);
+    X = rd8(ABS(0x039D)); nz8((u8)X);
+    ret();
+}

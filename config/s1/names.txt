@@ -247,3 +247,6 @@
 819530 ConfettiStep
 8196B4 SpawnObject
 81BE4C PodiumWalkIn
+81BD6E FrameSequenceA
+81BDDB FrameSequenceB
+81B731 ReleaseBalloons
