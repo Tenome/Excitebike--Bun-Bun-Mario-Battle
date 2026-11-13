@@ -230,3 +230,9 @@
 80CE5D  1 1  mem+X,Y,C,V     PlaceAllRiderShadows
 8198B6  1 1  mem+V           SkyFadeStep
 809C14  1 1  mem+X,Y,C,V     EntryConfirmStep
+809ABF  1 1  mem+X,Y,C,V     EntryIntroStep
+80FBAE  1 1  mem+A,X,Y,C,V   OffTrackBrake
+80F097  1 1  mem+X,Y,V       BonusSignStep
+809A43  1 1  mem+X,Y,C,V     EntryMenuStep
+80CAE5  1 1  mem+X,Y,V       DrawRider
+80C0E3  1 1  mem+A,X,Y,C,V   CrashLand

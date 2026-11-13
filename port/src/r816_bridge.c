@@ -597,6 +597,13 @@ BRIDGE(HleHand_CopyTrackColumn, CopyTrackColumn_m1x1, 400)
 BRIDGE(HleHand_PlaceAllRiderShadows, PlaceAllRiderShadows_m1x1, 560)
 BRIDGE_DYN(HleHand_SkyFadeStep, SkyFadeStep_m1x1, 40 + ((g_ram[0x63] & 7) ? 15 : 15 + 45 * 4))
 BRIDGE_DYN(HleHand_EntryConfirmStep, EntryConfirmStep_m1x1, ((g_ram[0x21] | g_ram[0x26]) & 0x80) ? 1000 : 15)
+/* c/hand/s4/objects.c, part 15 */
+BRIDGE_DYN(HleHand_EntryIntroStep, EntryIntroStep_m1x1, (g_ram[0xA2] | g_ram[0xA3] << 8) >= 0x013E ? 1000 : 20)
+BRIDGE(HleHand_OffTrackBrake, OffTrackBrake_m1x1, 80)
+BRIDGE_DYN(HleHand_BonusSignStep, BonusSignStep_m1x1, g_ram[0x97] ? 700 : 10)
+BRIDGE_DYN(HleHand_EntryMenuStep, EntryMenuStep_m1x1, (g_ram[0x88] == 1 || (g_ram[0x26] & 0x80)) ? 1000 : 15)
+BRIDGE(HleHand_DrawRider, DrawRider_m1x1, 200)
+BRIDGE(HleHand_CrashLand, CrashLand_m1x1, 150)
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)

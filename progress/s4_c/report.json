@@ -1,15 +1,15 @@
 {
  "measures": {
-  "fuzzy_match_percent": 70.9775,
+  "fuzzy_match_percent": 71.7195,
   "total_code": "36930",
-  "matched_code": "15627",
-  "matched_code_percent": 42.3152,
+  "matched_code": "16175",
+  "matched_code_percent": 43.7991,
   "total_data": "0",
   "matched_data": "0",
   "matched_data_percent": 0.0,
   "total_functions": 532,
-  "matched_functions": 228,
-  "matched_functions_percent": 42.8571,
+  "matched_functions": 234,
+  "matched_functions_percent": 43.985,
   "complete_code": "0",
   "complete_code_percent": 0.0,
   "complete_data": "0",
@@ -21,16 +21,16 @@
   {
    "name": "main/bank80",
    "measures": {
-    "fuzzy_match_percent": 70.8504,
+    "fuzzy_match_percent": 71.961,
     "total_code": "24671",
-    "matched_code": "10421",
-    "matched_code_percent": 42.2399,
+    "matched_code": "10969",
+    "matched_code_percent": 44.4611,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 357,
-    "matched_functions": 142,
-    "matched_functions_percent": 39.7759,
+    "matched_functions": 148,
+    "matched_functions_percent": 41.4566,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -42,7 +42,7 @@
     {
      "name": ".text",
      "size": "24671",
-     "fuzzy_match_percent": 70.8504
+     "fuzzy_match_percent": 71.961
     }
    ],
    "functions": [
@@ -439,17 +439,17 @@
      }
     },
     {
-     "name": "sub_809A43",
+     "name": "EntryMenuStep",
      "size": "116",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8428099"
      }
     },
     {
-     "name": "sub_809ABF",
+     "name": "EntryIntroStep",
      "size": "78",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8428223"
      }
@@ -1319,9 +1319,9 @@
      }
     },
     {
-     "name": "sub_80C0E3",
+     "name": "CrashLand",
      "size": "78",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8437987"
      }
@@ -1527,9 +1527,9 @@
      }
     },
     {
-     "name": "sub_80CAE5",
+     "name": "DrawRider",
      "size": "115",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8440549"
      }
@@ -2303,9 +2303,9 @@
      }
     },
     {
-     "name": "sub_80F097",
+     "name": "BonusSignStep",
      "size": "90",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8450199"
      }
@@ -2727,9 +2727,9 @@
      }
     },
     {
-     "name": "sub_80FBAE",
+     "name": "OffTrackBrake",
      "size": "71",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8453038"
      }

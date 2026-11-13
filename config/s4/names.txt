@@ -247,3 +247,9 @@
 80CE5D PlaceAllRiderShadows
 8198B6 SkyFadeStep
 809C14 EntryConfirmStep
+809ABF EntryIntroStep
+80FBAE OffTrackBrake
+80F097 BonusSignStep
+809A43 EntryMenuStep
+80CAE5 DrawRider
+80C0E3 CrashLand

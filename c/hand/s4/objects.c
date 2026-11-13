@@ -4373,3 +4373,283 @@ void EntryConfirmStep_m1x1(void)
     wr8(ABS(0x0450), dec8(rd8(ABS(0x0450))));
     ret();
 }
+
+void StartCrash_m1x1(void);
+void RiderHeightStep_m1x1(void);
+void BrakeRider_m1x1(void);
+void QueueTileBlock_m1x1(void);
+void RiderPose_m1x1(void);
+void DrawBigSprite_m1x1(void);
+
+/* $80:9ABF EntryIntroStep (RTS): zoom $A2 in by 2 a frame; at $0140 sound
+ * $2D, next step ($0450 + 1), queue the entry screen ($7E:5A00, $20 x 2
+ * rows at VRAM $0300) and reset the number to 001 ($1570-$1572, $156F,
+ * cursor $044F). */
+void EntryIntroStep_m1x1(void)
+{
+    rep(0x20);
+    wr16(ABS(0x00A2), inc16(rd16(ABS(0x00A2))));
+    wr16(ABS(0x00A2), inc16(rd16(ABS(0x00A2))));
+    lda16(rd16(ABS(0x00A2)));
+    cmp16(A, 0x0140);
+    if (fc) {
+        sep(0x20);
+        lda8(0x2D);
+        push8(0x80); push16(0x9AD6); QueueSoundB_m1x1();
+        wr8(ABS(0x0450), inc8(rd8(ABS(0x0450))));
+        lda8(0x00); wr8(DP(0x02), 0x00);
+        lda8(0x5A); wr8(DP(0x03), 0x5A);
+        lda8(0x7E); wr8(DP(0x04), 0x7E);
+        lda8(0x20); wr8(DP(0x10), 0x20);
+        lda8(0x02); wr8(DP(0x11), 0x02);
+        lda8(0x00); wr8(DP(0x00), 0x00);
+        lda8(0x03); wr8(DP(0x01), 0x03);
+        push16(0x9AF8); QueueTileRows_m1x1();
+        lda8(0x01); wr8(ABS(0x1572), 0x01);
+        wr8(ABS(0x1571), 0);
+        wr8(ABS(0x1570), 0);
+        wr8(ABS(0x156F), 0);
+        wr8(ABS(0x044F), 0);
+    }
+    sep(0x20);
+    ret();
+}
+
+/* $80:FBAE OffTrackBrake (RTS, Y kept): rider X on rough ground (not
+ * crashed, $020E 0 or bit 1 set) brakes by step 6 (5 with the turbo
+ * button, $017E bit 6) and counts as on a ramp ($08BC = 1); on tile type 1
+ * the player's turbo heat fraction $098F is held at $1200 at most. */
+void OffTrackBrake_m1x1(void)
+{
+    lda8(rd8(ABSX(0x01EE)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABSX(0x020E)));
+    if (!fz) {
+        lda8(lsr8((u8)A));
+        lda8(lsr8((u8)A));
+        if (!fc) { ret(); return; }
+    }
+    wr8(DP(0x01), (u8)Y);
+    ldy8(0x04);
+    lda8(rd8(ABSX(0x017E)));
+    lda8(asl8((u8)A));
+    lda8(asl8((u8)A));
+    if (fc) Y = dec8((u8)Y);
+    lda8(0x01); wr8(ABSX(0x08BC), 0x01);
+    Y = inc8((u8)Y); Y = inc8((u8)Y);
+    push16(0xFBD1); BrakeRider_m1x1();
+    Y = rd8(ABSX(0x0216)); nz8((u8)Y);
+    lda8(rd8(ABSY(0xAD33)));
+    cmp8((u8)A, 0x01);
+    if (fz) {
+        cmp8((u8)X, 0x00);
+        if (fz) {
+            rep(0x20);
+            lda16(rd16(ABS(0x098F)));
+            cmp16(A, 0x1200);
+            if (fc) { lda16(0x1200); wr16(ABS(0x098F), 0x1200); }
+        }
+        sep(0x20);
+    }
+    Y = rd8(DP(0x01)); nz8((u8)Y);
+    ret();
+}
+
+/* $80:F097 BonusSignStep (RTS): while the bonus sign is up ($97) draw it
+ * eleven columns ahead of the track ($0279 + $0B, tilemap $0B20 or the other
+ * screen): the sign block $80:F0F1 on the first frame (remembering the
+ * address in $98), then the blank block $80:F0FC once the column moved on. */
+void BonusSignStep_m1x1(void)
+{
+    lda8(rd8(DP(0x97)));
+    if (fz) { sep(0x20); ret(); return; }
+    lda8(0x28); wr8(DP(0x0F), 0x28);
+    rep(0x20);
+    lda16(rd16(ABS(0x0279)));
+    fc = 0; adc16(0x000B);
+    and16(0x0020);
+    eor16(0x0020);
+    A = (u16)((A >> 8) | (A << 8)); nz8((u8)A);
+    lda16(lsr16(A)); lda16(lsr16(A)); lda16(lsr16(A));
+    fc = 0; adc16(0x0B20);
+    wr16(DP(0x00), A);
+    lda16(rd16(ABS(0x0279)));
+    fc = 0; adc16(0x000B);
+    and16(0x001F);
+    ora16(rd16(DP(0x00)));
+    wr16(DP(0x00), A);
+    sep(0x20);
+    Y = rd8(DP(0x97)); nz8((u8)Y);
+    Y = dec8((u8)Y);
+    if (fz) {
+        rep(0x20);
+        wr16(DP(0x98), A);
+        lda16(0xF0F1); wr16(DP(0x02), 0xF0F1);
+        sep(0x20);
+        wr8(DP(0x97), inc8(rd8(DP(0x97))));
+    } else {
+        rep(0x20);
+        cmp16(A, rd16(DP(0x98)));
+        if (fz) { sep(0x20); ret(); return; }
+        wr16(DP(0x98), 0);
+        lda16(0xF0FC); wr16(DP(0x02), 0xF0FC);
+        sep(0x20);
+    }
+    push16(0xF0ED); QueueTileBlock_m1x1();
+    sep(0x20);
+    ret();
+}
+
+/* $80:9A43 EntryMenuStep (RTS): after the delay $88 queue the menu screen
+ * ($7E:5900, $20 x 2 rows at VRAM $0300); on B from pad 2 ($26 bit 7, sound
+ * $43, delay $20) go to the chosen step $0451 (choice 5: step $0A), and
+ * for the others first queue its screen ($7E:5980). */
+void EntryMenuStep_m1x1(void)
+{
+    lda8(rd8(DP(0x88)));
+    if (!fz) {
+        u8 t = dec8(rd8(DP(0x88)));
+        wr8(DP(0x88), t);
+        if (!fz) { ret(); return; }
+        lda8(0x00); wr8(DP(0x02), 0x00);
+        lda8(0x59); wr8(DP(0x03), 0x59);
+        lda8(0x7E); wr8(DP(0x04), 0x7E);
+        lda8(0x20); wr8(DP(0x10), 0x20);
+        lda8(0x02); wr8(DP(0x11), 0x02);
+        lda8(0x00); wr8(DP(0x00), 0x00);
+        lda8(0x03); wr8(DP(0x01), 0x03);
+        push16(0x9A69); QueueTileRows_m1x1();
+    }
+    lda8(rd8(DP(0x26)));
+    and8(0x80);
+    if (fz) { ret(); return; }
+    lda8(rd8(ABS(0x0451)));
+    cmp8((u8)A, 0x05);
+    if (fz) {
+        lda8(0x20); wr8(DP(0x88), 0x20);
+        lda8(0x43);
+        push8(0x80); push16(0x9A80); QueueSoundB_m1x1();
+        lda8(0x0A); wr8(ABS(0x0450), 0x0A);
+        ret();
+        return;
+    }
+    lda8(0x43);
+    push8(0x80); push16(0x9A94); QueueSoundB_m1x1();
+    lda8(rd8(ABS(0x0451)));
+    wr8(ABS(0x0450), (u8)A);
+    lda8(0x20); wr8(DP(0x88), 0x20);
+    lda8(0x80); wr8(DP(0x02), 0x80);
+    lda8(0x59); wr8(DP(0x03), 0x59);
+    lda8(0x7E); wr8(DP(0x04), 0x7E);
+    lda8(0x20); wr8(DP(0x10), 0x20);
+    lda8(0x02); wr8(DP(0x11), 0x02);
+    lda8(0x00); wr8(DP(0x00), 0x00);
+    lda8(0x03); wr8(DP(0x01), 0x03);
+    push16(0x9ABD); QueueTileRows_m1x1();
+    ret();
+}
+
+/* $80:CAE5 DrawRider (RTS): rider X's 2x2 sprite at column $0196, height
+ * $01B6 - 8 (the player outside races and screen $0C rides at $28 when low
+ * or flagged $0904; a flagged rival off the bottom is not drawn), with the
+ * pose from RiderPose: tiles $80:BA99, the slot's animation frame $1961
+ * from $80:CB58 (frame $14 for a landed player at the end of the course). */
+void DrawRider_m1x1(void)
+{
+    lda8(rd8(ABSX(0x0196)));
+    wr8(DP(0x00), (u8)A);
+    lda8(rd8(ABSX(0x01B6)));
+    fc = 1; sbc8(0x08);
+    wr8(DP(0x01), (u8)A);
+    int special = 0;
+    cmp8((u8)X, 0x00);
+    if (fz) {
+        lda8(rd8(DP(0x76)));
+        cmp8((u8)A, 0x03);
+        if (!fz) {
+            cmp8((u8)A, 0x0C);
+            if (!fz) special = 1;
+        }
+    }
+    if (special) {
+        lda8(rd8(ABS(0x0904)));
+        int low = 1;
+        if (fz) {
+            lda8(rd8(ABS(0x01B6)));
+            cmp8((u8)A, 0x30);
+            low = !fc;
+        }
+        if (low) { lda8(0x28); wr8(DP(0x01), 0x28); }
+    } else {
+        lda8(rd8(ABSX(0x0904)));
+        if (!fz) {
+            lda8(rd8(DP(0x01)));
+            cmp8((u8)A, 0xEC);
+            if (!fc) { ret(); return; }
+        }
+    }
+    push16(0xCB1F); RiderPose_m1x1();
+    wr8(DP(0xA8), (u8)A);
+    lda8(asl8((u8)A));
+    Y = (u8)A; nz8((u8)Y);
+    rep(0x20);
+    lda16(rd16(ABSY(0xBA99)));
+    wr16(DP(0x02), A);
+    sep(0x20);
+    Y = rd8(DP(0xA8)); nz8((u8)Y);
+    push8((u8)X);
+    X = rd8(DP(0x0D)); nz8((u8)X);
+    lda8(rd8(ABSX(0x0950)));
+    X = (u8)A; nz8((u8)X);
+    lda8(rd8(ABSY(0xCB58)));
+    wr8(ABSX(0x1961), (u8)A);
+    cmp8((u8)A, 0x05);
+    if (fz) {
+        lda8(rd8(ABS(0x01CE)));
+        ora8(rd8(ABS(0x01EE)));
+        if (fz) {
+            lda8(rd8(DP(0x84)));
+            cmp8((u8)A, 0x01);
+            if (fz) { lda8(0x14); wr8(ABSX(0x1961), 0x14); }
+        }
+    }
+    X = pull8(); nz8((u8)X);
+    push16(0xCB56); DrawBigSprite_m1x1();
+    ret();
+}
+
+/* $80:C0E3 CrashLand (RTS): rider X's speed high byte becomes its crash
+ * speed ($08EC) and the crash starts (StartCrash); then the lean step
+ * $08FC from $80:BA6F by the d-pad (or $26 when the jump contest's player
+ * is fast enough in the air), the height step, and the landed flag $08AC
+ * once settled ($0226 = 0). */
+void CrashLand_m1x1(void)
+{
+    lda8(rd8(ABSX(0x01C6)));
+    wr8(ABSX(0x08EC), (u8)A);
+    push16(0xC0EB); StartCrash_m1x1();
+    lda8(rd8(ABSX(0x017E)));
+    and8(0x03);
+    Y = (u8)A; nz8((u8)Y);
+    lda8(rd8(DP(0x96)));
+    int fast = 0;
+    if (!fz) {
+        lda8(rd8(ABS(0x08EC)));
+        cmp8((u8)A, rd8(ABS(0x08DC)));
+        if (fc) {
+            lda8(rd8(DP(0xC7)));
+            cmp8((u8)A, 0x01);
+            fast = fz;
+        }
+    }
+    if (fast) lda8(0x26);
+    else lda8(rd8(ABSY(0xBA6F)));
+    wr8(ABSX(0x08FC), (u8)A);
+    lda8(rd8(ABSX(0x01B6)));
+    wr8(DP(0x01), (u8)A);
+    push16(0xC122); RiderHeightStep_m1x1();
+    wr8(ABSX(0x01B6), (u8)A);
+    lda8(rd8(ABSX(0x0226)));
+    if (fz) { lda8(0x01); wr8(ABSX(0x08AC), 0x01); }
+    ret();
+}
