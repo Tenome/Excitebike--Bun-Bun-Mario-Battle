@@ -589,6 +589,13 @@ BRIDGE(HleHand_BonusScrollStep, BonusScrollStep_m1x1, 100)
 BRIDGE_DYN(HleHand_LoadEntryScreenStep, LoadEntryScreenStep_m1x1, g_ram[0x88] == 1 ? 1000 : 15)
 BRIDGE_DYN(HleHand_FadeObjectStep, FadeObjectStep_m1x1, 40 + ((g_ram[0x63] & 7) ? 20 : 20 + 40 * (g_ram[0xB9] / 2 + 1)))
 BRIDGE(HleHand_TickRaceClock, TickRaceClock_m1x1, 1340)
+/* c/hand/s4/objects.c, part 14 */
+BRIDGE(HleHand_ShowJumpCount, ShowJumpCount_m1x1, 3000)
+BRIDGE(HleHand_ShowBonusPoints, ShowBonusPoints_m1x1, 2900)
+BRIDGE(HleHand_CopyTrackColumn, CopyTrackColumn_m1x1, 400)
+BRIDGE(HleHand_PlaceAllRiderShadows, PlaceAllRiderShadows_m1x1, 560)
+BRIDGE_DYN(HleHand_SkyFadeStep, SkyFadeStep_m1x1, 40 + ((g_ram[0x63] & 7) ? 15 : 15 + 45 * 4))
+BRIDGE_DYN(HleHand_EntryConfirmStep, EntryConfirmStep_m1x1, ((g_ram[0x21] | g_ram[0x26]) & 0x80) ? 1000 : 15)
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)

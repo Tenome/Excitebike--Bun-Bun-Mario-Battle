@@ -224,3 +224,9 @@
 809D0E  1 1  mem+X,Y,C,V     LoadEntryScreenStep
 8198FF  1 1  mem+V           FadeObjectStep
 80C58D  1 1  mem+X,Y,C,V     TickRaceClock
+80E956  1 1  mem+X,Y,V       ShowJumpCount
+80E9B2  1 1  mem+X,Y,V       ShowBonusPoints
+818C3C  1 1  mem+X,Y         CopyTrackColumn
+80CE5D  1 1  mem+X,Y,C,V     PlaceAllRiderShadows
+8198B6  1 1  mem+V           SkyFadeStep
+809C14  1 1  mem+X,Y,C,V     EntryConfirmStep

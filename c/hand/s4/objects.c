@@ -4205,3 +4205,171 @@ void TickRaceClock_m1x1(void)
     if (fz) { QueueRaceTime_m1x1(); return; }
     ret();
 }
+
+void BuildScoreDigits_m0x1(void);
+void BuildJumpScore_m1x1(void);
+void PlaceRiderShadow_m1x1(void);
+void FadeSkyColours_m1x1(void);
+
+/* $80:E956 ShowJumpCount (RTS): the jump count $1569 as five digits plus
+ * the score label (BuildJumpScore), queued at VRAM $1970, and the label
+ * tiles $80:E989 at VRAM $1967. */
+void ShowJumpCount_m1x1(void)
+{
+    rep(0x20);
+    lda16(rd16(ABS(0x1569)));
+    push16(0xE95D); BuildScoreDigits_m0x1();
+    push8(0x80); push16(0xE961); BuildJumpScore_m1x1();
+    rep(0x20);
+    lda16(0x1970); wr16(DP(0x00), 0x1970);
+    lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+    sep(0x20);
+    lda8(0x20); wr8(DP(0x0F), 0x20);
+    push16(0xE976); VramQueueTiles_m1x1();
+    rep(0x20);
+    lda16(0x1967); wr16(DP(0x00), 0x1967);
+    lda16(0xE989); wr16(DP(0x02), 0xE989);
+    sep(0x20);
+    push16(0xE987); VramQueueTiles20_m1x1();
+    ret();
+}
+
+/* $80:E9B2 ShowBonusPoints (RTS): the points for jump rank $156B (table
+ * $80:F155) as five digits at VRAM $19B3, and the label tiles $80:E9E7 at
+ * VRAM $19A7. */
+void ShowBonusPoints_m1x1(void)
+{
+    rep(0x20);
+    Y = rd8(ABS(0x156B)); nz8((u8)Y);
+    lda16(rd16(ABSY(0xF155)));
+    and16(0x00FF);
+    push16(0xE9BF); BuildScoreDigits_m0x1();
+    rep(0x20);
+    lda16(0x19B3); wr16(DP(0x00), 0x19B3);
+    lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+    sep(0x20);
+    lda8(0x20); wr8(DP(0x0F), 0x20);
+    push16(0xE9D4); VramQueueTiles_m1x1();
+    rep(0x20);
+    lda16(0x19A7); wr16(DP(0x00), 0x19A7);
+    lda16(0xE9E7); wr16(DP(0x02), 0xE9E7);
+    sep(0x20);
+    push16(0xE9E5); VramQueueTiles20_m1x1();
+    ret();
+}
+
+/* $81:8C3C CopyTrackColumn (RTL): the track streamer's column: from the
+ * piece words at ($05) + Y + 2, ... each tile (& $07FF | $0800, palette 2)
+ * into the VRAM queue $7F:000C + X and its height bits (high byte >> 3)
+ * into $7F:200C + X, until X = $1E. */
+void CopyTrackColumn_m1x1(void)
+{
+    do {
+        Y = inc8((u8)Y); Y = inc8((u8)Y);
+        rep(0x20);
+        lda16(rd16((((u32)DB << 16) + rd16(DP(0x05)) + Y) & 0xFFFFFF));
+        push16(A);
+        and16(0x07FF);
+        ora16(0x0800);
+        wr16(LONGX(0x7F000C), A);
+        lda16(pull16());
+        A = (u16)((A >> 8) | (A << 8)); nz8((u8)A);
+        and16(0x00FF);
+        lda16(lsr16(A)); lda16(lsr16(A)); lda16(lsr16(A));
+        wr16(LONGX(0x7F200C), A);
+        X = inc8((u8)X); X = inc8((u8)X);
+        cmp8((u8)X, 0x1E);
+    } while (!fz);
+    sep(0x20);
+    retl();
+}
+
+/* $80:CE5D PlaceAllRiderShadows (RTS): PlaceRiderShadow for every rider
+ * slot 7..0 in use ($0950), OAM offset from $80:BAC7; a rider on screen in
+ * columns $70-$8F sets $092A. */
+void PlaceAllRiderShadows_m1x1(void)
+{
+    ldy8(0x07);
+    do {
+        wr8(DP(0x05), (u8)Y);
+        lda8(rd8(ABSY(0x0950)));
+        if (!fz) {
+            X = (u8)A; nz8((u8)X);
+            lda8(rd8(ABSY(0xBAC7)));
+            wr8(DP(0x07), (u8)A);
+            lda8(rd8(ABSX(0x019E)));
+            cmp8((u8)A, 0x01);
+            if (fz) {
+                lda8(rd8(ABSX(0x0196)));
+                cmp8((u8)A, 0x70);
+                if (fc) {
+                    cmp8((u8)A, 0x90);
+                    if (!fc) { lda8(0x01); wr8(ABS(0x092A), 0x01); }
+                }
+            }
+            push16(0xCE85); PlaceRiderShadow_m1x1();
+        }
+        Y = rd8(DP(0x05)); nz8((u8)Y);
+        Y = dec8((u8)Y);
+    } while (!fn);
+    ret();
+}
+
+/* $81:98B6 SkyFadeStep (RTS): fade the sky (FadeSkyColours); when the
+ * object $03A3's timer $031F runs out, advance its state, set colours
+ * $1C02-$1C16 to $6D69, flag the upload, $A5 + 1, $88 = $C0, $B9 = 6. */
+void SkyFadeStep_m1x1(void)
+{
+    push8(0x81); push16(0x98B9); FadeSkyColours_m1x1();
+    X = rd8(ABS(0x03A3)); nz8((u8)X);
+    rep(0x20);
+    u16 t = dec16(rd16(ABSX(0x031F)));
+    wr16(ABSX(0x031F), t);
+    if (fz) {
+        wr16(ABSX(0x030F), inc16(rd16(ABSX(0x030F))));
+        rep(0x20);
+        lda16(0x6D69);
+        for (u16 a = 0x1C02; a <= 0x1C16; a += 2) wr16(ABS(a), 0x6D69);
+        sep(0x20);
+        wr8(ABS(0x1915), inc8(rd8(ABS(0x1915))));
+        wr8(DP(0xA5), inc8(rd8(DP(0xA5))));
+        lda8(0xC0); wr8(DP(0x88), 0xC0);
+        lda8(0x06); wr8(DP(0xB9), 0x06);
+    }
+    sep(0x20);
+    ret();
+}
+
+/* $80:9C14 EntryConfirmStep (RTS): on B ($21 or $26 bit 7): with a press
+ * on the second pad ($26) leave for mode $16 (fade, $0450 + 1, sound $45);
+ * otherwise redraw the entry screen ($7E:5A00, $20 x 2 rows at VRAM $0300)
+ * and go back a step ($0450 - 1). */
+void EntryConfirmStep_m1x1(void)
+{
+    lda8(rd8(DP(0x26)));
+    ora8(rd8(DP(0x21)));
+    and8(0x80);
+    if (fz) { ret(); return; }
+    lda8(rd8(DP(0x26)));
+    if (!fz) {
+        wr8(ABS(0x1923), dec8(rd8(ABS(0x1923))));
+        wr8(ABS(0x0450), inc8(rd8(ABS(0x0450))));
+        lda8(0x45);
+        push8(0x80); push16(0x9C2B); QueueSoundB_m1x1();
+        lda8(0x16); wr8(DP(0x76), 0x16);
+        wr8(DP(0x75), 0);
+        wr8(DP(0x77), 0);
+        ret();
+        return;
+    }
+    lda8(0x00); wr8(DP(0x02), 0x00);
+    lda8(0x5A); wr8(DP(0x03), 0x5A);
+    lda8(0x7E); wr8(DP(0x04), 0x7E);
+    lda8(0x20); wr8(DP(0x10), 0x20);
+    lda8(0x02); wr8(DP(0x11), 0x02);
+    lda8(0x00); wr8(DP(0x00), 0x00);
+    lda8(0x03); wr8(DP(0x01), 0x03);
+    push16(0x9C53); QueueTileRows_m1x1();
+    wr8(ABS(0x0450), dec8(rd8(ABS(0x0450))));
+    ret();
+}

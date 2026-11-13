@@ -241,3 +241,9 @@
 809D0E LoadEntryScreenStep
 8198FF FadeObjectStep
 80C58D TickRaceClock
+80E956 ShowJumpCount
+80E9B2 ShowBonusPoints
+818C3C CopyTrackColumn
+80CE5D PlaceAllRiderShadows
+8198B6 SkyFadeStep
+809C14 EntryConfirmStep
