@@ -232,3 +232,12 @@
 809B0D EnterNumberStep
 80BE66 RivalTarget
 80CC18 DrawRiderShadow
+809FE1 BsxEndIfFlagged
+80EE9D CopyPieceColumn
+80DBD8 CopyPieceColumnPal2
+80B0D0 RetargetRival
+80DA55 BonusTimerStep
+80DA2A BonusScrollStep
+809D0E LoadEntryScreenStep
+8198FF FadeObjectStep
+80C58D TickRaceClock

@@ -1,15 +1,15 @@
 {
  "measures": {
-  "fuzzy_match_percent": 70.1516,
+  "fuzzy_match_percent": 70.5307,
   "total_code": "36930",
-  "matched_code": "15017",
-  "matched_code_percent": 40.6634,
+  "matched_code": "15297",
+  "matched_code_percent": 41.4216,
   "total_data": "0",
   "matched_data": "0",
   "matched_data_percent": 0.0,
   "total_functions": 532,
-  "matched_functions": 213,
-  "matched_functions_percent": 40.0376,
+  "matched_functions": 222,
+  "matched_functions_percent": 41.7293,
   "complete_code": "0",
   "complete_code_percent": 0.0,
   "complete_data": "0",
@@ -21,16 +21,16 @@
   {
    "name": "main/bank80",
    "measures": {
-    "fuzzy_match_percent": 69.9181,
+    "fuzzy_match_percent": 70.4066,
     "total_code": "24671",
-    "matched_code": "9961",
-    "matched_code_percent": 40.3753,
+    "matched_code": "10202",
+    "matched_code_percent": 41.3522,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 357,
-    "matched_functions": 130,
-    "matched_functions_percent": 36.4146,
+    "matched_functions": 138,
+    "matched_functions_percent": 38.6555,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -42,7 +42,7 @@
     {
      "name": ".text",
      "size": "24671",
-     "fuzzy_match_percent": 69.9181
+     "fuzzy_match_percent": 70.4066
     }
    ],
    "functions": [
@@ -495,9 +495,9 @@
      }
     },
     {
-     "name": "sub_809D0E",
+     "name": "LoadEntryScreenStep",
      "size": "41",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8428814"
      }
@@ -567,9 +567,9 @@
      }
     },
     {
-     "name": "sub_809FE1",
+     "name": "BsxEndIfFlagged",
      "size": "18",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8429537"
      }
@@ -879,9 +879,9 @@
      }
     },
     {
-     "name": "sub_80B0D0",
+     "name": "RetargetRival",
      "size": "26",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8433872"
      }
@@ -1407,9 +1407,9 @@
      }
     },
     {
-     "name": "sub_80C58D",
+     "name": "TickRaceClock",
      "size": "35",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8439181"
      }
@@ -1799,17 +1799,17 @@
      }
     },
     {
-     "name": "sub_80DA2A",
+     "name": "BonusScrollStep",
      "size": "43",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8444458"
      }
     },
     {
-     "name": "sub_80DA55",
+     "name": "BonusTimerStep",
      "size": "34",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8444501"
      }
@@ -1839,9 +1839,9 @@
      }
     },
     {
-     "name": "sub_80DBD8",
+     "name": "CopyPieceColumnPal2",
      "size": "25",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8444888"
      }
@@ -2215,9 +2215,9 @@
      }
     },
     {
-     "name": "sub_80EE9D",
+     "name": "CopyPieceColumn",
      "size": "19",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8449693"
      }
@@ -2911,16 +2911,16 @@
   {
    "name": "main/bank81",
    "measures": {
-    "fuzzy_match_percent": 72.3277,
+    "fuzzy_match_percent": 72.559,
     "total_code": "8429",
-    "matched_code": "3764",
-    "matched_code_percent": 44.6554,
+    "matched_code": "3803",
+    "matched_code_percent": 45.118,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 137,
-    "matched_functions": 66,
-    "matched_functions_percent": 48.1752,
+    "matched_functions": 67,
+    "matched_functions_percent": 48.9051,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -2932,7 +2932,7 @@
     {
      "name": ".text",
      "size": "8429",
-     "fuzzy_match_percent": 72.3277
+     "fuzzy_match_percent": 72.559
     }
    ],
    "functions": [
@@ -3153,9 +3153,9 @@
      }
     },
     {
-     "name": "sub_8198FF",
+     "name": "FadeObjectStep",
      "size": "39",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8493311"
      }

@@ -4012,3 +4012,196 @@ void DrawRiderShadow_m1x1(void)
     if (margin) port_ws_shadow_fix();
     ret();
 }
+
+void BsxReadHeader3_m1x1(void);
+void ScrollByPlayerSpeed_m1x1(void);
+void RivalTarget_m1x1(void);
+void FadePalette_m1x1(void);
+void QueueRaceTime_m1x1(void);
+
+/* $80:9FE1 BsxEndIfFlagged (RTS): read the broadcast header; when its
+ * flags ($01 & 3) are 3, hand control back to the receiver ($2197 = $80). */
+void BsxEndIfFlagged_m1x1(void)
+{
+    push8(0x80); push16(0x9FE4); BsxReadHeader3_m1x1();
+    lda8(rd8(DP(0x01)));
+    and8(0x03);
+    cmp8((u8)A, 0x03);
+    if (fz) { lda8(0x80); wr8(ABS(0x2197), 0x80); }
+    ret();
+}
+
+/* $80:EE9D CopyPieceColumn (RTS): copy the words at ($05) + Y + 2, ... into
+ * the VRAM queue $7F:000E + X until X = $1E. */
+void CopyPieceColumn_m1x1(void)
+{
+    do {
+        Y = inc8((u8)Y); Y = inc8((u8)Y);
+        rep(0x20);
+        lda16(rd16((((u32)DB << 16) + rd16(DP(0x05)) + Y) & 0xFFFFFF));
+        wr16(LONGX(0x7F000E), A);
+        X = inc8((u8)X); X = inc8((u8)X);
+        cmp8((u8)X, 0x1E);
+    } while (!fz);
+    sep(0x20);
+    ret();
+}
+
+/* $80:DBD8 CopyPieceColumnPal2 (RTS): as CopyPieceColumn, each word masked
+ * to $20FF and given palette 2 ($0800). */
+void CopyPieceColumnPal2_m1x1(void)
+{
+    do {
+        Y = inc8((u8)Y); Y = inc8((u8)Y);
+        rep(0x20);
+        lda16(rd16((((u32)DB << 16) + rd16(DP(0x05)) + Y) & 0xFFFFFF));
+        and16(0x20FF);
+        ora16(0x0800);
+        wr16(LONGX(0x7F000E), A);
+        X = inc8((u8)X); X = inc8((u8)X);
+        cmp8((u8)X, 0x1E);
+    } while (!fz);
+    sep(0x20);
+    ret();
+}
+
+/* $80:B0D0 RetargetRival (RTS): rival X (not rider 7) picks a new target
+ * speed (RivalTarget) every time it passes a 32-column boundary with the
+ * random $2E,X at $C0 or more (Y = 1 when above $C0); rider 7 always. */
+void RetargetRival_m1x1(void)
+{
+    ldy8(0x00);
+    cmp8((u8)X, 0x07);
+    if (!fz) {
+        lda8(rd8(ABSX(0x0196)));
+        and8(0x10);
+        if (fz) { ret(); return; }
+        lda8(rd8(DPX(0x2E)));
+        cmp8((u8)A, 0xC0);
+        if (!fc) { ret(); return; }
+        if (!fz) Y = inc8((u8)Y);
+    }
+    push16(0xB0E8); RivalTarget_m1x1();
+    ret();
+}
+
+/* $80:DA55 BonusTimerStep (RTS): the bonus course's countdown: every $3C
+ * frames ($B5) one second off $B4; at zero the run ends ($84 = 2, $1990 = 2
+ * unless set, sound $2D). Then the counter display. */
+void BonusTimerStep_m1x1(void)
+{
+    u8 t = dec8(rd8(DP(0xB5)));
+    wr8(DP(0xB5), t);
+    if (fz) {
+        lda8(0x3C); wr8(DP(0xB5), 0x3C);
+        u8 s = dec8(rd8(DP(0xB4)));
+        wr8(DP(0xB4), s);
+        if (fz) {
+            lda8(0x02); wr8(DP(0x84), 0x02);
+            X = rd8(ABS(0x1990)); nz8((u8)X);
+            if (fz) wr8(ABS(0x1990), (u8)A);
+            lda8(0x2D);
+            push8(0x80); push16(0xDA72); QueueSoundB_m1x1();
+        }
+    }
+    push16(0xDA75); QueueBonusCount_m1x1();
+    ret();
+}
+
+/* $80:DA2A BonusScrollStep (RTS): while the bonus run lasts the track
+ * scrolls with the player (ScrollByPlayerSpeed); after it the player rides
+ * on across the screen ($0196 + speed) and at column $F0 leaves it ($84 =
+ * $019E = 2, sound $2D, the counter display); otherwise the speed is
+ * cleared for the frame. */
+void BonusScrollStep_m1x1(void)
+{
+    lda8(rd8(DP(0x84)));
+    if (fz) { ScrollByPlayerSpeed_m1x1(); return; }
+    lda8(rd8(ABS(0x0186)));
+    fc = 0; adc8(rd8(ABS(0x0196)));
+    wr8(ABS(0x0196), (u8)A);
+    cmp8((u8)A, 0xF0);
+    if (fc) {
+        lda8(0x02);
+        wr8(DP(0x84), 0x02);
+        wr8(ABS(0x019E), 0x02);
+        lda8(0x2D);
+        push8(0x80); push16(0xDA4B); QueueSoundB_m1x1();
+        push16(0xDA75); QueueBonusCount_m1x1();
+        ret();
+        return;
+    }
+    lda8(0x00);
+    wr8(ABS(0x0186), 0x00);
+    ret();
+}
+
+/* $80:9D0E LoadEntryScreenStep (RTS): count $88 down; at zero queue the
+ * entry screen's tiles ($7E:5B00, $20 x 2 rows at VRAM $0300) and go to
+ * step 9 ($0450). */
+void LoadEntryScreenStep_m1x1(void)
+{
+    u8 t = dec8(rd8(DP(0x88)));
+    wr8(DP(0x88), t);
+    if (!fz) { ret(); return; }
+    lda8(0x00); wr8(DP(0x02), 0x00);
+    lda8(0x5B); wr8(DP(0x03), 0x5B);
+    lda8(0x7E); wr8(DP(0x04), 0x7E);
+    lda8(0x20); wr8(DP(0x10), 0x20);
+    lda8(0x02); wr8(DP(0x11), 0x02);
+    lda8(0x00); wr8(DP(0x00), 0x00);
+    lda8(0x03); wr8(DP(0x01), 0x03);
+    push16(0x9D30); QueueTileRows_m1x1();
+    lda8(0x09); wr8(ABS(0x0450), 0x09);
+    ret();
+}
+
+/* $81:98FF FadeObjectStep (RTS): object $03A3's palette fade: every $C0
+ * frames ($88) move the fade start $B9 by 8 until $16, then advance the
+ * object's state ($030F,X); between steps FadePalette. */
+void FadeObjectStep_m1x1(void)
+{
+    X = rd8(ABS(0x03A3)); nz8((u8)X);
+    lda8(rd8(DP(0x88)));
+    if (fz) {
+        lda8(rd8(DP(0xB9)));
+        cmp8((u8)A, 0x16);
+        if (fc) {
+            wr8(ABSX(0x030F), inc8(rd8(ABSX(0x030F))));
+            X = rd8(ABS(0x03A3)); nz8((u8)X);
+            ret();
+            return;
+        }
+        fc = 0; adc8(0x08);
+        wr8(DP(0xB9), (u8)A);
+        lda8(0xC0); wr8(DP(0x88), 0xC0);
+    }
+    wr8(DP(0x88), dec8(rd8(DP(0x88))));
+    push8(0x81); push16(0x9921); FadePalette_m1x1();
+    X = rd8(ABS(0x03A3)); nz8((u8)X);
+    ret();
+}
+
+/* $80:C58D TickRaceClock (RTS): the race clock $03AE:$03AF:$03B0 (minutes,
+ * seconds, frames): carry the frames at $3C into the seconds and the
+ * seconds at $3C into the minutes; unless $CB, show it (QueueRaceTime with
+ * attribute $20, which returns for this routine). */
+void TickRaceClock_m1x1(void)
+{
+    lda8(0x20); wr8(DP(0x0F), 0x20);
+    lda8(rd8(ABS(0x03B0)));
+    cmp8((u8)A, 0x3C);
+    if (fc) {
+        wr8(ABS(0x03AF), inc8(rd8(ABS(0x03AF))));
+        lda8(rd8(ABS(0x03AF)));
+        cmp8((u8)A, 0x3C);
+        if (fc) {
+            wr8(ABS(0x03AE), inc8(rd8(ABS(0x03AE))));
+            wr8(ABS(0x03AF), 0);
+        }
+        wr8(ABS(0x03B0), 0);
+    }
+    lda8(rd8(DP(0xCB)));
+    if (fz) { QueueRaceTime_m1x1(); return; }
+    ret();
+}

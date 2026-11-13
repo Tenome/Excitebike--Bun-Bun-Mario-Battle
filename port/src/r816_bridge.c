@@ -579,6 +579,16 @@ BRIDGE(HleHand_EnterNumberStep, EnterNumberStep_m1x1, 1500)
 BRIDGE(HleHand_RivalTarget, RivalTarget_m1x1, 45)
 /* c/hand/s4/objects.c, part 12 */
 BRIDGE(HleHand_DrawRiderShadow, DrawRiderShadow_m1x1, 130)
+/* c/hand/s4/objects.c, part 13 */
+BRIDGE(HleHand_BsxEndIfFlagged, BsxEndIfFlagged_m1x1, 150)
+BRIDGE(HleHand_CopyPieceColumn, CopyPieceColumn_m1x1, 300)
+BRIDGE(HleHand_CopyPieceColumnPal2, CopyPieceColumnPal2_m1x1, 330)
+BRIDGE(HleHand_RetargetRival, RetargetRival_m1x1, 60)
+BRIDGE(HleHand_BonusTimerStep, BonusTimerStep_m1x1, 1360)
+BRIDGE(HleHand_BonusScrollStep, BonusScrollStep_m1x1, 100)
+BRIDGE_DYN(HleHand_LoadEntryScreenStep, LoadEntryScreenStep_m1x1, g_ram[0x88] == 1 ? 1000 : 15)
+BRIDGE_DYN(HleHand_FadeObjectStep, FadeObjectStep_m1x1, 40 + ((g_ram[0x63] & 7) ? 20 : 20 + 40 * (g_ram[0xB9] / 2 + 1)))
+BRIDGE(HleHand_TickRaceClock, TickRaceClock_m1x1, 1340)
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)

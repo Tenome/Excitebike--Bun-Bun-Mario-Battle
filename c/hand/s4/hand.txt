@@ -215,3 +215,12 @@
 809B0D  1 1  mem+X,Y,C,V     EnterNumberStep
 80BE66  1 1  mem+A,X,Y,C,V   RivalTarget
 80CC18  1 1  mem+X,Y,C,V     DrawRiderShadow
+809FE1  1 1  mem+X,Y,C,V     BsxEndIfFlagged
+80EE9D  1 1  mem+X,Y         CopyPieceColumn
+80DBD8  1 1  mem+Y           CopyPieceColumnPal2
+80B0D0  1 1  mem+X,Y,V       RetargetRival
+80DA55  1 1  mem+V           BonusTimerStep
+80DA2A  1 1  mem+V           BonusScrollStep
+809D0E  1 1  mem+X,Y,C,V     LoadEntryScreenStep
+8198FF  1 1  mem+V           FadeObjectStep
+80C58D  1 1  mem+X,Y,C,V     TickRaceClock
