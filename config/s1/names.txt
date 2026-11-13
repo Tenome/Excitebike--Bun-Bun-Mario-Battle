@@ -254,3 +254,6 @@
 80C654 RaceTimer
 80D20F CoinCollected
 809B4C EndScreenChoice
+80DE23 BonusResultStart
+80DEB3 BonusCountUp
+80C12C RivalTarget

@@ -2046,3 +2046,134 @@ void EndScreenChoice_m1x1(void)
     choice_box(0x80, 0x9BC6);
     ret();
 }
+
+/* $80:DE6A: the bonus count $10 as two digits (tens blank $FC) at VRAM
+ * $18B9 from $03D2 (size $22). */
+static void bonus_count1(void)
+{
+    rep(0x20);
+    lda16(0x18B9); wr16(DP(0x00), 0x18B9);
+    lda16(0x03D2); wr16(DP(0x02), 0x03D2);
+    sep(0x20);
+    lda8(0x22); wr8(ABS(0x03D2), 0x22);
+    ldy8(0x00);
+    lda8(rd8(DP(0x10)));
+    for (;;) {
+        cmp8((u8)A, 0x0A);
+        if (!fc) break;
+        sbc8(0x0A);
+        Y = inc8((u8)Y);
+        WAIT_TICK();
+    }
+    fc = 0; adc8(0x50); wr8(ABS(0x03D4), (u8)A);
+    fc = 0; adc8(0x10); wr8(ABS(0x03D6), (u8)A);
+    lda8((u8)Y);
+    fc = 0; adc8(0x50); wr8(ABS(0x03D3), (u8)A);
+    fc = 0; adc8(0x10); wr8(ABS(0x03D5), (u8)A);
+    cmp8((u8)Y, 0x00);
+    if (fz) { lda8(0xFC); wr8(ABS(0x03D3), 0xFC); wr8(ABS(0x03D5), 0xFC); }
+    push16(0xDEB1); VramQueueTiles20_m1x1();
+    ret();
+}
+
+/* $80:DE23 (RTS): the bonus result screen starts: $88 = $10, the label
+ * $80:DE54 at VRAM $18B6, the tiles $80:DE59 at $0090 ($0F = 8), the
+ * next step and a count of 0. */
+void BonusResultStart_m1x1(void)
+{
+    lda8(0x10); wr8(DP(0x88), 0x10);
+    rep(0x20);
+    lda16(0x18B6); wr16(DP(0x00), 0x18B6);
+    lda16(0xDE54); wr16(DP(0x02), 0xDE54);
+    sep(0x20);
+    push16(0xDE37); VramQueueTiles20_m1x1();
+    rep(0x20);
+    lda16(0x0090); wr16(DP(0x00), 0x0090);
+    lda16(0xDE59); wr16(DP(0x02), 0xDE59);
+    sep(0x20);
+    lda8(0x08); wr8(DP(0x0F), 0x08);
+    push16(0xDE4C); VramQueueTiles_m1x1();
+    wr8(DP(0x77), inc8(rd8(DP(0x77))));
+    wr8(DP(0x10), 0);
+    bonus_count1();
+}
+
+/* $80:DEB3 (RTS): the bonus count-up: every 4 frames ($88) the shown
+ * count $09C6 steps toward $09C5 with sound $44; at the end, next step,
+ * a $40 wait and for a full score ($09C9) the banner $80:DEF2 at $18F4. */
+void BonusCountUp_m1x1(void)
+{
+    u8 t = dec8(rd8(DP(0x88)));
+    wr8(DP(0x88), t);
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABS(0x09C6)));
+    cmp8((u8)A, rd8(ABS(0x09C5)));
+    if (!fz) {
+        lda8(inc8((u8)A));
+        wr8(ABS(0x09C6), (u8)A);
+        wr8(DP(0x10), (u8)A);
+        lda8(0x44);
+        push8(0x80); push16(0xDECA); QueueSound_m1x1();
+        lda8(0x04); wr8(DP(0x88), 0x04);
+        bonus_count1();
+        return;
+    }
+    wr8(DP(0x77), inc8(rd8(DP(0x77))));
+    lda8(0x40); wr8(DP(0x88), 0x40);
+    lda8(rd8(ABS(0x09C5)));
+    cmp8((u8)A, rd8(ABS(0x09C9)));
+    if (!fz) { ret(); return; }
+    rep(0x20);
+    lda16(0x18F4); wr16(DP(0x00), 0x18F4);
+    lda16(0xDEF2); wr16(DP(0x02), 0xDEF2);
+    sep(0x20);
+    VramQueueTiles20_m1x1();
+}
+
+/* $80:C12C RivalTarget (RTS, X = rival, Y = speed class): rival X's
+ * target speed: 3 after the race ($84); a pacing rival ($80:C17F) on
+ * screen page 0 shadows the moving player's speed (from X $40 on, or in
+ * the player's row $095B, plain), creeping its high byte up to 4; others
+ * $80:BDD7 by class; the low byte $80:BDCF by its random $2F. */
+void RivalTarget_m1x1(void)
+{
+    lda8(rd8(DP(0x84)));
+    if (!fz) { lda8(0x03); goto set; }
+    lda8(rd8(ABSX(0xC17F)));
+    if (!fz) {
+        lda8(rd8(ABSX(0x0198)));
+        lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
+        if (!fc) {
+            lda8(rd8(ABS(0x01C0)));
+            if (!fz) {
+                wr8(ABSX(0x0230), (u8)A);
+                lda8(rd8(ABS(0x01B8)));
+                wr8(ABSX(0x0228), (u8)A);
+                lda8(rd8(ABSX(0x0198)));
+                if (!fz) {
+                    lda8(rd8(ABSX(0x0190)));
+                    cmp8((u8)A, 0x40);
+                    if (fc) goto plain;
+                    lda8(rd8(ABS(0x0958)));
+                    cmp8((u8)A, rd8(ABS(0x095B)));
+                    if (fz) { ret(); return; }
+                }
+                lda8(rd8(ABSX(0x0230)));
+                cmp8((u8)A, 0x04);
+                if (!fc) wr8(ABSX(0x0230), inc8(rd8(ABSX(0x0230))));
+                ret();
+                return;
+            }
+        }
+    }
+plain:
+    lda8(rd8(ABSY(0xBDD7)));
+set:
+    wr8(ABSX(0x0230), (u8)A);
+    lda8(rd8(DPX(0x2F)));
+    and8(0x0F);
+    Y = (u8)A; nz8((u8)Y);
+    lda8(rd8(ABSY(0xBDCF)));
+    wr8(ABSX(0x0228), (u8)A);
+    ret();
+}
