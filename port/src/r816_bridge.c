@@ -393,6 +393,10 @@ BRIDGE(HleHand_CpuThrottle, CpuThrottle_m1x1, 35)
 BRIDGE(HleHand_CpuReleaseDpad, CpuReleaseDpad_m1x1, 15)
 BRIDGE(HleHand_CpuSteer, CpuSteer_m1x1, 45)
 BRIDGE_DYN(HleHand_AimVelocity, AimVelocity_m1x1, (A & 0xFF) ? 140 + 25 * (A & 0xFF) : 35)
+BRIDGE(HleHand_PlayerHalt, PlayerHalt_m1x1, 30)
+BRIDGE(HleHand_PlayerStop, PlayerStop_m1x1, 40)
+BRIDGE(HleHand_PlayerColumnCheck, PlayerColumnCheck_m1x1, 60)
+BRIDGE(HleHand_MarkerObjectStep, MarkerObjectStep_m1x1, 260)
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */

@@ -177,3 +177,7 @@
 80AFF2  1 1  mem+A,X,Y,C,V   CpuReleaseDpad
 80AFFB  1 1  mem+A,X,Y,C,V   CpuSteer
 819F7A  1 1  mem+A,X,Y,C,V   AimVelocity
+80DDAF  1 1  mem+A,X,Y,C,V   PlayerHalt
+80DDA7  1 1  mem+A,X,Y,C,V   PlayerStop
+80DD82  1 1  mem+A,X,Y,C,V   PlayerColumnCheck
+80D31F  1 1  mem+A,X,Y,C,V   MarkerObjectStep

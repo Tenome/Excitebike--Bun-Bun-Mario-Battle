@@ -289,3 +289,100 @@ void AimVelocity_m1x1(void)
     lda8(rd8(DP(0x0A))); wr8(ABSX(0x0299), (u8)A);
     retl();
 }
+
+void GroundHeightAbove_m1x1(void);
+void StepObjectX_m1x1(void);
+void StepObjectX8_m1x1(void);
+void DrawSmallObject_m1x1(void);
+void sub_80C37B_m1x1(void);
+
+/* $80:DDAF PlayerHalt (RTS): the player's speed and jump state cleared. */
+static void player_halt1(void)
+{
+    lda8(0x00);
+    wr8(ABS(0x01B8), 0); wr8(ABS(0x01C0), 0); wr8(ABS(0x09C4), 0);
+    wr8(ABS(0x09C7), 0); wr8(ABS(0x0180), 0); wr8(ABS(0x08F4), 0);
+    ret();
+}
+
+void PlayerHalt_m1x1(void) { player_halt1(); }
+
+/* $80:DDA7 PlayerStop (RTS): crashed flags $01C8 = $0999 = $FF, then
+ * PlayerHalt. */
+void PlayerStop_m1x1(void)
+{
+    lda8(0xFF);
+    wr8(ABS(0x01C8), 0xFF);
+    wr8(ABS(0x0999), 0xFF);
+    player_halt1();
+}
+
+/* $80:DD82 PlayerColumnCheck (RTS): as Stadium 4's $80:DC70, with
+ * Stadium 1's addresses (wheel column $0260, air $01E8, fall speed
+ * $01B0; CrashLand is $80:C37B). */
+void PlayerColumnCheck_m1x1(void)
+{
+    Y = rd8(ABS(0x0260)); nz8((u8)Y);
+    lda8(rd8(ABS(0x01E8)));
+    if (!fz) {
+        lda8(rd8(ABS(0x0904)));
+        if (!fz) { ret(); return; }
+        lda8(rd8(ABSY(0x0A13)));
+        Y = inc8((u8)Y);
+        cmp8((u8)A, rd8(ABSY(0x0A13)));
+        if (fz) { ret(); return; }
+        push16(0xDD9A); GroundHeightAbove_m1x1();
+        fc = 0; adc8(0x08);
+        fc = 1; sbc8(rd8(ABSY(0x0A13)));
+        cmp8((u8)A, rd8(ABS(0x01B0)));
+        if (fc) { ret(); return; }
+        PlayerStop_m1x1();
+        return;
+    }
+    lda8(rd8(ABS(0x09C7)));
+    if (!fz) {
+        cmp8((u8)A, rd8(ABSY(0x0A13)));
+        int stop;
+        if (fz) {
+            Y = inc8((u8)Y);
+            cmp8((u8)A, rd8(ABSY(0x0A13)));
+            stop = !fc;
+            if (!stop) goto ramp;
+        } else stop = !fc;
+        if (stop) { push16(0xDDD2); PlayerStop_m1x1(); }
+        push16(0xDDD5); CALL(sub_80C37B_m1x1, 0x80C37B, 2);
+        lda8(rd8(ABS(0x08D4))); wr8(ABS(0x08E4), (u8)A);
+        lda8(rd8(ABS(0x08DC))); wr8(ABS(0x08EC), (u8)A);
+        ret();
+        return;
+    }
+ramp:
+    ldx8(0x01);
+    lda8(rd8(ABSY(0x09D3)));
+    cmp8((u8)A, 0xFC);
+    if (!fz) ldx8(0x00);
+    wr8(ABS(0x0958), (u8)X);
+    ret();
+}
+
+/* $80:D31F MarkerObjectStep (RTL, X = object): move object X and X + 8,
+ * count its timer $1518 up and draw it; once its Y $1508 reaches $C0,
+ * clear $1530 and count $1541 up to 5. */
+void MarkerObjectStep_m1x1(void)
+{
+    push8(0x80); push16(0xD322); StepObjectX_m1x1();
+    push8((u8)X);
+    push8(0x80); push16(0xD327); StepObjectX8_m1x1();
+    X = pull8(); nz8((u8)X);
+    wr8(ABSX(0x1518), inc8(rd8(ABSX(0x1518))));
+    push8(0x80); push16(0xD32F); DrawSmallObject_m1x1();
+    lda8(rd8(ABSX(0x1508)));
+    cmp8((u8)A, 0xC0);
+    if (fc) {
+        wr8(ABSX(0x1530), 0);
+        lda8(rd8(ABS(0x1541)));
+        cmp8((u8)A, 0x05);
+        if (!fc) wr8(ABS(0x1541), inc8(rd8(ABS(0x1541))));
+    }
+    retl();
+}

@@ -199,3 +199,7 @@
 80AFF2 CpuReleaseDpad
 80AFFB CpuSteer
 819F7A AimVelocity
+80DDAF PlayerHalt
+80DDA7 PlayerStop
+80DD82 PlayerColumnCheck
+80D31F MarkerObjectStep
