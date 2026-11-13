@@ -593,7 +593,7 @@ void CrossFinish_m1x1(void)
 /* $80:DA31 (RTS): the bonus banner sprites: for banner $BB (1-based; at
  * 4 only while $8A counts down) four OAM words from $80:DA65 + 8 *
  * ($BB - 1) into $16A0-$16A7, size 2 for both. X is kept. */
-void BonusBannerSprites_m1x1(void)
+static void banner_sprites(u16 table)
 {
     lda8(rd8(DP(0xBB)));
     if (fz) { ret(); return; }
@@ -611,7 +611,7 @@ void BonusBannerSprites_m1x1(void)
     ldy8(0xA0);
     rep(0x20);
     do {
-        lda16(rd16(ABSX(0xDA65)));
+        lda16(rd16(ABSX(table)));
         wr16(ABSY(0x1600), A);
         X = inc8((u8)X); X = inc8((u8)X);
         Y = inc8((u8)Y); Y = inc8((u8)Y);
@@ -621,5 +621,160 @@ void BonusBannerSprites_m1x1(void)
     lda16(0x0202); wr16(ABSY(0x1820), 0x0202);
     sep(0x20);
     X = pull8(); nz8((u8)X);
+    ret();
+}
+
+void BonusBannerSprites_m1x1(void) { banner_sprites(0xDA65); }
+
+/* $80:AA78 (RTS): BonusBannerSprites' twin for the race banners
+ * (table $80:AAAC). */
+void RaceBannerSprites_m1x1(void) { banner_sprites(0xAAAC); }
+
+void VramQueueTiles_m1x1(void);
+void VramQueueCopy_m1x1(void);
+void FadeSkyColours_m1x1(void);
+void Random_m1x1(void);
+
+/* $80:EE68 (RTS): the six score digits $0CE5 as two rows at $0CEC /
+ * $0CF2 (+$50 / +$60; leading zeros blank $0F except the last), size
+ * $26, queued from $0CEB (VRAM address in $00). */
+void QueueScoreDigits_m1x1(void)
+{
+    ldx8(0x00);
+    Y = X; nz8((u8)Y);
+    do {
+        lda8(rd8(ABSX(0x0CE5)));
+        int blank = 0;
+        if (fz) {
+            cmp8((u8)Y, 0x00);
+            if (fz) { cmp8((u8)X, 0x05); blank = !fz; }
+        }
+        if (blank) lda8(0x0F);
+        else { Y = inc8((u8)Y); fc = 0; adc8(0x50); }
+        wr8(ABSX(0x0CEC), (u8)A);
+        fc = 0; adc8(0x10);
+        wr8(ABSX(0x0CF2), (u8)A);
+        X = inc8((u8)X);
+        cmp8((u8)X, 0x06);
+    } while (!fc);
+    lda8(0x26); wr8(ABS(0x0CEB), 0x26);
+    lda8(0xEB); wr8(DP(0x02), 0xEB);
+    lda8(0x0C); wr8(DP(0x03), 0x0C);
+    VramQueueTiles_m1x1();
+}
+
+/* The end screen's box: 2 rows of $20 from $89:DA00 to VRAM $0300. */
+static void end_box(u16 back)
+{
+    lda8(0x00); wr8(DP(0x02), 0x00);
+    lda8(0xDA); wr8(DP(0x03), 0xDA);
+    lda8(0x89); wr8(DP(0x04), 0x89);
+    lda8(0x20); wr8(DP(0x10), 0x20);
+    lda8(0x02); wr8(DP(0x11), 0x02);
+    lda8(0x00); wr8(DP(0x00), 0x00);
+    lda8(0x03); wr8(DP(0x01), 0x03);
+    push16(back); VramQueueCopy_m1x1();
+}
+
+/* $80:9D07 (RTS): on the end screen's prompt a press of A (bit 7): with
+ * the new press ($26) the next step ($1923 - 1, $0453 + 1, sound $45);
+ * held from before ($21) the box is redrawn and the step goes back. */
+void EndScreenPrompt_m1x1(void)
+{
+    lda8(rd8(DP(0x26)));
+    ora8(rd8(DP(0x21)));
+    and8(0x80);
+    if (fz) { ret(); return; }
+    lda8(rd8(DP(0x26)));
+    if (!fz) {
+        wr8(ABS(0x1923), dec8(rd8(ABS(0x1923))));
+        wr8(ABS(0x0453), inc8(rd8(ABS(0x0453))));
+        lda8(0x45);
+        push8(0x80); push16(0x9D1E); QueueSound_m1x1();
+        ret();
+        return;
+    }
+    end_box(0x9D3E);
+    wr8(ABS(0x0453), dec8(rd8(ABS(0x0453))));
+    ret();
+}
+
+/* $80:9BC8 (RTS): the end screen's scroll-in: BG X $9A moves 2 a frame;
+ * at $0140 sound $2D, the next step, the box, $03A9 = 1 and $0452
+ * cleared. */
+void EndScreenScrollIn_m1x1(void)
+{
+    rep(0x20);
+    wr16(ABS(0x009A), inc16(rd16(ABS(0x009A))));
+    wr16(ABS(0x009A), inc16(rd16(ABS(0x009A))));
+    lda16(rd16(ABS(0x009A)));
+    cmp16(A, 0x0140);
+    if (fc) {
+        sep(0x20);
+        lda8(0x2D);
+        push8(0x80); push16(0x9BDF); QueueSound_m1x1();
+        wr8(ABS(0x0453), inc8(rd8(ABS(0x0453))));
+        end_box(0x9C01);
+        lda8(0x01); wr8(ABS(0x03A9), 0x01);
+        wr8(ABS(0x0452), 0);
+    }
+    sep(0x20);
+    ret();
+}
+
+/* $81:97E2 (RTS): the sky fade object ($039D): the sky colours fade, and
+ * when its word timer $0319 runs out its state steps, the palette
+ * entries $1C02-$1C16 become $6D69, and $9D + 1, $88 = $C0, $B1 = 6. */
+void SkyFadeObject_m1x1(void)
+{
+    push8(0x81); push16(0x97E5); FadeSkyColours_m1x1();
+    X = rd8(ABS(0x039D)); nz8((u8)X);
+    rep(0x20);
+    wr16(ABSX(0x0319), dec16(rd16(ABSX(0x0319))));
+    if (fz) {
+        wr16(ABSX(0x0309), inc16(rd16(ABSX(0x0309))));
+        rep(0x20);
+        lda16(0x6D69);
+        for (u16 a = 0x1C02; a <= 0x1C16; a += 2) wr16(ABS(a), 0x6D69);
+        sep(0x20);
+        wr8(ABS(0x1915), inc8(rd8(ABS(0x1915))));
+        wr8(DP(0x9D), inc8(rd8(DP(0x9D))));
+        lda8(0xC0); wr8(DP(0x88), 0xC0);
+        lda8(0x06); wr8(DP(0xB1), 0x06);
+    }
+    sep(0x20);
+    ret();
+}
+
+/* $81:BBE4 (RTS): object $039D's idle animation: when its delay $0369 is
+ * out the step $0319 cycles 0-3 (delay and frame from $81:BC26 /
+ * $81:BC2A); after $0329 rounds it goes to state 2 (delay $0A, frame 6,
+ * counter $40-$7F). */
+void IdleCycleObject_m1x1(void)
+{
+    X = rd8(ABS(0x039D)); nz8((u8)X);
+    lda8(rd8(ABSX(0x0369)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABSX(0x0319)));
+    lda8(inc8((u8)A));
+    and8(0x03);
+    wr8(ABSX(0x0319), (u8)A);
+    Y = (u8)A; nz8((u8)Y);
+    if (fz) {
+        wr8(ABSX(0x0329), dec8(rd8(ABSX(0x0329))));
+        if (fz) {
+            lda8(0x02); wr8(ABSX(0x0309), 0x02);
+            lda8(0x0A); wr8(ABSX(0x0369), 0x0A);
+            lda8(0x06); wr8(ABSX(0x0349), 0x06);
+            push8(0x81); push16(0xBC0F); Random_m1x1();
+            and8(0x3F);
+            fc = 0; adc8(0x40);
+            wr8(ABSX(0x0379), (u8)A);
+            ret();
+            return;
+        }
+    }
+    lda8(rd8(ABSY(0xBC26))); wr8(ABSX(0x0369), (u8)A);
+    lda8(rd8(ABSY(0xBC2A))); wr8(ABSX(0x0349), (u8)A);
     ret();
 }

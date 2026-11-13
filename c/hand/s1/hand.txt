@@ -191,3 +191,9 @@
 80AF9F  1 1  mem+A,X,Y,C,V   RiderAhead
 80ED42  1 1  mem+A,X,Y,C,V   CrossFinish
 80DA31  1 1  mem+A,X,Y,C,V   BonusBannerSprites
+80AA78  1 1  mem+A,X,Y,C,V   RaceBannerSprites
+80EE68  1 1  mem+X,Y,C,V     QueueScoreDigits
+809D07  1 1  mem+A,X,Y,C,V   EndScreenPrompt
+809BC8  1 1  mem+A,X,Y,C,V   EndScreenScrollIn
+8197E2  1 1  mem+A,X,Y,C,V   SkyFadeObject
+81BBE4  1 1  mem+A,X,Y,C,V   IdleCycleObject

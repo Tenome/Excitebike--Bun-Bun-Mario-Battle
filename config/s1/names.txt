@@ -213,3 +213,9 @@
 80AF9F RiderAhead
 80ED42 CrossFinish
 80DA31 BonusBannerSprites
+80AA78 RaceBannerSprites
+80EE68 QueueScoreDigits
+809D07 EndScreenPrompt
+809BC8 EndScreenScrollIn
+8197E2 SkyFadeObject
+81BBE4 IdleCycleObject
