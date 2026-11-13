@@ -325,3 +325,11 @@
 81AC0B  1 1  mem+A,X,Y,C,V   EmptyHook
 80F9C2  1 1  mem+A,X,Y,C,V   SetRiderPair
 80F8D3  1 1  mem+A,X,Y,C,V   RiderLanePieceAt
+80B194  1 1  mem+A,X,Y,C,V   ReadRiderPieces
+80FA0E  1 1  mem+A,X,Y,C,V   FlattenPlayerPiece
+80FA40  1 1  mem+A,X,Y,C,V   UseArrowPiece
+80FAB7  1 1  mem+A,X,Y,C,V   CollectPickupPiece
+80F96E  1 1  mem+A,X,Y,C,V   HeightBelow
+80F969  1 1  mem+A,X,Y,C,V   RiderPairHeight
+80F97A  1 1  mem+A,X,Y,C,V   PlayerSpeedBoost
+80DD45  1 1  mem+A,X,Y,C,V   Mode0A

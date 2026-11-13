@@ -706,6 +706,17 @@ BRIDGE(HleHand_ObjectFollowPath, ObjectFollowPath_m1x1, 1900)
 BRIDGE(HleHand_SetRiderPair, SetRiderPair_m1x1, 18)
 BRIDGE(HleHand_RiderLanePieceAt, RiderLanePieceAt_m1x1, 66)
 BRIDGE(HleHand_EmptyHook, EmptyHook_m1x1, 5)
+BRIDGE(HleHand_ReadRiderPieces, ReadRiderPieces_m1x1, 1120)
+BRIDGE_DYN(HleHand_FlattenPlayerPiece, FlattenPlayerPiece_m1x1,
+           ((X & 0xFF) == 0 && !g_ram[0x01EE] && !g_ram[0x84]) ? 110 : 10)
+BRIDGE_DYN(HleHand_UseArrowPiece, UseArrowPiece_m1x1,
+           165 + (((X & 0xFF) == 0 && !g_ram[0x01EE]) ? 300 : 10))
+BRIDGE_DYN(HleHand_CollectPickupPiece, CollectPickupPiece_m1x1,
+           ((X & 0xFF) == 0 && !g_ram[0x01EE]) ? 330 : 15)
+BRIDGE(HleHand_HeightBelow, HeightBelow_m1x1, 15)
+BRIDGE(HleHand_RiderPairHeight, RiderPairHeight_m1x1, 40)
+BRIDGE(HleHand_PlayerSpeedBoost, PlayerSpeedBoost_m1x1, 70)
+BRIDGE(HleHand_Mode0A, Mode0A_m1x1, 120)
 /* VramQueueTilesLong / QueueTileRowsLong ($80:B2D6 / $80:B431) are
  * verified but unhooked: trampolines whose cost is the callee's. */
 /* c/hand/s4/objects.c, part 26 */

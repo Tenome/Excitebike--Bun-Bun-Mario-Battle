@@ -337,3 +337,11 @@
 81AC0B EmptyHook
 80F9C2 SetRiderPair
 80F8D3 RiderLanePieceAt
+80B194 ReadRiderPieces
+80FA0E FlattenPlayerPiece
+80FA40 UseArrowPiece
+80FAB7 CollectPickupPiece
+80F96E HeightBelow
+80F969 RiderPairHeight
+80F97A PlayerSpeedBoost
+80DD45 Mode0A

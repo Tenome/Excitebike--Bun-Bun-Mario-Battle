@@ -7512,3 +7512,237 @@ void RiderLanePieceAt_m1x1(void)
     Y = rd8(ABSX(0x08A4)); nz8((u8)Y);
     RiderPieceAt_m1x1();
 }
+
+void RiderLanePieceAt_m1x1(void);
+void SetRiderPair_m1x1(void);
+void SpawnPlayerSpark_m1x1(void);
+void StartWheelie_m1x1(void);
+void CheckBonusTime_m1x1(void);
+void EndAtBonusMinute_m1x1(void);
+void SetBgTileBase_m1x1(void);
+void EmptyHook_m1x1(void);
+
+/* $80:B194 (RTS): for riders 7-0, the piece under the wheel (type $021E,
+ * height $0216) and the four piece heights from there on ($0884 + 4X,
+ * the column wrapping at $40). */
+void ReadRiderPieces_m1x1(void)
+{
+    ldx8(0x07);
+    do {
+        lda8((u8)X);
+        lda8(asl8((u8)A)); lda8(asl8((u8)A));
+        wr8(DP(0x0C), (u8)A);
+        lda8(0x04); wr8(DP(0x0B), 0x04);
+        push16(0xB1A1); RiderLanePieceAt_m1x1();
+        wr8(ABSX(0x021E), (u8)A);
+        lda8(rd8(DP(0x10)));
+        wr8(ABSX(0x0216), (u8)A);
+        for (;;) {
+            push8((u8)A);
+            Y = inc8((u8)Y);
+            lda8((u8)Y);
+            and8(0x3F);
+            wr8(DP(0x08), (u8)A);
+            Y = rd8(DP(0x0C)); nz8((u8)Y);
+            lda8(pull8());
+            wr8(ABSY(0x0884), (u8)A);
+            wr8(DP(0x0C), inc8(rd8(DP(0x0C))));
+            u8 n = dec8(rd8(DP(0x0B)));
+            wr8(DP(0x0B), n);
+            if (fz) break;
+            Y = rd8(DP(0x08)); nz8((u8)Y);
+            lda8(rd8((((u32)DB << 16) + rd16(DP(0x03)) + Y) & 0xFFFFFF));
+        }
+        X = dec8((u8)X);
+    } while (!fn);
+    ret();
+}
+
+/* The player's lane piece ($0180 on: its type byte), Y left 16-bit. */
+static void player_piece_type(u16 back)
+{
+    push16(back); RiderLanePieceAt_m1x1();
+    rep(0x30);
+    lda16(Y);
+    fc = 0; adc16(0x0180);
+    Y = A; nz16(Y);
+    sep(0x20);
+}
+
+static u32 piece_addr(void)
+{
+    return (((u32)DB << 16) + rd16(DP(0x03)) + Y) & 0xFFFFFF;
+}
+
+/* The course map entry ($7F:4000) for the column $54 back from the
+ * scroll $AE (wrapping by $B0), by the position table $7F:6000: X = the
+ * entry, Y = the player's lane, 8-bit A. */
+static void course_map_slot(void)
+{
+    rep(0x30);
+    lda16(rd16(DP(0xAE)));
+    fc = 1; sbc16(0x0054);
+    if (fn) { fc = 0; adc16(rd16(DP(0xB0))); }
+    X = A; nz16(X);
+    lda16(rd16(LONGX(0x7F6000)));
+    cmp16(A, rd16(LONGX(0x7F5FFE)));
+    if (!fz) lda16(dec16(A));
+    X = A; nz16(X);
+    lda16(rd16(ABS(0x08A4)));
+    and16(0x00FF);
+    Y = A; nz16(Y);
+    sep(0x20);
+}
+
+/* $80:FA0E (RTS, X = rider): the player on the ground (and $84 clear)
+ * turns its piece flat ($1F) and sets $B2 from its lane ($80:FA39). */
+void FlattenPlayerPiece_m1x1(void)
+{
+    cmp8((u8)X, 0x00);
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABSX(0x01EE)));
+    ora8(rd8(DP(0x84)));
+    if (!fz) { ret(); return; }
+    player_piece_type(0xFA1B);
+    lda8(0x1F);
+    wr8(piece_addr(), 0x1F);
+    sep(0x10);
+    push8((u8)X);
+    X = rd8(ABS(0x08A4)); nz8((u8)X);
+    lda8(rd8(ABSX(0xFA39)));
+    wr8(DP(0xB2), (u8)A);
+    sep(0x10);
+    X = pull8(); nz8((u8)X);
+    ret();
+}
+
+/* $80:FA40 (RTS, X = rider): for the player on the ground in a lane with
+ * an arrow ($80:FAB0): sound $32, $1979 = 1, and an arrow piece ($15)
+ * becomes used ($12), with the course map entry set to the lane's
+ * $80:FAA9 and $B7 from $80:FA39. Then StartWheelie. */
+void UseArrowPiece_m1x1(void)
+{
+    cmp8((u8)X, 0x00);
+    if (fz) {
+        lda8(rd8(ABSX(0x01EE)));
+        if (fz) {
+            Y = rd8(ABS(0x08A4)); nz8((u8)Y);
+            lda8(rd8(ABSY(0xFAB0)));
+            if (!fz) {
+                lda8(0x32);
+                push8(0x80); push16(0xFA56); QueueSoundB_m1x1();
+                lda8(0x01); wr8(ABS(0x1979), 0x01);
+                player_piece_type(0xFA5E);
+                lda8(rd8(piece_addr()));
+                cmp8((u8)A, 0x15);
+                if (fz) {
+                    lda8(0x12);
+                    wr8(piece_addr(), 0x12);
+                    push16(X);
+                    course_map_slot();
+                    lda8(rd8(ABSY(0xFAA9)));
+                    wr8(LONGX(0x7F4000), (u8)A);
+                    lda8(rd8(ABSY(0xFA39)));
+                    wr8(DP(0xB7), (u8)A);
+                    X = pull16(); nz16(X);
+                }
+            }
+        }
+    }
+    sep(0x30);
+    StartWheelie_m1x1();
+}
+
+/* $80:FAB7 (RTS, X = rider): the player on the ground collects a pickup:
+ * a spark, player $7C's flag $1E8D, and in a lane with one ($80:FB1E)
+ * sound $47 and the pickup piece ($16) cleared to flat ($1F), its course
+ * map entry set to $80. */
+void CollectPickupPiece_m1x1(void)
+{
+    cmp8((u8)X, 0x00);
+    if (fz) {
+        lda8(rd8(ABSX(0x01EE)));
+        if (fz) {
+            push8(0x80); push16(0xFAC3); SpawnPlayerSpark_m1x1();
+            Y = rd8(DP(0x7C)); nz8((u8)Y);
+            lda8(0x01); wr8(ABSY(0x1E8D), 0x01);
+            Y = rd8(ABS(0x08A4)); nz8((u8)Y);
+            lda8(rd8(ABSY(0xFB1E)));
+            if (!fz) {
+                lda8(0x47);
+                push8(0x80); push16(0xFAD8); QueueSoundB_m1x1();
+                player_piece_type(0xFADB);
+                lda8(rd8(piece_addr()));
+                cmp8((u8)A, 0x16);
+                if (fz) {
+                    lda8(0x1F);
+                    wr8(piece_addr(), 0x1F);
+                    push16(X);
+                    course_map_slot();
+                    lda8(0x80);
+                    wr8(LONGX(0x7F4000), 0x80);
+                    X = pull16(); nz16(X);
+                }
+            }
+        }
+    }
+    sep(0x30);
+    ret();
+}
+
+/* $80:F96E (RTS, X = rider): jump height $01FE = $026E - A. */
+static void height_below(void)
+{
+    wr8(DP(0x00), (u8)A);
+    lda8(rd8(ABSX(0x026E)));
+    fc = 1; sbc8(rd8(DP(0x00)));
+    wr8(ABSX(0x01FE), (u8)A);
+    ret();
+}
+
+void HeightBelow_m1x1(void) { height_below(); }
+
+/* $80:F969 (RTS): SetRiderPair(1), then HeightBelow. */
+void RiderPairHeight_m1x1(void)
+{
+    lda8(0x01);
+    push16(0xF96D); SetRiderPair_m1x1();
+    height_below();
+}
+
+/* $80:F97A (RTS, X = rider): the player's speed ($01BE / $01C6) + $40,
+ * at most $0340, then RiderPairHeight. */
+void PlayerSpeedBoost_m1x1(void)
+{
+    lda8(rd8(ABS(0x01BE))); wr8(DP(0x10), (u8)A);
+    lda8(rd8(ABS(0x01C6))); wr8(DP(0x11), (u8)A);
+    rep(0x20);
+    lda16(rd16(DP(0x10)));
+    fc = 0; adc16(0x0040);
+    cmp16(A, 0x0340);
+    if (fc) lda16(0x0340);
+    sep(0x20);
+    wr8(ABS(0x01BE), (u8)A);
+    A = (u16)((A >> 8) | (A << 8)); nz8((u8)A);
+    wr8(ABS(0x01C6), (u8)A);
+    lda8(0x01);
+    push16(0xF9A1); SetRiderPair_m1x1();
+    height_below();
+}
+
+/* $80:DD45 Mode0A (RTS): the bonus course: its time and minute checks,
+ * the BG tile base, then (once $3A is clear) its step $77 through the
+ * table $80:DD5F. */
+void Mode0A_m1x1(void)
+{
+    push16(0xDD47); CheckBonusTime_m1x1();
+    push16(0xDD4A); EndAtBonusMinute_m1x1();
+    push8(0x80); push16(0xDD4E); SetBgTileBase_m1x1();
+    push8(0x80); push16(0xDD52); EmptyHook_m1x1();
+    lda8(rd8(DP(0x3A)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(DP(0x77)));
+    lda8(asl8((u8)A));
+    X = (u8)A; nz8((u8)X);
+    r816_call_pc(0x800000u | rd16(LONGX(0x80DD5F)));
+}
