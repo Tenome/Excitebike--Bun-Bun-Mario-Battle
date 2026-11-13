@@ -273,3 +273,6 @@
 80C09F PlaceRival
 80C012 SpawnRivals
 80BEB7 WalkBackOn
+80DA99 PlayerTileState
+80A231 PackEntryNumber
+8199CB FadePaletteStep

@@ -252,3 +252,6 @@
 80C09F  1 1  mem+A,X,Y,C,V   PlaceRival
 80C012  1 1  mem+A,X,Y,C,V   SpawnRivals
 80BEB7  1 1  mem+A,X,Y,C,V   WalkBackOn
+80DA99  1 1  mem+A,X,Y,C,V   PlayerTileState
+80A231  1 1  mem+A,X,Y,C,V   PackEntryNumber
+8199CB  1 1  mem+A,X,Y,C,V   FadePaletteStep

@@ -2848,3 +2848,139 @@ arrived:
     if (fz) { wr8(ABS(0x092C), 0); wr8(ABS(0x08C7), 0); }
     ret();
 }
+
+void Add32_m1x1(void);
+
+/* $80:DA99 (RTS): the player's track column $0260: a new column in the
+ * air adds its coin value $0A93 into $09C5; on the ground the height
+ * $09C4 follows $0A13; the piece $09D3 goes to $0210 (below $28 ends the
+ * race once: $099C, $84 = 1, sound $2B); a coin $0A53 in the air is
+ * collected as piece $45, on the ground (not a $40 piece) taken off the
+ * track (scenery rows $3B, $0218); a $84 piece reads $FC on the ground. */
+void PlayerTileState_m1x1(void)
+{
+    X = rd8(ABS(0x0260)); nz8((u8)X);
+    lda8(rd8(ABS(0x09C7)));
+    ora8(rd8(ABS(0x01E8)));
+    if (!fz) {
+        lda8(rd8(ABS(0x0260)));
+        cmp8((u8)A, rd8(ABS(0x09C8)));
+        if (!fz) {
+            wr8(ABS(0x09C8), (u8)A);
+            lda8(rd8(ABSX(0x0A93)));
+            fc = 0; adc8(rd8(ABS(0x09C5)));
+            wr8(ABS(0x09C5), (u8)A);
+        }
+    }
+    lda8(rd8(ABS(0x01C8)));
+    if (fz) { lda8(rd8(ABSX(0x0A13))); wr8(ABS(0x09C4), (u8)A); }
+    lda8(rd8(ABSX(0x09D3)));
+    wr8(ABS(0x0210), (u8)A);
+    cmp8((u8)A, 0x28);
+    if (!fc) {
+        lda8(rd8(ABS(0x099C)));
+        if (fz) {
+            lda8(0x01); wr8(ABS(0x099C), 0x01); wr8(DP(0x84), 0x01);
+            lda8(0x2B);
+            push8(0x80); push16(0xDADF); QueueSound_m1x1();
+        }
+        ret();
+        return;
+    }
+    lda8(rd8(ABSX(0x0A53)));
+    if (!fz) {
+        lda8(rd8(ABS(0x09C7)));
+        ora8(rd8(ABS(0x01E8)));
+        if (!fz) { lda8(0x45); wr8(ABS(0x0210), 0x45); ret(); return; }
+        lda8(rd8(ABSX(0x09D3)));
+        and8(0x40);
+        if (!fz) { ret(); return; }
+        wr8(ABSX(0x0A53), 0);
+        lda8(0x3B);
+        wr8(ABSX(0x0B53), 0x3B); wr8(ABSX(0x0B93), 0x3B); wr8(ABSX(0x0BD3), 0x3B);
+        wr8(ABSX(0x0C13), 0x3B); wr8(ABSX(0x0C53), 0x3B); wr8(ABSX(0x0C93), 0x3B);
+        wr8(ABS(0x0218), 0x3B);
+    }
+    lda8(rd8(ABSX(0x09D3)));
+    cmp8((u8)A, 0x84);
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABS(0x09C7)));
+    if (!fz) { ret(); return; }
+    lda8(0xFC); wr8(ABS(0x0210), 0xFC);
+    ret();
+}
+
+/* $80:A231 (RTL): the entry digits $03A6-$03A9 as a number (x1000, x100,
+ * x10, +1 via Mul16 and Add32 into $10-$13), packed into the entry
+ * record's BCD nibbles ($085A low, $0859, $0858, $0855 bits 4-5). */
+void PackEntryNumber_m1x1(void)
+{
+    rep(0x20);
+    wr16(DP(0x10), 0); wr16(DP(0x12), 0);
+    static const u16 mul[3] = { 0x03E8, 0x0064, 0x000A };
+    static const u16 back[3][2] = { { 0xA249, 0xA24C }, { 0xA261, 0xA264 }, { 0xA279, 0xA27C } };
+    for (int i = 0; i < 3; i++) {
+        if (i) rep(0x20);
+        lda16(rd16(ABS(0x03A6 + i)));
+        and16(0x00FF);
+        wr16(DP(0x00), A);
+        lda16(mul[i]); wr16(DP(0x02), mul[i]);
+        sep(0x20);
+        push8(0x80); push16(back[i][0]); Mul16_m1x1();
+        push16(back[i][1]); Add32_m1x1();
+    }
+    lda8(rd8(ABS(0x03A9))); wr8(DP(0x04), (u8)A);
+    wr8(DP(0x05), 0); wr8(DP(0x06), 0); wr8(DP(0x07), 0);
+    push16(0xA28A); Add32_m1x1();
+    lda8(rd8(DP(0x10)));
+    and8(0x0F);
+    ora8(rd8(ABS(0x085A)));
+    wr8(ABS(0x085A), (u8)A);
+    lda8(rd8(DP(0x10)));
+    lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
+    wr8(ABS(0x0859), (u8)A);
+    lda8(rd8(DP(0x11)));
+    and8(0x0F);
+    wr8(ABS(0x0858), (u8)A);
+    lda8(rd8(DP(0x11)));
+    and8(0x30);
+    ora8(rd8(ABS(0x0855)));
+    wr8(ABS(0x0855), (u8)A);
+    retl();
+}
+
+/* $81:99CB (RTL): every 8 frames the palette entries from $B1 down
+ * (skipping each group's colour 0) step one unit per channel toward the
+ * targets $81:9A45 (blue), $81:9A5D (green), $81:9A75 (red). */
+void FadePaletteStep_m1x1(void)
+{
+    lda8(rd8(DP(0x63)));
+    and8(0x07);
+    if (fz) {
+        X = rd8(DP(0xB1)); nz8((u8)X);
+        rep(0x20);
+        static const u16 mask[3] = { 0x7C00, 0x03E0, 0x001F };
+        static const u16 tgt[3] = { 0x9A45, 0x9A5D, 0x9A75 };
+        static const u16 unit[3] = { 0x0400, 0x0020, 0x0001 };
+        do {
+            lda16((u16)X);
+            and16(0x0007);
+            if (!fz) {
+                for (int c = 0; c < 3; c++) {
+                    lda16(rd16(ABSX(0x1C00)));
+                    and16(mask[c]);
+                    cmp16(A, rd16(ABSX(tgt[c])));
+                    if (fz) continue;
+                    if (!fc) { lda16(rd16(ABSX(0x1C00))); fc = 0; adc16(unit[c]); }
+                    else { lda16(rd16(ABSX(0x1C00))); fc = 1; sbc16(unit[c]); }
+                    wr16(ABSX(0x1C00), A);
+                }
+            }
+            X = dec8((u8)X);
+            X = dec8((u8)X);
+        } while (!fn);
+        sep(0x20);
+    }
+    wr8(ABS(0x1915), inc8(rd8(ABS(0x1915))));
+    retl();
+}
