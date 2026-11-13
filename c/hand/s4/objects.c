@@ -11076,3 +11076,54 @@ void JumpRun_m1x1(void)
     push16(0xC391); JumpRiderStep_m1x1();
     ret();
 }
+
+void QueueBlinkBanner_m1x1(void);
+
+/* $80:8F10 (RTL): ChangeMode for other banks. */
+void ChangeModeLong_m1x1(void)
+{
+    push16(0x8F12); ChangeMode_m1x1();
+    retl();
+}
+
+/* $81:C3B1 (RTS): leave the jump contest for mode 3. */
+void LeaveJumpContest_m1x1(void)
+{
+    lda8(0x03); wr8(DP(0x76), 0x03);
+    push8(0x81); push16(0xC3B8); ChangeModeLong_m1x1();
+    ret();
+}
+
+/* $81:C29A (RTL): the jump contest's run steps: Start with the debug flag
+ * leaves; otherwise $88 counts up and the run step $197F runs through
+ * $81:C2C1 (start, run, ...), then the banner. */
+void JumpRunSteps_m1x1(void)
+{
+    lda8(rd8(LONG(0x81800E)));
+    if (!fz) {
+        lda8(rd8(DP(0x21)));
+        and8(0x10);
+        if (!fz) { push16(0xC2A8); LeaveJumpContest_m1x1(); retl(); return; }
+    }
+    push8(DB);
+    push8(0x81);
+    DB = pull8(); nz8(DB);
+    rep(0x20);
+    wr16(DP(0x88), inc16(rd16(DP(0x88))));
+    sep(0x20);
+    lda8(rd8(ABS(0x197F)));
+    lda8(asl8((u8)A));
+    X = (u8)A; nz8((u8)X);
+    push16(0xC2BB);
+    r816_call_pc(0x810000u | rd16(LONGX(0x81C2C1)));
+    push16(0xC2BE); QueueBlinkBanner_m1x1();
+    DB = pull8(); nz8(DB);
+    retl();
+}
+
+/* $80:B7F1 (RTS): the jump contest's run steps (mode entry). */
+void JumpRunStepsMode_m1x1(void)
+{
+    push8(0x80); push16(0xB7F4); JumpRunSteps_m1x1();
+    ret();
+}

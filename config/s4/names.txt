@@ -430,3 +430,7 @@
 81C2D9 JumpRunStart
 81C5AA MoveAndScroll
 81C331 JumpRun
+808F10 ChangeModeLong
+81C3B1 LeaveJumpContest
+81C29A JumpRunSteps
+80B7F1 JumpRunStepsMode
