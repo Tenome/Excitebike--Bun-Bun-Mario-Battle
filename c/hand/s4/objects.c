@@ -5572,3 +5572,193 @@ void LoadHdmaScene_m1x1(void)
     DB = pull8(); nz8(DB);
     retl();
 }
+
+void CheckBonusTime_m1x1(void);
+void SetJumpScroll_m1x1(void);
+void EndAtBonusMinute_m1x1(void);
+void SendSpeedToApu_m1x1(void);
+void DrawCountdownSignB_m1x1(void);
+void SetBgTileBase_m1x1(void);
+void DispatchBy85_m1x1(void);
+void NextMode_m1x1(void);
+
+/* $80:9004 ShowCoinRank (RTS): in races, on even frames, the coin count
+ * box at VRAM $1848: below 6 coins ($1542) one of the six small boxes
+ * ($80:90FE + count * $29, attribute $30); from 6 the big box ($80:90AC, or
+ * $80:90D5 with the bonus count $199A) with the count ($1542 or $199D) as
+ * three digits. */
+void ShowCoinRank_m1x1(void)
+{
+    lda8(rd8(DP(0x63)));
+    and8(0x01);
+    if (!fz) { ret(); return; }
+    lda8(rd8(DP(0x76)));
+    cmp8((u8)A, 0x03);
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABS(0x1542)));
+    cmp8((u8)A, 0x06);
+    if (!fc) {
+        wr8(ABS(0x4202), (u8)A);
+        lda8(0x29);
+        wr8(ABS(0x4203), 0x29);
+        rep(0x20);
+        lda16(rd16(ABS(0x4216)));
+        fc = 0; adc16(0x90FE);
+        wr16(DP(0x02), A);
+        lda16(0x1848); wr16(DP(0x00), 0x1848);
+        sep(0x20);
+        lda8(0x30); wr8(DP(0x0F), 0x30);
+        push16(0x90AA); QueueTileBlock_m1x1();
+        ret();
+        return;
+    }
+    ldy8(0x28);
+    lda8(rd8(ABS(0x199A)));
+    rep(0x20);
+    lda16(fz ? 0x90AC : 0x90D5);
+    wr16(DP(0x00), A);
+    sep(0x20);
+    do {
+        lda8(rd8((((u32)DB << 16) + rd16(DP(0x00)) + Y) & 0xFFFFFF));
+        wr8(ABSY(0x03CF), (u8)A);
+        Y = dec8((u8)Y);
+    } while (!fn);
+    ldy8(0x00);
+    lda8(rd8(ABS(0x199A)));
+    if (!fz) lda8(rd8(ABS(0x199D)));
+    else lda8(rd8(ABS(0x1542)));
+    for (;;) {
+        cmp8((u8)A, 0x0A);
+        if (!fc) break;
+        sbc8(0x0A);
+        Y = inc8((u8)Y);
+        WAIT_TICK();
+    }
+    wr8(ABS(0x03DC), (u8)A);
+    ora8(0x10); wr8(ABS(0x03F0), (u8)A);
+    lda8((u8)Y);
+    ldy8(0x00);
+    for (;;) {
+        cmp8((u8)A, 0x0A);
+        if (!fc) break;
+        sbc8(0x0A);
+        Y = inc8((u8)Y);
+        WAIT_TICK();
+    }
+    wr8(ABS(0x03DA), (u8)A);
+    ora8(0x10); wr8(ABS(0x03EE), (u8)A);
+    lda8((u8)Y);
+    wr8(ABS(0x03D8), (u8)A);
+    ora8(0x10); wr8(ABS(0x03EC), (u8)A);
+    rep(0x20);
+    lda16(0x1848); wr16(DP(0x00), 0x1848);
+    lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+    sep(0x20);
+    QueueTileBlock_m1x1();
+}
+
+/* $80:D81B BonusCourseFrame (RTS): one frame of the bonus course: the
+ * time check, scroll, zoom ($0D14/$0D17 from $A2, $0D1A = $10), the end
+ * minute, engine sound, countdown sign and BG tile base; the parallax
+ * scrolls ($1B00/$1B02/$1B04 from $9C, $B6 once past $0500). During the
+ * start countdown ($88) the beeps at $B4/$78/$3C (clearing the sign
+ * sprites, sound $26) and at 0 the start ($8A = $40, sound $27). After it
+ * the player's input, the 19 course objects (DispatchBy85) and the hidden
+ * sprites; when the run has ended ($84 even, not 0) the next mode. */
+void BonusCourseFrame_m1x1(void)
+{
+    push16(0xD81D); CheckBonusTime_m1x1();
+    push8(0x80); push16(0xD821); SetJumpScroll_m1x1();
+    lda8(rd8(DP(0xA2)));
+    eor8(0xFF);
+    lda8(inc8((u8)A));
+    fc = 0; adc8(0x01);
+    wr8(ABS(0x0D14), (u8)A);
+    lda8(rd8(DP(0xA2)));
+    fc = 0; adc8(0x80);
+    wr8(ABS(0x0D17), (u8)A);
+    lda8(0x10); wr8(ABS(0x0D1A), 0x10);
+    push16(0xD83C); EndAtBonusMinute_m1x1();
+    push16(0xD83F); SendSpeedToApu_m1x1();
+    push16(0xD842); DrawCountdownSignB_m1x1();
+    push8(0x80); push16(0xD846); SetBgTileBase_m1x1();
+    rep(0x20);
+    lda16(rd16(DP(0x9C)));
+    lda16(lsr16(A));
+    wr16(ABS(0x1B02), A);
+    wr16(ABS(0x1B04), A);
+    lda16(lsr16(A)); lda16(lsr16(A)); lda16(lsr16(A)); lda16(lsr16(A));
+    wr16(ABS(0x1B00), A);
+    lda16(rd16(ABS(0x00B6)));
+    if (fz) {
+        lda16(rd16(ABS(0x1B02)));
+        cmp16(A, 0x0500);
+        if (fc) wr16(ABS(0x00B6), inc16(rd16(ABS(0x00B6))));
+    }
+    lda16(rd16(DP(0x88)));
+    if (!fz) {
+        wr16(DP(0x88), dec16(rd16(DP(0x88))));
+        lda16(rd16(DP(0x88)));
+        cmp16(A, 0x00B4);
+        int beep = fz;
+        if (!beep) { cmp16(A, 0x0078); beep = fz; }
+        if (!beep) { cmp16(A, 0x003C); beep = fz; }
+        if (beep) {
+            sep(0x20);
+            ldx8(0x3C);
+            do {
+                lda8(0xF0);
+                wr8(ABSX(0x1701), 0xF0);
+                X = dec8((u8)X); X = dec8((u8)X); X = dec8((u8)X); X = dec8((u8)X);
+            } while (!fn);
+            lda8(0x26);
+            push8(0x80); push16(0xD8AD); QueueSoundB_m1x1();
+            wr8(DP(0xC3), inc8(rd8(DP(0xC3))));
+            ret();
+            return;
+        }
+        cmp16(A, 0x0000);
+        if (fz) {
+            lda16(0x0040); wr16(DP(0x8A), 0x0040);
+            sep(0x20);
+            lda8(0x27);
+            push8(0x80); push16(0xD893); QueueSoundB_m1x1();
+            wr8(DP(0xC3), inc8(rd8(DP(0xC3))));
+        }
+        sep(0x20);
+        ret();
+        return;
+    }
+    sep(0x20);
+    wr8(ABS(0x1958), 0);
+    lda8(rd8(DP(0x54)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(DP(0x84)));
+    if (!fz) {
+        lda8(lsr8((u8)A));
+        if (!fc) {
+            lda8(0x02); wr8(DP(0x50), 0x02);
+            lda8(0x00); wr8(DP(0x85), 0x00);
+            NextMode_m1x1();
+            return;
+        }
+    }
+    lda8(rd8(DP(0x20)));
+    wr8(ABS(0x017E), (u8)A);
+    lda8(0x00); wr8(DP(0x85), 0x00);
+    do {
+        push16(0xD8CC); DispatchBy85_m1x1();
+        wr8(DP(0x85), inc8(rd8(DP(0x85))));
+        lda8(rd8(DP(0x85)));
+        cmp8((u8)A, 0x13);
+    } while (!fc);
+    ldx8(0x09);
+    do {
+        lda8((u8)X);
+        lda8(asl8((u8)A)); lda8(asl8((u8)A));
+        Y = (u8)A; nz8((u8)Y);
+        lda8(0xF0); wr8(ABSY(0x16C1), 0xF0);
+        X = dec8((u8)X);
+    } while (!fn);
+    ret();
+}

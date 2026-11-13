@@ -276,3 +276,5 @@
 80865A TitleScrollStep
 8086F8 StartEndScreen
 81A747 LoadHdmaScene
+809004 ShowCoinRank
+80D81B BonusCourseFrame

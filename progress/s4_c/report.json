@@ -1,15 +1,15 @@
 {
  "measures": {
-  "fuzzy_match_percent": 74.2892,
+  "fuzzy_match_percent": 74.8037,
   "total_code": "36930",
-  "matched_code": "18073",
-  "matched_code_percent": 48.9385,
+  "matched_code": "18453",
+  "matched_code_percent": 49.9675,
   "total_data": "0",
   "matched_data": "0",
   "matched_data_percent": 0.0,
   "total_functions": 532,
-  "matched_functions": 257,
-  "matched_functions_percent": 48.3083,
+  "matched_functions": 259,
+  "matched_functions_percent": 48.6842,
   "complete_code": "0",
   "complete_code_percent": 0.0,
   "complete_data": "0",
@@ -21,16 +21,16 @@
   {
    "name": "main/bank80",
    "measures": {
-    "fuzzy_match_percent": 75.001,
+    "fuzzy_match_percent": 75.7711,
     "total_code": "24671",
-    "matched_code": "12469",
-    "matched_code_percent": 50.5411,
+    "matched_code": "12849",
+    "matched_code_percent": 52.0814,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 357,
-    "matched_functions": 168,
-    "matched_functions_percent": 47.0588,
+    "matched_functions": 170,
+    "matched_functions_percent": 47.619,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -42,7 +42,7 @@
     {
      "name": ".text",
      "size": "24671",
-     "fuzzy_match_percent": 75.001
+     "fuzzy_match_percent": 75.7711
     }
    ],
    "functions": [
@@ -295,9 +295,9 @@
      }
     },
     {
-     "name": "sub_809004",
+     "name": "ShowCoinRank",
      "size": "168",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8425476"
      }
@@ -1751,9 +1751,9 @@
      }
     },
     {
-     "name": "sub_80D81B",
+     "name": "BonusCourseFrame",
      "size": "212",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8443931"
      }
