@@ -241,3 +241,9 @@
 808EA0 SelectTimerDigits
 80E059 ShowBonusBest
 80EDEF PaceBonus
+80BC61 Mul16
+80BCCD Mul16c
+80C877 ShowBestTime
+819530 ConfettiStep
+8196B4 SpawnObject
+81BE4C PodiumWalkIn

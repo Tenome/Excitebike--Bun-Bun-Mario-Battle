@@ -219,3 +219,10 @@
 808EA0  1 1  mem+X,Y,C,V     SelectTimerDigits
 80E059  1 1  mem+X,Y,C,V     ShowBonusBest
 80EDEF  1 1  mem+A,X,Y,C,V   PaceBonus
+80BC61  1 1  mem+Y,V         Mul16
+80BCCD  1 1  mem+V           Mul16c
+80C877  1 1  mem+X,Y,C,V     ShowBestTime
+819530  1 1  mem+A,X,Y,C,V   ConfettiStep
+8196B4  1 1  mem+A,X,Y,C,V   SpawnObject
+81BE4C  1 1  mem+A,X,Y,C,V   PodiumWalkIn
+80BC61  1 0  mem+Y,V         Mul16

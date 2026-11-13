@@ -467,21 +467,21 @@ void Mode0A_m1x1(void)
 /* $80:C805 ShowRaceClock (RTS): the race time $03B1 (minutes), $03B2
  * (seconds) and $03B3 (frames -> hundredths, $80:C6CE) as two-row digits
  * at $03D2 (from the digit pairs $80:C70A), queued with $0F = $20. */
-void ShowRaceClock_m1x1(void)
+static void show_clock(u16 minutes)
 {
     rep(0x20);
     lda16(0x03D2); wr16(DP(0x02), 0x03D2);
-    X = rd8(ABS(0x03B3)); nz8((u8)X);
+    X = rd8(ABS(minutes + 2)); nz8((u8)X);
     lda16(rd16(ABSX(0xC6CE)));
     lda16(asl16(A));
     X = (u8)A; nz8((u8)X);
     lda16(rd16(ABSX(0xC70A))); wr16(ABS(0x03D8), A);
-    lda16(rd16(ABS(0x03B2)));
+    lda16(rd16(ABS(minutes + 1)));
     lda16(asl16(A));
     X = (u8)A; nz8((u8)X);
     lda16(rd16(ABSX(0xC70A))); wr16(ABS(0x03D5), A);
     sep(0x20);
-    lda8(rd8(ABS(0x03B1))); wr8(ABS(0x03D3), (u8)A);
+    lda8(rd8(ABS(minutes))); wr8(ABS(0x03D3), (u8)A);
     lda8(0x27); wr8(ABS(0x03D2), 0x27);
     rep(0x20);
     lda16(rd16(ABS(0x03D3))); ora16(0x9750); wr16(ABS(0x03D3), A);
@@ -495,6 +495,8 @@ void ShowRaceClock_m1x1(void)
     fc = 0; adc8(0x10); wr8(ABS(0x03E0), (u8)A);
     VramQueueTiles20_m1x1();
 }
+
+void ShowRaceClock_m1x1(void) { show_clock(0x03B1); }
 
 /* $80:C7EB TickRaceClock (RTS): at 60 frames ($03B3) carry into the
  * seconds $03B2 and at 60 into the minutes $03B1; then ShowRaceClock. */
@@ -1572,5 +1574,202 @@ void PaceBonus_m1x1(void)
     lda8(0x00);
     wr8(ABS(0x0995), 0);
     wr8(ABS(0x0996), 0);
+    ret();
+}
+
+void Nop_BD39_m1x1(void);
+void MoveObjectX_m1x1(void);
+void MoveObjectX8_m1x1(void);
+
+/* One 8x8 hardware multiply, with the wait call ($80:BD39). */
+static void mul8_1(u8 a, u8 b, u16 back)
+{
+    lda8(a); wr8(ABS(0x4202), (u8)A);
+    lda8(b); wr8(ABS(0x4203), (u8)A);
+    push16(back); Nop_BD39_m1x1();
+}
+
+/* [p] * [q] into r..r+3 (direct page) from four 8x8 products. */
+static void mul16_1(u8 p, u8 q, u8 r, const u16 back[4])
+{
+    mul8_1(rd8(DP(p)), rd8(DP(q)), back[0]);
+    lda8(rd8(ABS(0x4216))); wr8(DP(r), (u8)A);
+    lda8(rd8(ABS(0x4217))); wr8(DP(r + 1), (u8)A);
+    mul8_1(rd8(DP(p)), rd8(DP(q + 1)), back[1]);
+    lda8(rd8(ABS(0x4216)));
+    fc = 0; adc8(rd8(DP(r + 1))); wr8(DP(r + 1), (u8)A);
+    lda8(rd8(ABS(0x4217)));
+    adc8(0x00); wr8(DP(r + 2), (u8)A);
+    mul8_1(rd8(DP(p + 1)), rd8(DP(q)), back[2]);
+    lda8(rd8(ABS(0x4216)));
+    fc = 0; adc8(rd8(DP(r + 1))); wr8(DP(r + 1), (u8)A);
+    lda8(rd8(ABS(0x4217)));
+    adc8(rd8(DP(r + 2))); wr8(DP(r + 2), (u8)A);
+    mul8_1(rd8(DP(p + 1)), rd8(DP(q + 1)), back[3]);
+    lda8(rd8(ABS(0x4216)));
+    fc = 0; adc8(rd8(DP(r + 2))); wr8(DP(r + 2), (u8)A);
+    lda8(rd8(ABS(0x4217)));
+    adc8(0x00); wr8(DP(r + 3), (u8)A);
+}
+
+/* $80:BC61 Mul16 (RTL): $00:$01 * $02:$03 -> $04-$07. */
+static void mul16_00(void)
+{
+    static const u16 back[4] = { 0xBC6D, 0xBC84, 0xBCA0, 0xBCBC };
+    mul16_1(0x00, 0x02, 0x04, back);
+    retl();
+}
+void Mul16_m1x1(void) { mul16_00(); }
+void Mul16_m1x0(void) { mul16_00(); }
+
+/* $80:BCCD Mul16c (RTS): $40:$41 * $42:$43 -> $44-$47. */
+void Mul16c_m1x1(void)
+{
+    static const u16 back[4] = { 0xBCD9, 0xBCF0, 0xBD0C, 0xBD28 };
+    mul16_1(0x40, 0x42, 0x44, back);
+    ret();
+}
+
+/* $80:C877 ShowBestTime (RTS): ShowRaceClock's display for the best time
+ * $083A-$083C. */
+void ShowBestTime_m1x1(void) { show_clock(0x083A); }
+
+/* $81:9530 (RTS, Y = piece): Stadium 1's confetti piece (Stadium 4's
+ * $81:9604 with the arrays at $0100-$0140 and tiles $81:959B / $81:959F). */
+void ConfettiStep_m1x1(void)
+{
+    X = Y; nz8((u8)X);
+    wr8(ABSX(0x0120), dec8(rd8(ABSX(0x0120))));
+    if (fz) {
+        lda8(rd8(ABSX(0x0118)));
+        lda8(inc8((u8)A));
+        and8(0x03);
+        wr8(ABSX(0x0118), (u8)A);
+        lda8(0x04); wr8(ABSX(0x0120), 0x04);
+    }
+    push8(0x81); push16(0x9547); MoveObjectX_m1x1();
+    push8((u8)X);
+    push8(0x81); push16(0x954C); MoveObjectX8_m1x1();
+    X = pull8(); nz8((u8)X);
+    lda8((u8)X);
+    lda8(asl8((u8)A));
+    Y = (u8)A; nz8((u8)Y);
+    lda8(rd8(ABSX(0x0100))); wr8(ABSY(0x1610), (u8)A);
+    lda8(rd8(ABSX(0x0108))); wr8(ABSY(0x1611), (u8)A);
+    lda8(rd8(ABSX(0x0140)));
+    cmp8((u8)A, 0xF0);
+    if (fc) lda8(0x00);
+    else lda8(rd8(ABSX(0x0118)));
+    push8((u8)X);
+    X = (u8)A; nz8((u8)X);
+    lda8(rd8(LONGX(0x81959B))); wr8(ABSY(0x1612), (u8)A);
+    lda8(rd8(LONGX(0x81959F))); wr8(ABSY(0x1613), (u8)A);
+    X = pull8(); nz8((u8)X);
+    lda8((u8)Y);
+    lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
+    Y = (u8)A; nz8((u8)Y);
+    lda8(0x02); wr8(ABSY(0x1824), 0x02);
+    wr8(ABSX(0x0140), inc8(rd8(ABSX(0x0140))));
+    lda8(rd8(ABSX(0x0140)));
+    if (fz) {
+        lda8(0x03); wr8(ABSX(0x0128), 0x03);
+        lda8(0x20); wr8(ABSX(0x0120), 0x20);
+        wr8(ABSX(0x0118), 0);
+    }
+    ret();
+}
+
+/* $81:96B4 SpawnObject (RTL, Y = type, $00 / $02 = position): Stadium 4's
+ * $81:9788 with Stadium 1's object arrays (6 bytes lower) and tables
+ * ($81:AABD scripts, $81:AAD1 init routines). */
+void SpawnObject_m1x1(void)
+{
+    push8(DB);
+    lda8(0x81); push8(0x81);
+    DB = pull8(); nz8(DB);
+    push8((u8)X);
+    ldx8(0x0E);
+    for (;;) {
+        lda8(rd8(ABSX(0x02E9)));
+        if (fz) break;
+        X = dec8((u8)X);
+        X = dec8((u8)X);
+        if (fn) {
+            X = pull8(); nz8((u8)X);
+            DB = pull8(); nz8(DB);
+            fc = 1;
+            retl();
+            return;
+        }
+    }
+    lda8((u8)Y);
+    wr8(ABSX(0x02F9), (u8)A);
+    lda8(0x01); wr8(ABSX(0x02E9), 0x01);
+    rep(0x20);
+    lda16(Y);
+    lda16(asl16(A));
+    Y = (u8)A; nz8((u8)Y);
+    lda16(rd16(ABSY(0xAABD))); wr16(ABSX(0x0389), A);
+    lda16(rd16(DP(0x00))); wr16(ABSX(0x0279), A);
+    lda16(rd16(DP(0x02))); wr16(ABSX(0x0289), A);
+    static const u16 clr[11] = { 0x0319, 0x0329, 0x0369, 0x0379, 0x0309, 0x0359,
+                                 0x0349, 0x0299, 0x02A9, 0x02B9, 0x02C9 };
+    for (int i = 0; i < 11; i++) wr16(ABSX(clr[i]), 0);
+    sep(0x20);
+    wr8(DP(0x0E), (u8)X);
+    X = Y; nz8((u8)X);
+    push16(0x970F);
+    r816_call_pc(0x810000u | rd16(LONGX(0x81AAD1)));
+    X = pull8(); nz8((u8)X);
+    DB = pull8(); nz8(DB);
+    fc = 0;
+    retl();
+}
+
+/* $81:BE4C (RTS): a podium rider walking in: every 8 frames ($0369) it
+ * steps ($0319 0/1) one pixel left; at X $90 (or $95 with $0303 = 4) the
+ * pose for the player's place and entry ($81:BEAE by $1542 * 8 + place)
+ * becomes its state, with a $40 wait. Its frame $0349 from $81:BEAC. */
+void PodiumWalkIn_m1x1(void)
+{
+    X = rd8(ABS(0x039D)); nz8((u8)X);
+    lda8(rd8(ABSX(0x0369)));
+    if (fz) {
+        lda8(rd8(ABSX(0x0319)));
+        eor8(0x01);
+        wr8(ABSX(0x0319), (u8)A);
+        lda8(0x08); wr8(ABSX(0x0369), 0x08);
+        wr8(ABSX(0x0279), dec8(rd8(ABSX(0x0279))));
+        lda8(rd8(ABS(0x0303)));
+        cmp8((u8)A, 0x04);
+        int arrived;
+        lda8(rd8(ABSX(0x0279)));
+        if (fz) { cmp8((u8)A, 0x95); arrived = !fc; }
+        else { cmp8((u8)A, 0x90); arrived = !fc; }
+        if (arrived) {
+            ldy8(0x0E);
+            do {
+                lda8(rd8(ABSY(0x086E)));
+                lda8(dec8((u8)A));
+                if (fz) break;
+                Y = dec8((u8)Y);
+                Y = dec8((u8)Y);
+            } while (!fn);
+            lda8((u8)Y);
+            lda8(lsr8((u8)A));
+            wr8(DP(0x00), (u8)A);
+            lda8(rd8(ABS(0x1542)));
+            lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A));
+            fc = 0; adc8(rd8(DP(0x00)));
+            wr8(DP(0x00), (u8)A);
+            Y = (u8)A; nz8((u8)Y);
+            lda8(rd8(ABSY(0xBEAE)));
+            wr8(ABSX(0x0309), (u8)A);
+            lda8(0x40); wr8(ABSX(0x0369), 0x40);
+        }
+    }
+    Y = rd8(ABSX(0x0319)); nz8((u8)Y);
+    lda8(rd8(ABSY(0xBEAC)));
+    wr8(ABSX(0x0349), (u8)A);
     ret();
 }
