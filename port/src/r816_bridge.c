@@ -692,6 +692,17 @@ BRIDGE(HleHand_QueueMapTile, QueueMapTile_m1x1, 660)
 BRIDGE(HleHand_QueueBlinkBanner, QueueBlinkBanner_m1x1, 600)
 BRIDGE(HleHand_QueueFiveDigits, QueueFiveDigits_m1x1, 760)
 BRIDGE_DYN(HleHand_QueueDigitsAt, QueueDigitsAt_m1x1, 620 + 20 * (Y & 0xFF))
+BRIDGE(HleHand_ShowDigitDifference, ShowDigitDifference_m1x1, 920)
+BRIDGE_DYN(HleHand_EndScreenScore, EndScreenScore_m1x1, g_ram[0x88] == 1 ? 820 : 15)
+BRIDGE_DYN(HleHand_EndScreenCode, EndScreenCode_m1x1,
+           20 + (g_ram[0x88] == 1 ? 680 : 0) +
+           ((g_ram[0x88] <= 1 && (g_ram[0x26] & 0x80)) ? 900 : 0))
+BRIDGE(HleHand_CpuLaneDecision, CpuLaneDecision_m1x1, 150)
+BRIDGE(HleHand_PlayerStop, PlayerStop_m1x1, 40)
+BRIDGE(HleHand_PlayerHalt, PlayerHalt_m1x1, 30)
+BRIDGE(HleHand_PlayerStopB, PlayerStopB_m1x1, 40)
+BRIDGE(HleHand_PlayerHaltB, PlayerHaltB_m1x1, 30)
+BRIDGE(HleHand_ObjectFollowPath, ObjectFollowPath_m1x1, 1900)
 /* VramQueueTilesLong / QueueTileRowsLong ($80:B2D6 / $80:B431) are
  * verified but unhooked: trampolines whose cost is the callee's. */
 /* c/hand/s4/objects.c, part 26 */

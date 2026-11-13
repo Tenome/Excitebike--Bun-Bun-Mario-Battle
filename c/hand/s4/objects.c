@@ -6908,24 +6908,28 @@ void PlayerColumnCheckB_m1x1(void) { player_column(0xEF37); }
  * of a rider ahead (RiderAhead at row $0958 -/+ 1); next to the far
  * lane (3 going up, 2 going down) that lane must be flat too. Then the
  * steering $01AE = +1 (up) / -1 (down). */
-static void steer_lane(int up)
+static void steer_lane(int up, int from_ahead)
 {
-    for (;;) {
-        Y = rd8(ABSX(0x08A4)); nz8((u8)Y);
-        if (up) {
-            Y = dec8((u8)Y);
-            cmp8((u8)Y, 0x01);
-            if (fn) { up = 0; continue; }
-        } else {
-            Y = inc8((u8)Y);
-            cmp8((u8)Y, 0x05);
-            if (!fn) { up = 1; continue; }
+    u16 b;
+    if (!from_ahead) {
+        for (;;) {
+            Y = rd8(ABSX(0x08A4)); nz8((u8)Y);
+            if (up) {
+                Y = dec8((u8)Y);
+                cmp8((u8)Y, 0x01);
+                if (fn) { up = 0; continue; }
+            } else {
+                Y = inc8((u8)Y);
+                cmp8((u8)Y, 0x05);
+                if (!fn) { up = 1; continue; }
+            }
+            break;
         }
-        break;
+        b = up ? 0xAFE9 : 0xB01E;
+        push16((u16)(b + 0x0A)); RiderOnFlat_m1x1();
+        if (fc) { ret(); return; }
     }
-    u16 b = up ? 0xAFE9 : 0xB01E;
-    push16((u16)(b + 0x0A)); RiderOnFlat_m1x1();
-    if (fc) { ret(); return; }
+    b = up ? 0xAFE9 : 0xB01E;
     Y = rd8(ABSX(0x0958));
     Y = up ? inc8((u8)Y) : dec8((u8)Y);
     wr8(DP(0x02), (u8)Y);
@@ -6945,8 +6949,16 @@ static void steer_lane(int up)
     ret();
 }
 
-void CpuSteerUp_m1x1(void) { steer_lane(1); }
-void CpuSteerDown_m1x1(void) { steer_lane(0); }
+void CpuSteerUp_m1x1(void) { steer_lane(1, 0); }
+void CpuSteerDown_m1x1(void) { steer_lane(0, 0); }
+
+/* $80:B017: down, unless rider X's $0216 is $E6 (then up). */
+static void steer_by_e6(void)
+{
+    lda8(rd8(ABSX(0x0216)));
+    cmp8((u8)A, 0xE6);
+    steer_lane(fz, 0);
+}
 
 /* $81:C883 (RTL): queue the tiles at $03CF (size $20) to VRAM $19F3 and
  * the two rows at $81:C8B5 ($020B) to $19E7. */
@@ -7256,3 +7268,223 @@ void BallHit_m1x1(void)
     lda8(0x01);
     ret();
 }
+
+void QueueDigitsAt_m1x1(void);
+void QueueFiveDigits_m1x1(void);
+void QueueMapTile_m1x1(void);
+void VelocityDirection_m1x1(void);
+void SteerObjectStep_m1x1(void);
+void QueueTileRows_m1x1(void);
+void CpuReleaseButtons_m1x1(void);
+
+/* $80:9567 (RTS): the six digits $1549 become $0CE5 - $1549 (digit by
+ * digit, then borrowing), queued at VRAM $19B6 (QueueDigitsAt, size $20). */
+void ShowDigitDifference_m1x1(void)
+{
+    ldx8(0x05);
+    do {
+        lda8(rd8(ABSX(0x0CE5)));
+        fc = 1; sbc8(rd8(ABSX(0x1549)));
+        wr8(ABSX(0x1549), (u8)A);
+        X = dec8((u8)X);
+    } while (!fn);
+    ldx8(0x05);
+    do {
+        lda8(rd8(ABSX(0x1549)));
+        if (fn) {
+            fc = 0; adc8(0x0A);
+            wr8(ABSX(0x1549), (u8)A);
+            wr8(ABSX(0x1548), dec8(rd8(ABSX(0x1548))));
+        }
+        X = dec8((u8)X);
+    } while (!fn);
+    rep(0x20);
+    lda16(0x1549); wr16(DP(0x02), 0x1549);
+    lda16(0x19B6); wr16(DP(0x00), 0x19B6);
+    sep(0x20);
+    lda8(0x20); wr8(DP(0x0F), 0x20);
+    ldy8(0x05);
+    push8(0x80); push16(0x95A0); QueueDigitsAt_m1x1();
+    ret();
+}
+
+/* $80:9949 (RTS): when the timer $88 runs out, the five digits at
+ * $00:0CE5 at VRAM $0975, $88 = $20, and the end screen's next steps
+ * ($0450 = 4, $0451 = 5; or 3 when $085D is set). */
+void EndScreenScore_m1x1(void)
+{
+    u8 t = dec8(rd8(DP(0x88)));
+    wr8(DP(0x88), t);
+    if (!fz) { ret(); return; }
+    rep(0x20);
+    lda16(0x0CE5); wr16(DP(0x18), 0x0CE5);
+    lda16(0x0975); wr16(DP(0x00), 0x0975);
+    sep(0x20);
+    lda8(0x00); wr8(DP(0x1A), 0x00);
+    push8(0x80); push16(0x9962); QueueFiveDigits_m1x1();
+    lda8(0x20); wr8(DP(0x88), 0x20);
+    lda8(rd8(ABS(0x085D)));
+    if (fz) {
+        lda8(0x04); wr8(ABS(0x0450), 0x04);
+        lda8(0x05); wr8(ABS(0x0451), 0x05);
+    } else {
+        lda8(0x03); wr8(ABS(0x0450), 0x03);
+    }
+    ret();
+}
+
+/* $81:984C (RTS): object $03A3 follows its path ($81:9C3F, four bytes a
+ * point: target $039F / $03A1) with SteerObjectStep; on arriving it moves
+ * to the next point, and at the $8000 end marker resets the point to $60
+ * and steps its state $030F. Otherwise its map tile (unless $0280) and
+ * its velocity direction. */
+void ObjectFollowPath_m1x1(void)
+{
+    rep(0x30);
+    X = rd16(ABS(0x03A3)); nz16(X);
+    lda16(rd16(ABSX(0x031F)));
+    lda16(asl16(A)); lda16(asl16(A));
+    Y = A; nz16(Y);
+    lda16(rd16(ABSY(0x9C3F))); wr16(ABS(0x039F), A);
+    lda16(rd16(ABSY(0x9C41))); wr16(ABS(0x03A1), A);
+    sep(0x30);
+    ldy8(0x0C);
+    lda8(0x20);
+    push8(0x81); push16(0x986C); SteerObjectStep_m1x1();
+    if (fc) {
+        rep(0x30);
+        wr16(ABSX(0x031F), inc16(rd16(ABSX(0x031F))));
+        lda16(rd16(ABSX(0x031F)));
+        lda16(asl16(A)); lda16(asl16(A));
+        Y = A; nz16(Y);
+        lda16(rd16(ABSY(0x9C3F)));
+        cmp16(A, 0x8000);
+        sep(0x30);
+        if (fz) {
+            rep(0x20);
+            lda16(0x0060); wr16(ABSX(0x031F), 0x0060);
+            sep(0x20);
+            wr8(ABSX(0x030F), inc8(rd8(ABSX(0x030F))));
+            ret();
+            return;
+        }
+    }
+    lda8(rd8(ABSX(0x0280)));
+    if (fz) { push8(0x81); push16(0x989A); QueueMapTile_m1x1(); }
+    push8(0x81); push16(0x989E); VelocityDirection_m1x1();
+    ret();
+}
+
+/* $80:99F0 (RTS): the end screen's entry code. After the $88 delay the
+ * code box (2 rows of $20 from $7E:5880) is queued at $0300; then a
+ * press of A ($26 bit 7) gives sound $43, $88 = $20, step $0450 = $0A and
+ * queues the five digits at $11:5730 to VRAM $0A15. */
+void EndScreenCode_m1x1(void)
+{
+    lda8(rd8(DP(0x88)));
+    if (!fz) {
+        u8 t = dec8(rd8(DP(0x88)));
+        wr8(DP(0x88), t);
+        if (!fz) { ret(); return; }
+        lda8(0x80); wr8(DP(0x02), 0x80);
+        lda8(0x58); wr8(DP(0x03), 0x58);
+        lda8(0x7E); wr8(DP(0x04), 0x7E);
+        lda8(0x20); wr8(DP(0x10), 0x20);
+        lda8(0x02); wr8(DP(0x11), 0x02);
+        lda8(0x00); wr8(DP(0x00), 0x00);
+        lda8(0x03); wr8(DP(0x01), 0x03);
+        push16(0x9A16); QueueTileRows_m1x1();
+    }
+    lda8(rd8(DP(0x26)));
+    and8(0x80);
+    if (fz) { ret(); return; }
+    lda8(0x20); wr8(DP(0x88), 0x20);
+    lda8(0x43);
+    push8(0x80); push16(0x9A26); QueueSoundB_m1x1();
+    lda8(0x0A); wr8(ABS(0x0450), 0x0A);
+    rep(0x20);
+    lda16(0x0A15); wr16(DP(0x00), 0x0A15);
+    lda16(0x5730); wr16(DP(0x18), 0x5730);
+    sep(0x20);
+    lda8(0x11); wr8(DP(0x1A), 0x11);
+    push8(0x80); push16(0x9A41); QueueFiveDigits_m1x1();
+    ret();
+}
+
+/* $80:AF87 (RTS, X = rider): CPU riders 0-3 on screen page 1 decide on a
+ * lane change. Blocked by a rider ahead in its lane: let go of the
+ * buttons and, on a $1F piece in the right half of the screen, steer
+ * away (by its pad bit 0 / $0216). Otherwise, not already steering: at
+ * a $0C piece move toward the middle lanes; else, unless on a $1E
+ * piece, at X $80-$EF try a lane up. */
+void CpuLaneDecision_m1x1(void)
+{
+    cmp8((u8)X, 0x04);
+    if (fc) { ret(); return; }
+    lda8(rd8(ABSX(0x019E)));
+    cmp8((u8)A, 0x01);
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABSX(0x0958)));
+    wr8(DP(0x02), (u8)A);
+    ldy8(0x02);
+    push16(0xAF9B); RiderAhead_m1x1();
+    if (fc) {
+        push16(0xAFA0); CpuReleaseButtons_m1x1();
+        lda8(rd8(ABSX(0x021E)));
+        cmp8((u8)A, 0x1F);
+        if (!fz) { ret(); return; }
+        lda8(rd8(ABSX(0x0196)));
+        lda8(asl8((u8)A));
+        if (!fc) { ret(); return; }
+        lda8(rd8(DPX(0x2C)));
+        lda8(lsr8((u8)A));
+        if (fc) steer_by_e6();
+        else steer_lane(1, 0);
+        return;
+    }
+    cmp8((u8)X, 0x04);
+    if (fc) { ret(); return; }
+    lda8(rd8(ABSX(0x01AE)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABSX(0x021E)));
+    cmp8((u8)A, 0x0C);
+    if (fz) {
+        lda8(rd8(ABSX(0x08A4)));
+        cmp8((u8)A, 0x03);
+        steer_lane(fc, 1);
+        return;
+    }
+    cmp8((u8)A, 0x1E);
+    if (fz) { ret(); return; }
+    lda8(rd8(ABSX(0x019E)));
+    cmp8((u8)A, 0x01);
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABSX(0x0196)));
+    cmp8((u8)A, 0xF0);
+    if (fc) { ret(); return; }
+    cmp8((u8)A, 0x80);
+    if (!fc) { ret(); return; }
+    steer_lane(1, 0);
+}
+
+/* $80:DC95 / $80:DC9D and $80:EF5C / $80:EF64: the player stops (the
+ * full stop, or only the speed and jump state cleared). */
+static void player_halt(void)
+{
+    lda8(0x00);
+    wr8(ABS(0x01BE), 0); wr8(ABS(0x01C6), 0); wr8(ABS(0x09C4), 0);
+    wr8(ABS(0x09C7), 0); wr8(ABS(0x0186), 0); wr8(ABS(0x08F4), 0);
+    ret();
+}
+
+void PlayerStop_m1x1(void)
+{
+    lda8(0xFF);
+    wr8(ABS(0x01CE), 0xFF);
+    wr8(ABS(0x0999), 0xFF);
+    player_halt();
+}
+
+void PlayerHalt_m1x1(void) { player_halt(); }
+void PlayerStopB_m1x1(void) { PlayerStop_m1x1(); }
+void PlayerHaltB_m1x1(void) { player_halt(); }

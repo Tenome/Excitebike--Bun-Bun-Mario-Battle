@@ -325,3 +325,12 @@
 8283A1 QueueFiveDigits
 8283E2 QueueDigitsAt
 80C997 BallHit
+809567 ShowDigitDifference
+809949 EndScreenScore
+81984C ObjectFollowPath
+8099F0 EndScreenCode
+80AF87 CpuLaneDecision
+80DC95 PlayerStop
+80DC9D PlayerHalt
+80EF5C PlayerStopB
+80EF64 PlayerHaltB

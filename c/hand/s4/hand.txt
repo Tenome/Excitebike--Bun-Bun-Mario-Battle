@@ -313,3 +313,12 @@
 8283A1  1 1  mem+A,X,Y,C,V   QueueFiveDigits
 8283E2  1 1  mem+A,X,Y,C,V   QueueDigitsAt
 80C997  1 1  mem+A,X,Y,C,V   BallHit
+809567  1 1  mem+A,X,Y,C,V   ShowDigitDifference
+809949  1 1  mem+A,X,Y,C,V   EndScreenScore
+81984C  1 1  mem+A,X,Y,C,V   ObjectFollowPath
+8099F0  1 1  mem+A,X,Y,C,V   EndScreenCode
+80AF87  1 1  mem+A,X,Y,C,V   CpuLaneDecision
+80DC95  1 1  mem+A,X,Y,C,V   PlayerStop
+80DC9D  1 1  mem+A,X,Y,C,V   PlayerHalt
+80EF5C  1 1  mem+A,X,Y,C,V   PlayerStopB
+80EF64  1 1  mem+A,X,Y,C,V   PlayerHaltB
