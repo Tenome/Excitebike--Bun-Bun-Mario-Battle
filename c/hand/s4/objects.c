@@ -6995,3 +6995,264 @@ void QueuePlayerMarkers_m1x1(void)
     DB = pull8(); nz8(DB);
     retl();
 }
+
+void LanePieceTables_m1x1(void);
+void LanePieceTablesLong_m1x1(void);
+
+/* $81:8BEB (RTL): fill column $0F of the six lane rows (5 down to 0) from
+ * the course buffer, two bytes a lane from entry $1A down: the piece
+ * $7F:000E,X (skipping $FC ramp tops) and its height $7F:200E,X ($0180
+ * further on in the row). */
+void FillLaneColumn_m1x1(void)
+{
+    ldx8(0x05);
+    lda8(0x1A); wr8(DP(0x0C), 0x1A);
+    do {
+        Y = X; nz8((u8)Y);
+        push8(0x81); push16(0x8BF5); LanePieceTablesLong_m1x1();
+        wr8(DP(0x0A), (u8)X);
+        for (;;) {
+            X = rd8(DP(0x0C)); nz8((u8)X);
+            lda8(rd8(LONGX(0x7F000E)));
+            cmp8((u8)A, 0xFC);
+            if (!fz) break;
+            wr8(DP(0x0C), dec8(rd8(DP(0x0C))));
+            wr8(DP(0x0C), dec8(rd8(DP(0x0C))));
+            lda8(rd8(DP(0x0C)));
+            if (fn) break;
+        }
+        Y = rd8(DP(0x0F)); nz8((u8)Y);
+        wr8((((u32)DB << 16) + rd16(DP(0x03)) + Y) & 0xFFFFFF, (u8)A);
+        rep(0x30);
+        lda16(Y);
+        fc = 0; adc16(0x0180);
+        Y = A; nz16(Y);
+        sep(0x20);
+        lda8(rd8(LONGX(0x7F200E)));
+        wr8((((u32)DB << 16) + rd16(DP(0x03)) + Y) & 0xFFFFFF, (u8)A);
+        sep(0x10);
+        wr8(DP(0x0C), dec8(rd8(DP(0x0C))));
+        wr8(DP(0x0C), dec8(rd8(DP(0x0C))));
+        X = rd8(DP(0x0A)); nz8((u8)X);
+        X = dec8((u8)X);
+    } while (!fn);
+    retl();
+}
+
+/* $80:DB7B / $80:EE40 (two copies, tables = the per-course pointer
+ * tables): the next column ($09C3) of course $027D's lane data into
+ * column $0F of lanes 0-3; lane 2's piece (0 = $3B) also fills the six
+ * scenery rows $0B53-$0C93. */
+static void course_column(u16 lo_table, u16 hi_table, u16 back)
+{
+    X = rd8(ABS(0x027D)); nz8((u8)X);
+    lda8(rd8(ABSX(lo_table))); wr8(DP(0x09), (u8)A);
+    lda8(rd8(ABSX(hi_table))); wr8(DP(0x0A), (u8)A);
+    ldy8(0x00); wr8(DP(0x0E), 0);
+    do {
+        Y = rd8(DP(0x0E)); nz8((u8)Y);
+        push16(back); LanePieceTables_m1x1();
+        Y = rd8(ABS(0x09C3)); nz8((u8)Y);
+        lda8(rd8((((u32)DB << 16) + rd16(DP(0x09)) + Y) & 0xFFFFFF));
+        wr8(ABS(0x09C3), inc8(rd8(ABS(0x09C3))));
+        Y = rd8(DP(0x0F)); nz8((u8)Y);
+        wr8((((u32)DB << 16) + rd16(DP(0x03)) + Y) & 0xFFFFFF, (u8)A);
+        wr8(DP(0x10), (u8)A);
+        wr8(DP(0x0E), inc8(rd8(DP(0x0E))));
+        lda8(rd8(DP(0x0E)));
+        cmp8((u8)A, 0x03);
+        if (fz) {
+            lda8(rd8(DP(0x10)));
+            if (fz) lda8(0x3B);
+            wr8(ABSY(0x0B53), (u8)A); wr8(ABSY(0x0B93), (u8)A);
+            wr8(ABSY(0x0BD3), (u8)A); wr8(ABSY(0x0C13), (u8)A);
+            wr8(ABSY(0x0C53), (u8)A); wr8(ABSY(0x0C93), (u8)A);
+            lda8(rd8(DP(0x0E)));
+        }
+        cmp8((u8)A, 0x04);
+    } while (!fz);
+    ret();
+}
+
+void CourseColumn_m1x1(void) { course_column(0xD30D, 0xD316, 0xDB90); }
+void CourseColumnB_m1x1(void) { course_column(0xE02F, 0xE040, 0xEE55); }
+
+/* $81:9B5D (RTL): object X's map tile (row $028F, column $027F in pixels)
+ * from the map $81:9B7F (+$A0 unless $FF), queued as one tile word
+ * (palette $11) at VRAM $1840 + offset. */
+void QueueMapTile_m1x1(void)
+{
+    rep(0x20);
+    lda16(rd16(ABSX(0x028F)));
+    and16(0x00F8);
+    lda16(asl16(A)); lda16(asl16(A));
+    wr16(DP(0x00), A);
+    lda16(rd16(ABSX(0x027F)));
+    lda16(lsr16(A)); lda16(lsr16(A)); lda16(lsr16(A));
+    fc = 0; adc16(rd16(DP(0x00)));
+    Y = (u8)A; nz8((u8)Y);
+    fc = 0; adc16(0x1840);
+    wr16(DP(0x00), A);
+    lda16(0x03A5); wr16(DP(0x02), 0x03A5);
+    lda16(rd16(ABSY(0x9B7F)));
+    and16(0x00FF);
+    cmp16(A, 0x00FF);
+    if (!fz) { fc = 0; adc16(0x00A0); }
+    A = (u16)((A >> 8) | (A << 8)); nz8((u8)A);
+    ora16(0x0011);
+    wr16(ABS(0x03A5), A);
+    sep(0x20);
+    lda8(0x1C); wr8(DP(0x0F), 0x1C);
+    push8(0x81); push16(0x9B9D); VramQueueTilesLong_m1x1();
+    retl();
+}
+
+/* $81:C6B4 (RTS): the banner at VRAM $194B. Once the score $9C (nonzero)
+ * reaches $1985 it holds frame 2 (and is left alone from $197F's level 2
+ * on); before that it alternates frames 0 / 2 every 32 frames ($63). Two rows ($020A) of
+ * the frame at $81:C6B0. */
+void QueueBlinkBanner_m1x1(void)
+{
+    rep(0x20);
+    lda16(0x194B); wr16(DP(0x00), 0x194B);
+    lda16(rd16(DP(0x9C)));
+    int alternate = fz;
+    if (!alternate) { cmp16(A, rd16(ABS(0x1985))); alternate = !fc; }
+    if (!alternate) {
+        lda16(rd16(ABS(0x197F)));
+        and16(0x000F);
+        cmp16(A, 0x0002);
+        if (fc) { sep(0x20); ret(); return; }
+        ldx8(0x02);
+    } else {
+        lda16(0x194B); wr16(DP(0x00), 0x194B);
+        lda16(rd16(DP(0x63)));
+        and16(0x0020);
+        lda16(lsr16(A)); lda16(lsr16(A)); lda16(lsr16(A)); lda16(lsr16(A));
+        X = (u8)A; nz8((u8)X);
+    }
+    lda16(rd16(ABSX(0xC6B0)));
+    wr16(DP(0x02), A);
+    lda16(0x020A); wr16(DP(0x10), 0x020A);
+    sep(0x20);
+    lda8(0x81); wr8(DP(0x04), 0x81);
+    push8(0x81); push16(0xC6F5); QueueTileRowsLong_m1x1();
+    sep(0x20);
+    ret();
+}
+
+/* $82:83A1 (RTL): the five digits at [$18] (leading zeros as blank $0C)
+ * as a two-row number ($03D0 / $03D6 +$10, a trailing 0 / $10) queued
+ * with size $26 at VRAM $00. X and Y are kept. */
+void QueueFiveDigits_m1x1(void)
+{
+    push8((u8)X); push8((u8)Y);
+    ldx8(0x00); ldy8(0x00);
+    do {
+        lda8(rd8((ILDP(0x18) + Y) & 0xFFFFFF));
+        int blank = 0;
+        if (fz) { cmp8((u8)X, 0x00); blank = fz; }
+        if (blank) lda8(0x0C);
+        else X = inc8((u8)X);
+        wr8(ABSY(0x03D0), (u8)A);
+        ora8(0x10);
+        wr8(ABSY(0x03D6), (u8)A);
+        Y = inc8((u8)Y);
+        cmp8((u8)Y, 0x05);
+    } while (!fc);
+    wr8(ABS(0x03D5), 0);
+    lda8(0x10); wr8(ABS(0x03DB), 0x10);
+    lda8(0x26); wr8(ABS(0x03CF), 0x26);
+    rep(0x20);
+    lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+    sep(0x20);
+    lda8(0x01); wr8(DP(0x0F), 0x01);
+    push8(0x82); push16(0x83DE); VramQueueTilesLong_m1x1();
+    Y = pull8(); nz8((u8)Y);
+    X = pull8(); nz8((u8)X);
+    retl();
+}
+
+/* $82:83E2 (RTL, Y = last index): the Y + 1 digits at ($02) as a two-row
+ * number (lower row +$10), leading zeros blanked ($FF), size Y + 1 | $20,
+ * queued at VRAM $00. */
+void QueueDigitsAt_m1x1(void)
+{
+    lda8((u8)Y);
+    wr8(DP(0x04), (u8)A);
+    lda8(asl8((u8)A));
+    X = (u8)A; nz8((u8)X);
+    do {
+        lda8(rd8((((u32)DB << 16) + rd16(DP(0x02)) + Y) & 0xFFFFFF));
+        wr8(ABSY(0x03D0), (u8)A);
+        ora8(0x10);
+        wr8(ABSX(0x03D1), (u8)A);
+        X = dec8((u8)X);
+        Y = dec8((u8)Y);
+    } while (!fn);
+    lda8(rd8(DP(0x04)));
+    lda8(inc8((u8)A));
+    ora8(0x20);
+    wr8(ABS(0x03CF), (u8)A);
+    ldx8(0x00);
+    lda8(rd8(DP(0x04)));
+    lda8(inc8((u8)A));
+    Y = (u8)A; nz8((u8)Y);
+    for (;;) {
+        lda8(rd8(ABSX(0x03D0)));
+        if (!fz) break;
+        lda8(0xFF);
+        wr8(ABSX(0x03D0), 0xFF);
+        wr8(ABSY(0x03D0), 0xFF);
+        Y = inc8((u8)Y);
+        X = inc8((u8)X);
+        cmp8((u8)X, rd8(DP(0x04)));
+        if (fc) break;
+    }
+    rep(0x20);
+    lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+    sep(0x20);
+    push8(0x82); push16(0x8422); VramQueueTilesLong_m1x1();
+    retl();
+}
+
+/* $80:C997 (RTS): the player (not crashed, not off the track) running into
+ * the ball: lane $01F6 - 3 .. + 4 around the ball's $097C, X within $12 of
+ * $090F, ball ($08C7) out and the player at screen page 1 ($01A1), and the
+ * ball low enough (GroundHeightAbove - 8 below speed $01B6). Then the
+ * player stops (flags $01CE / $01B1 / $01D9 / $091F) and A = 1. */
+void BallHit_m1x1(void)
+{
+    lda8(rd8(ABS(0x01D6)));
+    ora8(rd8(ABS(0x0940)));
+    if (!fz) { ret(); return; }
+    X = (u8)A; nz8((u8)X);
+    lda8(rd8(ABS(0x01A1)));
+    cmp8((u8)A, 0x01);
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABS(0x08C7)));
+    if (fz) { ret(); return; }
+    lda8(rd8(ABS(0x01F6)));
+    fc = 1; sbc8(0x03);
+    cmp8((u8)A, rd8(ABS(0x097C)));
+    if (fc) { ret(); return; }
+    adc8(0x07);
+    cmp8((u8)A, rd8(ABS(0x097C)));
+    if (!fc) { ret(); return; }
+    lda8(rd8(ABS(0x0196)));
+    cmp8((u8)A, rd8(ABS(0x090F)));
+    if (fc) { ret(); return; }
+    adc8(0x12);
+    cmp8((u8)A, rd8(ABS(0x090F)));
+    if (!fc) { ret(); return; }
+    push16(0xC9CF); GroundHeightAbove_m1x1();
+    fc = 1; sbc8(0x08);
+    cmp8((u8)A, rd8(ABS(0x01B6)));
+    if (fc) { ret(); return; }
+    ldy8(0xFF); wr8(ABS(0x01CE), 0xFF);
+    Y = inc8((u8)Y); wr8(ABS(0x01B1), (u8)Y);
+    Y = inc8((u8)Y); wr8(ABS(0x01D9), (u8)Y);
+    Y = inc8((u8)Y); wr8(ABS(0x091F), (u8)Y);
+    lda8(0x01);
+    ret();
+}

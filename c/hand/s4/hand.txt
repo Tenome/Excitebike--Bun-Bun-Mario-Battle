@@ -305,3 +305,11 @@
 80B01E  1 1  mem+A,X,Y,C,V   CpuSteerDown
 81C883  1 1  mem+A,X,Y,C,V   QueueResultsTiles
 8284EE  1 1  mem+A,X,Y,C,V   QueuePlayerMarkers
+818BEB  1 1  mem+A,X,Y,C,V   FillLaneColumn
+80DB7B  1 1  mem+A,X,Y,C,V   CourseColumn
+80EE40  1 1  mem+A,X,Y,C,V   CourseColumnB
+819B5D  1 1  mem+A,X,Y,C,V   QueueMapTile
+81C6B4  1 1  mem+A,X,Y,C,V   QueueBlinkBanner
+8283A1  1 1  mem+A,X,Y,C,V   QueueFiveDigits
+8283E2  1 1  mem+A,X,Y,C,V   QueueDigitsAt
+80C997  1 1  mem+A,X,Y,C,V   BallHit

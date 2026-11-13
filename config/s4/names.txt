@@ -317,3 +317,11 @@
 80B01E CpuSteerDown
 81C883 QueueResultsTiles
 8284EE QueuePlayerMarkers
+818BEB FillLaneColumn
+80DB7B CourseColumn
+80EE40 CourseColumnB
+819B5D QueueMapTile
+81C6B4 QueueBlinkBanner
+8283A1 QueueFiveDigits
+8283E2 QueueDigitsAt
+80C997 BallHit
