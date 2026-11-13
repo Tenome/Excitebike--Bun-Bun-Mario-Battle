@@ -1,15 +1,15 @@
 {
  "measures": {
-  "fuzzy_match_percent": 77.8053,
+  "fuzzy_match_percent": 78.0531,
   "total_code": "36930",
-  "matched_code": "20670",
-  "matched_code_percent": 55.9708,
+  "matched_code": "20853",
+  "matched_code_percent": 56.4663,
   "total_data": "0",
   "matched_data": "0",
   "matched_data_percent": 0.0,
   "total_functions": 532,
-  "matched_functions": 281,
-  "matched_functions_percent": 52.8195,
+  "matched_functions": 283,
+  "matched_functions_percent": 53.1955,
   "complete_code": "0",
   "complete_code_percent": 0.0,
   "complete_data": "0",
@@ -21,16 +21,16 @@
   {
    "name": "main/bank80",
    "measures": {
-    "fuzzy_match_percent": 79.0766,
+    "fuzzy_match_percent": 79.4475,
     "total_code": "24671",
-    "matched_code": "14480",
-    "matched_code_percent": 58.6924,
+    "matched_code": "14663",
+    "matched_code_percent": 59.4342,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 357,
-    "matched_functions": 186,
-    "matched_functions_percent": 52.1008,
+    "matched_functions": 188,
+    "matched_functions_percent": 52.6611,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -42,7 +42,7 @@
     {
      "name": ".text",
      "size": "24671",
-     "fuzzy_match_percent": 79.0766
+     "fuzzy_match_percent": 79.4475
     }
    ],
    "functions": [
@@ -2383,9 +2383,9 @@
      }
     },
     {
-     "name": "sub_80F330",
+     "name": "DemoInputStep",
      "size": "114",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8450864"
      }
@@ -2439,9 +2439,9 @@
      }
     },
     {
-     "name": "sub_80F4C8",
+     "name": "TitlePushStart",
      "size": "69",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8451272"
      }

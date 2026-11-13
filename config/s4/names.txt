@@ -297,3 +297,5 @@
 80D656 StartBonusCourse
 809FF3 ShowEntryCode
 819F3A SteerObjectStep
+80F330 DemoInputStep
+80F4C8 TitlePushStart

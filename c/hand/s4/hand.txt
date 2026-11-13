@@ -285,3 +285,5 @@
 80889B  1 1  mem+X,Y,C,V     Mode02_SegmentCard
 809DBD  1 1  mem+X,Y,C,V     Mode11
 8098B2  1 1  mem+X,Y,C,V     Mode0F_EndScreen
+80F330  1 1  mem+X,Y,C,V     DemoInputStep
+80F4C8  1 1  mem+X,Y,C,V     TitlePushStart

@@ -201,3 +201,98 @@ void Mode0F_EndScreen_m1x1(void)
     lda8(rd8(ABSX(0x98C9))); wr8(DP(0x01), (u8)A);
     r816_call_pc(0x800000u | rd16(LONG(0x000000)));
 }
+
+void VramQueueTiles20_m1x1(void);
+
+/* $80:F395: leave the demo through the table $80:F213/$80:F218 by Y
+ * (JMP ($0000)). */
+static void demo_exit(void)
+{
+    lda8(rd8(ABSY(0xF213))); wr8(DP(0x00), (u8)A);
+    lda8(rd8(ABSY(0xF218))); wr8(DP(0x01), (u8)A);
+    r816_call_pc(0x800000u | rd16(LONG(0x000000)));
+}
+
+/* $80:F330 DemoInputStep (RTS): the attract demo's recorded input: the
+ * debug flag lets Start leave; on the first frame load the first entry
+ * ($9C:D200 input, $9C:D300 duration, $63 = 0); each frame feed the input
+ * to the player ($017E, $098E) for its duration $0CE3, then the next
+ * entry; a duration of $F8 or more ends the demo through exit $FF - it.
+ * C clear while it plays. */
+void DemoInputStep_m1x1(void)
+{
+    lda8(rd8(LONG(0x81800E)));
+    if (!fz) {
+        lda8(rd8(DP(0x21)));
+        and8(0x10);
+        if (!fz) { ldy8(0x00); demo_exit(); return; }
+    }
+    lda8(rd8(DP(0x92)));
+    if (fz) {
+        wr8(DP(0x63), 0);
+        lda8(rd8(LONG(0x9CD200))); wr8(ABS(0x197C), (u8)A);
+        lda8(rd8(LONG(0x9CD300))); wr8(ABS(0x0CE3), (u8)A);
+        lda8(0x01); wr8(ABS(0x0CE1), 0x01);
+    } else {
+        lda8(rd8(ABS(0x0CE3)));
+        if (!fz) {
+            wr8(ABS(0x0CE3), dec8(rd8(ABS(0x0CE3))));
+            X = rd8(ABS(0x0CE1)); nz8((u8)X);
+            X = dec8((u8)X);
+            lda8(rd8(LONGX(0x9CD200)));
+            wr8(ABS(0x017E), (u8)A);
+            wr8(ABS(0x098E), (u8)A);
+        } else {
+            X = rd8(ABS(0x0CE1)); nz8((u8)X);
+            wr8(ABS(0x0CE1), inc8(rd8(ABS(0x0CE1))));
+            lda8(rd8(LONGX(0x9CD300)));
+            cmp8((u8)A, 0xF8);
+            if (fc) {
+                eor8(0xFF);
+                Y = (u8)A; nz8((u8)Y);
+                demo_exit();
+                return;
+            }
+            wr8(ABS(0x0CE3), (u8)A);
+            lda8(rd8(LONGX(0x9CD200)));
+            wr8(ABS(0x017E), (u8)A);
+            wr8(ABS(0x098E), (u8)A);
+        }
+    }
+    fc = 0;
+    ret();
+}
+
+/* $80:F4C8 TitlePushStart (RTS): from minute 6 the PUSH START panel
+ * blinks (one of three frames by $C5, tiles from $80:F50D at VRAM $18F1);
+ * Start (sound $2D) leaves through exit 0. */
+void TitlePushStart_m1x1(void)
+{
+    lda8(rd8(LONG(0x7FFFFF)));
+    cmp8((u8)A, 0x06);
+    if (!fc) { ret(); return; }
+    wr8(DP(0xC5), inc8(rd8(DP(0xC5))));
+    lda8(rd8(DP(0xC5)));
+    and8(0x20);
+    lda8(lsr8((u8)A));
+    wr8(DP(0x00), (u8)A);
+    wr8(DP(0x00), lsr8(rd8(DP(0x00))));
+    wr8(DP(0x00), lsr8(rd8(DP(0x00))));
+    fc = 0; adc8(rd8(DP(0x00)));
+    wr8(DP(0x00), lsr8(rd8(DP(0x00))));
+    wr8(DP(0x00), lsr8(rd8(DP(0x00))));
+    fc = 0; adc8(rd8(DP(0x00)));
+    rep(0x20);
+    and16(0x00FF);
+    fc = 0; adc16(0xF50D);
+    wr16(DP(0x02), A);
+    lda16(0x18F1); wr16(DP(0x00), 0x18F1);
+    sep(0x20);
+    push16(0xF4FB); VramQueueTiles20_m1x1();
+    lda8(rd8(DP(0x21)));
+    and8(0x10);
+    if (fz) { ret(); return; }
+    lda8(0x2D); wr8(ABS(0x2140), 0x2D);
+    ldy8(0x00);
+    demo_exit();
+}
