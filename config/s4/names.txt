@@ -282,3 +282,5 @@
 81F9C8 BsxFindFile
 809471 ShowItemPoints
 80FC5F UpdateLanes
+828BFE UnpackToWram
+828BD8 UnpackToLowRam

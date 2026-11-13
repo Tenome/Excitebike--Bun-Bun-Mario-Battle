@@ -267,3 +267,5 @@
 81F9C8  0 0  mem+Y,C         BsxFindFile
 809471  1 1  mem+X,Y,V       ShowItemPoints
 80FC5F  1 1  mem+X,Y,C,V     UpdateLanes
+828BFE  1 1  mem+V           UnpackToWram
+828BD8  1 1  mem+V           UnpackToLowRam

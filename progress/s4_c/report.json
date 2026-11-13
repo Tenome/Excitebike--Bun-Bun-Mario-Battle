@@ -1,15 +1,15 @@
 {
  "measures": {
-  "fuzzy_match_percent": 75.7392,
+  "fuzzy_match_percent": 76.0601,
   "total_code": "36930",
-  "matched_code": "19144",
-  "matched_code_percent": 51.8386,
+  "matched_code": "19381",
+  "matched_code_percent": 52.4804,
   "total_data": "0",
   "matched_data": "0",
   "matched_data_percent": 0.0,
   "total_functions": 532,
-  "matched_functions": 263,
-  "matched_functions_percent": 49.4361,
+  "matched_functions": 265,
+  "matched_functions_percent": 49.812,
   "complete_code": "0",
   "complete_code_percent": 0.0,
   "complete_data": "0",
@@ -4041,16 +4041,16 @@
   {
    "name": "main/bank82",
    "measures": {
-    "fuzzy_match_percent": 66.8668,
+    "fuzzy_match_percent": 69.9608,
     "total_code": "3830",
-    "matched_code": "1292",
-    "matched_code_percent": 33.7337,
+    "matched_code": "1529",
+    "matched_code_percent": 39.9217,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 38,
-    "matched_functions": 17,
-    "matched_functions_percent": 44.7368,
+    "matched_functions": 19,
+    "matched_functions_percent": 50.0,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -4062,7 +4062,7 @@
     {
      "name": ".text",
      "size": "3830",
-     "fuzzy_match_percent": 66.8668
+     "fuzzy_match_percent": 69.9608
     }
    ],
    "functions": [
@@ -4275,17 +4275,17 @@
      }
     },
     {
-     "name": "sub_828BD8",
+     "name": "UnpackToLowRam",
      "size": "38",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8555480"
      }
     },
     {
-     "name": "sub_828BFE",
+     "name": "UnpackToWram",
      "size": "199",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8555518"
      }

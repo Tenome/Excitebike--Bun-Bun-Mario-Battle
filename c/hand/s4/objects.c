@@ -6118,3 +6118,160 @@ void UpdateLanes_m1x1(void)
     push8(0x80); push16(0xFD7C); QueueSoundB_m1x1();
     ret();
 }
+
+void ReadStreamByte_m1x0(void);
+void ReadStreamWord_m1x0(void);
+
+/* $82:8C22: unpack the stream at [$08] to [$00] (X = 16-bit, Y counts the
+ * output). Each command byte (until $FF): below $E0 the top three bits are
+ * the command and the low five + 1 the length; from $E0 bits 2-4 are the
+ * command and the length is ((b & 3) << 8 | next byte) + 1. Commands: 0
+ * copy bytes, $20 fill with a byte, $40 fill with a word (alternating
+ * bytes), $60 fill with an incrementing byte, $80+ copy from earlier
+ * output (big-endian offset). */
+/* The original's cycles for the last unpack (per command and per byte of
+ * each loop), for the port's bridge, which charges them after the call. */
+unsigned g_unpack_cycles;
+
+static void unpack_stream(void)
+{
+    g_unpack_cycles = 40;
+    rep(0x10);
+    Y = 0; nz16(Y);
+    for (;;) {
+        lda8(rd8(ILDP(0x08)));
+        cmp8((u8)A, 0xFF);
+        if (fz) { sep(0x10); ret(); return; }
+        X = rd16(DP(0x08)); X = inc16(X);
+        if (fz) { X = 0x8000; nz16(X); wr8(DP(0x0A), inc8(rd8(DP(0x0A)))); }
+        wr16(DP(0x08), X);
+        wr8(DP(0x05), (u8)A);
+        g_unpack_cycles += 75;
+        cmp8((u8)A, 0xE0);
+        if (!fc) {
+            and8(0xE0);
+            push8((u8)A);
+            lda8(rd8(DP(0x05)));
+            rep(0x21); fc = 0;
+            and16(0x001F);
+        } else {
+            lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A));
+            and8(0xE0);
+            push8((u8)A);
+            lda8(rd8(DP(0x05)));
+            and8(0x03);
+            A = (u16)((A >> 8) | (A << 8)); nz8((u8)A);
+            push16(0x8C58); ReadStreamByte_m1x0();
+            rep(0x21); fc = 0;
+        }
+        lda16(inc16(A));
+        wr16(DP(0x03), A);
+        lda16(Y);
+        adc16(rd16(DP(0x03)));
+        wr16(DP(0x05), A);
+        sep(0x20);
+        u8 cmd = pull8();
+        lda8(cmd);
+        if (fz) {                                      /* copy bytes */
+            X = rd16(DP(0x08)); nz16(X);
+            do {
+                lda8(rd8(ILDP(0x08)));
+                X = inc16(X);
+                if (fz) { X = 0x8000; nz16(X); wr8(DP(0x0A), inc8(rd8(DP(0x0A)))); }
+                wr16(DP(0x08), X);
+                wr8((ILDP(0x00) + Y) & 0xFFFFFF, (u8)A);
+                Y = inc16(Y);
+                cmp16(Y, rd16(DP(0x05)));
+                g_unpack_cycles += 34;
+                WAIT_TICK();
+            } while (!fz);
+        } else if (fn) {                               /* copy from the output */
+            push16(0x8CB3); ReadStreamWord_m1x0();
+            X = A; nz16(X);
+            do {
+                push16(Y);
+                Y = X; nz16(Y);
+                lda8(rd8((ILDP(0x00) + Y) & 0xFFFFFF));
+                Y = pull16(); nz16(Y);
+                wr8((ILDP(0x00) + Y) & 0xFFFFFF, (u8)A);
+                X = inc16(X);
+                Y = inc16(Y);
+                cmp16(Y, rd16(DP(0x05)));
+                g_unpack_cycles += 37;
+                WAIT_TICK();
+            } while (!fz);
+        } else {
+            lda8(asl8((u8)A));
+            if (!fn) {                                 /* $20: fill with a byte */
+                push16(0x8C97); ReadStreamByte_m1x0();
+                X = rd16(DP(0x03)); nz16(X);
+                do {
+                    wr8((ILDP(0x00) + Y) & 0xFFFFFF, (u8)A);
+                    Y = inc16(Y);
+                    X = dec16(X);
+                    g_unpack_cycles += 14;
+                    WAIT_TICK();
+                } while (!fz);
+            } else {
+                lda8(asl8((u8)A));
+                if (!fn) {                             /* $40: fill with a word */
+                    push16(0x8CA4); ReadStreamWord_m1x0();
+                    X = rd16(DP(0x03)); nz16(X);
+                    do {
+                        A = (u16)((A >> 8) | (A << 8)); nz8((u8)A);
+                        wr8((ILDP(0x00) + Y) & 0xFFFFFF, (u8)A);
+                        Y = inc16(Y);
+                        X = dec16(X);
+                        g_unpack_cycles += 17;
+                        WAIT_TICK();
+                    } while (!fz);
+                } else {                               /* $60: incrementing fill */
+                    push16(0x8C72); ReadStreamByte_m1x0();
+                    X = rd16(DP(0x03)); nz16(X);
+                    do {
+                        wr8((ILDP(0x00) + Y) & 0xFFFFFF, (u8)A);
+                        lda8(inc8((u8)A));
+                        Y = inc16(Y);
+                        X = dec16(X);
+                        g_unpack_cycles += 16;
+                        WAIT_TICK();
+                    } while (!fz);
+                }
+            }
+        }
+    }
+}
+
+/* $82:8BFE UnpackToWram (RTS, A = entry): unpack stream A of the set at
+ * $00 (pointer table $82:96A9, three bytes each) to $7E:4000. */
+void UnpackToWram_m1x1(void)
+{
+    rep(0x30);
+    lda16(asl16(A));
+    fc = 0; adc16(rd16(DP(0x00)));
+    Y = A; nz16(Y);
+    sep(0x20);
+    lda8(rd8(ABSY(0x96A9))); wr8(DP(0x08), (u8)A);
+    lda8(rd8(ABSY(0x96AA))); wr8(DP(0x09), (u8)A);
+    lda8(rd8(ABSY(0x96AB))); wr8(DP(0x0A), (u8)A);
+    lda8(0x00); wr8(DP(0x00), 0x00);
+    lda8(0x40); wr8(DP(0x01), 0x40);
+    lda8(0x7E); wr8(DP(0x02), 0x7E);
+    unpack_stream();
+}
+
+/* $82:8BD8 UnpackToLowRam (RTS, A = entry): as UnpackToWram, to $00:1C00
+ * (the palette buffer). */
+void UnpackToLowRam_m1x1(void)
+{
+    lda8(asl8((u8)A));
+    fc = 0; adc8(rd8(DP(0x00)));
+    Y = (u8)A; nz8((u8)Y);
+    lda8(rd8(ABSY(0x96A9))); wr8(DP(0x08), (u8)A);
+    lda8(rd8(ABSY(0x96AA))); wr8(DP(0x09), (u8)A);
+    lda8(rd8(ABSY(0x96AB))); wr8(DP(0x0A), (u8)A);
+    lda8(0x00); wr8(DP(0x00), 0x00);
+    lda8(0x1C); wr8(DP(0x01), 0x1C);
+    lda8(0x00); wr8(DP(0x02), 0x00);
+    unpack_stream();
+}

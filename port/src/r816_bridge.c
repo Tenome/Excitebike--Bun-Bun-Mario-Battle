@@ -167,6 +167,10 @@ int r816_call_pc(uint32_t pc24)
         return g_tail_pending ? g_tail_result : RECOMP_RETURN_NORMAL; \
     }
 
+/* As BRIDGE, with the cycle cost read after the call (for routines whose
+ * work depends on data they only see while running). */
+#define BRIDGE_AFTER(hle_name, hand_fn, cycles_expr)          void hand_fn(void);                                       RecompReturn hle_name(CpuState *cpu)                      {                                                             from_cpu(cpu);                                            g_tail_pending = 0;                                       hand_fn();                                                to_cpu(cpu, (uint32)(cycles_expr));                       return g_tail_pending ? g_tail_result : RECOMP_RETURN_NORMAL;     }
+
 /* As BRIDGE, with the cycle cost worked out before the call (for routines
  * that do real work only on some frames). */
 #define BRIDGE_DYN(hle_name, hand_fn, cycles_expr)        \
@@ -662,6 +666,13 @@ BRIDGE(HleHand_BsxFindFile, BsxFindFile_m0x0, 600)
 /* c/hand/s4/objects.c, part 25 */
 BRIDGE(HleHand_ShowItemPoints, ShowItemPoints_m1x1, 1650)
 BRIDGE(HleHand_UpdateLanes, UpdateLanes_m1x1, 520)
+/* c/hand/s4/objects.c, part 26 */
+/* UnpackToWram / UnpackToLowRam ($82:8BFE / $82:8BD8) pass difftest but
+ * are not hooked: an unpack runs for several frames' worth of cycles and
+ * the original takes NMIs part-way through it, which one bridged call
+ * cannot; with them hooked the race run diverges whatever the cost. The C
+ * counts the original's cycles (g_unpack_cycles) for when the bridge can
+ * yield. */
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)
