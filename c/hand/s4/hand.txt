@@ -392,3 +392,5 @@
 80ABCD  1 1  mem+A,X,Y,C,V   RidersThrottle
 8197E8  1 1  mem+A,X,Y,C,V   UpdateObjects
 8095A2  1 1  mem+A,X,Y,C,V   BroadcastEndScreens
+829028  1 1  mem+A,X,Y,C,V   StadiumBonusBanner
+828CF0  1 1  mem+A,X,Y,C,V   SpeedReadout

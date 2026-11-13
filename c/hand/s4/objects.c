@@ -9964,3 +9964,158 @@ void BroadcastEndScreens_m1x1(void)
     }
     ret();
 }
+
+/* $82:9028 (RTL): the stadium bonus banner on its timer $D4: at $7E the
+ * "bonus" text ($82:9113 at VRAM $1935) and the stadium's bonus points
+ * ($82:9131 + 4 * (stadium - 2), leading zeros blank, a trailing 0) at
+ * $1977; at 0 both rows are cleared ($82:90F5 / $82:9108). */
+void StadiumBonusBanner_m1x1(void)
+{
+    push8(DB);
+    lda8(0x82); push8(0x82);
+    DB = pull8(); nz8(DB);
+    lda8(rd8(DP(0xD4)));
+    if (!fz) {
+        wr8(DP(0xD4), dec8(rd8(DP(0xD4))));
+        lda8(rd8(DP(0xD4)));
+        if (fz) {
+            rep(0x20);
+            lda16(0x1935); wr16(DP(0x00), 0x1935);
+            lda16(0x90F5); wr16(DP(0x02), 0x90F5);
+            sep(0x20);
+            lda8(0x20); wr8(DP(0x0F), 0x20);
+            push8(0x82); push16(0x9056); VramQueueTilesLong_m1x1();
+            rep(0x20);
+            lda16(0x1977); wr16(DP(0x00), 0x1977);
+            lda16(0x9108); wr16(DP(0x02), 0x9108);
+            sep(0x20);
+            lda8(0x20); wr8(DP(0x0F), 0x20);
+            push8(0x82); push16(0x906C); VramQueueTilesLong_m1x1();
+        } else {
+            cmp8((u8)A, 0x7E);
+            if (fz) {
+                rep(0x20);
+                lda16(0x1935); wr16(DP(0x00), 0x1935);
+                lda16(0x9113); wr16(DP(0x02), 0x9113);
+                sep(0x20);
+                lda8(0x20); wr8(DP(0x0F), 0x20);
+                push8(0x82); push16(0x9085); VramQueueTilesLong_m1x1();
+                lda8(rd8(ABS(0x0928)));
+                lda8(dec8((u8)A)); lda8(dec8((u8)A));
+                wr8(DP(0x00), (u8)A);
+                lda8(asl8((u8)A)); lda8(asl8((u8)A));
+                X = (u8)A; nz8((u8)X);
+                for (int i = 0; i < 4; i++) {
+                    lda8(rd8(ABSX(0x9131 + i)));
+                    wr8(ABS(0x03D0 + i), (u8)A);
+                    ora8(0x10);
+                    wr8(ABS(0x03D5 + i), (u8)A);
+                }
+                wr8(ABS(0x03D4), 0);
+                lda8(0x10); wr8(ABS(0x03D9), 0x10);
+                lda8(0x25); wr8(ABS(0x03CF), 0x25);
+                ldx8(0x00);
+                for (;;) {
+                    lda8(rd8(ABSX(0x03D0)));
+                    if (!fz) break;
+                    lda8(0xFF);
+                    wr8(ABSX(0x03D0), 0xFF);
+                    wr8(ABSX(0x03D5), 0xFF);
+                    X = inc8((u8)X);
+                    cmp8((u8)X, 0x02);
+                    if (fc) break;
+                }
+                rep(0x20);
+                lda16(0x1977); wr16(DP(0x00), 0x1977);
+                lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+                sep(0x20);
+                lda8(0x20); wr8(DP(0x0F), 0x20);
+                push8(0x82); push16(0x90F2); VramQueueTilesLong_m1x1();
+            }
+        }
+    }
+    DB = pull8(); nz8(DB);
+    retl();
+}
+
+/* $82:8CF0 SpeedReadout (RTL): on odd frames the player's speed
+ * ($01C6:$01BE; while it holds steady and nonzero it jitters by a random
+ * 0 / 1, $D0 = last) as "NNN.N" at VRAM $1B22 (leading zeros blank,
+ * the point $54); 0 before the jump contest's first run ($C7 = 2 with
+ * $1569 = 0). */
+void SpeedReadout_m1x1(void)
+{
+    lda8(rd8(DP(0x63)));
+    and8(0x01);
+    if (fz) { retl(); return; }
+    lda8(rd8(ABS(0x01C6)));
+    A = (u16)((A >> 8) | (A << 8)); nz8((u8)A);
+    lda8(rd8(ABS(0x01BE)));
+    rep(0x20);
+    cmp16(A, rd16(DP(0xD0)));
+    int jitter = fz;
+    if (jitter) { cmp16(A, 0x0000); jitter = !fz; }
+    if (jitter) {
+        wr16(DP(0xD0), A);
+        sep(0x20);
+        push8(0x82); push16(0x8D10); RandomB_m1x1();
+        rep(0x20);
+        and16(0x0001);
+        fc = 0; adc16(rd16(DP(0xD0)));
+    } else {
+        wr16(DP(0xD0), A);
+    }
+    wr16(DP(0x00), 0); wr16(DP(0x02), 0); wr16(DP(0x04), 0);
+    wr16(DP(0x0E), A);
+    lda16(rd16(ABS(0x00C7)));
+    and16(0x00FF);
+    cmp16(A, 0x0002);
+    if (fz) {
+        lda16(rd16(ABS(0x1569)));
+        if (fz) wr16(DP(0x0E), 0);
+    }
+    lda16(rd16(DP(0x0E)));
+    static const u16 pow10[3] = { 1000, 100, 10 };
+    static const u16 cnt[3] = { 0x00, 0x02, 0x04 };
+    for (int i = 0; i < 3; i++) {
+        for (;;) {
+            cmp16(A, pow10[i]);
+            if (!fc) break;
+            sbc16(pow10[i]);
+            wr16(DP(cnt[i]), inc16(rd16(DP(cnt[i]))));
+            WAIT_TICK();
+        }
+    }
+    sep(0x20);
+    wr8(ABS(0x03D4), (u8)A);
+    ora8(0x10); wr8(ABS(0x03D9), (u8)A);
+    lda8(0xFF); wr8(ABS(0x03D3), 0xFF);
+    lda8(0x54); wr8(ABS(0x03D8), 0x54);
+    lda8(rd8(DP(0x04)));
+    wr8(ABS(0x03D2), (u8)A);
+    ora8(0x10); wr8(ABS(0x03D7), (u8)A);
+    lda8(rd8(DP(0x00)));
+    if (fz) {
+        lda8(0xFF); wr8(ABS(0x03D0), 0xFF); wr8(ABS(0x03D5), 0xFF);
+    } else {
+        wr8(ABS(0x03D0), (u8)A);
+        ora8(0x10); wr8(ABS(0x03D5), (u8)A);
+    }
+    lda8(rd8(DP(0x02)));
+    int blank = 0;
+    if (fz) { Y = rd8(DP(0x00)); nz8((u8)Y); blank = fz; }
+    if (blank) {
+        lda8(0xFF); wr8(ABS(0x03D1), 0xFF); wr8(ABS(0x03D6), 0xFF);
+    } else {
+        wr8(ABS(0x03D1), (u8)A);
+        ora8(0x10); wr8(ABS(0x03D6), (u8)A);
+    }
+    lda8(0x25); wr8(ABS(0x03CF), 0x25);
+    rep(0x20);
+    lda16(0x1B22); wr16(DP(0x00), 0x1B22);
+    lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+    sep(0x20);
+    lda8(0x20); wr8(DP(0x0F), 0x20);
+    push8(0x82); push16(0x8DC5); VramQueueTilesLong_m1x1();
+    retl();
+}

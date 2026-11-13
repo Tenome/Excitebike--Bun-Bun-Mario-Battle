@@ -850,6 +850,9 @@ static uint32 end_screens_cost(void)
     return g_ram[0x88] == 1 ? 1500 : 30;
 }
 BRIDGE_DYN(HleHand_BroadcastEndScreens, BroadcastEndScreens_m1x1, end_screens_cost())
+BRIDGE_DYN(HleHand_StadiumBonusBanner, StadiumBonusBanner_m1x1,
+           g_ram[0xD4] == 1 ? 1250 : g_ram[0xD4] == 0x7F ? 1400 : 15)
+BRIDGE_DYN(HleHand_SpeedReadout, SpeedReadout_m1x1, (g_ram[0x63] & 1) ? 900 : 8)
 /* VramQueueTilesLong / QueueTileRowsLong ($80:B2D6 / $80:B431) are
  * verified but unhooked: trampolines whose cost is the callee's. */
 /* c/hand/s4/objects.c, part 26 */
