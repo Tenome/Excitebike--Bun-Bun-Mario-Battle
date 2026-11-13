@@ -355,3 +355,7 @@
 80D169  1 1  mem+A,X,Y,C,V   StepObjectX8
 80D145  1 1  mem+A,X,Y,C,V   MarkerObjectStep
 80FF00  1 1  mem+A,X,Y,C,V   QueueBonusDigitsAt
+80D12B  1 1  mem+A,X,Y,C,V   MarkerObjects
+80B208  1 1  mem+A,X,Y,C,V   RaceFrameStep
+828424  1 1  mem+A,X,Y,C,V   QueueFontDigits
+819828  1 1  mem+A,X,Y,C,V   EmptyStep9828

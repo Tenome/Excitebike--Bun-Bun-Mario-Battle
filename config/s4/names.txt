@@ -367,3 +367,7 @@
 80D169 StepObjectX8
 80D145 MarkerObjectStep
 80FF00 QueueBonusDigitsAt
+80D12B MarkerObjects
+80B208 RaceFrameStep
+828424 QueueFontDigits
+819828 EmptyStep9828

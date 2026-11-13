@@ -755,6 +755,18 @@ BRIDGE_DYN(HleHand_LaunchBall, LaunchBall_m1x1, g_ram[0x092C] ? 500 : 8)
 BRIDGE(HleHand_StepObjectX8, StepObjectX8_m1x1, 88)
 BRIDGE(HleHand_MarkerObjectStep, MarkerObjectStep_m1x1, 260)
 BRIDGE(HleHand_QueueBonusDigitsAt, QueueBonusDigitsAt_m1x1, 1310)
+static uint32 marker_objects_cost(void)
+{
+    uint32 c = 20 + ((!(g_ram[0x63] & 1) && g_ram[0x76] == 3) ? 1300 : 15);
+    for (int x = 0; x <= 6; x += 2)
+        if (g_ram[0x1530 + x]) c += 280;
+    return c;
+}
+BRIDGE_DYN(HleHand_MarkerObjects, MarkerObjects_m1x1, marker_objects_cost())
+BRIDGE_DYN(HleHand_RaceFrameStep, RaceFrameStep_m1x1,
+           1130 + ((!g_ram[0x0CD7] && !g_ram[0x1923] && g_ram[0x76] < 9) ? 1560 : 0))
+BRIDGE(HleHand_EmptyStep9828, EmptyStep9828_m1x1, 6)
+BRIDGE(HleHand_QueueFontDigits, QueueFontDigits_m1x1, 850)
 /* VramQueueTilesLong / QueueTileRowsLong ($80:B2D6 / $80:B431) are
  * verified but unhooked: trampolines whose cost is the callee's. */
 /* c/hand/s4/objects.c, part 26 */

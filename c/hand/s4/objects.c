@@ -8478,3 +8478,92 @@ void QueueBonusDigitsAt_m1x1(void)
     lda8(0x20); wr8(DP(0x0F), 0x20);
     QueueBonusDigits_m1x1();
 }
+
+void ShowCoinRank_m1x1(void);
+void MarkerObjectStep_m1x1(void);
+void ReadRiderPieces_m1x1(void);
+void TrackRiderPace_m1x1(void);
+void QueueBonusDigitsAt_m1x1(void);
+void ByteTable84BA_m1x1(void);
+
+/* $80:D12B (RTL): the coin rank, then each active marker object (even
+ * slots 6-0, $1530) counts its word timer $1538 up and steps. */
+void MarkerObjects_m1x1(void)
+{
+    push16(0xD12D); ShowCoinRank_m1x1();
+    ldx8(0x06);
+    do {
+        lda8(rd8(ABSX(0x1530)));
+        if (!fz) {
+            rep(0x20);
+            wr16(ABSX(0x1538), inc16(rd16(ABSX(0x1538))));
+            sep(0x20);
+            push8(0x80); push16(0xD13F); MarkerObjectStep_m1x1();
+        }
+        X = dec8((u8)X);
+        X = dec8((u8)X);
+    } while (!fn);
+    retl();
+}
+
+/* $80:B208 (RTS): $7F = frame & 7, the riders' pieces, and in the race
+ * modes (below 9, no fade $1923, not $0CD7) the pace, score and bonus
+ * digits. */
+void RaceFrameStep_m1x1(void)
+{
+    lda8(rd8(DP(0x63)));
+    and8(0x07);
+    wr8(DP(0x7F), (u8)A);
+    push16(0xB210); ReadRiderPieces_m1x1();
+    lda8(rd8(ABS(0x0CD7)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABS(0x1923)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(DP(0x76)));
+    cmp8((u8)A, 0x09);
+    if (fc) { ret(); return; }
+    push16(0xB223); TrackRiderPace_m1x1();
+    push16(0xB226); AddScore_m1x1();
+    push16(0xB229); QueueBonusDigitsAt_m1x1();
+    ret();
+}
+
+/* $82:8424 (RTL): the five digits at [$18] (leading zeros as $0A) and a
+ * trailing 0 through the font table, +$10, queued from $03CF (size $16)
+ * at VRAM $00. X and Y are kept. */
+void QueueFontDigits_m1x1(void)
+{
+    push8((u8)X); push8((u8)Y);
+    ldx8(0x00); ldy8(0x00);
+    do {
+        lda8(rd8((ILDP(0x18) + Y) & 0xFFFFFF));
+        int blank = 0;
+        if (fz) { cmp8((u8)X, 0x00); blank = fz; }
+        if (blank) lda8(0x0A);
+        else X = inc8((u8)X);
+        push8(0x82); push16(0x843A); ByteTable84BA_m1x1();
+        fc = 0; adc8(0x10);
+        wr8(ABSY(0x03D0), (u8)A);
+        Y = inc8((u8)Y);
+        cmp8((u8)Y, 0x05);
+    } while (!fc);
+    lda8(0x00);
+    push8(0x82); push16(0x844B); ByteTable84BA_m1x1();
+    fc = 0; adc8(0x10);
+    wr8(ABS(0x03D5), (u8)A);
+    lda8(0x16); wr8(ABS(0x03CF), 0x16);
+    rep(0x20);
+    lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+    sep(0x20);
+    lda8(0x10); wr8(DP(0x0F), 0x10);
+    push8(0x82); push16(0x8467); VramQueueTilesLong_m1x1();
+    Y = pull8(); nz8((u8)Y);
+    X = pull8(); nz8((u8)X);
+    retl();
+}
+
+/* $81:9828 (RTS): an empty step. */
+void EmptyStep9828_m1x1(void)
+{
+    ret();
+}
