@@ -377,6 +377,7 @@ BRIDGE(HleHand_CopyTrackColumn, CopyTrackColumn_m1x1, 400)
 BRIDGE(HleHand_CpuReleaseButtons, CpuReleaseButtons_m1x1, 25)
 BRIDGE_DYN(HleHand_AimRatio, AimRatio_m1x1, (A & 0xFF) ? 120 + 25 * (A & 0xFF) : 15)
 BRIDGE(HleHand_RiderRunOut, RiderRunOut_m1x1, 50)
+BRIDGE(HleHand_Mode11, Mode11_m1x1, 30)
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */

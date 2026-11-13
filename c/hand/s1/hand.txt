@@ -161,3 +161,4 @@
 819F8C  1 1  mem+X,V        AimRatio               # from s4 81A065
 80BE3E  1 1  mem+X,Y,C,V    RiderRunOut            # from s4 80BB56
 81F9C8  0 0  mem+Y,C        BsxFindFile            # from s4 81F9C8
+809E8E  1 1  mem+X,Y,C,V    Mode11                 # from s4 809DBD

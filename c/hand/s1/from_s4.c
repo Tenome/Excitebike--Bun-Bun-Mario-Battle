@@ -902,3 +902,21 @@ void BsxFindFile_m0x0(void)
     fc = 1;
     retl();
 }
+/* $80:9E8E Mode11 (RTS): wait $88 frames, then the end screen (mode $0F,
+ * fade, a $20-frame timer). */
+void Mode11_m1x1(void)
+{
+    rep(0x20);
+    u16 t = dec16(rd16(DP(0x88)));
+    wr16(DP(0x88), t);
+    sep(0x20);
+    if (!fz) { ret(); return; }
+    lda8(0x0F); wr8(DP(0x76), 0x0F);
+    wr8(DP(0x75), 0);
+    wr8(DP(0x77), 0);
+    wr8(ABS(0x1923), dec8(rd8(ABS(0x1923))));
+    rep(0x20);
+    lda16(0x0020); wr16(DP(0x88), 0x0020);
+    sep(0x20);
+    ret();
+}

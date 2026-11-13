@@ -183,3 +183,4 @@
 819F8C AimRatio              # from s4 81A065
 80BE3E RiderRunOut           # from s4 80BB56
 81F9C8 BsxFindFile           # from s4 81F9C8
+809E8E Mode11                # from s4 809DBD
