@@ -10218,3 +10218,166 @@ void QueueBestTimeLong_m1x1(void)
     DB = pull8(); nz8(DB);
     retl();
 }
+
+void QueueBestTimeLong_m1x1(void);
+void QueueBonusDigitsLong_m1x1(void);
+
+/* $82:8DC7 (RTL): the new-record blink on its timer $CB: at 1 the best
+ * time back at VRAM $18D7; every 16 frames the clock at $1897 alternates
+ * between blank and the stadium's record ($0819 + 3 * (stadium - 2):
+ * minute, seconds, hundredths via $80:C470; the marks $47 / $48). */
+void BestTimeBlink_m1x1(void)
+{
+    lda8(rd8(DP(0xCB)));
+    if (fz) { retl(); return; }
+    wr8(DP(0xCB), dec8(rd8(DP(0xCB))));
+    if (fz) {
+        lda8(0xD7); wr8(DP(0x00), 0xD7);
+        lda8(0x18); wr8(DP(0x01), 0x18);
+        lda8(0x24); wr8(DP(0x0F), 0x24);
+        push8(0x82); push16(0x8DDF); QueueBestTimeLong_m1x1();
+    }
+    lda8(rd8(DP(0xCB)));
+    and8(0x0F);
+    if (!fz) { retl(); return; }
+    lda8(rd8(DP(0xCB)));
+    and8(0x10);
+    if (fz) {
+        ldx8(0x0F);
+        lda8(0xFF);
+        do {
+            wr8(ABSX(0x03CF), 0xFF);
+            X = dec8((u8)X);
+        } while (!fn);
+    } else {
+        lda8(rd8(ABS(0x0928)));
+        lda8(dec8((u8)A)); lda8(dec8((u8)A));
+        wr8(DP(0x00), (u8)A);
+        lda8(asl8((u8)A));
+        fc = 0; adc8(rd8(DP(0x00)));
+        X = (u8)A; nz8((u8)X);
+        Y = rd8(ABSX(0x081B)); nz8((u8)Y);
+        lda8(rd8(ABSY(0xC470)));
+        static const u16 lo[2] = { 0x03D6, 0x03D3 };
+        for (int i = 0; i < 2; i++) {
+            if (i) lda8(rd8(ABSX(0x081A)));
+            ldy8(0x00);
+            for (;;) {
+                cmp8((u8)A, 0x0A);
+                if (!fc) break;
+                sbc8(0x0A);
+                Y = inc8((u8)Y);
+            }
+            wr8(ABS(lo[i]), (u8)A);
+            ora8(0x10); wr8(ABS(lo[i] + 7), (u8)A);
+            lda8((u8)Y);
+            wr8(ABS(lo[i] - 1), (u8)A);
+            ora8(0x10); wr8(ABS(lo[i] + 6), (u8)A);
+        }
+        lda8(rd8(ABSX(0x0819)));
+        wr8(ABS(0x03D0), (u8)A);
+        ora8(0x10); wr8(ABS(0x03D7), (u8)A);
+        lda8(0xFF); wr8(ABS(0x03D8), 0xFF); wr8(ABS(0x03DB), 0xFF);
+        lda8(0x47); wr8(ABS(0x03D1), 0x47);
+        lda8(0x48); wr8(ABS(0x03D4), 0x48);
+    }
+    rep(0x20);
+    lda16(0x1897); wr16(DP(0x00), 0x1897);
+    lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+    sep(0x20);
+    lda8(0x27); wr8(ABS(0x03CF), 0x27);
+    lda8(0x20); wr8(DP(0x0F), 0x20);
+    push8(0x82); push16(0x8E7D); VramQueueTilesLong_m1x1();
+    retl();
+}
+
+/* $81:9926 (RTS): the results' bonus count-down object. Every 4 frames
+ * ($88) the bonus $BA counts down by one into the score (sound $44, the
+ * count at VRAM $1CB6, $09AF = 1, the bonus digits). At 0 it hands the
+ * podium on: the player's place (the slot where $086E is 1) plus 8 *
+ * $154F picks the type-7 object's state 3 (timer $10) and the type from
+ * $81:9A06 goes to state 4 with long timers; its own state steps. */
+void ResultsBonusCount_m1x1(void)
+{
+    lda8(rd8(DP(0x88)));
+    if (!fz) goto tick;
+    lda8(rd8(DP(0xBA)));
+    if (fz) {
+        ldy8(0x0E);
+        do {
+            lda8(rd8(ABSY(0x086E)));
+            lda8(dec8((u8)A));
+            if (fz) break;
+            Y = dec8((u8)Y);
+            Y = dec8((u8)Y);
+        } while (!fn);
+        lda8((u8)Y);
+        lda8(lsr8((u8)A));
+        wr8(DP(0x00), (u8)A);
+        lda8(rd8(ABS(0x154F)));
+        lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A));
+        fc = 0; adc8(rd8(DP(0x00)));
+        wr8(DP(0x00), (u8)A);
+        Y = (u8)A; nz8((u8)Y);
+        lda8(0x03); wr8(DP(0x01), 0x03);
+        lda8(0x07);
+        push8(0x81); push16(0x9956); FindObjectSlot_m1x1();
+        lda8(rd8(DP(0x01))); wr8(ABSY(0x030F), (u8)A);
+        lda8(0x10); wr8(ABSY(0x036F), 0x10);
+        X = rd8(ABS(0x03A3)); nz8((u8)X);
+        wr8(ABSX(0x030F), inc8(rd8(ABSX(0x030F))));
+        Y = rd8(DP(0x00)); nz8((u8)Y);
+        lda8(rd8(ABSY(0x9A06)));
+        push8(0x81); push16(0x996F); FindObjectSlot_m1x1();
+        lda8(0x04); wr8(ABSY(0x030F), 0x04);
+        lda8(0xFF); wr8(ABSY(0x036F), 0xFF);
+        lda8(0xFF); wr8(ABSY(0x037F), 0xFF);
+        goto tick;
+    }
+    wr8(DP(0xBA), dec8(rd8(DP(0xBA))));
+    lda8(0x44);
+    push8(0x81); push16(0x9989); QueueSoundB_m1x1();
+    ldy8(0x00);
+    lda8(rd8(DP(0xBA)));
+    for (;;) {
+        cmp8((u8)A, 0x0A);
+        if (!fc) break;
+        sbc8(0x0A);
+        Y = inc8((u8)Y);
+    }
+    wr8(DP(0x00), (u8)A);
+    wr8(ABS(0x03D2), (u8)A);
+    ora8(0x10); wr8(ABS(0x03D7), (u8)A);
+    cmp8((u8)Y, 0x00);
+    if (!fz) {
+        lda8((u8)Y);
+        wr8(ABS(0x03D1), (u8)A);
+        ora8(0x10); wr8(ABS(0x03D6), (u8)A);
+    } else {
+        lda8(0xFF); wr8(ABS(0x03D1), 0xFF); wr8(ABS(0x03D6), 0xFF);
+    }
+    lda8((u8)Y);
+    ora8(rd8(DP(0x00)));
+    if (fz) {
+        lda8(0xFF);
+        wr8(ABS(0x03D2), 0xFF); wr8(ABS(0x03D3), 0xFF);
+        wr8(ABS(0x03D7), 0xFF); wr8(ABS(0x03D8), 0xFF);
+    }
+    lda8(0xFF); wr8(ABS(0x03D0), 0xFF); wr8(ABS(0x03D5), 0xFF);
+    lda8(0x04); wr8(DP(0x88), 0x04);
+    rep(0x20);
+    lda16(0x1CB6); wr16(DP(0x00), 0x1CB6);
+    lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+    sep(0x20);
+    lda8(0x28); wr8(DP(0x0F), 0x28);
+    push8(0x81); push16(0x99EC); VramQueueTilesLong_m1x1();
+    lda8(0x01); wr8(ABS(0x09AF), 0x01);
+    push8(0x81); push16(0x99F5); AddScoreLong_m1x1();
+    wr8(DP(0x00), dec8(rd8(DP(0x00))));
+    lda8(0x28); wr8(DP(0x0F), 0x28);
+    push8(0x81); push16(0x99FF); QueueBonusDigitsLong_m1x1();
+tick:
+    wr8(DP(0x88), dec8(rd8(DP(0x88))));
+    X = rd8(ABS(0x03A3)); nz8((u8)X);
+    ret();
+}

@@ -397,3 +397,5 @@
 80E85B  1 1  mem+A,X,Y,C,V   JumpContestFrame
 80FEFC  1 1  mem+A,X,Y,C,V   QueueBonusDigitsLong
 80C619  1 1  mem+A,X,Y,C,V   QueueBestTimeLong
+828DC7  1 1  mem+A,X,Y,C,V   BestTimeBlink
+819926  1 1  mem+A,X,Y,C,V   ResultsBonusCount

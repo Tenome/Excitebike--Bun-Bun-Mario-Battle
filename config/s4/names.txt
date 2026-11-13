@@ -409,3 +409,5 @@
 80E85B JumpContestFrame
 80FEFC QueueBonusDigitsLong
 80C619 QueueBestTimeLong
+828DC7 BestTimeBlink
+819926 ResultsBonusCount
