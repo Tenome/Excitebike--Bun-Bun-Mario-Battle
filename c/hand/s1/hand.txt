@@ -261,3 +261,5 @@
 81982B  1 1  mem+A,X,Y,C,V   FadeInObject
 80D906  1 1  mem+X,Y,C,V     ShowBonusLabel
 80CD54  1 1  mem+A,X,Y,C,V   RiderPose
+80C475  1 1  mem+A,X,Y,C,V   CrashRecovery
+80DD0E  1 1  mem+A,X,Y,C,V   PlayerCrashStep

@@ -282,3 +282,5 @@
 81982B FadeInObject
 80D906 ShowBonusLabel
 80CD54 RiderPose
+80C475 CrashRecovery
+80DD0E PlayerCrashStep
