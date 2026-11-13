@@ -871,6 +871,10 @@ BRIDGE(HleHand_JumpResultDistance, JumpResultDistance_m1x1, 750)
 /* four score builds and queues, two distance displays (recompiled) */
 BRIDGE(HleHand_JumpResultBoard, JumpResultBoard_m1x1, 4500)
 BRIDGE_DYN(HleHand_JumpResultBoardStep, JumpResultBoardStep_m1x1, 4560 + draw_all_riders_cost())
+BRIDGE(HleHand_ShowJumpCountLong, ShowJumpCountLong_m1x1, 3010)
+BRIDGE(HleHand_ShowBonusPointsLong, ShowBonusPointsLong_m1x1, 2910)
+BRIDGE_DYN(HleHand_JumpResultSkip, JumpResultSkip_m1x1,
+           (g_ram[0x21] | g_ram[0x26]) ? 4000 : 10)
 /* VramQueueTilesLong / QueueTileRowsLong ($80:B2D6 / $80:B431) are
  * verified but unhooked: trampolines whose cost is the callee's. */
 /* c/hand/s4/objects.c, part 26 */

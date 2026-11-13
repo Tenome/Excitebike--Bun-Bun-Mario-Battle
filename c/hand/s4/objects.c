@@ -10734,3 +10734,61 @@ void JumpResultBoardStep_m1x1(void)
     push16(0xEA3C); JumpResultBoard_m1x1();
     ret();
 }
+
+void ShowJumpCount_m1x1(void);
+void ShowBonusPoints_m1x1(void);
+void JumpResultDistance_m1x1(void);
+
+/* $80:E938 (RTL): ShowJumpCount for other banks. */
+void ShowJumpCountLong_m1x1(void)
+{
+    push16(0xE93A); ShowJumpCount_m1x1();
+    retl();
+}
+
+/* $80:E994 (RTL): ShowBonusPoints for other banks. */
+void ShowBonusPointsLong_m1x1(void)
+{
+    push16(0xE996); ShowBonusPoints_m1x1();
+    retl();
+}
+
+/* $81:C956 (RTL): a button on the jump result screen skips ahead: from
+ * step $CD 2-5 the remaining parts (distance, count, bonus points, the
+ * total) are shown at once; then step 5, $8C = 2, $88 = $3C and
+ * $1999 = 1. */
+void JumpResultSkip_m1x1(void)
+{
+    lda8(rd8(DP(0x21)));
+    ora8(rd8(DP(0x26)));
+    if (fz) { retl(); return; }
+    lda8(rd8(DP(0xCD)));
+    cmp8((u8)A, 0x02);
+    if (fn) { retl(); return; }
+    int from = 2;
+    if (!fz) {
+        cmp8((u8)A, 0x03);
+        if (fz) from = 3;
+        else {
+            cmp8((u8)A, 0x04);
+            if (fz) from = 4;
+            else {
+                cmp8((u8)A, 0x05);
+                if (fz) from = 5;
+                else {
+                    cmp8((u8)A, 0x05);
+                    if (fc) { retl(); return; }
+                }
+            }
+        }
+    }
+    if (from <= 2) { push8(0x81); push16(0xC977); JumpResultDistance_m1x1(); }
+    if (from <= 3) { push8(0x81); push16(0xC97B); ShowJumpCountLong_m1x1(); }
+    if (from <= 4) { push8(0x81); push16(0xC97F); ShowBonusPointsLong_m1x1(); }
+    push8(0x81); push16(0xC983); QueueResultsTiles_m1x1();
+    lda8(0x05); wr8(DP(0xCD), 0x05);
+    lda8(0x02); wr8(DP(0x8C), 0x02);
+    lda8(0x3C); wr8(DP(0x88), 0x3C);
+    lda8(0x01); wr8(ABS(0x1999), 0x01);
+    retl();
+}

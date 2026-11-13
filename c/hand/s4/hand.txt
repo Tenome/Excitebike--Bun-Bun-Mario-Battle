@@ -406,3 +406,6 @@
 81C7EF  1 1  mem+A,X,Y,C,V   JumpResultDistance
 80EA68  1 1  mem+A,X,Y,C,V   JumpResultBoard
 80EA01  1 1  mem+A,X,Y,C,V   JumpResultBoardStep
+80E938  1 1  mem+A,X,Y,C,V   ShowJumpCountLong
+80E994  1 1  mem+A,X,Y,C,V   ShowBonusPointsLong
+81C956  1 1  mem+A,X,Y,C,V   JumpResultSkip

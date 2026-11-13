@@ -418,3 +418,6 @@
 81C7EF JumpResultDistance
 80EA68 JumpResultBoard
 80EA01 JumpResultBoardStep
+80E938 ShowJumpCountLong
+80E994 ShowBonusPointsLong
+81C956 JumpResultSkip
