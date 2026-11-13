@@ -415,3 +415,6 @@
 80BCEF  1 1  mem+A,X,Y,C,V   AddSpeedToXLong
 80CD0A  1 1  mem+A,X,Y,C,V   DrawRiderShadowPairLong
 81C483  1 1  mem+A,X,Y,C,V   JumpRiderStep
+81C2D9  1 1  mem+A,X,Y,C,V   JumpRunStart
+81C5AA  1 1  mem+A,X,Y,C,V   MoveAndScroll
+81C331  1 1  mem+A,X,Y,C,V   JumpRun

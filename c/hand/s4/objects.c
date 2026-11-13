@@ -10989,3 +10989,90 @@ void JumpRiderStep_m1x1(void)
     push16(0xC56C); DispatchByDistance_m1x1();
     ret();
 }
+
+void DrawJumpCrowd_m1x1(void);
+void JumpRiderStep_m1x1(void);
+void AddSpeedToXLong_m1x1(void);
+void ScrollByPlayerSpeedLong_m1x1(void);
+void SpinWheels8_m1x1(void);
+void sub_818A4D_m1x1(void);
+
+/* $81:C2D9 (RTS): the jump run's start: once racing ($92), the run length
+ * $1985 for this entry ($81:C2C9 by $7C, +8 with the debug flag), speed
+ * $0500 and the next run step ($197F). Then the crowd and the rider. */
+void JumpRunStart_m1x1(void)
+{
+    rep(0x20);
+    lda16(rd16(DP(0x92)));
+    if (!fz) {
+        wr16(DP(0x00), 0);
+        lda16(rd16(LONG(0x81800C)));
+        if (!fz) { lda16(0x0008); wr16(DP(0x00), 0x0008); }
+        lda16(rd16(DP(0x7C)));
+        and16(0x00FF);
+        lda16(asl16(A));
+        fc = 0; adc16(rd16(DP(0x00)));
+        X = (u8)A; nz8((u8)X);
+        lda16(rd16(LONGX(0x81C2C9)));
+        wr16(ABS(0x1985), A);
+        sep(0x20);
+        lda8(0x00); wr8(ABS(0x01BE), 0x00);
+        lda8(0x05); wr8(ABS(0x01C6), 0x05);
+        wr8(ABS(0x197F), inc8(rd8(ABS(0x197F))));
+    }
+    sep(0x20);
+    push16(0xC310); DrawJumpCrowd_m1x1();
+    push16(0xC313); JumpRiderStep_m1x1();
+    ret();
+}
+
+/* $81:C5AA (RTS): the player moves and the screen follows. */
+void MoveAndScroll_m1x1(void)
+{
+    ldx8(0x00);
+    push8(0x81); push16(0xC5AF); AddSpeedToXLong_m1x1();
+    push8(0x81); push16(0xC5B3); ScrollByPlayerSpeedLong_m1x1();
+    ret();
+}
+
+/* $81:C331 (RTS): the jump run. Until the run length $1985 the track
+ * streams ($81:8A4D), the rider moves, the crowd and wheels animate.
+ * At the end, unless the time is short ($88 < $0654), the landing
+ * banner ($81:C315, $0207 at VRAM $194D), speed $0080, $56 = 3, sound
+ * $45, $198A = $30 and the next step. Then the rider. */
+void JumpRun_m1x1(void)
+{
+    rep(0x20);
+    lda16(rd16(DP(0x9C)));
+    cmp16(A, rd16(ABS(0x1985)));
+    if (!fc) {
+        sep(0x20);
+        push8(0x81); push16(0xC383); CALL(sub_818A4D_m1x1, 0x818A4D, 3);
+        push16(0xC386); MoveAndScroll_m1x1();
+        push16(0xC389); DrawJumpCrowd_m1x1();
+        push16(0xC38C); SpinWheels8_m1x1();
+    } else {
+        lda16(rd16(DP(0x88)));
+        cmp16(A, 0x0654);
+        if (fc) {
+            wr16(ABS(0x1981), 0);
+            wr16(ABS(0x1988), 0);
+            lda16(0x194D); wr16(DP(0x00), 0x194D);
+            lda16(0xC315); wr16(DP(0x02), 0xC315);
+            lda16(0x0207); wr16(DP(0x10), 0x0207);
+            sep(0x20);
+            lda8(0x81); wr8(DP(0x04), 0x81);
+            push8(0x81); push16(0xC35F); QueueTileRowsLong_m1x1();
+            lda8(0x80); wr8(ABS(0x01BE), 0x80);
+            lda8(0x00); wr8(ABS(0x01C6), 0x00);
+            lda8(0x03); wr8(DP(0x56), 0x03);
+            lda8(0x45);
+            push8(0x81); push16(0xC373); QueueSoundB_m1x1();
+            lda8(0x30); wr8(ABS(0x198A), 0x30);
+            wr8(ABS(0x197F), inc8(rd8(ABS(0x197F))));
+        }
+    }
+    sep(0x20);
+    push16(0xC391); JumpRiderStep_m1x1();
+    ret();
+}

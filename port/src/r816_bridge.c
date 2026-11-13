@@ -882,6 +882,10 @@ BRIDGE(HleHand_RiderThrottleLong, RiderThrottleLong_m1x1, 165)
 BRIDGE(HleHand_AddSpeedToXLong, AddSpeedToXLong_m1x1, 45)
 BRIDGE(HleHand_DrawRiderShadowPairLong, DrawRiderShadowPairLong_m1x1, 70)
 BRIDGE_DYN(HleHand_JumpRiderStep, JumpRiderStep_m1x1, 520 + draw_all_riders_cost())
+BRIDGE_DYN(HleHand_JumpRunStart, JumpRunStart_m1x1, 800 + draw_all_riders_cost())
+BRIDGE(HleHand_MoveAndScroll, MoveAndScroll_m1x1, 100)
+/* the track streamer stays recompiled and counts its own cycles */
+BRIDGE_DYN(HleHand_JumpRun, JumpRun_m1x1, 1050 + draw_all_riders_cost())
 /* VramQueueTilesLong / QueueTileRowsLong ($80:B2D6 / $80:B431) are
  * verified but unhooked: trampolines whose cost is the callee's. */
 /* c/hand/s4/objects.c, part 26 */

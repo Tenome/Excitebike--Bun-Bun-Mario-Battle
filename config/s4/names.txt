@@ -427,3 +427,6 @@
 80BCEF AddSpeedToXLong
 80CD0A DrawRiderShadowPairLong
 81C483 JumpRiderStep
+81C2D9 JumpRunStart
+81C5AA MoveAndScroll
+81C331 JumpRun
