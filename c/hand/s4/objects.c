@@ -5048,6 +5048,8 @@ void RaceStartLights_m1x1(void)
 
 void RiderShadowY_m1x1(void);
 
+static void crash_loop(int enter_turn);
+
 /* $80:C1F3 CrashRecovery (RTS): every 4 frames (phase $0998, counting
  * down) each crashed rider ($01CE) picks a lane: the player in a race lane
  * 4 (sound $25 when not the CPU's turn $7F, and clears $092D), others a
@@ -5066,6 +5068,14 @@ void CrashRecovery_m1x1(void)
     lda8(rd8(ABS(0x0998)));
     and8(0x03);
     wr8(ABS(0x0998), (u8)A);
+    crash_loop(0);
+}
+
+/* The rider loop of CrashRecovery (riders 7-0). Entered at $80:C279 (the
+ * lean turn, enter_turn) for the current X by the player's crash steps. */
+static void crash_loop(int enter_turn)
+{
+    if (enter_turn) goto turn;
     ldx8(0x07);
     for (;;) {
         lda8(rd8(ABSX(0x01CE)));
@@ -6847,6 +6857,16 @@ static void player_stop(void)
     wr8(ABS(0x09C7), 0); wr8(ABS(0x0186), 0); wr8(ABS(0x08F4), 0);
 }
 
+/* $80:DCC1 / $80:EF88: the player crash-lands, copying $08D4 / $08DC to
+ * $08E4 / $08EC. */
+static void player_crash_tail(u16 base)
+{
+    push16((u16)(base + 0x53)); CrashLand_m1x1();
+    lda8(rd8(ABS(0x08D4))); wr8(ABS(0x08E4), (u8)A);
+    lda8(rd8(ABS(0x08DC))); wr8(ABS(0x08EC), (u8)A);
+    ret();
+}
+
 /* $80:DC70 / $80:EF37 (two copies, base = the entry): the player against
  * the track column at its wheel ($0266). On the ground ($01EE = 0) with
  * no jump in progress, a step up taller than its speed $01B6 stops it.
@@ -6884,10 +6904,7 @@ static void player_column(u16 base)
             if (!stop) goto ramp;
         } else stop = !fc;
         if (stop) { push16((u16)(base + 0x50)); player_stop(); pull16(); }
-        push16((u16)(base + 0x53)); CrashLand_m1x1();
-        lda8(rd8(ABS(0x08D4))); wr8(ABS(0x08E4), (u8)A);
-        lda8(rd8(ABS(0x08DC))); wr8(ABS(0x08EC), (u8)A);
-        ret();
+        player_crash_tail(base);
         return;
     }
 ramp:
@@ -9127,3 +9144,73 @@ void ConfettiAll_m1x1(void)
     X = pull8(); nz8((u8)X);
     retl();
 }
+
+/* $80:DBFC / $80:EEBB (two copies; b = the second, which also silences
+ * APU port 2 and clears $01C6 on the get-up): the crashed player
+ * ($01CE). Still tumbling ($0999): on the ground, stopped and level
+ * (angle 6, $0176 clear) it gets up; otherwise it slides at $88 and,
+ * once $3B is clear, sets $3B = 2 and turns its lean (CrashRecovery's
+ * loop from $80:C279). Stopped: the speed is cleared and the timer $3A
+ * starts at $20; below $1C it slides, and at 1 the tumble ends: $0999 =
+ * 1, $09C4 = 0 and (unless $0176) the player halts and crash-lands. */
+static void player_crash_step(int b)
+{
+    u16 base = b ? 0xEF37 : 0xDC70;
+    lda8(rd8(ABS(0x01CE)));
+    if (fz) { ret(); return; }
+    lda8(0x00); wr8(ABS(0x092D), 0x00);
+    lda8(rd8(DP(0x7F)));
+    if (fz) lda8(0x01);
+    lda8(rd8(ABS(0x0999)));
+    if (!fz) {
+        lda8(rd8(ABS(0x01EE)));
+        if (fz) {
+            lda8(rd8(ABS(0x01C6)));
+            if (fz) {
+                lda8(rd8(ABS(0x0176)));
+                int up = 0;
+                if (fz) {
+                    lda8(rd8(ABS(0x01E6)));
+                    cmp8((u8)A, 0x06);
+                    up = fz;
+                }
+                if (up) {
+                    if (b) { lda8(0x00); wr8(ABS(0x2142), 0x00); }
+                    lda8(0x00);
+                    wr8(ABS(0x01BE), 0);
+                    if (b) wr8(ABS(0x01C6), 0);
+                    wr8(ABS(0x01CE), 0);
+                    wr8(ABS(0x0999), 0);
+                    ret();
+                    return;
+                }
+                lda8(0x88); wr8(ABS(0x01BE), 0x88);
+            }
+        }
+        goto slide;
+    }
+    lda8(0x00);
+    wr8(ABS(0x01BE), 0); wr8(ABS(0x01C6), 0); wr8(ABS(0x0186), 0);
+    lda8(rd8(DP(0x3A)));
+    if (fz) { lda8(0x20); wr8(DP(0x3A), 0x20); }
+    cmp8((u8)A, 0x1C);
+    if (fc) { ret(); return; }
+    cmp8((u8)A, 0x01);
+    if (!fz) goto slide;
+    wr8(ABS(0x0999), (u8)A);
+    lda8(lsr8((u8)A));
+    wr8(ABS(0x09C4), (u8)A);
+    lda8(rd8(ABS(0x0176)));
+    if (!fz) { ret(); return; }
+    push16(b ? 0xEF33 : 0xDC6C); player_halt();
+    player_crash_tail(base);
+    return;
+slide:
+    lda8(rd8(DP(0x3B)));
+    if (!fz) { ret(); return; }
+    lda8(0x02); wr8(DP(0x3B), 0x02);
+    crash_loop(1);
+}
+
+void PlayerCrashStep_m1x1(void) { player_crash_step(0); }
+void PlayerCrashStepB_m1x1(void) { player_crash_step(1); }

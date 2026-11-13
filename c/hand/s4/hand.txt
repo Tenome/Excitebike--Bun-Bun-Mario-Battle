@@ -378,3 +378,5 @@
 80D21C  1 1  mem+A,X,Y,C,V   ResetCoinCounts
 81C84F  1 1  mem+A,X,Y,C,V   JumpResultTotal
 819538  1 1  mem+A,X,Y,C,V   ConfettiAll
+80DBFC  1 1  mem+A,X,Y,C,V   PlayerCrashStep
+80EEBB  1 1  mem+A,X,Y,C,V   PlayerCrashStepB

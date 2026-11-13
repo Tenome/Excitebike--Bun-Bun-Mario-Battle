@@ -390,3 +390,5 @@
 80D21C ResetCoinCounts
 81C84F JumpResultTotal
 819538 ConfettiAll
+80DBFC PlayerCrashStep
+80EEBB PlayerCrashStepB
