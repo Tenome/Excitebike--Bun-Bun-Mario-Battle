@@ -33,6 +33,7 @@ What the port adds:
 |---|---|
 | **Expanded roster** | Mario, Yoshi, Kinopio, Wario, Peach and Luigi in one player select (Luigi's rider set and voice come from the Stadium 3 dump) |
 | **CPU rivals in every race** | The original runs the free runs alone and meets the seven rivals only in the final; the port fills every race (the engine's eight rider slots) |
+| **Rival pace** | Easy, normal (original) or hard CPU rivals: a percentage on the target speed the rival AI picks |
 | **No broadcast clock** | Each screen moves on as soon as it is done instead of waiting for the satellite schedule; the original timing is one switch away |
 | **Skip buttons** | A or Start ends the player-select countdown, Start skips the course preview and results, Select ends a race |
 | **Settings GUI** | The launcher (also **Ctrl+L** / Select+L3 in game): controls per player, display, audio, rewind, save states and the **Mods** page |

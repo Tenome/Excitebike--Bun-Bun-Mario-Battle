@@ -348,6 +348,19 @@ static uint8_t *end_minutes(void)       /* $80:C468 in the cartridge image */
     return g_snes->cart->rom + 0x4468;
 }
 
+/* Rival pace (launcher: Game > Rival pace): a percentage on every CPU
+ * rival's target speed, which RivalTarget ($80:BE66) sets and the riders
+ * accelerate toward. */
+int port_rival_pace(void)
+{
+    static int pct = -1;
+    if (pct < 0) {
+        const char *p = bunbun_setting("game.pace", "normal");
+        pct = strcmp(p, "easy") == 0 ? 85 : strcmp(p, "hard") == 0 ? 115 : 100;
+    }
+    return pct;
+}
+
 void RivalsAfterFrame(void)
 {
     static int on = -1;

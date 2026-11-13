@@ -109,7 +109,9 @@ state, so you continue where you were.
     alone and meets its seven CPU rivals only in the final, the default here
     puts all seven in every race (the engine has eight rider slots; more
     would need the race engine rewritten, which the decompilation is working
-    towards).
+    towards); *Rival pace*: easy (rivals 15% slower), normal (the
+    original) or hard (15% faster), applied to the target speed the rival
+    AI ($80:BE66) picks.
   * *Sprite swaps*: pick a PNG rider sheet per character (export the
     originals with `tools/assets.py export`).
   * *Music & sound*: pick a folder of replacement samples (WAV files named as

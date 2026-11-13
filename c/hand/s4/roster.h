@@ -68,5 +68,7 @@ int port_hide_clock(void);                      /* draw the broadcast clock blan
 /* The race just run was the final ($7D). The port can run any race with the
  * final's seven CPU rivals; such a race still ends like the free run it is. */
 int port_race_is_final(void);
+/* Percent applied to a CPU rival's target speed ($80:BE66); 100 original. */
+int port_rival_pace(void);
 
 #endif

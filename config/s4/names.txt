@@ -230,3 +230,4 @@
 80CD34 TurboMeter
 80EBD0 ReadBonusTrack
 809B0D EnterNumberStep
+80BE66 RivalTarget

@@ -1,15 +1,15 @@
 {
  "measures": {
-  "fuzzy_match_percent": 69.8809,
+  "fuzzy_match_percent": 69.9946,
   "total_code": "36930",
-  "matched_code": "14817",
-  "matched_code_percent": 40.1219,
+  "matched_code": "14901",
+  "matched_code_percent": 40.3493,
   "total_data": "0",
   "matched_data": "0",
   "matched_data_percent": 0.0,
   "total_functions": 532,
-  "matched_functions": 211,
-  "matched_functions_percent": 39.6617,
+  "matched_functions": 212,
+  "matched_functions_percent": 39.8496,
   "complete_code": "0",
   "complete_code_percent": 0.0,
   "complete_data": "0",
@@ -21,16 +21,16 @@
   {
    "name": "main/bank80",
    "measures": {
-    "fuzzy_match_percent": 69.5128,
+    "fuzzy_match_percent": 69.683,
     "total_code": "24671",
-    "matched_code": "9761",
-    "matched_code_percent": 39.5647,
+    "matched_code": "9845",
+    "matched_code_percent": 39.9052,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 357,
-    "matched_functions": 128,
-    "matched_functions_percent": 35.8543,
+    "matched_functions": 129,
+    "matched_functions_percent": 36.1345,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -42,7 +42,7 @@
     {
      "name": ".text",
      "size": "24671",
-     "fuzzy_match_percent": 69.5128
+     "fuzzy_match_percent": 69.683
     }
    ],
    "functions": [
@@ -1255,9 +1255,9 @@
      }
     },
     {
-     "name": "sub_80BE66",
+     "name": "RivalTarget",
      "size": "84",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8437350"
      }
