@@ -118,7 +118,10 @@ state, so you continue where you were.
     HUD's checkered flag is reflected into the margins; every other screen
     is pillarboxed. Riders in the margins are shown too: PlaceRiderShadow
     ($80:CE96) ends with a port hook that unhides a rider's sprites inside
-    the wide view and sets each column's X9 bit. Restart to apply.
+    the wide view and sets each column's X9 bit, and DrawRiderShadow
+    ($80:CC18) draws their jump shadows there. The jump contest is wide
+    too (its scene fills the whole tilemap); menus and the course preview
+    are pillarboxed. Restart to apply.
   * *Sprite swaps*: pick a PNG rider sheet per character (export the
     originals with `tools/assets.py export`).
   * *Music & sound*: pick a folder of replacement samples (WAV files named as

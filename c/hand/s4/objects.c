@@ -3946,3 +3946,69 @@ void EnterNumberStep_m1x1(void)
     }
     ret();
 }
+
+void DrawRiderShadowPair_m1x1(void);
+int port_ws_shadow_margin(void);   /* roster.h: the port's widescreen */
+void port_ws_shadow_fix(void);
+
+/* $80:CC18 DrawRiderShadow (RTS): rider X's shadow while it is in the air
+ * on a ramp ($08BC): two sprites under it (DrawRiderShadowPair at OAM
+ * buffer $16C0 + Y), blinking every 4 frames, palette from the track piece
+ * (or $0E off the track and above height $58), attribute | $21, the lower
+ * one hidden while the speed high byte is zero. Only for a moving rider on
+ * the original screen ($019E = 1) from column $10. */
+void DrawRiderShadow_m1x1(void)
+{
+    lda8(rd8(ABSX(0x08BC)));
+    if (fz) { ret(); return; }
+    lda8(rd8(ABSX(0x01C6)));
+    ora8(rd8(ABSX(0x01BE)));
+    if (fz) { ret(); return; }
+    lda8(rd8(ABSX(0x01FE)));
+    if (!fz) { ret(); return; }
+    int margin = port_ws_shadow_margin();
+    if (margin) {
+        lda8(rd8(ABSX(0x0196)));
+    } else {
+        lda8(rd8(ABSX(0x019E)));
+        cmp8((u8)A, 0x01);
+        if (!fz) { ret(); return; }
+        lda8(rd8(ABSX(0x0196)));
+        cmp8((u8)A, 0x10);
+        if (!fc) { ret(); return; }
+    }
+    push16(0xCC3A); DrawRiderShadowPair_m1x1();
+    lda8(rd8(DP(0x63)));
+    and8(0x04);
+    if (!fz) {
+        lda8(0xF0); wr8(ABSY(0x16C2), 0xF0);
+        lda8(0xE0); wr8(ABSY(0x16C6), 0xE0);
+    }
+    lda8(rd8(ABSX(0x0958)));
+    if (fz) {
+        lda8(0x0E); wr8(DP(0x02), 0x0E);
+    } else {
+        push8((u8)Y);
+        Y = rd8(ABSX(0x0216)); nz8((u8)Y);
+        lda8(rd8(ABSY(0xAD33)));
+        Y = pull8(); nz8((u8)Y);
+        wr8(DP(0x02), (u8)A);
+        cmp8((u8)A, 0x00);
+        if (fz) {
+            lda8(0xF0);
+            wr8(ABSY(0x16C1), 0xF0);
+            wr8(ABSY(0x16C5), 0xF0);
+        }
+    }
+    lda8(rd8(ABSX(0x01B6)));
+    cmp8((u8)A, 0x58);
+    if (!fc) lda8(0x0E);
+    else lda8(rd8(DP(0x02)));
+    ora8(0x21);
+    wr8(ABSY(0x16C3), (u8)A);
+    wr8(ABSY(0x16C7), (u8)A);
+    lda8(rd8(ABSX(0x01C6)));
+    if (fz) { lda8(0xF8); wr8(ABSY(0x16C5), 0xF8); }
+    if (margin) port_ws_shadow_fix();
+    ret();
+}

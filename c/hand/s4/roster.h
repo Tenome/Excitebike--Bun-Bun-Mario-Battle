@@ -73,5 +73,10 @@ int port_rival_pace(void);
 /* Widescreen: after PlaceRiderShadow, show rider X's four sprites (OAM
  * buffer $1600 + $07) wherever they fall in the wide view. No-op otherwise. */
 void port_ws_rider_sprites(void);
+/* Widescreen: 1 when rider X's jump shadow ($80:CC18) should be drawn
+ * although the rider is off the original screen; port_ws_shadow_fix then
+ * gives its two sprites ($16C0/$16C4 + Y) their X9 bits. */
+int port_ws_shadow_margin(void);
+void port_ws_shadow_fix(void);
 
 #endif

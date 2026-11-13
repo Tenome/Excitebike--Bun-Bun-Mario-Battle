@@ -577,6 +577,8 @@ BRIDGE(HleHand_ReadBonusTrack, ReadBonusTrack_m1x1, 60)
 BRIDGE(HleHand_EnterNumberStep, EnterNumberStep_m1x1, 1500)
 /* c/hand/s4/flow.c */
 BRIDGE(HleHand_RivalTarget, RivalTarget_m1x1, 45)
+/* c/hand/s4/objects.c, part 12 */
+BRIDGE(HleHand_DrawRiderShadow, DrawRiderShadow_m1x1, 130)
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)

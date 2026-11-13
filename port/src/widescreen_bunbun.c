@@ -11,13 +11,15 @@
  *   off    256 columns, the original picture (nothing here runs)
  *   16:9   348 columns (46 each side): 16:9 with the SNES's 8:7 pixels
  *
- * Races show the wide view; every other screen is pillarboxed. Gen B
+ * Races and the jump contest show the wide view; every other screen is
+ * pillarboxed (the course preview's track band and frame would each need
+ * their own fill rules). Gen B
  * (Stadium 3-4) only: the addresses below are that engine's.
  *
  * Riders in the margins: PlaceRiderShadow ($80:CE96, hand C) ends with
  * port_ws_rider_sprites (src/roster.c), which unhides a rider's sprites
- * inside the wide view. Not yet: ground shadows, dust and other effects
- * past the original edges.
+ * inside the wide view, and DrawRiderShadow ($80:CC18, hand C) draws the
+ * jump shadows of riders in the margins (port_ws_shadow_*).
  *
  * Track lookahead. The race's track layer lives in a 64-column tilemap, and
  * the game streams one 8-pixel column into it ($81:8A4D) just before that
@@ -188,5 +190,7 @@ void BunbunWsBeginFrame(unsigned number)
         PpuSetWidescreenLayerWorldMirrorBand(g_ppu, 1, 184, 224, 0, 256);
         return;
     }
+    if (mode == 0x14)                                          /* the jump contest: its */
+        return;                       /* scene fills the whole tilemap, so it extends as is */
     PpuSetExtraSideSpace(g_ppu, 0, 0, 0);                      /* elsewhere: pillarbox */
 }

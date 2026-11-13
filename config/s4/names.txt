@@ -231,3 +231,4 @@
 80EBD0 ReadBonusTrack
 809B0D EnterNumberStep
 80BE66 RivalTarget
+80CC18 DrawRiderShadow

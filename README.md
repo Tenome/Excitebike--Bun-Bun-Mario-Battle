@@ -33,7 +33,7 @@ What the port adds:
 |---|---|
 | **Expanded roster** | Mario, Yoshi, Kinopio, Wario, Peach and Luigi in one player select (Luigi's rider set and voice come from the Stadium 3 dump) |
 | **CPU rivals in every race** | The original runs the free runs alone and meets the seven rivals only in the final; the port fills every race (the engine's eight rider slots) |
-| **Widescreen (first stage)** | 16:9 races: the track, crowd, HUD and riders continue into both margins; other screens are pillarboxed. Shadows and effects at the edges still to do |
+| **Widescreen** | 16:9 races and jump contest: the track, crowd, HUD, riders and their shadows continue into both margins; menus and the course preview are pillarboxed |
 | **Rival pace** | Easy, normal (original) or hard CPU rivals: a percentage on the target speed the rival AI picks |
 | **No broadcast clock** | Each screen moves on as soon as it is done instead of waiting for the satellite schedule; the original timing is one switch away |
 | **Skip buttons** | A or Start ends the player-select countdown, Start skips the course preview and results, Select ends a race |
@@ -49,6 +49,8 @@ Modding: [docs/MODDING.md](docs/MODDING.md).
 ![A race in 16:9](docs/screenshots/race-widescreen.png)
 
 *A race in 16:9 (Game › Widescreen).*
+
+![The jump contest in 16:9](docs/screenshots/jump-widescreen.png)
 
 ## The course editor
 

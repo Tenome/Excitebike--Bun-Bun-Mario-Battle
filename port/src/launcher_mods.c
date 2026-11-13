@@ -66,7 +66,7 @@ static const Choice kPace[] = {
 };
 static const Choice kWide[] = {
     { "off", "Off (4:3, the original picture)" },
-    { "16:9", "16:9: races wide, other screens pillarboxed" },
+    { "16:9", "16:9: races and the jump contest wide, menus pillarboxed" },
 };
 static const Opt kGameOpts[] = {
     { "flow", "Game flow", "Without the clock the port moves on as soon as a screen is done; the original waits for the satellite broadcast's schedule.", "game.flow", "menu", RECOMP_MOD_OPTION_CHOICE, kFlow, 2 },
