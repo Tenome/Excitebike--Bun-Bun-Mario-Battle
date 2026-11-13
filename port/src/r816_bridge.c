@@ -638,6 +638,12 @@ BRIDGE_DYN(HleHand_AimRatio, AimRatio_m1x1, (A & 0xFF) ? 120 + 25 * (A & 0xFF) :
 BRIDGE_DYN(HleHand_SpeedGauge, SpeedGauge_m1x1, (g_ram[0x092D] && !(g_ram[0x7F] & 1)) ? 260 : 15)
 BRIDGE(HleHand_FallingObjectStep, FallingObjectStep_m1x1, 130)
 BRIDGE(HleHand_RiderRunOut, RiderRunOut_m1x1, 50)
+/* c/hand/s4/objects.c, part 21 */
+BRIDGE(HleHand_Mul16, Mul16_m1x1, 230)
+/* Mul16b ($80:B9FA) passes difftest but is not hooked: with it the jump
+ * contest run diverges within a few frames whatever its cost, and the
+ * difftest cannot check multiplier reads (the harness serves them from a
+ * table). Left recompiled until the difference is found. */
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)

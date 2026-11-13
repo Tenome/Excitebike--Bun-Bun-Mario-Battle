@@ -5322,3 +5322,63 @@ void RiderRunOut_m1x1(void)
     if (!fz) { lda8(0x08); wr8(DPX(0x45), 0x08); }
     ret();
 }
+
+void Nop_BD39_m1x1(void);
+
+/* One 8x8 hardware multiply: WRMPYA = a, WRMPYB = b, wait (Nop_BD39 at
+ * return address `back`), then the product is at RDMPYL/H. */
+static void mul8(u8 a, u8 b, u16 back)
+{
+    lda8(a); wr8(ABS(0x4202), (u8)A);
+    lda8(b); wr8(ABS(0x4203), (u8)A);
+    push16(back); Nop_BD39_m1x1();
+}
+
+/* The 16x16 -> 32 multiply both routines below do: [p] * [q] into r..r+3
+ * (direct page), from four 8x8 products. */
+static void mul16(u8 p, u8 q, u8 r, const u16 back[4])
+{
+    mul8(rd8(DP(p)), rd8(DP(q)), back[0]);
+    lda8(rd8(ABS(0x4216))); wr8(DP(r), (u8)A);
+    lda8(rd8(ABS(0x4217))); wr8(DP(r + 1), (u8)A);
+    mul8(rd8(DP(p)), rd8(DP(q + 1)), back[1]);
+    lda8(rd8(ABS(0x4216)));
+    fc = 0; adc8(rd8(DP(r + 1)));
+    wr8(DP(r + 1), (u8)A);
+    lda8(rd8(ABS(0x4217)));
+    adc8(0x00);
+    wr8(DP(r + 2), (u8)A);
+    mul8(rd8(DP(p + 1)), rd8(DP(q)), back[2]);
+    lda8(rd8(ABS(0x4216)));
+    fc = 0; adc8(rd8(DP(r + 1)));
+    wr8(DP(r + 1), (u8)A);
+    lda8(rd8(ABS(0x4217)));
+    adc8(rd8(DP(r + 2)));
+    wr8(DP(r + 2), (u8)A);
+    mul8(rd8(DP(p + 1)), rd8(DP(q + 1)), back[3]);
+    lda8(rd8(ABS(0x4216)));
+    fc = 0; adc8(rd8(DP(r + 2)));
+    wr8(DP(r + 2), (u8)A);
+    lda8(rd8(ABS(0x4217)));
+    adc8(0x00);
+    wr8(DP(r + 3), (u8)A);
+}
+
+/* $80:B98E Mul16 (RTL): $00:$01 * $02:$03 -> $04-$07 with the hardware
+ * multiplier. (The high bytes' carry into $07 is the product's own.) */
+void Mul16_m1x1(void)
+{
+    static const u16 back[4] = { 0xB99A, 0xB9B1, 0xB9CD, 0xB9E9 };
+    mul16(0x00, 0x02, 0x04, back);
+    retl();
+}
+
+/* $80:B9FA Mul16b (RTS): $60:$61 * $62:$63 -> $64-$67. */
+static void mul16b(void)
+{
+    static const u16 back[4] = { 0xBA06, 0xBA1D, 0xBA39, 0xBA55 };
+    mul16(0x60, 0x62, 0x64, back);
+    ret();
+}
+void Mul16b_m1x1(void) { mul16b(); }
+void Mul16b_m1x0(void) { mul16b(); }

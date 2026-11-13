@@ -271,3 +271,5 @@
 80C391 SpeedGauge
 81B8F4 FallingObjectStep
 80BB56 RiderRunOut
+80B98E Mul16
+80B9FA Mul16b

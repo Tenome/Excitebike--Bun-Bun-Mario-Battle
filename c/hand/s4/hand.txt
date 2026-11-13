@@ -254,3 +254,6 @@
 80C391  1 1  mem+X,Y,V       SpeedGauge
 81B8F4  1 1  mem+V           FallingObjectStep
 80BB56  1 1  mem+X,Y,C,V     RiderRunOut
+80B98E  1 1  mem+Y           Mul16
+80B9FA  1 1  mem             Mul16b
+80B9FA  1 0  mem             Mul16b
