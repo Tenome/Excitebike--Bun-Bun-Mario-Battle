@@ -250,3 +250,5 @@
 80AEC6  1 1  mem+A,X,Y,C,V   CpuRidersStep
 80ECE4  1 1  mem+A,X,Y,C,V   DrawSparksAndMarkers
 80C09F  1 1  mem+A,X,Y,C,V   PlaceRival
+80C012  1 1  mem+A,X,Y,C,V   SpawnRivals
+80BEB7  1 1  mem+A,X,Y,C,V   WalkBackOn

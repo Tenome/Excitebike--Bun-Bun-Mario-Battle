@@ -271,3 +271,5 @@
 80AEC6 CpuRidersStep
 80ECE4 DrawSparksAndMarkers
 80C09F PlaceRival
+80C012 SpawnRivals
+80BEB7 WalkBackOn

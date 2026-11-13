@@ -2742,3 +2742,109 @@ void PlaceRival_m1x1(void)
     lda8(0x01); wr8(ABSX(0x01D8), 0x01);
     ret();
 }
+
+/* $80:C012 SpawnRivals (RTS): distances, then every rival slot 7-1 not
+ * on the track whose distance $085E is $170 or more ahead of the
+ * player's $94, or up to $A0 behind it, gets placed (unless $84). */
+void SpawnRivals_m1x1(void)
+{
+    push16(0xC014); UpdateRiderDistances_m1x1();
+    ldy8(0x0E);
+    ldx8(0x07);
+    do {
+        lda8(rd8(ABSX(0x01D8)));
+        if (fz) {
+            rep(0x20);
+            lda16(rd16(DP(0x94)));
+            fc = 0; adc16(0x0170);
+            cmp16(A, rd16(ABSY(0x085E)));
+            int place = fc;
+            if (!place) {
+                lda16(rd16(DP(0x94)));
+                fc = 1; sbc16(0x00A0);
+                if (!fn) {
+                    cmp16(A, rd16(ABSY(0x085E)));
+                    place = fc;
+                }
+            }
+            if (place) {
+                sep(0x20);
+                lda8(rd8(DP(0x84)));
+                if (fz) {
+                    push8((u8)Y);
+                    push16(0xC041); PlaceRival_m1x1();
+                    Y = pull8(); nz8((u8)Y);
+                }
+            }
+        }
+        sep(0x20);
+        X = dec8((u8)X);
+        Y = dec8((u8)Y);
+        Y = dec8((u8)Y);
+    } while (!fz);
+    ret();
+}
+
+/* $80:BEB7 (RTS, X = rider): a rider walking back onto the track ($08C4)
+ * toward its run-out point $090C: every 16 frames (for the player, at
+ * once on a new button press, $79) the point moves back; every 8 frames
+ * the walk pose $091C steps 1 / 3 / 4 / 0 with sound $23 at 3 and on
+ * the wrap. On reaching it (or with no walk), $56,X = 3, the next start
+ * step ($01D0) and $099E cleared (rider 7 also clears the ball). */
+void WalkBackOn_m1x1(void)
+{
+    lda8(rd8(ABSX(0x08C4)));
+    if (fz) goto arrived;
+    lda8(rd8(DPX(0x45)));
+    if (!fz) { ret(); return; }
+    lda8((u8)X);
+    int step;
+    if (fz) {
+        Y = rd8(DP(0x79)); nz8((u8)Y);
+        lda8(rd8(ABS(0x0178)));
+        and8(0xC0);
+        if (!fz) {
+            wr8(DP(0x79), (u8)A);
+            lda8((u8)Y);
+            if (fz) { step = 1; goto move; }
+        }
+        wr8(DP(0x79), (u8)A);
+    }
+    lda8(rd8(DP(0x63)));
+    and8(0x0F);
+    step = fz;
+move:
+    if (step) wr8(ABSX(0x090C), dec8(rd8(ABSX(0x090C))));
+    and8(0x07);
+    if (fz) {
+        lda8(rd8(ABSX(0x091C)));
+        lda8(inc8((u8)A));
+        cmp8((u8)A, 0x02);
+        if (fz) lda8(inc8((u8)A));
+        cmp8((u8)A, 0x05);
+        if (fz) {
+            lda8(0x23);
+            push8(0x80); push16(0xBF01); QueueSound_m1x1();
+            lda8(0x00);
+            wr8(ABSX(0x091C), 0x00);
+        } else {
+            cmp8((u8)A, 0x03);
+            if (fz) {
+                wr8(ABSX(0x091C), (u8)A);
+                lda8(0x23);
+                push8(0x80); push16(0xBEF9); QueueSound_m1x1();
+            } else wr8(ABSX(0x091C), (u8)A);
+        }
+    }
+    lda8(rd8(ABSX(0x090C)));
+    fc = 1; sbc8(0x08);
+    cmp8((u8)A, rd8(ABSX(0x0190)));
+    if (fc) { ret(); return; }
+arrived:
+    lda8(0x03); wr8(DPX(0x56), 0x03);
+    wr8(ABSX(0x01D0), inc8(rd8(ABSX(0x01D0))));
+    lda8(0x00); wr8(ABSX(0x099E), 0x00);
+    cmp8((u8)X, 0x07);
+    if (fz) { wr8(ABS(0x092C), 0); wr8(ABS(0x08C7), 0); }
+    ret();
+}

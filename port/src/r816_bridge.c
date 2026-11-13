@@ -476,6 +476,8 @@ static uint32 cpu_riders_cost1(void)
 BRIDGE_DYN(HleHand_CpuRidersStep, CpuRidersStep_m1x1, cpu_riders_cost1())
 BRIDGE(HleHand_DrawSparksAndMarkers, DrawSparksAndMarkers_m1x1, 1000)
 BRIDGE(HleHand_PlaceRival, PlaceRival_m1x1, 380)
+BRIDGE(HleHand_SpawnRivals, SpawnRivals_m1x1, 420)
+BRIDGE(HleHand_WalkBackOn, WalkBackOn_m1x1, 50)
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */
