@@ -675,6 +675,15 @@ BRIDGE(HleHand_IsPieceFlat, IsPieceFlat_m1x1, 10)
 BRIDGE(HleHand_RiderOnFlat, RiderOnFlat_m1x1, 77)
 BRIDGE(HleHand_HeightAbove, HeightAbove_m1x1, 18)
 BRIDGE(HleHand_GroundHeightAbove, GroundHeightAbove_m1x1, 21)
+BRIDGE(HleHand_PlayerColumnCheck, PlayerColumnCheck_m1x1, 60)
+BRIDGE(HleHand_PlayerColumnCheckB, PlayerColumnCheckB_m1x1, 60)
+BRIDGE(HleHand_CpuSteerUp, CpuSteerUp_m1x1, 150)
+BRIDGE(HleHand_CpuSteerDown, CpuSteerDown_m1x1, 150)
+BRIDGE(HleHand_QueueResultsTiles, QueueResultsTiles_m1x1, 1280)
+/* about 650 units for each flagged player's 44-byte marker */
+BRIDGE_DYN(HleHand_QueuePlayerMarkers, QueuePlayerMarkers_m1x1,
+           30 + 650 * ((g_ram[0x1E8D] != 0) + (g_ram[0x1E8E] != 0) +
+                       (g_ram[0x1E8F] != 0) + (g_ram[0x1E90] != 0)))
 /* VramQueueTilesLong / QueueTileRowsLong ($80:B2D6 / $80:B431) are
  * verified but unhooked: trampolines whose cost is the callee's. */
 /* c/hand/s4/objects.c, part 26 */

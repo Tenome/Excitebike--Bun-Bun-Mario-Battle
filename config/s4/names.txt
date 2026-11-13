@@ -311,3 +311,9 @@
 80B04E RiderOnFlat
 80C049 HeightAbove
 80C046 GroundHeightAbove
+80DC70 PlayerColumnCheck
+80EF37 PlayerColumnCheckB
+80AFE9 CpuSteerUp
+80B01E CpuSteerDown
+81C883 QueueResultsTiles
+8284EE QueuePlayerMarkers

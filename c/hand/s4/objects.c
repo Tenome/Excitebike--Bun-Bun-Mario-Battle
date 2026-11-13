@@ -6827,3 +6827,171 @@ void GroundHeightAbove_m1x1(void)
     lda8(rd8(ABS(0x0CD5)));
     HeightAbove_m1x1();
 }
+
+void RiderAhead_m1x1(void);
+void CrashLand_m1x1(void);
+void RiderOnFlat_m1x1(void);
+void GroundHeightAbove_m1x1(void);
+void VramQueueTilesLong_m1x1(void);
+void QueueTileRowsLong_m1x1(void);
+
+/* $80:DC95 / $80:EF5C: the player stops dead (flags $01CE = $0999 = $FF,
+ * speed, jump height and fractions cleared). */
+static void player_stop(void)
+{
+    lda8(0xFF);
+    wr8(ABS(0x01CE), 0xFF);
+    wr8(ABS(0x0999), 0xFF);
+    lda8(0x00);
+    wr8(ABS(0x01BE), 0); wr8(ABS(0x01C6), 0); wr8(ABS(0x09C4), 0);
+    wr8(ABS(0x09C7), 0); wr8(ABS(0x0186), 0); wr8(ABS(0x08F4), 0);
+}
+
+/* $80:DC70 / $80:EF37 (two copies, base = the entry): the player against
+ * the track column at its wheel ($0266). On the ground ($01EE = 0) with
+ * no jump in progress, a step up taller than its speed $01B6 stops it.
+ * In the air, landing at or below the column height crash-lands it
+ * (stopping it first when it lands below); otherwise $0958 = 1 when the
+ * piece is a $FC ramp top. */
+static void player_column(u16 base)
+{
+    Y = rd8(ABS(0x0266)); nz8((u8)Y);
+    lda8(rd8(ABS(0x01EE)));
+    if (!fz) {
+        lda8(rd8(ABS(0x0904)));
+        if (!fz) { ret(); return; }
+        lda8(rd8(ABSY(0x0A13)));
+        Y = inc8((u8)Y);
+        cmp8((u8)A, rd8(ABSY(0x0A13)));
+        if (fz) { ret(); return; }
+        push16((u16)(base + 0x18)); GroundHeightAbove_m1x1();
+        fc = 0; adc8(0x08);
+        fc = 1; sbc8(rd8(ABSY(0x0A13)));
+        cmp8((u8)A, rd8(ABS(0x01B6)));
+        if (fc) { ret(); return; }
+        player_stop();
+        ret();
+        return;
+    }
+    lda8(rd8(ABS(0x09C7)));
+    if (!fz) {
+        cmp8((u8)A, rd8(ABSY(0x0A13)));
+        int stop;
+        if (fz) {
+            Y = inc8((u8)Y);
+            cmp8((u8)A, rd8(ABSY(0x0A13)));
+            stop = !fc;
+            if (!stop) goto ramp;
+        } else stop = !fc;
+        if (stop) { push16((u16)(base + 0x50)); player_stop(); pull16(); }
+        push16((u16)(base + 0x53)); CrashLand_m1x1();
+        lda8(rd8(ABS(0x08D4))); wr8(ABS(0x08E4), (u8)A);
+        lda8(rd8(ABS(0x08DC))); wr8(ABS(0x08EC), (u8)A);
+        ret();
+        return;
+    }
+ramp:
+    ldx8(0x01);
+    lda8(rd8(ABSY(0x09D3)));
+    cmp8((u8)A, 0xFC);
+    if (!fz) ldx8(0x00);
+    wr8(ABS(0x0958), (u8)X);
+    ret();
+}
+
+void PlayerColumnCheck_m1x1(void) { player_column(0xDC70); }
+void PlayerColumnCheckB_m1x1(void) { player_column(0xEF37); }
+
+/* $80:AFE9 / $80:B01E: CPU rider X picks a lane change. Up (AFE9) wants
+ * lane $08A4 - 1 (from lane 0 it tries down instead), down (B01E) lane
+ * + 1 (from lane 4, up). The lane must be flat (RiderOnFlat) and clear
+ * of a rider ahead (RiderAhead at row $0958 -/+ 1); next to the far
+ * lane (3 going up, 2 going down) that lane must be flat too. Then the
+ * steering $01AE = +1 (up) / -1 (down). */
+static void steer_lane(int up)
+{
+    for (;;) {
+        Y = rd8(ABSX(0x08A4)); nz8((u8)Y);
+        if (up) {
+            Y = dec8((u8)Y);
+            cmp8((u8)Y, 0x01);
+            if (fn) { up = 0; continue; }
+        } else {
+            Y = inc8((u8)Y);
+            cmp8((u8)Y, 0x05);
+            if (!fn) { up = 1; continue; }
+        }
+        break;
+    }
+    u16 b = up ? 0xAFE9 : 0xB01E;
+    push16((u16)(b + 0x0A)); RiderOnFlat_m1x1();
+    if (fc) { ret(); return; }
+    Y = rd8(ABSX(0x0958));
+    Y = up ? inc8((u8)Y) : dec8((u8)Y);
+    wr8(DP(0x02), (u8)Y);
+    ldy8(0x00);
+    push16((u16)(b + 0x17)); RiderAhead_m1x1();
+    if (fc) { ret(); return; }
+    lda8(rd8(ABSX(0x08A4)));
+    cmp8((u8)A, up ? 0x03 : 0x02);
+    if (fz) {
+        ldy8(up ? 0x02 : 0x03);
+        push16((u16)(b + 0x25)); RiderOnFlat_m1x1();
+        adc8(0x00);
+        if (!fz) { ret(); return; }
+    }
+    lda8(up ? 0x01 : 0xFF);
+    wr8(ABSX(0x01AE), (u8)A);
+    ret();
+}
+
+void CpuSteerUp_m1x1(void) { steer_lane(1); }
+void CpuSteerDown_m1x1(void) { steer_lane(0); }
+
+/* $81:C883 (RTL): queue the tiles at $03CF (size $20) to VRAM $19F3 and
+ * the two rows at $81:C8B5 ($020B) to $19E7. */
+void QueueResultsTiles_m1x1(void)
+{
+    rep(0x20);
+    lda16(0x19F3); wr16(DP(0x00), 0x19F3);
+    lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+    sep(0x20);
+    lda8(0x20); wr8(DP(0x0F), 0x20);
+    push8(0x81); push16(0xC898); VramQueueTilesLong_m1x1();
+    rep(0x20);
+    lda16(0x19E7); wr16(DP(0x00), 0x19E7);
+    lda16(0xC8B5); wr16(DP(0x02), 0xC8B5);
+    ldx8(0x81); wr8(DP(0x04), 0x81);
+    lda16(0x020B); wr16(DP(0x10), 0x020B);
+    sep(0x20);
+    push8(0x81); push16(0xC8B3); QueueTileRowsLong_m1x1();
+    retl();
+}
+
+/* $82:84EE (RTL): for each of the four players flagged in $1E8D, queue
+ * its marker tiles ($82:8518, size $2C) at the VRAM address $82:851D. */
+void QueuePlayerMarkers_m1x1(void)
+{
+    push8(DB);
+    lda8(0x82); push8(0x82);
+    DB = pull8(); nz8(DB);
+    ldy8(0x03);
+    do {
+        lda8(rd8(ABSY(0x1E8D)));
+        if (!fz) {
+            lda8((u8)Y);
+            lda8(asl8((u8)A));
+            X = (u8)A; nz8((u8)X);
+            rep(0x20);
+            lda16(rd16(ABSX(0x851D)));
+            wr16(DP(0x00), A);
+            lda16(0x8518); wr16(DP(0x02), 0x8518);
+            sep(0x20);
+            lda8(0x2C); wr8(DP(0x0F), 0x2C);
+            push8(0x82); push16(0x8512); VramQueueTilesLong_m1x1();
+        }
+        Y = dec8((u8)Y);
+    } while (!fn);
+    DB = pull8(); nz8(DB);
+    retl();
+}

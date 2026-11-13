@@ -299,3 +299,9 @@
 80B04E  1 1  mem+A,X,C,V     RiderOnFlat
 80C049  1 1  mem+A,X,Y,C,V   HeightAbove
 80C046  1 1  mem+A,X,Y,C,V   GroundHeightAbove
+80DC70  1 1  mem+A,X,Y,C,V   PlayerColumnCheck
+80EF37  1 1  mem+A,X,Y,C,V   PlayerColumnCheckB
+80AFE9  1 1  mem+A,X,Y,C,V   CpuSteerUp
+80B01E  1 1  mem+A,X,Y,C,V   CpuSteerDown
+81C883  1 1  mem+A,X,Y,C,V   QueueResultsTiles
+8284EE  1 1  mem+A,X,Y,C,V   QueuePlayerMarkers
