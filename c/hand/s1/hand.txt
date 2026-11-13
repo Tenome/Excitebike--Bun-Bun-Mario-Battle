@@ -255,3 +255,6 @@
 80DA99  1 1  mem+A,X,Y,C,V   PlayerTileState
 80A231  1 1  mem+A,X,Y,C,V   PackEntryNumber
 8199CB  1 1  mem+A,X,Y,C,V   FadePaletteStep
+80A1BC  1 1  mem+A,X,Y,C,V   PackRecordTime
+809053  1 1  mem+A,X,Y,C,V   SpriteTextRow
+80C8EE  1 1  mem+X,Y,C,V     RecordCourseTime

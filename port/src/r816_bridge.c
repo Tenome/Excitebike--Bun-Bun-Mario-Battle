@@ -481,6 +481,9 @@ BRIDGE(HleHand_WalkBackOn, WalkBackOn_m1x1, 50)
 BRIDGE(HleHand_PlayerTileState, PlayerTileState_m1x1, 70)
 BRIDGE(HleHand_PackEntryNumber, PackEntryNumber_m1x1, 1100)
 BRIDGE_DYN(HleHand_FadePaletteStep, FadePaletteStep_m1x1, (g_ram[0x63] & 7) ? 12 : 30 + 70 * (g_ram[0xB1] + 2) / 2)
+BRIDGE(HleHand_PackRecordTime, PackRecordTime_m1x1, 850)
+BRIDGE(HleHand_SpriteTextRow, SpriteTextRow_m1x1, 220)
+BRIDGE(HleHand_RecordCourseTime, RecordCourseTime_m1x1, 1420)
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */

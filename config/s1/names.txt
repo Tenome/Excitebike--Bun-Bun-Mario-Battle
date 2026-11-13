@@ -276,3 +276,6 @@
 80DA99 PlayerTileState
 80A231 PackEntryNumber
 8199CB FadePaletteStep
+80A1BC PackRecordTime
+809053 SpriteTextRow
+80C8EE RecordCourseTime

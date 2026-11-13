@@ -2984,3 +2984,124 @@ void FadePaletteStep_m1x1(void)
     wr8(ABS(0x1915), inc8(rd8(ABS(0x1915))));
     retl();
 }
+
+/* $80:A1BC (RTL): the record time at $11:572C-$11:572E (minutes x6000,
+ * seconds x100, hundredths) as a number into $10-$13, packed as BCD
+ * nibbles into $0854-$0857 and $085A bits 4-5 (with $2C bit 1). */
+void PackRecordTime_m1x1(void)
+{
+    rep(0x20);
+    wr16(DP(0x10), 0); wr16(DP(0x12), 0);
+    static const u16 mul[2] = { 0x1770, 0x0064 };
+    static const u16 back[2][2] = { { 0xA1D5, 0xA1D8 }, { 0xA1EE, 0xA1F1 } };
+    for (int i = 0; i < 2; i++) {
+        if (i) rep(0x20);
+        lda16(rd16(LONG(0x11572C + i)));
+        and16(0x00FF);
+        wr16(DP(0x00), A);
+        lda16(mul[i]); wr16(DP(0x02), mul[i]);
+        sep(0x20);
+        push8(0x80); push16(back[i][0]); Mul16_m1x1();
+        push16(back[i][1]); Add32_m1x1();
+    }
+    lda8(rd8(LONG(0x11572E))); wr8(DP(0x04), (u8)A);
+    wr8(DP(0x05), 0); wr8(DP(0x06), 0); wr8(DP(0x07), 0);
+    push16(0xA200); Add32_m1x1();
+    lda8(rd8(DP(0x11)));
+    lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
+    wr8(ABS(0x0854), (u8)A);
+    lda8(rd8(DP(0x11))); and8(0x0F); wr8(ABS(0x0855), (u8)A);
+    lda8(rd8(DP(0x10)));
+    lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
+    wr8(ABS(0x0856), (u8)A);
+    lda8(rd8(DP(0x10))); and8(0x0F); wr8(ABS(0x0857), (u8)A);
+    lda8(rd8(DP(0x2C)));
+    and8(0x02);
+    ora8(rd8(DP(0x12)));
+    and8(0x03);
+    lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A));
+    wr8(ABS(0x085A), (u8)A);
+    retl();
+}
+
+/* $80:9053 (RTL, X = row): a six-sprite text row at OAM $1700: X $68 on
+ * in steps of 8, Y $82, tiles $60 + 16X on, attribute $21, small. */
+void SpriteTextRow_m1x1(void)
+{
+    lda8(0x68);
+    for (int i = 0; i < 6; i++) {
+        if (i) { fc = 0; adc8(0x08); }
+        wr8(ABS(0x1700 + 4 * i), (u8)A);
+    }
+    lda8(0x82);
+    for (int i = 0; i < 6; i++) wr8(ABS(0x1701 + 4 * i), 0x82);
+    lda8((u8)X);
+    lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A));
+    fc = 0; adc8(0x60);
+    for (int i = 0; i < 6; i++) {
+        if (i) lda8(inc8((u8)A));
+        wr8(ABS(0x1702 + 4 * i), (u8)A);
+    }
+    lda8(0x21);
+    for (int i = 0; i < 6; i++) wr8(ABS(0x1703 + 4 * i), 0x21);
+    for (int i = 0; i < 6; i++) wr8(ABS(0x1860 + i), 0);
+    retl();
+}
+
+/* $80:C8EE RecordCourseTime: the race time $03B1-$03B3 into the stadium's
+ * slot $081C + 3 * (stadium - 2); a new best ($083A-$083C) is kept with
+ * its stadium $084C and shown, else the best is shown (VRAM $18D7);
+ * before the race end the clock restarts. X and Y are kept. */
+static void record_course_time(void)
+{
+    push8((u8)X); push8((u8)Y);
+    lda8(rd8(ABS(0x0928)));
+    lda8(dec8((u8)A)); lda8(dec8((u8)A));
+    wr8(DP(0x00), (u8)A);
+    lda8(asl8((u8)A));
+    fc = 0; adc8(rd8(DP(0x00)));
+    X = (u8)A; nz8((u8)X);
+    lda8(rd8(ABS(0x03B1))); wr8(ABSX(0x081C), (u8)A);
+    lda8(rd8(ABS(0x03B2))); wr8(ABSX(0x081D), (u8)A);
+    lda8(rd8(ABS(0x03B3))); wr8(ABSX(0x081E), (u8)A);
+    int better = 0;
+    lda8(rd8(ABS(0x083A)));
+    cmp8((u8)A, rd8(ABS(0x03B1)));
+    if (fc) {
+        if (!fz) better = 1;
+        else {
+            lda8(rd8(ABS(0x083B)));
+            cmp8((u8)A, rd8(ABS(0x03B2)));
+            if (fc) {
+                if (!fz) better = 1;
+                else {
+                    lda8(rd8(ABS(0x083C)));
+                    cmp8((u8)A, rd8(ABS(0x03B3)));
+                    better = fc && !fz;
+                }
+            }
+        }
+    }
+    if (better) {
+        lda8(rd8(ABS(0x03B1))); wr8(ABS(0x083A), (u8)A);
+        lda8(rd8(ABS(0x03B2))); wr8(ABS(0x083B), (u8)A);
+        lda8(rd8(ABS(0x03B3))); wr8(ABS(0x083C), (u8)A);
+        lda8(rd8(ABS(0x0928)));
+        lda8(dec8((u8)A));
+        wr8(ABS(0x084C), (u8)A);
+        lda8(0xD7); wr8(DP(0x00), 0xD7);
+        lda8(0x18); wr8(DP(0x01), 0x18);
+        push16(0xC95E); ShowRaceClock_m1x1();
+    } else {
+        lda8(0xD7); wr8(DP(0x00), 0xD7);
+        lda8(0x18); wr8(DP(0x01), 0x18);
+        push16(0xC951); ShowBestTime_m1x1();
+    }
+    lda8(rd8(DP(0x84)));
+    if (fz) { wr8(ABS(0x03B1), 0); wr8(ABS(0x03B2), 0); wr8(ABS(0x03B3), 0); }
+    Y = pull8(); nz8((u8)Y);
+    X = pull8(); nz8((u8)X);
+}
+
+/* (RTL) */
+void RecordCourseTime_m1x1(void) { record_course_time(); retl(); }
