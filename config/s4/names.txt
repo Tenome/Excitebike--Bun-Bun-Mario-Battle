@@ -226,3 +226,7 @@
 808F17 ChangeMode
 808F15 NextMode
 80AB59 RaceFinishStep
+80A66F DrawCoinPickup
+80CD34 TurboMeter
+80EBD0 ReadBonusTrack
+809B0D EnterNumberStep

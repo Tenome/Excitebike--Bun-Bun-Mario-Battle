@@ -1,15 +1,15 @@
 {
  "measures": {
-  "fuzzy_match_percent": 68.5703,
+  "fuzzy_match_percent": 69.8809,
   "total_code": "36930",
-  "matched_code": "13849",
-  "matched_code_percent": 37.5007,
+  "matched_code": "14817",
+  "matched_code_percent": 40.1219,
   "total_data": "0",
   "matched_data": "0",
   "matched_data_percent": 0.0,
   "total_functions": 532,
-  "matched_functions": 207,
-  "matched_functions_percent": 38.9098,
+  "matched_functions": 211,
+  "matched_functions_percent": 39.6617,
   "complete_code": "0",
   "complete_code_percent": 0.0,
   "complete_data": "0",
@@ -21,16 +21,16 @@
   {
    "name": "main/bank80",
    "measures": {
-    "fuzzy_match_percent": 67.551,
+    "fuzzy_match_percent": 69.5128,
     "total_code": "24671",
-    "matched_code": "8793",
-    "matched_code_percent": 35.641,
+    "matched_code": "9761",
+    "matched_code_percent": 39.5647,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 357,
-    "matched_functions": 124,
-    "matched_functions_percent": 34.7339,
+    "matched_functions": 128,
+    "matched_functions_percent": 35.8543,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -42,7 +42,7 @@
     {
      "name": ".text",
      "size": "24671",
-     "fuzzy_match_percent": 67.551
+     "fuzzy_match_percent": 69.5128
     }
    ],
    "functions": [
@@ -455,9 +455,9 @@
      }
     },
     {
-     "name": "sub_809B0D",
+     "name": "EnterNumberStep",
      "size": "259",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8428301"
      }
@@ -663,9 +663,9 @@
      }
     },
     {
-     "name": "sub_80A66F",
+     "name": "DrawCoinPickup",
      "size": "218",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8431215"
      }
@@ -1567,9 +1567,9 @@
      }
     },
     {
-     "name": "sub_80CD34",
+     "name": "TurboMeter",
      "size": "227",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8441140"
      }
@@ -2167,9 +2167,9 @@
      }
     },
     {
-     "name": "sub_80EBD0",
+     "name": "ReadBonusTrack",
      "size": "264",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448976"
      }

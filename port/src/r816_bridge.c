@@ -570,6 +570,11 @@ BRIDGE_DYN(HleHand_DrawBonusPickup, DrawBonusPickup_m1x1, g_ram[0xB7] ? 2600 : 1
 BRIDGE(HleHand_ChangeMode, ChangeMode_m1x1, 20)
 BRIDGE(HleHand_NextMode, NextMode_m1x1, 25)
 BRIDGE(HleHand_RaceFinishStep, RaceFinishStep_m1x1, 40)
+/* c/hand/s4/objects.c, part 11 */
+BRIDGE_DYN(HleHand_DrawCoinPickup, DrawCoinPickup_m1x1, g_ram[0xB2] ? 2700 : 15)
+BRIDGE(HleHand_TurboMeter, TurboMeter_m1x1, 240)
+BRIDGE(HleHand_ReadBonusTrack, ReadBonusTrack_m1x1, 60)
+BRIDGE(HleHand_EnterNumberStep, EnterNumberStep_m1x1, 1500)
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)

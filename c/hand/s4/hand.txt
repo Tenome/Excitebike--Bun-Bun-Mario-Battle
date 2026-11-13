@@ -209,3 +209,7 @@
 808F17  1 1  mem+X,Y,C,V     ChangeMode
 808F15  1 1  mem+X,Y,C,V     NextMode
 80AB59  1 1  mem+X,Y,C,V     RaceFinishStep
+80A66F  1 1  mem+X,Y,C,V     DrawCoinPickup
+80CD34  1 1  mem+X,Y,C,V     TurboMeter
+80EBD0  1 1  mem+X,Y,V       ReadBonusTrack
+809B0D  1 1  mem+X,Y,C,V     EnterNumberStep

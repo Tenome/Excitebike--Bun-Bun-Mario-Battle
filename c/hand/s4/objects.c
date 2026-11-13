@@ -3545,3 +3545,402 @@ void DrawBonusPickup_m1x1(void)
     X = pull8(); nz8((u8)X);
     retl();
 }
+
+void CollectCoin_m1x1(void);
+
+/* As queue_bonus_tiles, for the item index in `dp` with the map bases at
+ * `bases` (X = 2 * index on entry). */
+static void queue_item_tiles(u8 dp, u16 bases, u16 t0, u16 t1)
+{
+    rep(0x20);
+    lda16(rd16(ABS(0x0266)));
+    fc = 1; sbc16(rd16(DP(0x10)));
+    and16(0x0020);
+    for (int i = 0; i < 5; i++) lda16(asl16(A));
+    wr16(DP(0x00), A);
+    lda16(rd16(ABS(0x0266)));
+    fc = 1; sbc16(rd16(DP(0x10)));
+    and16(0x001F);
+    fc = 0; adc16(rd16(DP(0x00)));
+    fc = 0; adc16(rd16(ABSX(bases)));
+    wr16(DP(0x00), A);
+    lda16(0x0018); wr16(DP(0x02), 0x0018);
+    sep(0x20);
+    X = rd8(DP(dp)); nz8((u8)X);
+    lda8(0x21); wr8(DP(0x18), 0x21);
+    lda8(rd8(ABSX(t0))); wr8(DP(0x19), (u8)A);
+    lda8(rd8(ABSX(t1))); wr8(DP(0x1A), (u8)A);
+    lda8(0x08); wr8(DP(0x0F), 0x08);
+}
+
+/* $80:A66F DrawCoinPickup (RTL): when a coin was taken ($B2), redraw the
+ * two map cells behind it (one or two columns back, rows $80:A74E, marker
+ * $80:A749) with the tiles $80:A758/$80:A75D, count it ($0CDF, CollectCoin),
+ * and at the fifth coin start the turbo ($0CE0 = 1, sounds $2D and 1, the
+ * meter $0990 = $20). */
+void DrawCoinPickup_m1x1(void)
+{
+    push8((u8)X);
+    lda8(rd8(DP(0xB2)));
+    if (fz) { X = pull8(); nz8((u8)X); retl(); return; }
+    lda8(0x01); wr8(DP(0x10), 0x01);
+    wr8(DP(0x11), 0);
+    lda8(rd8(DP(0xB2)));
+    lda8(asl8((u8)A));
+    X = (u8)A; nz8((u8)X);
+    rep(0x20);
+    lda16(rd16(ABSX(0xA74E)));
+    wr16(DP(0x00), A);
+    sep(0x20);
+    Y = rd8(ABS(0x0266)); nz8((u8)Y);
+    lda8(rd8((((u32)DB << 16) + rd16(DP(0x00)) + Y) & 0xFFFFFF));
+    Y = rd8(ABS(0x00B2)); nz8((u8)Y);
+    cmp8((u8)A, rd8(ABSY(0xA749)));
+    if (!fz) wr8(DP(0x10), inc8(rd8(DP(0x10))));
+    queue_item_tiles(0xB2, 0xA762, 0xA758, 0xA75D);
+    push16(0xA6DA); VramQueueTiles_m1x1();
+    wr8(DP(0x10), dec8(rd8(DP(0x10))));
+    lda8(rd8(DP(0xB2)));
+    lda8(asl8((u8)A));
+    X = (u8)A; nz8((u8)X);
+    queue_item_tiles(0xB2, 0xA762, 0xA758, 0xA75D);
+    push16(0xA722); VramQueueTiles_m1x1();
+    wr8(DP(0xB2), 0);
+    wr8(ABS(0x0CDF), inc8(rd8(ABS(0x0CDF))));
+    push8(0x80); push16(0xA72B); CollectCoin_m1x1();
+    lda8(rd8(ABS(0x0CDF)));
+    cmp8((u8)A, 0x05);
+    if (fz) {
+        lda8(0x2D);
+        push8(0x80); push16(0xA738); QueueSoundB_m1x1();
+        lda8(0x01); wr8(ABS(0x0CE0), 0x01);
+        push8(0x80); push16(0xA741); QueueSoundB_m1x1();
+        lda8(0x20); wr8(ABS(0x0990), 0x20);
+    }
+    X = pull8(); nz8((u8)X);
+    retl();
+}
+
+/* $80:CD34 TurboMeter (RTS): the player's turbo heat $0990 (fraction
+ * $098F) rises with A/B held toward the limit $80:BB1B by button (rate
+ * $80:BB17) and cools by $0B otherwise; at $20 it overheats ($60, $0940,
+ * sounds $2E/$3E), and above $1A on the turbo button the warning sound
+ * $2C plays ($AA). Then the meter's four sprites at $17F0 (blinking
+ * while overheated, full while the coin turbo $0CE0 runs). */
+void TurboMeter_m1x1(void)
+{
+    u8 y01;
+    lda8(rd8(DP(0x84)));
+    ora8(rd8(ABS(0x0CE0)));
+    if (!fz) { y01 = 0xFF; goto draw; }
+    lda8(rd8(ABS(0x0940)));
+    if (!fz) {
+        lda8(rd8(DP(0x60)));
+        lda8(lsr8((u8)A));
+        if (fc) { y01 = 0xFF; goto draw; }
+        y01 = 0x01;
+        goto draw;
+    }
+    lda8(rd8(ABS(0x017E)));
+    and8(0xC0);
+    if (!fz) {
+        Y = rd8(DP(0x92)); nz8((u8)Y);
+        if (fz) lda8(0x80);
+        lda8(asl8((u8)A));
+        lda8(rol8((u8)A));
+        lda8(rol8((u8)A));
+    }
+    Y = (u8)A; nz8((u8)Y);
+    lda8(rd8(ABS(0x0990)));
+    cmp8((u8)A, rd8(ABSY(0xBB1B)));
+    if (!fc) {
+        lda8(rd8(ABS(0x098F)));
+        fc = 0; adc8(rd8(ABSY(0xBB17)));
+        wr8(ABS(0x098F), (u8)A);
+        if (fc) wr8(ABS(0x0990), inc8(rd8(ABS(0x0990))));
+    } else if (!fz) {
+        lda8(rd8(ABS(0x098F)));
+        fc = 1; sbc8(0x0B);
+        wr8(ABS(0x098F), (u8)A);
+        if (!fc) {
+            lda8(rd8(ABS(0x0990)));
+            if (!fz) wr8(ABS(0x0990), dec8(rd8(ABS(0x0990))));
+        }
+    }
+    ldx8(0x00);
+    lda8(rd8(ABS(0x0990)));
+    cmp8((u8)A, 0x20);
+    if (fc) {
+        wr8(DP(0x60), (u8)A);
+        wr8(ABS(0x0940), (u8)A);
+        push8((u8)A);
+        lda8(0x2E);
+        push8(0x80); push16(0xCDA4); QueueSoundB_m1x1();
+        lda8(0x3E);
+        push8(0x80); push16(0xCDAA); QueueSoundB_m1x1();
+        lda8(pull8());
+    }
+    cmp8((u8)A, 0x1A);
+    if (fc) {
+        Y = dec8((u8)Y);
+        if (fz) {
+            lda8(rd8(DP(0xAA)));
+            if (fz) {
+                lda8(rd8(ABS(0x0CE0)));
+                if (fz) {
+                    lda8(0x2C);
+                    push8(0x80); push16(0xCDC1); QueueSoundB_m1x1();
+                }
+                wr8(DP(0xAA), (u8)A);
+            }
+            y01 = 0xFF;
+            goto draw;
+        }
+    }
+    lda8(rd8(DP(0xAA)));
+    if (!fz) {
+        lda8(0x2D);
+        push8(0x80); push16(0xCDCF); QueueSoundB_m1x1();
+        wr8(DP(0xAA), 0);
+    }
+    y01 = 0xFF;
+draw:
+    lda8(y01);
+    wr8(DP(0x01), y01);
+    lda8(rd8(ABS(0x0990)));
+    fc = 0; adc8(0x58);
+    X = rd8(ABS(0x0CE0)); nz8((u8)X);
+    if (!fz) lda8(0x78);
+    wr8(DP(0x00), (u8)A);
+    ldx8(0x0C);
+    lda8(rd8(ABS(0x0CE0)));
+    lda8(asl8((u8)A));
+    lda8(asl8((u8)A));
+    Y = (u8)A; nz8((u8)Y);
+    do {
+        lda8(rd8(DP(0x00)));
+        wr8(ABSX(0x17F0), (u8)A);
+        fc = 0; adc8(0x08);
+        wr8(DP(0x00), (u8)A);
+        cmp8((u8)A, 0x70);
+        lda8(fc ? 0xC7 : 0xF0);
+        wr8(ABSX(0x17F1), (u8)A);
+        lda8(rd8(ABSY(0xCE17)));
+        wr8(ABSX(0x17F2), (u8)A);
+        lda8(0x2F);
+        wr8(ABSX(0x17F3), 0x2F);
+        Y = inc8((u8)Y);
+        X = dec8((u8)X); X = dec8((u8)X); X = dec8((u8)X); X = dec8((u8)X);
+    } while (!fn);
+    ret();
+}
+
+/* $80:EBD0 ReadBonusTrack (RTS): the bonus course's ReadJumpTrack. As
+ * that routine (landing points, height, tile $09D3 into $0216, tile flags
+ * $0A53, tile $84), plus: tile $A7 under or behind the wheel lands the
+ * rider back on the ground at height $B0 once the zoom $A2 is $0100; tile
+ * 0 starts the run-out ($C7 = 2, height $80) or, before that, the drop
+ * ($C7 = 1, $C8 = scroll); tiles 1-$27 end the course once. */
+void ReadBonusTrack_m1x1(void)
+{
+    lda8(rd8(DP(0xC7)));
+    cmp8((u8)A, 0x02);
+    if (fz) wr8(ABS(0x017E), 0);
+    X = rd8(ABS(0x0266)); nz8((u8)X);
+    lda8(rd8(ABS(0x09C7)));
+    ora8(rd8(ABS(0x01EE)));
+    if (!fz) {
+        lda8(rd8(ABS(0x0266)));
+        cmp8((u8)A, rd8(ABS(0x09C8)));
+        if (!fz) {
+            wr8(ABS(0x09C8), (u8)A);
+            lda8(rd8(ABSX(0x0A93)));
+            fc = 0; adc8(rd8(ABS(0x09C5)));
+            wr8(ABS(0x09C5), (u8)A);
+        }
+    }
+    lda8(rd8(ABS(0x01CE)));
+    if (fz) { lda8(rd8(ABSX(0x0A13))); wr8(ABS(0x09C4), (u8)A); }
+    lda8(rd8(ABSX(0x09D3)));
+    wr8(ABS(0x0216), (u8)A);
+    lda8(rd8(ABSX(0x09D2)));
+    cmp8((u8)A, 0xA7);
+    int land = fz;
+    if (!land) {
+        lda8(rd8(ABSX(0x09D3)));
+        cmp8((u8)A, 0xA7);
+        land = fz;
+    }
+    if (land) {
+        lda8(rd8(ABS(0x01B6)));
+        cmp8((u8)A, 0xB0);
+        if (fc) {
+            rep(0x20);
+            lda16(rd16(ABS(0x00A2)));
+            cmp16(A, 0x0100);
+            sep(0x20);
+            if (fz) {
+                lda8(0xB0); wr8(ABS(0x01B6), 0xB0);
+                wr8(ABS(0x01EE), 0); wr8(ABS(0x0226), 0); wr8(ABS(0x01FE), 0);
+                wr8(ABS(0x0176), 0); wr8(ABS(0x01A6), 0);
+            }
+        }
+        goto flags;
+    }
+    cmp8((u8)A, 0x28);
+    if (fc) goto flags;
+    cmp8((u8)A, 0x00);
+    if (!fz) {
+        lda8(rd8(ABS(0x099C)));
+        if (fz) {
+            lda8(0x01);
+            wr8(ABS(0x099C), 0x01);
+            wr8(DP(0x84), 0x01);
+            lda8(0x2B);
+            push8(0x80); push16(0xEC8F); QueueSoundB_m1x1();
+        }
+        ret();
+        return;
+    }
+    lda8(rd8(ABS(0x01B6)));
+    cmp8((u8)A, 0xB0);
+    if (fc) {
+        rep(0x20);
+        lda16(rd16(ABS(0x00A2)));
+        cmp16(A, 0x0100);
+        sep(0x20);
+        if (fz) {
+            lda8(0x02); wr8(DP(0xC7), 0x02);
+            lda8(0x80); wr8(ABS(0x01B6), 0x80);
+            wr8(ABS(0x01EE), 0); wr8(ABS(0x0226), 0); wr8(ABS(0x01FE), 0);
+            ret();
+            return;
+        }
+    }
+    lda8(0x01); wr8(DP(0xC7), 0x01);
+    rep(0x20);
+    lda16(rd16(DP(0x9C)));
+    wr16(DP(0xC8), A);
+    sep(0x20);
+    ret();
+    return;
+flags:
+    lda8(rd8(ABSX(0x0A53)));
+    if (!fz) {
+        lda8(rd8(ABS(0x09C7)));
+        ora8(rd8(ABS(0x01EE)));
+        if (!fz) { lda8(0x45); wr8(ABS(0x0216), 0x45); ret(); return; }
+        lda8(rd8(ABSX(0x09D3)));
+        and8(0x40);
+        if (!fz) { ret(); return; }
+        wr8(ABSX(0x0A53), 0);
+        lda8(0x3B);
+        wr8(ABSX(0x0B53), 0x3B); wr8(ABSX(0x0B93), 0x3B); wr8(ABSX(0x0BD3), 0x3B);
+        wr8(ABSX(0x0C13), 0x3B); wr8(ABSX(0x0C53), 0x3B); wr8(ABSX(0x0C93), 0x3B);
+        wr8(ABS(0x021E), 0x3B);
+    }
+    lda8(rd8(ABSX(0x09D3)));
+    cmp8((u8)A, 0x84);
+    if (fz) {
+        lda8(rd8(ABS(0x09C7)));
+        if (fz) { lda8(0xFC); wr8(ABS(0x0216), 0xFC); }
+    }
+    ret();
+}
+
+/* $80:9B0D EnterNumberStep (RTS): a three-digit entry ($1570-$1572,
+ * cursor $044F): up/down ($21 bits 3/2, sound $33) step the digit 0-9
+ * with wrap, left/right move the cursor (wrapping 0-2); the number never
+ * becomes 000 (the last digit is forced to 1, or 9 when stepping down).
+ * Queue the digits ($156F, size $23, lower row +$10) at VRAM $0B0F and the
+ * cursor arrows; Start ($21 bit 4) confirms ($0450 + 1) and queues the
+ * next screen's tiles ($7E:5A80, $20 x 2 rows at VRAM $0300). */
+void EnterNumberStep_m1x1(void)
+{
+    X = rd8(ABS(0x044F)); nz8((u8)X);
+    ldy8(0x01);
+    lda8(rd8(DP(0x21)));
+    and8(0x0C);
+    if (!fz) {
+        lda8(0x33);
+        push8(0x80); push16(0x9B1D); QueueSoundB_m1x1();
+        lda8(rd8(DP(0x21)));
+        and8(0x08);
+        if (!fz) {
+            lda8(rd8(ABSX(0x1570)));
+            lda8(inc8((u8)A));
+            wr8(ABSX(0x1570), (u8)A);
+            cmp8((u8)A, 0x0A);
+            if (fc) wr8(ABSX(0x1570), 0);
+        } else {
+            ldy8(0x09);
+            lda8(rd8(ABSX(0x1570)));
+            lda8(dec8((u8)A));
+            wr8(ABSX(0x1570), (u8)A);
+            if (fn) { lda8(0x09); wr8(ABSX(0x1570), 0x09); }
+        }
+    }
+    lda8(rd8(DP(0x21)));
+    and8(0x03);
+    if (!fz) {
+        X = (u8)A; nz8((u8)X);
+        lda8(rd8(ABSX(0x9C10)));
+        fc = 0; adc8(rd8(ABS(0x044F)));
+        if (fn) lda8(0x02);
+        else { cmp8((u8)A, 0x03); if (fc) lda8(0x00); }
+        wr8(ABS(0x044F), (u8)A);
+    }
+    lda8(rd8(ABS(0x1570)));
+    ora8(rd8(ABS(0x1571)));
+    ora8(rd8(ABS(0x1572)));
+    if (fz) {
+        cmp8((u8)X, 0x02);
+        if (!fz) ldy8(0x01);
+        wr8(ABS(0x1572), (u8)Y);
+    }
+    for (int i = 0; i < 3; i++) {
+        lda8(rd8(ABS(0x1570 + i)));
+        ora8(0x10);
+        wr8(ABS(0x1573 + i), (u8)A);
+    }
+    rep(0x20);
+    lda16(0x0B0F); wr16(DP(0x00), 0x0B0F);
+    lda16(0x156F); wr16(DP(0x02), 0x156F);
+    sep(0x20);
+    lda8(0x23); wr8(ABS(0x156F), 0x23);
+    lda8(0x01); wr8(DP(0x0F), 0x01);
+    push16(0x9BA6); VramQueueTiles_m1x1();
+    lda8(rd8(ABS(0x044F)));
+    lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A));
+    fc = 0; adc8(0x78);
+    wr8(ABS(0x1600), (u8)A); wr8(ABS(0x1604), (u8)A);
+    lda8(rd8(DP(0x63)));
+    and8(0x18);
+    lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
+    wr8(DP(0x00), (u8)A);
+    lda8(0x8E);
+    fc = 0; adc8(rd8(DP(0x00)));
+    wr8(ABS(0x1601), (u8)A);
+    lda8(0x78);
+    fc = 1; sbc8(rd8(DP(0x00)));
+    wr8(ABS(0x1605), (u8)A);
+    lda8(0xFE); wr8(ABS(0x1602), 0xFE); wr8(ABS(0x1606), 0xFE);
+    lda8(0x21); wr8(ABS(0x1603), 0x21);
+    lda8(0xA1); wr8(ABS(0x1607), 0xA1);
+    wr8(ABS(0x1820), 0);
+    wr8(ABS(0x1821), 0);
+    lda8(rd8(DP(0x21)));
+    and8(0x10);
+    if (!fz) {
+        wr8(ABS(0x0450), inc8(rd8(ABS(0x0450))));
+        lda8(0x80); wr8(DP(0x02), 0x80);
+        lda8(0x5A); wr8(DP(0x03), 0x5A);
+        lda8(0x7E); wr8(DP(0x04), 0x7E);
+        lda8(0x20); wr8(DP(0x10), 0x20);
+        lda8(0x02); wr8(DP(0x11), 0x02);
+        lda8(0x00); wr8(DP(0x00), 0x00);
+        lda8(0x03); wr8(DP(0x01), 0x03);
+        push16(0x9C0E); QueueTileRows_m1x1();
+    }
+    ret();
+}
