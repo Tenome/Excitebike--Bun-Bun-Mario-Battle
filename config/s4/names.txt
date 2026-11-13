@@ -294,3 +294,4 @@
 8091FC ResetRaceBoard
 80A17E StoreEntryNumber
 80A070 LoadPackNumber
+80D656 StartBonusCourse

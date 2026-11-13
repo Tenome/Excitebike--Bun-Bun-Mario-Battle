@@ -685,6 +685,8 @@ BRIDGE(HleHand_ResetRaceBoard, ResetRaceBoard_m1x1, 4600)
 /* c/hand/s4/objects.c, part 28 */
 BRIDGE(HleHand_StoreEntryNumber, StoreEntryNumber_m1x1, 820)
 BRIDGE(HleHand_LoadPackNumber, LoadPackNumber_m1x1, 1370)
+/* c/hand/s4/objects.c, part 29 */
+BRIDGE(HleHand_StartBonusCourse, StartBonusCourse_m1x1, 7700)
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)

@@ -6545,3 +6545,73 @@ void LoadPackNumber_m1x1(void)
     and8(0x0F); wr8(ABS(0x0853), (u8)A);
     retl();
 }
+
+void LoadRiderPalettes_m1x1(void);
+
+/* $80:D656 StartBonusCourse (RTS): the bonus course set-up: rider
+ * palettes; 64 columns of track rows cleared (tile $FC, heights and flags
+ * 0, the six rows $3B); the streamer's start; the player alone on screen
+ * (column $30, wheel column 9, lean 6, page 1, active, $94 = 2); its HDMA
+ * scene (3 before minute $28, else 1); the player drawn at height $B0,
+ * then set to $B8; the parallax tables $0D11-$0D25 from $80:D782 on HDMA
+ * channels 5-7; zoom $9E = $A2 = $0100, a $012C-frame countdown, the
+ * parallax scrolls cleared and HDMA on ($190F = $9C). */
+void StartBonusCourse_m1x1(void)
+{
+    push8(0x80); push16(0xD659); LoadRiderPalettes_m1x1();
+    ldx8(0x3F);
+    do {
+        lda8(0xFC); wr8(ABSX(0x09D3), 0xFC);
+        lda8(0x00);
+        wr8(ABSX(0x0A13), 0); wr8(ABSX(0x0A53), 0); wr8(ABSX(0x0A93), 0);
+        lda8(0x3B);
+        wr8(ABSX(0x0B53), 0x3B); wr8(ABSX(0x0B93), 0x3B); wr8(ABSX(0x0BD3), 0x3B);
+        wr8(ABSX(0x0C13), 0x3B); wr8(ABSX(0x0C53), 0x3B); wr8(ABSX(0x0C93), 0x3B);
+        X = dec8((u8)X);
+    } while (!fn);
+    lda8(0x34); wr8(ABS(0x0276), 0x34);
+    lda8(0x0A); wr8(ABS(0x0279), 0x0A);
+    lda8(0x05); wr8(ABS(0x0278), 0x05);
+    lda8(0x74); wr8(ABS(0x0277), 0x74);
+    lda8(0x08); wr8(ABS(0x018E), 0x08);
+    lda8(0x09); wr8(ABS(0x0266), 0x09);
+    lda8(0x30); wr8(ABS(0x0196), 0x30);
+    lda8(0x06); wr8(ABS(0x01E6), 0x06);
+    lda8(0x01);
+    wr8(ABS(0x019E), 0x01); wr8(ABS(0x01DE), 0x01); wr8(ABS(0x0958), 0x01);
+    lda8(asl8((u8)A));
+    wr8(DP(0x94), (u8)A);
+    lda8(0x17); wr8(ABS(0x1905), 0x17);
+    lda8(rd8(LONG(0x7FFFFF)));
+    cmp8((u8)A, 0x28);
+    lda8(fc ? 0x01 : 0x03);
+    push8(0x80); push16(0xD6CF); LoadHdmaScene_m1x1();
+    ldx8(0x00);
+    lda8(0xB0); wr8(ABS(0x0CD5), 0xB0); wr8(ABS(0x01B6), 0xB0);
+    push16(0xD6DC); DrawAllRiders_m1x1();
+    lda8(0xB8); wr8(ABS(0x0CD5), 0xB8); wr8(ABS(0x01B6), 0xB8);
+    ldx8(0x14);
+    do {
+        lda8(rd8(ABSX(0xD782)));
+        wr8(ABSX(0x0D11), (u8)A);
+        X = dec8((u8)X);
+    } while (!fn);
+    static const u8 dma[3][4] = { { 0x42, 0x0F, 0x11, 0x0D }, { 0x42, 0x10, 0x18, 0x0D }, { 0x40, 0x08, 0x1F, 0x0D } };
+    for (int c = 0; c < 3; c++) {
+        u16 b = (u16)(0x4370 - 0x10 * c);
+        for (int k = 0; k < 4; k++) { lda8(dma[c][k]); wr8(ABS(b + k), dma[c][k]); }
+        lda8(0x00); wr8(ABS(b + 4), 0x00);
+        lda8(0x00); wr8(ABS(b + 7), 0x00);
+    }
+    rep(0x20);
+    lda16(0x0100); wr16(DP(0x9E), 0x0100); wr16(DP(0xA2), 0x0100);
+    lda16(0x012C); wr16(DP(0x88), 0x012C);
+    wr16(ABS(0x1B00), 0); wr16(ABS(0x1B02), 0); wr16(ABS(0x1B04), 0); wr16(ABS(0x1B06), 0);
+    lda16(0x0000); wr16(ABS(0x1B20), 0x0000);
+    lda16(0x006E); wr16(ABS(0x1B22), 0x006E);
+    sep(0x20);
+    lda8(0x43); wr8(ABS(0x1B40), 0x43);
+    lda8(0x43); wr8(ABS(0x1B41), 0x43);
+    lda8(0x9C); wr8(ABS(0x190F), 0x9C);
+    ret();
+}

@@ -279,3 +279,4 @@
 8091FC  1 1  mem+X,Y,C,V     ResetRaceBoard
 80A17E  1 1  mem+Y           StoreEntryNumber
 80A070  1 1  mem+Y           LoadPackNumber
+80D656  1 1  mem+X,Y,C,V     StartBonusCourse

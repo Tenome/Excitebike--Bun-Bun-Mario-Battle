@@ -1,15 +1,15 @@
 {
  "measures": {
-  "fuzzy_match_percent": 76.9347,
+  "fuzzy_match_percent": 77.3409,
   "total_code": "36930",
-  "matched_code": "20027",
-  "matched_code_percent": 54.2296,
+  "matched_code": "20327",
+  "matched_code_percent": 55.042,
   "total_data": "0",
   "matched_data": "0",
   "matched_data_percent": 0.0,
   "total_functions": 532,
-  "matched_functions": 275,
-  "matched_functions_percent": 51.6917,
+  "matched_functions": 276,
+  "matched_functions_percent": 51.8797,
   "complete_code": "0",
   "complete_code_percent": 0.0,
   "complete_data": "0",
@@ -21,16 +21,16 @@
   {
    "name": "main/bank80",
    "measures": {
-    "fuzzy_match_percent": 78.0734,
+    "fuzzy_match_percent": 78.6814,
     "total_code": "24671",
-    "matched_code": "13985",
-    "matched_code_percent": 56.686,
+    "matched_code": "14285",
+    "matched_code_percent": 57.902,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 357,
-    "matched_functions": 181,
-    "matched_functions_percent": 50.7003,
+    "matched_functions": 182,
+    "matched_functions_percent": 50.9804,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -42,7 +42,7 @@
     {
      "name": ".text",
      "size": "24671",
-     "fuzzy_match_percent": 78.0734
+     "fuzzy_match_percent": 78.6814
     }
    ],
    "functions": [
@@ -1727,9 +1727,9 @@
      }
     },
     {
-     "name": "sub_80D656",
+     "name": "StartBonusCourse",
      "size": "300",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8443478"
      }
