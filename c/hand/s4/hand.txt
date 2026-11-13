@@ -394,3 +394,6 @@
 8095A2  1 1  mem+A,X,Y,C,V   BroadcastEndScreens
 829028  1 1  mem+A,X,Y,C,V   StadiumBonusBanner
 828CF0  1 1  mem+A,X,Y,C,V   SpeedReadout
+80E85B  1 1  mem+A,X,Y,C,V   JumpContestFrame
+80FEFC  1 1  mem+A,X,Y,C,V   QueueBonusDigitsLong
+80C619  1 1  mem+A,X,Y,C,V   QueueBestTimeLong

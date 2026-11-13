@@ -10119,3 +10119,102 @@ void SpeedReadout_m1x1(void)
     push8(0x82); push16(0x8DC5); VramQueueTilesLong_m1x1();
     retl();
 }
+
+void DrawJumpRiderSprites_m1x1(void);
+void SendSpeedToApu_m1x1(void);
+void DrawCountdownLights_m1x1(void);
+void DispatchBy85B_m1x1(void);
+void SetJumpScroll_m1x1(void);
+void QueueBestTime_m1x1(void);
+void SpeedReadout_m1x1(void);
+
+/* $80:E85B (RTS): the jump contest's frame. Waiting for the next run
+ * ($C7 = 2) the rider brakes and is drawn standing ($0216 = $35). Then
+ * the engine sound, the countdown lights, $A0 = distance / 2 and the
+ * start timer $88 (sound $26 at $40; at 0, $8E = $80, sound $27, the
+ * run count $C3 + 1). Unless paused ($54) or past the end ($84 even
+ * and nonzero: to mode $0A with $50 = 2), the player's pad drives the
+ * rider, the twenty jump steps run ($85 = 0-$13), and the speed readout
+ * and scroll update. */
+void JumpContestFrame_m1x1(void)
+{
+    lda8(rd8(ABS(0x00C7)));
+    cmp8((u8)A, 0x02);
+    if (fz) {
+        ldy8(0x05);
+        push16(0xE866); BrakeOnTurn_m1x1();
+        lda8(0x01); wr8(ABS(0x08BC), 0x01);
+        ldx8(0x00);
+        Y = X; nz8((u8)Y);
+        lda8(0x35); wr8(ABS(0x0216), 0x35);
+        push16(0xE876); DrawJumpRiderSprites_m1x1();
+    }
+    push16(0xE879); SendSpeedToApu_m1x1();
+    push16(0xE87C); DrawCountdownLights_m1x1();
+    rep(0x20);
+    lda16(rd16(DP(0x9C)));
+    lda16(lsr16(A));
+    wr16(DP(0xA0), A);
+    lda16(rd16(DP(0x88)));
+    if (!fz) {
+        cmp16(A, 0x0040);
+        if (fz) {
+            lda16(0x0026);
+            push8(0x80); push16(0xE893); QueueSoundB_m0x1();
+        }
+        wr16(DP(0x88), dec16(rd16(DP(0x88))));
+        lda16(rd16(DP(0x88)));
+        if (!fz) { sep(0x20); ret(); return; }
+        lda16(0x0080); wr16(DP(0x8E), 0x0080);
+        sep(0x20);
+        lda8(0x27);
+        push8(0x80); push16(0xE8A6); QueueSoundB_m1x1();
+        wr8(DP(0xC3), inc8(rd8(DP(0xC3))));
+        wr8(ABS(0x1958), 0);
+    }
+    sep(0x20);
+    lda8(rd8(DP(0x54)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(DP(0x84)));
+    if (!fz) {
+        lda8(lsr8((u8)A));
+        if (!fc) {
+            lda8(0x02); wr8(DP(0x50), 0x02);
+            lda8(0x00); wr8(DP(0x85), 0x00);
+            lda8(0x0A);
+            ChangeMode_m1x1();
+            return;
+        }
+    }
+    lda8(rd8(DP(0x20)));
+    wr8(ABS(0x017E), (u8)A);
+    lda8(0x00); wr8(DP(0x85), 0x00);
+    do {
+        push16(0xE8C4); DispatchBy85B_m1x1();
+        wr8(DP(0x85), inc8(rd8(DP(0x85))));
+        lda8(rd8(DP(0x85)));
+        cmp8((u8)A, 0x14);
+    } while (!fc);
+    push8(0x80); push16(0xE8D0); SpeedReadout_m1x1();
+    push8(0x80); push16(0xE8D4); SetJumpScroll_m1x1();
+    sep(0x20);
+    ret();
+}
+
+/* $80:FEFC (RTL): QueueBonusDigits for other banks. */
+void QueueBonusDigitsLong_m1x1(void)
+{
+    push16(0xFEFE); QueueBonusDigits_m1x1();
+    retl();
+}
+
+/* $80:C619 (RTL): QueueBestTime with DB = $80. */
+void QueueBestTimeLong_m1x1(void)
+{
+    push8(DB);
+    lda8(0x80); push8(0x80);
+    DB = pull8(); nz8(DB);
+    push16(0xC620); QueueBestTime_m1x1();
+    DB = pull8(); nz8(DB);
+    retl();
+}

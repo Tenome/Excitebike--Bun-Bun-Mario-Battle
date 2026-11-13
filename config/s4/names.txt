@@ -406,3 +406,6 @@
 8095A2 BroadcastEndScreens
 829028 StadiumBonusBanner
 828CF0 SpeedReadout
+80E85B JumpContestFrame
+80FEFC QueueBonusDigitsLong
+80C619 QueueBestTimeLong
