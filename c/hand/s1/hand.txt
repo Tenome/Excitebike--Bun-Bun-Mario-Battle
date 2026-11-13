@@ -197,3 +197,8 @@
 809BC8  1 1  mem+A,X,Y,C,V   EndScreenScrollIn
 8197E2  1 1  mem+A,X,Y,C,V   SkyFadeObject
 81BBE4  1 1  mem+A,X,Y,C,V   IdleCycleObject
+818BE2  1 1  mem+A,X,Y,C,V   FillLaneColumn
+809942  1 1  mem+X,Y,C,V     QueueFiveDigits
+80DC8D  1 1  mem+A,X,Y,C,V   CourseColumn
+80D29F  1 1  mem+A,X,Y,C,V   MarkerObjects
+8195A3  1 1  mem+A,X,Y,C,V   SparkPieceStep

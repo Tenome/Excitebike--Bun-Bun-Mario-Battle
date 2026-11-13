@@ -413,6 +413,11 @@ BRIDGE_DYN(HleHand_EndScreenPrompt, EndScreenPrompt_m1x1, ((g_ram[0x26] | g_ram[
 BRIDGE(HleHand_EndScreenScrollIn, EndScreenScrollIn_m1x1, 30)
 BRIDGE(HleHand_SkyFadeObject, SkyFadeObject_m1x1, 200)
 BRIDGE(HleHand_IdleCycleObject, IdleCycleObject_m1x1, 40)
+BRIDGE(HleHand_FillLaneColumn, FillLaneColumn_m1x1, 490)
+BRIDGE(HleHand_QueueFiveDigits, QueueFiveDigits_m1x1, 760)
+BRIDGE(HleHand_CourseColumn, CourseColumn_m1x1, 280)
+BRIDGE_DYN(HleHand_MarkerObjects, MarkerObjects_m1x1, 40 + ((g_ram[0x63] & 7) ? 0 : 60) + 280 * (!!g_ram[0x1530] + !!g_ram[0x1532] + !!g_ram[0x1534] + !!g_ram[0x1536]))
+BRIDGE(HleHand_SparkPieceStep, SparkPieceStep_m1x1, 90)
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */

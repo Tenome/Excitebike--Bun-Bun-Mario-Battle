@@ -219,3 +219,8 @@
 809BC8 EndScreenScrollIn
 8197E2 SkyFadeObject
 81BBE4 IdleCycleObject
+818BE2 FillLaneColumn
+809942 QueueFiveDigits
+80DC8D CourseColumn
+80D29F MarkerObjects
+8195A3 SparkPieceStep

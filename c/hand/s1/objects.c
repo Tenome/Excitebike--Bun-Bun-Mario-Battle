@@ -778,3 +778,184 @@ void IdleCycleObject_m1x1(void)
     lda8(rd8(ABSY(0xBC2A))); wr8(ABSX(0x0349), (u8)A);
     ret();
 }
+
+void LanePieceTablesLong_m1x1(void);
+void DrawCoinIcons_m1x1(void);
+
+/* $81:8BE2 FillLaneColumn (RTL): as Stadium 4's $81:8BEB (column $0F of
+ * the six lane rows from the course buffer, entry $1A down, skipping
+ * $FC ramp tops). */
+void FillLaneColumn_m1x1(void)
+{
+    ldx8(0x05);
+    lda8(0x1A); wr8(DP(0x0C), 0x1A);
+    do {
+        Y = X; nz8((u8)Y);
+        push8(0x81); push16(0x8BEC); LanePieceTablesLong_m1x1();
+        wr8(DP(0x0A), (u8)X);
+        for (;;) {
+            X = rd8(DP(0x0C)); nz8((u8)X);
+            lda8(rd8(LONGX(0x7F000E)));
+            cmp8((u8)A, 0xFC);
+            if (!fz) break;
+            wr8(DP(0x0C), dec8(rd8(DP(0x0C))));
+            wr8(DP(0x0C), dec8(rd8(DP(0x0C))));
+            lda8(rd8(DP(0x0C)));
+            if (fn) break;
+        }
+        Y = rd8(DP(0x0F)); nz8((u8)Y);
+        wr8((((u32)DB << 16) + rd16(DP(0x03)) + Y) & 0xFFFFFF, (u8)A);
+        rep(0x30);
+        lda16(Y);
+        fc = 0; adc16(0x0180);
+        Y = A; nz16(Y);
+        sep(0x20);
+        lda8(rd8(LONGX(0x7F200E)));
+        wr8((((u32)DB << 16) + rd16(DP(0x03)) + Y) & 0xFFFFFF, (u8)A);
+        sep(0x10);
+        wr8(DP(0x0C), dec8(rd8(DP(0x0C))));
+        wr8(DP(0x0C), dec8(rd8(DP(0x0C))));
+        X = rd8(DP(0x0A)); nz8((u8)X);
+        X = dec8((u8)X);
+    } while (!fn);
+    retl();
+}
+
+/* $80:9942 QueueFiveDigits (RTL): the five digits at [$18] (leading zeros
+ * blank $0C) as two rows at $03D3 / $03D9 (+$10, trailing 0 / $10), size
+ * $26 from $03D2, queued at VRAM $00. X and Y are kept. */
+void QueueFiveDigits_m1x1(void)
+{
+    push8((u8)X); push8((u8)Y);
+    ldx8(0x00); ldy8(0x00);
+    do {
+        lda8(rd8((ILDP(0x18) + Y) & 0xFFFFFF));
+        int blank = 0;
+        if (fz) { cmp8((u8)X, 0x00); blank = fz; }
+        if (blank) lda8(0x0C);
+        else X = inc8((u8)X);
+        wr8(ABSY(0x03D3), (u8)A);
+        ora8(0x10);
+        wr8(ABSY(0x03D9), (u8)A);
+        Y = inc8((u8)Y);
+        cmp8((u8)Y, 0x05);
+    } while (!fc);
+    wr8(ABS(0x03D8), 0);
+    lda8(0x10); wr8(ABS(0x03DE), 0x10);
+    lda8(0x26); wr8(ABS(0x03D2), 0x26);
+    rep(0x20);
+    lda16(0x03D2); wr16(DP(0x02), 0x03D2);
+    sep(0x20);
+    lda8(0x01); wr8(DP(0x0F), 0x01);
+    push16(0x997E); VramQueueTiles_m1x1();
+    Y = pull8(); nz8((u8)Y);
+    X = pull8(); nz8((u8)X);
+    retl();
+}
+
+/* $80:DC8D CourseColumn (RTS): as Stadium 4's $80:DB7B (course $0277's
+ * pointer tables $80:D4E2 / $80:D4EB). */
+void CourseColumn_m1x1(void)
+{
+    X = rd8(ABS(0x0277)); nz8((u8)X);
+    lda8(rd8(ABSX(0xD4E2))); wr8(DP(0x09), (u8)A);
+    lda8(rd8(ABSX(0xD4EB))); wr8(DP(0x0A), (u8)A);
+    ldy8(0x00); wr8(DP(0x0E), 0);
+    do {
+        Y = rd8(DP(0x0E)); nz8((u8)Y);
+        push16(0xDCA2); LanePieceTables_m1x1();
+        Y = rd8(ABS(0x09C3)); nz8((u8)Y);
+        lda8(rd8((((u32)DB << 16) + rd16(DP(0x09)) + Y) & 0xFFFFFF));
+        wr8(ABS(0x09C3), inc8(rd8(ABS(0x09C3))));
+        Y = rd8(DP(0x0F)); nz8((u8)Y);
+        wr8((((u32)DB << 16) + rd16(DP(0x03)) + Y) & 0xFFFFFF, (u8)A);
+        wr8(DP(0x10), (u8)A);
+        wr8(DP(0x0E), inc8(rd8(DP(0x0E))));
+        lda8(rd8(DP(0x0E)));
+        cmp8((u8)A, 0x03);
+        if (fz) {
+            lda8(rd8(DP(0x10)));
+            if (fz) lda8(0x3B);
+            wr8(ABSY(0x0B53), (u8)A); wr8(ABSY(0x0B93), (u8)A);
+            wr8(ABSY(0x0BD3), (u8)A); wr8(ABSY(0x0C13), (u8)A);
+            wr8(ABSY(0x0C53), (u8)A); wr8(ABSY(0x0C93), (u8)A);
+            lda8(rd8(DP(0x0E)));
+        }
+        cmp8((u8)A, 0x04);
+    } while (!fz);
+    ret();
+}
+
+/* $80:D29F (RTL): the marker objects (even slots 6-0, $1530: word timer
+ * $1538 up, MarkerObjectStep), the coin icons, and every 8 frames the
+ * cycling palette entries $1C08-$1C0F from $80:D2DF ($63 & $38). */
+void MarkerObjects_m1x1(void)
+{
+    ldx8(0x06);
+    do {
+        lda8(rd8(ABSX(0x1530)));
+        if (!fz) {
+            rep(0x20);
+            wr16(ABSX(0x1538), inc16(rd16(ABSX(0x1538))));
+            sep(0x20);
+            push8(0x80); push16(0xD2B0); MarkerObjectStep_m1x1();
+        }
+        X = dec8((u8)X);
+        X = dec8((u8)X);
+    } while (!fn);
+    push8(0x80); push16(0xD2B8); DrawCoinIcons_m1x1();
+    lda8(rd8(DP(0x63)));
+    and8(0x07);
+    if (!fz) { retl(); return; }
+    push8((u8)X);
+    ldy8(0x00);
+    lda8(rd8(DP(0x63)));
+    and8(0x38);
+    X = (u8)A; nz8((u8)X);
+    rep(0x20);
+    do {
+        lda16(rd16(LONGX(0x80D2DF)));
+        wr16(ABSY(0x1C08), A);
+        X = inc8((u8)X); X = inc8((u8)X);
+        Y = inc8((u8)Y); Y = inc8((u8)Y);
+        cmp8((u8)Y, 0x08);
+    } while (!fc);
+    sep(0x20);
+    X = pull8(); nz8((u8)X);
+    wr8(ABS(0x1915), inc8(rd8(ABS(0x1915))));
+    retl();
+}
+
+/* $81:95A3 (RTS, Y = piece): a spark piece's sprite ($1610 + 2Y:
+ * position $0100 / $0108, tile $81:95EB by frame $0118, attribute $2D,
+ * size 2); every 4 frames ($0120) the frame steps, and after frame 2 the
+ * state $0128 steps with a $40 wait. */
+void SparkPieceStep_m1x1(void)
+{
+    X = Y; nz8((u8)X);
+    lda8((u8)X);
+    lda8(asl8((u8)A));
+    Y = (u8)A; nz8((u8)Y);
+    lda8(rd8(ABSX(0x0100))); wr8(ABSY(0x1610), (u8)A);
+    lda8(rd8(ABSX(0x0108))); wr8(ABSY(0x1611), (u8)A);
+    lda8(rd8(ABSX(0x0118)));
+    push8((u8)X);
+    X = (u8)A; nz8((u8)X);
+    lda8(rd8(LONGX(0x8195EB))); wr8(ABSY(0x1612), (u8)A);
+    lda8(0x2D); wr8(ABSY(0x1613), 0x2D);
+    X = pull8(); nz8((u8)X);
+    lda8((u8)Y);
+    lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
+    Y = (u8)A; nz8((u8)Y);
+    lda8(0x02); wr8(ABSY(0x1824), 0x02);
+    wr8(ABSX(0x0120), dec8(rd8(ABSX(0x0120))));
+    if (!fz) { ret(); return; }
+    lda8(0x04); wr8(ABSX(0x0120), 0x04);
+    wr8(ABSX(0x0118), inc8(rd8(ABSX(0x0118))));
+    lda8(rd8(ABSX(0x0118)));
+    cmp8((u8)A, 0x03);
+    if (!fc) { ret(); return; }
+    wr8(ABSX(0x0128), inc8(rd8(ABSX(0x0128))));
+    lda8(0x40); wr8(ABSX(0x0120), 0x40);
+    ret();
+}
