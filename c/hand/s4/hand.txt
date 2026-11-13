@@ -283,3 +283,5 @@
 809FF3  1 1  mem+X,Y,C,V     ShowEntryCode
 819F3A  1 1  mem+X,C,V       SteerObjectStep
 80889B  1 1  mem+X,Y,C,V     Mode02_SegmentCard
+809DBD  1 1  mem+X,Y,C,V     Mode11
+8098B2  1 1  mem+X,Y,C,V     Mode0F_EndScreen

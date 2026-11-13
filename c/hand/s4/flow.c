@@ -167,3 +167,37 @@ void Mode02_SegmentCard_m1x1(void)
     if (!fc) { ret(); return; }
     NextMode_m1x1();
 }
+
+void BsxEndIfFlagged_m1x1(void);
+
+/* $80:9DBD Mode11 (RTS): wait $88 frames, then the end screen (mode $0F,
+ * fade, a $20-frame timer). */
+void Mode11_m1x1(void)
+{
+    rep(0x20);
+    u16 t = dec16(rd16(DP(0x88)));
+    wr16(DP(0x88), t);
+    sep(0x20);
+    if (!fz) { ret(); return; }
+    lda8(0x0F); wr8(DP(0x76), 0x0F);
+    wr8(DP(0x75), 0);
+    wr8(DP(0x77), 0);
+    wr8(ABS(0x1923), dec8(rd8(ABS(0x1923))));
+    rep(0x20);
+    lda16(0x0020); wr16(DP(0x88), 0x0020);
+    sep(0x20);
+    ret();
+}
+
+/* $80:98B2 Mode0F_EndScreen (RTS): the broadcast-over check, then the
+ * end screen's step $0450 through the table $80:98C8 (JMP ($0000)). */
+void Mode0F_EndScreen_m1x1(void)
+{
+    push16(0x98B4); BsxEndIfFlagged_m1x1();
+    lda8(rd8(ABS(0x0450)));
+    lda8(asl8((u8)A));
+    X = (u8)A; nz8((u8)X);
+    lda8(rd8(ABSX(0x98C8))); wr8(DP(0x00), (u8)A);
+    lda8(rd8(ABSX(0x98C9))); wr8(DP(0x01), (u8)A);
+    r816_call_pc(0x800000u | rd16(LONG(0x000000)));
+}
