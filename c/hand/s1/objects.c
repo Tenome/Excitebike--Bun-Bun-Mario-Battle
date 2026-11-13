@@ -959,3 +959,97 @@ void SparkPieceStep_m1x1(void)
     lda8(0x40); wr8(ABSX(0x0120), 0x40);
     ret();
 }
+
+/* $80:9A52 EndScreenScore (RTS): when $88 runs out, the five digits at
+ * $00:0CE5 at VRAM $0975, $88 = $20 and the next end-screen steps
+ * ($0453 = 4 and $0454 = 5, or 3 when $085D is set). */
+void EndScreenScore_m1x1(void)
+{
+    u8 t = dec8(rd8(DP(0x88)));
+    wr8(DP(0x88), t);
+    if (!fz) { ret(); return; }
+    rep(0x20);
+    lda16(0x0CE5); wr16(DP(0x18), 0x0CE5);
+    lda16(0x0975); wr16(DP(0x00), 0x0975);
+    sep(0x20);
+    lda8(0x00); wr8(DP(0x1A), 0x00);
+    push8(0x80); push16(0x9A6B); QueueFiveDigits_m1x1();
+    lda8(0x20); wr8(DP(0x88), 0x20);
+    lda8(rd8(ABS(0x085D)));
+    if (fz) {
+        lda8(0x04); wr8(ABS(0x0453), 0x04);
+        lda8(0x05); wr8(ABS(0x0454), 0x05);
+    } else {
+        lda8(0x03); wr8(ABS(0x0453), 0x03);
+    }
+    ret();
+}
+
+/* $80:9AF9 EndScreenCode (RTS): after the $88 delay the code box (2 rows
+ * of $20 from $89:D880 at $0300); then A ($26 bit 7): $88 = $20, sound
+ * $43, step $0453 = $0A and the five digits at $11:5730 to VRAM $0A15. */
+void EndScreenCode_m1x1(void)
+{
+    lda8(rd8(DP(0x88)));
+    if (!fz) {
+        u8 t = dec8(rd8(DP(0x88)));
+        wr8(DP(0x88), t);
+        if (!fz) { ret(); return; }
+        lda8(0x80); wr8(DP(0x02), 0x80);
+        lda8(0xD8); wr8(DP(0x03), 0xD8);
+        lda8(0x89); wr8(DP(0x04), 0x89);
+        lda8(0x20); wr8(DP(0x10), 0x20);
+        lda8(0x02); wr8(DP(0x11), 0x02);
+        lda8(0x00); wr8(DP(0x00), 0x00);
+        lda8(0x03); wr8(DP(0x01), 0x03);
+        push16(0x9B1F); VramQueueCopy_m1x1();
+    }
+    lda8(rd8(DP(0x26)));
+    and8(0x80);
+    if (fz) { ret(); return; }
+    lda8(0x20); wr8(DP(0x88), 0x20);
+    lda8(0x43);
+    push8(0x80); push16(0x9B2F); QueueSound_m1x1();
+    lda8(0x0A); wr8(ABS(0x0453), 0x0A);
+    rep(0x20);
+    lda16(0x0A15); wr16(DP(0x00), 0x0A15);
+    lda16(0x5730); wr16(DP(0x18), 0x5730);
+    sep(0x20);
+    lda8(0x11); wr8(DP(0x1A), 0x11);
+    push8(0x80); push16(0x9B4A); QueueFiveDigits_m1x1();
+    ret();
+}
+
+/* $80:C3B3 StartJump (RTS, X = rider): rider X takes off: air state 2,
+ * height step $0F, the take-off speed ($01C0:$01B8 + $AF, halved when
+ * $08F4 = 2) into $08DC:$08D4. The player also clears $09C7, plays
+ * sound $20 and returns A = speed high * 16 ^ $30 (8 when that is 0). */
+void StartJump_m1x1(void)
+{
+    lda8(0x02); wr8(ABSX(0x01E8), 0x02);
+    lda8(0x0F); wr8(ABSX(0x08E4), 0x0F);
+    lda8(rd8(ABSX(0x01B8)));
+    fc = 0; adc8(0xAF);
+    wr8(ABSX(0x08D4), (u8)A);
+    lda8(rd8(ABSX(0x01C0)));
+    adc8(0x00);
+    wr8(ABSX(0x08DC), (u8)A);
+    lda8(rd8(ABSX(0x08F4)));
+    cmp8((u8)A, 0x02);
+    if (fz) {
+        u8 hi = rd8(ABSX(0x08DC));
+        fc = hi & 1; hi >>= 1; wr8(ABSX(0x08DC), hi); nz8(hi);
+        u8 lo = rd8(ABSX(0x08D4));
+        u8 c = fc; fc = lo & 1; lo = (u8)((lo >> 1) | (c << 7)); wr8(ABSX(0x08D4), lo); nz8(lo);
+    }
+    lda8((u8)X);
+    if (!fz) { ret(); return; }
+    wr8(ABS(0x09C7), (u8)A);
+    lda8(0x20);
+    push8(0x80); push16(0xC3E6); QueueSound_m1x1();
+    lda8(rd8(ABSX(0x01C0)));
+    lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A));
+    eor8(0x30);
+    if (fz) lda8(0x08);
+    ret();
+}

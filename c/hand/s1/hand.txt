@@ -202,3 +202,6 @@
 80DC8D  1 1  mem+A,X,Y,C,V   CourseColumn
 80D29F  1 1  mem+A,X,Y,C,V   MarkerObjects
 8195A3  1 1  mem+A,X,Y,C,V   SparkPieceStep
+809A52  1 1  mem+A,X,Y,C,V   EndScreenScore
+809AF9  1 1  mem+A,X,Y,C,V   EndScreenCode
+80C3B3  1 1  mem+A,X,Y,C,V   StartJump

@@ -224,3 +224,6 @@
 80DC8D CourseColumn
 80D29F MarkerObjects
 8195A3 SparkPieceStep
+809A52 EndScreenScore
+809AF9 EndScreenCode
+80C3B3 StartJump
