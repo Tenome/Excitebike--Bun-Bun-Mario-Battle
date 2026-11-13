@@ -224,3 +224,68 @@ void StepSpark_m1x1(void)
     wr8(ABS(0x1824 + Y), 0x02);
     ret();
 }
+
+/* ---- Stadium 1 versions of Stadium 4 routines (rider arrays sit 6 bytes
+ * lower: $0178 input, $01B8/$01C0 speed, $0228/$0230 target speed). ---- */
+
+void CpuReleaseButtons_m1x1(void);
+void AimRatio_m1x1(void);
+
+/* $80:AFD5 CpuThrottle (RTS): CPU rider X below its target speed
+ * ($0228/$0230) holds A ($80); at or above it lets go of the buttons. */
+void CpuThrottle_m1x1(void)
+{
+    ldy8(0x80);
+    lda8(rd8(ABSX(0x01C0)));
+    cmp8((u8)A, rd8(ABSX(0x0230)));
+    if (!fc) goto press;
+    if (fz) {
+        lda8(rd8(ABSX(0x01B8)));
+        cmp8((u8)A, rd8(ABSX(0x0228)));
+        if (!fc) goto press;
+    }
+    CpuReleaseButtons_m1x1();
+    return;
+press:
+    lda8((u8)Y);
+    ora8(rd8(ABSX(0x0178)));
+    wr8(ABSX(0x0178), (u8)A);
+    ret();
+}
+
+/* $80:AFF2 CpuReleaseDpad (RTS): input $0178 & $F0. */
+void CpuReleaseDpad_m1x1(void)
+{
+    lda8(0xF0);
+    and8(rd8(ABSX(0x0178)));
+    wr8(ABSX(0x0178), (u8)A);
+    ret();
+}
+
+/* $80:AFFB CpuSteer (RTS): release the d-pad, then press down (1) or up
+ * (2) toward the target lane angle $0971 against $01E0 (none when equal
+ * or no target). */
+void CpuSteer_m1x1(void)
+{
+    push16(0xAFFD); CpuReleaseDpad_m1x1();
+    ldy8(0x01);
+    lda8(rd8(ABSX(0x0971)));
+    if (fz) { ret(); return; }
+    cmp8((u8)A, rd8(ABSX(0x01E0)));
+    if (fz) { ret(); return; }
+    if (fc) Y = inc8((u8)Y);
+    lda8((u8)Y);
+    ora8(rd8(ABSX(0x0178)));
+    wr8(ABSX(0x0178), (u8)A);
+    ret();
+}
+
+/* $81:9F7A AimVelocity (RTL, A = steps): object X's velocity toward its
+ * target from AimRatio ($02A9 vertical, $0299 horizontal). */
+void AimVelocity_m1x1(void)
+{
+    push8(0x81); push16(0x9F7D); AimRatio_m1x1();
+    lda8(rd8(DP(0x00))); wr8(ABSX(0x02A9), (u8)A);
+    lda8(rd8(DP(0x0A))); wr8(ABSX(0x0299), (u8)A);
+    retl();
+}

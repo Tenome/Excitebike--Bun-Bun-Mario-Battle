@@ -195,3 +195,7 @@
 80AFE9 CpuReleaseButtons     # from s4 80B0A4
 819F8C AimRatio              # from s4 81A065
 80BE3E RiderRunOut           # from s4 80BB56
+80AFD5 CpuThrottle
+80AFF2 CpuReleaseDpad
+80AFFB CpuSteer
+819F7A AimVelocity

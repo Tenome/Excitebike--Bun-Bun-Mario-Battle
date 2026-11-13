@@ -173,3 +173,7 @@
 80AFE9  1 1  mem+X,Y,V      CpuReleaseButtons      # from s4 80B0A4
 819F8C  1 1  mem+X,V        AimRatio               # from s4 81A065
 80BE3E  1 1  mem+X,Y,C,V    RiderRunOut            # from s4 80BB56
+80AFD5  1 1  mem+A,X,Y,C,V   CpuThrottle
+80AFF2  1 1  mem+A,X,Y,C,V   CpuReleaseDpad
+80AFFB  1 1  mem+A,X,Y,C,V   CpuSteer
+819F7A  1 1  mem+A,X,Y,C,V   AimVelocity
