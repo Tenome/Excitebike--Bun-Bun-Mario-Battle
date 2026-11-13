@@ -10381,3 +10381,78 @@ tick:
     X = rd8(ABS(0x03A3)); nz8((u8)X);
     ret();
 }
+
+void TitlePushStart_m1x1(void);
+
+/* $80:F3DD (RTS): the attract demo's pad display: a 2x2 d-pad sprite
+ * (OAM $1680, tiles from $80:F4BF by the direction table $80:F4AF on
+ * $098E's low nibble, attribute $26) and a 4-tile button sprite (OAM
+ * $1670, tiles from $80:F4C4 by $098E bits 7-6, attribute $28), both
+ * large; then PUSH START. */
+void DemoPadDisplay_m1x1(void)
+{
+    lda8(rd8(ABS(0x098E)));
+    and8(0x0F);
+    Y = (u8)A; nz8((u8)Y);
+    lda8(rd8(ABSY(0xF4AF)));
+    Y = (u8)A; nz8((u8)Y);
+    lda8(rd8(ABSY(0xF4BF)));
+    wr8(DP(0x00), (u8)A);
+    ldy8(0x80);
+    lda8(0x80);
+    wr8(ABSY(0x1600), (u8)A); wr8(ABSY(0x1608), (u8)A);
+    fc = 0; adc8(0x10);
+    wr8(ABSY(0x1604), (u8)A); wr8(ABSY(0x160C), (u8)A);
+    lda8(0x18);
+    wr8(ABSY(0x1601), (u8)A); wr8(ABSY(0x1605), (u8)A);
+    fc = 0; adc8(0x10);
+    wr8(ABSY(0x1609), (u8)A); wr8(ABSY(0x160D), (u8)A);
+    lda8(rd8(DP(0x00)));
+    wr8(ABSY(0x1602), (u8)A);
+    lda8(inc8((u8)A)); lda8(inc8((u8)A));
+    wr8(ABSY(0x1606), (u8)A);
+    fc = 0; adc8(0x1E);
+    wr8(ABSY(0x160A), (u8)A);
+    lda8(inc8((u8)A)); lda8(inc8((u8)A));
+    wr8(ABSY(0x160E), (u8)A);
+    lda8(0x26);
+    wr8(ABSY(0x1603), 0x26); wr8(ABSY(0x1607), 0x26);
+    wr8(ABSY(0x160B), 0x26); wr8(ABSY(0x160F), 0x26);
+    lda8((u8)Y);
+    lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
+    Y = (u8)A; nz8((u8)Y);
+    lda8(0x02);
+    wr8(ABSY(0x1820), 0x02); wr8(ABSY(0x1821), 0x02);
+    wr8(ABSY(0x1822), 0x02); wr8(ABSY(0x1823), 0x02);
+    lda8(rd8(ABS(0x098E)));
+    lda8(rol8((u8)A)); lda8(rol8((u8)A)); lda8(rol8((u8)A));
+    and8(0x03);
+    Y = (u8)A; nz8((u8)Y);
+    lda8(rd8(ABSY(0xF4C4)));
+    wr8(DP(0x00), (u8)A);
+    ldy8(0x70);
+    lda8(0xB0);
+    wr8(ABSY(0x1600), (u8)A); wr8(ABSY(0x1608), (u8)A);
+    fc = 0; adc8(0x18);
+    wr8(ABSY(0x1604), (u8)A); wr8(ABSY(0x160C), (u8)A);
+    lda8(0x18);
+    wr8(ABSY(0x1601), (u8)A); wr8(ABSY(0x1605), (u8)A);
+    fc = 0; adc8(0x10);
+    wr8(ABSY(0x1609), (u8)A); wr8(ABSY(0x160D), (u8)A);
+    lda8(rd8(DP(0x00)));
+    wr8(ABSY(0x1602), (u8)A);
+    lda8(inc8((u8)A)); lda8(inc8((u8)A)); wr8(ABSY(0x1606), (u8)A);
+    lda8(inc8((u8)A)); lda8(inc8((u8)A)); wr8(ABSY(0x160A), (u8)A);
+    lda8(inc8((u8)A)); lda8(inc8((u8)A)); wr8(ABSY(0x160E), (u8)A);
+    lda8(0x28);
+    wr8(ABSY(0x1603), 0x28); wr8(ABSY(0x1607), 0x28);
+    wr8(ABSY(0x160B), 0x28); wr8(ABSY(0x160F), 0x28);
+    lda8((u8)Y);
+    lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
+    Y = (u8)A; nz8((u8)Y);
+    lda8(0x02);
+    wr8(ABSY(0x1820), 0x02); wr8(ABSY(0x1821), 0x02);
+    wr8(ABSY(0x1822), 0x02); wr8(ABSY(0x1823), 0x02);
+    push16(0xF4AD); TitlePushStart_m1x1();
+    ret();
+}
