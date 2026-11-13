@@ -609,6 +609,22 @@ BRIDGE(HleHand_RiderLandCheck, RiderLandCheck_m1x1, 150)
 BRIDGE(HleHand_BoostOnTile, BoostOnTile_m1x1, 170)
 BRIDGE(HleHand_SlowTileCheck, SlowTileCheck_m1x1, 180)
 BRIDGE(HleHand_LandFlat, LandFlat_m1x1, 160)
+/* c/hand/s4/objects.c, part 17 */
+BRIDGE(HleHand_CpuReleaseButtons, CpuReleaseButtons_m1x1, 25)
+BRIDGE(HleHand_CpuThrottle, CpuThrottle_m1x1, 35)
+BRIDGE(HleHand_CpuReleaseDpad, CpuReleaseDpad_m1x1, 15)
+BRIDGE(HleHand_CpuSteer, CpuSteer_m1x1, 45)
+BRIDGE_DYN(HleHand_QueuePlaceBadgeHud, QueuePlaceBadgeHud_m1x1, g_ram[0x086E] ? 1400 : 10)
+/* per slot X..0: about 300 units with an active rider drawn, 45 without */
+static uint32 draw_all_riders_cost(void)
+{
+    uint32 c = 20;
+    for (int i = (int)(X & 0xFF); i >= 0 && i < 8; i--)
+        c += g_ram[0x01DE + g_ram[0x0950 + i]] ? 300 : 45;
+    return c;
+}
+BRIDGE_DYN(HleHand_DrawAllRiders, DrawAllRiders_m1x1, draw_all_riders_cost())
+BRIDGE_DYN(HleHand_ShowCourseRecord, ShowCourseRecord_m1x1, g_ram[0x084C] ? 1700 : 15)
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)

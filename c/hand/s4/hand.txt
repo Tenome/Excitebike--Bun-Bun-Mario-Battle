@@ -240,3 +240,10 @@
 80FB60  1 1  mem+A,X,Y,C,V   BoostOnTile
 80FC03  1 1  mem+A,X,Y,C,V   SlowTileCheck
 80FC41  1 1  mem+A,X,Y,C,V   LandFlat
+80B0A4  1 1  mem+X,Y,V       CpuReleaseButtons
+80B090  1 1  mem+X,Y,Z,V     CpuThrottle
+80B0AD  1 1  mem+X,V         CpuReleaseDpad
+80B0B6  1 1  mem+X,Y,V       CpuSteer
+80CF8B  1 1  mem+X,Y,C,V     QueuePlaceBadgeHud
+80CA98  1 1  mem+X,Y,C,V     DrawAllRiders
+80A457  1 1  mem+X,Y,C,V     ShowCourseRecord

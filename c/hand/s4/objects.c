@@ -4765,3 +4765,171 @@ void SlowTileCheck_m1x1(void)
     crash_stop();
     ret();
 }
+
+void QueuePlaceBadge_m1x1(void);
+void DrawRider_m1x1(void);
+void MirrorJumpRider_m1x1(void);
+void TickRaceClock_m1x1(void);
+
+/* $80:B0C8: OR Y into rider X's input $017E. */
+static void input_or_y(void)
+{
+    lda8((u8)Y);
+    ora8(rd8(ABSX(0x017E)));
+    wr8(ABSX(0x017E), (u8)A);
+}
+
+/* $80:B0AF: AND A into rider X's input $017E. */
+static void input_and_a(void)
+{
+    and8(rd8(ABSX(0x017E)));
+    wr8(ABSX(0x017E), (u8)A);
+}
+
+/* $80:B0A4 CpuReleaseButtons (RTS): a moving CPU rider lets go of the
+ * buttons (input $017E & $0F). */
+void CpuReleaseButtons_m1x1(void)
+{
+    lda8(rd8(ABSX(0x01C6)));
+    if (fz) { ret(); return; }
+    lda8(0x0F);
+    input_and_a();
+    ret();
+}
+
+/* $80:B090 CpuThrottle (RTS): a CPU rider below its target speed
+ * $0236/$022E holds the throttle (input | $80), otherwise lets go of the
+ * buttons (CpuReleaseButtons). */
+void CpuThrottle_m1x1(void)
+{
+    ldy8(0x80);
+    lda8(rd8(ABSX(0x01C6)));
+    cmp8((u8)A, rd8(ABSX(0x0236)));
+    if (!fc) { input_or_y(); ret(); return; }
+    if (fz) {
+        lda8(rd8(ABSX(0x01BE)));
+        cmp8((u8)A, rd8(ABSX(0x022E)));
+        if (!fc) { input_or_y(); ret(); return; }
+    }
+    CpuReleaseButtons_m1x1();
+}
+
+/* $80:B0AD CpuReleaseDpad (RTS): input $017E & $F0. */
+void CpuReleaseDpad_m1x1(void)
+{
+    lda8(0xF0);
+    input_and_a();
+    ret();
+}
+
+/* $80:B0B6 CpuSteer (RTS): a CPU rider steers toward its wanted lean
+ * $0971 (when set): d-pad bit 0 (down) when the lean $01E6 is above it,
+ * bit 1 (up) when below. */
+void CpuSteer_m1x1(void)
+{
+    push16(0xB0B8); CpuReleaseDpad_m1x1();
+    ldy8(0x01);
+    lda8(rd8(ABSX(0x0971)));
+    if (fz) { ret(); return; }
+    cmp8((u8)A, rd8(ABSX(0x01E6)));
+    if (fz) { ret(); return; }
+    if (fc) Y = inc8((u8)Y);
+    input_or_y();
+    ret();
+}
+
+/* $80:CF8B QueuePlaceBadgeHud (RTS): with a place $086E, the place badge
+ * at VRAM $185A, attribute $20 (QueuePlaceBadge). */
+void QueuePlaceBadgeHud_m1x1(void)
+{
+    lda8(rd8(ABS(0x086E)));
+    if (fz) { ret(); return; }
+    lda8(0x5A); wr8(DP(0x00), 0x5A);
+    lda8(0x18); wr8(DP(0x01), 0x18);
+    lda8(0x20); wr8(DP(0x0F), 0x20);
+    QueuePlaceBadge_m1x1();
+}
+
+/* $80:CA98 DrawAllRiders (RTS, X = the last slot): DrawRider for every
+ * slot X..0 whose rider ($0950) is active ($01DE), OAM offset $80:BAC7,
+ * palette slot $80:BAD7 (the player blinking palette 5 during the coin
+ * turbo in races); the player's jump pose $16 adds the mirror image. */
+void DrawAllRiders_m1x1(void)
+{
+    for (;;) {
+        wr8(DP(0x0D), (u8)X);
+        lda8(rd8(ABSX(0xBAC7)));
+        wr8(DP(0x04), (u8)A);
+        lda8(rd8(ABS(0x0CE0)));
+        lda8(asl8((u8)A)); lda8(asl8((u8)A));
+        ora8(rd8(ABSX(0x0950)));
+        Y = (u8)A; nz8((u8)Y);
+        lda8(rd8(ABSX(0x0950)));
+        X = (u8)A; nz8((u8)X);
+        lda8(rd8(ABSX(0x01DE)));
+        if (!fz) {
+            lda8(rd8(ABSX(0xBAD7)));
+            wr8(DP(0x0B), (u8)A);
+            lda8(rd8(ABS(0x0CE0)));
+            if (!fz) {
+                lda8(rd8(DP(0x76)));
+                cmp8((u8)A, 0x03);
+                if (fz) {
+                    cmp8((u8)X, 0x00);
+                    if (fz) {
+                        lda8(rd8(DP(0x63)));
+                        and8(0x02);
+                        if (fz) { lda8(0x05); wr8(DP(0x0B), 0x05); }
+                    }
+                }
+            }
+            push16(0xCAD1); DrawRider_m1x1();
+        }
+        cmp8((u8)X, 0x00);
+        if (fz) {
+            lda8(rd8(DP(0xA8)));
+            cmp8((u8)A, 0x16);
+            if (fz) { push16(0xCADE); MirrorJumpRider_m1x1(); }
+        }
+        X = rd8(DP(0x0D)); nz8((u8)X);
+        X = dec8((u8)X);
+        if (fn) break;
+    }
+    ret();
+}
+
+/* $80:A457 ShowCourseRecord (RTS): with a record course $084C, show its
+ * time ($083A-$083C into the race clock) at the VRAM address from
+ * $80:97A5 (TickRaceClock), blinking: on even frames the time's queued
+ * tiles are blanked ($24). Then $88 = 1. */
+void ShowCourseRecord_m1x1(void)
+{
+    lda8(rd8(ABS(0x084C)));
+    if (!fz) {
+        lda8(rd8(ABS(0x083A))); wr8(ABS(0x03AE), (u8)A);
+        lda8(rd8(ABS(0x083B))); wr8(ABS(0x03AF), (u8)A);
+        lda8(rd8(ABS(0x083C))); wr8(ABS(0x03B0), (u8)A);
+        lda8(rd8(ABS(0x084C)));
+        lda8(dec8((u8)A));
+        lda8(asl8((u8)A));
+        X = (u8)A; nz8((u8)X);
+        lda8(rd8(ABSX(0x97A5))); wr8(DP(0x00), (u8)A);
+        lda8(rd8(ABSX(0x97A6))); wr8(DP(0x01), (u8)A);
+        push16(0xA480); TickRaceClock_m1x1();
+        lda8(rd8(DP(0x63)));
+        and8(0x01);
+        if (fz) {
+            lda8(rd8(LONG(0x7F0000)));
+            fc = 1; sbc8(0x27);
+            X = (u8)A; nz8((u8)X);
+            lda8(0x24);
+            static const u8 offs[] = { 0x00, 0x02, 0x04, 0x06, 0x08, 0x0A, 0x0C,
+                                       0x1A, 0x1C, 0x1E, 0x20, 0x22, 0x24, 0x26 };
+            for (unsigned i = 0; i < sizeof offs; i++)
+                wr8(LONG(0x7F0000 + offs[i] + (u8)X), 0x24);
+        }
+    }
+    lda8(0x01);
+    wr8(ABS(0x0088), 0x01);
+    ret();
+}

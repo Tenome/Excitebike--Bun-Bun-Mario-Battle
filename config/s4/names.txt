@@ -257,3 +257,10 @@
 80FB60 BoostOnTile
 80FC03 SlowTileCheck
 80FC41 LandFlat
+80B0A4 CpuReleaseButtons
+80B090 CpuThrottle
+80B0AD CpuReleaseDpad
+80B0B6 CpuSteer
+80CF8B QueuePlaceBadgeHud
+80CA98 DrawAllRiders
+80A457 ShowCourseRecord
