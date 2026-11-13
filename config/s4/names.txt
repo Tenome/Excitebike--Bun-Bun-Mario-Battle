@@ -381,3 +381,9 @@
 81B9DB ReleaseBalloons
 80997E EndScreenRecord
 81973F MoveObjectX8
+819604 ConfettiStep
+819554 EmptyStep9554
+80CA89 DrawAllRidersLong
+80F15B BuildScoreDigitsLong
+80C38B FlagRidersAtLine
+80AB46 BallOrGauge

@@ -8943,3 +8943,123 @@ void MoveObjectX8_m1x1(void)
     X = (u8)A; nz8((u8)X);
     MoveObjectX_m1x1();
 }
+
+void MoveObjectX8_m1x1(void);
+void SpeedGauge_m1x1(void);
+
+/* $81:9604 (RTS, Y = object): a falling confetti piece: its frame $011E
+ * cycles every 4 frames ($0126); it moves (X and X + 8), its sprite
+ * ($1610 + 2Y: position $0106 / $010E, tile and attribute from
+ * $81:966F / $81:9673 by frame, frame 0 from timer $F0 on, size 2),
+ * and when its timer $0146 wraps it goes to state 3 with a $20 wait. */
+void ConfettiStep_m1x1(void)
+{
+    X = Y; nz8((u8)X);
+    wr8(ABSX(0x0126), dec8(rd8(ABSX(0x0126))));
+    if (fz) {
+        lda8(rd8(ABSX(0x011E)));
+        lda8(inc8((u8)A));
+        and8(0x03);
+        wr8(ABSX(0x011E), (u8)A);
+        lda8(0x04); wr8(ABSX(0x0126), 0x04);
+    }
+    push8(0x81); push16(0x961B); MoveObjectX_m1x1();
+    push8((u8)X);
+    push8(0x81); push16(0x9620); MoveObjectX8_m1x1();
+    X = pull8(); nz8((u8)X);
+    lda8((u8)X);
+    lda8(asl8((u8)A));
+    Y = (u8)A; nz8((u8)Y);
+    lda8(rd8(ABSX(0x0106))); wr8(ABSY(0x1610), (u8)A);
+    lda8(rd8(ABSX(0x010E))); wr8(ABSY(0x1611), (u8)A);
+    lda8(rd8(ABSX(0x0146)));
+    cmp8((u8)A, 0xF0);
+    if (fc) lda8(0x00);
+    else lda8(rd8(ABSX(0x011E)));
+    push8((u8)X);
+    X = (u8)A; nz8((u8)X);
+    lda8(rd8(LONGX(0x81966F))); wr8(ABSY(0x1612), (u8)A);
+    lda8(rd8(LONGX(0x819673))); wr8(ABSY(0x1613), (u8)A);
+    X = pull8(); nz8((u8)X);
+    lda8((u8)Y);
+    lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
+    Y = (u8)A; nz8((u8)Y);
+    lda8(0x02); wr8(ABSY(0x1824), 0x02);
+    wr8(ABSX(0x0146), inc8(rd8(ABSX(0x0146))));
+    lda8(rd8(ABSX(0x0146)));
+    if (fz) {
+        lda8(0x03); wr8(ABSX(0x012E), 0x03);
+        lda8(0x20); wr8(ABSX(0x0126), 0x20);
+        wr8(ABSX(0x011E), 0);
+    }
+    ret();
+}
+
+/* $81:9554 (RTS): an empty confetti state. */
+void EmptyStep9554_m1x1(void)
+{
+    ret();
+}
+
+/* $80:CA89 (RTL): DrawAllRiders with DB = $80. */
+void DrawAllRidersLong_m1x1(void)
+{
+    push8(DB);
+    lda8(0x80); push8(0x80);
+    DB = pull8(); nz8(DB);
+    push16(0xCA90); DrawAllRiders_m1x1();
+    DB = pull8(); nz8(DB);
+    retl();
+}
+
+/* $80:F15B (RTL, 16-bit A): BuildScoreDigits for other banks. */
+void BuildScoreDigitsLong_m0x1(void)
+{
+    push16(0xF15D); BuildScoreDigits_m0x1();
+    retl();
+}
+
+/* $80:C38B (RTS): riders 7-1 on screen page 1 ($019E odd) at X $30-$3F
+ * flag $092D (cleared elsewhere on that page); Y is left $40 or $80. */
+void FlagRidersAtLine_m1x1(void)
+{
+    ldx8(0x08);
+    for (;;) {
+        X = dec8((u8)X);
+        if (fz) break;
+        lda8(rd8(ABSX(0x019E)));
+        lda8(lsr8((u8)A));
+        if (!fc) continue;
+        ldy8(0x40);
+        lda8(rd8(ABSX(0x0196)));
+        cmp8((u8)A, 0x30);
+        if (fc) {
+            ldy8(0x80);
+            cmp8((u8)A, 0x40);
+            if (!fc) { lda8(0x01); wr8(ABSX(0x092D), 0x01); continue; }
+        }
+        lda8(rd8(ABSX(0x092D)));
+        if (fz) continue;
+        lda8((u8)Y);
+        lda8(0x00);
+        wr8(ABSX(0x092D), 0x00);
+    }
+    ret();
+}
+
+/* $80:AB46 (RTS): on even frames the ball check; on frames 1 mod 4 the
+ * line flags and the speed gauge. */
+void BallOrGauge_m1x1(void)
+{
+    lda8(rd8(DP(0x63)));
+    lda8(lsr8((u8)A));
+    if (!fc) {
+        push16(0xAB4D); BallHit_m1x1();
+        ret();
+        return;
+    }
+    lda8(lsr8((u8)A));
+    if (fc) { ret(); return; }
+    push16(0xAB54); FlagRidersAtLine_m1x1();
+    SpeedGauge_m1x1();
+}

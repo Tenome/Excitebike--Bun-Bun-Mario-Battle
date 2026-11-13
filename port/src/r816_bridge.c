@@ -779,6 +779,19 @@ BRIDGE_DYN(HleHand_EndScreenRecord, EndScreenRecord_m1x1,
            20 + (g_ram[0x88] == 1 ? 680 : 0) +
            ((g_ram[0x88] <= 1 && (g_ram[0x26] & 0x80)) ? 1600 : 0))
 BRIDGE(HleHand_MoveObjectX8, MoveObjectX8_m1x1, 76)
+BRIDGE(HleHand_ConfettiStep, ConfettiStep_m1x1, 250)
+BRIDGE(HleHand_EmptyStep9554, EmptyStep9554_m1x1, 6)
+BRIDGE_DYN(HleHand_DrawAllRidersLong, DrawAllRidersLong_m1x1, 15 + draw_all_riders_cost())
+BRIDGE(HleHand_BuildScoreDigitsLong, BuildScoreDigitsLong_m0x1, 240)
+BRIDGE(HleHand_FlagRidersAtLine, FlagRidersAtLine_m1x1, 140)
+/* even frames: the ball check; frames 1 mod 4: line flags + speed gauge */
+static uint32 ball_or_gauge_cost(void)
+{
+    if (!(g_ram[0x63] & 1)) return 60;
+    if (g_ram[0x63] & 2) return 10;
+    return 160 + ((g_ram[0x092D] && !(g_ram[0x7F] & 1)) ? 260 : 15);
+}
+BRIDGE_AFTER(HleHand_BallOrGauge, BallOrGauge_m1x1, ball_or_gauge_cost())
 /* VramQueueTilesLong / QueueTileRowsLong ($80:B2D6 / $80:B431) are
  * verified but unhooked: trampolines whose cost is the callee's. */
 /* c/hand/s4/objects.c, part 26 */

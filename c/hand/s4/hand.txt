@@ -369,3 +369,9 @@
 81B9DB  1 1  mem+A,X,Y,C,V   ReleaseBalloons
 80997E  1 1  mem+A,X,Y,C,V   EndScreenRecord
 81973F  1 1  mem+A,X,Y,C,V   MoveObjectX8
+819604  1 1  mem+A,X,Y,C,V   ConfettiStep
+819554  1 1  mem+A,X,Y,C,V   EmptyStep9554
+80CA89  1 1  mem+A,X,Y,C,V   DrawAllRidersLong
+80F15B  0 1  mem+A,X,Y,C,V   BuildScoreDigitsLong
+80C38B  1 1  mem+A,X,Y,C,V   FlagRidersAtLine
+80AB46  1 1  mem+A,X,Y,C,V   BallOrGauge
