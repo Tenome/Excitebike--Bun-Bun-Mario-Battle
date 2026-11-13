@@ -722,6 +722,12 @@ BRIDGE(HleHand_RiderDropStep, RiderDropStep_m1x1, 60)
 BRIDGE_DYN(HleHand_RiderLanding, RiderLanding_m1x1, g_ram[0x01EE + (X & 0xFF)] ? 90 : 8)
 BRIDGE(HleHand_DrawShadowsAndMarkers, DrawShadowsAndMarkers_m1x1, 1200)
 BRIDGE(HleHand_StartModeWithSound, StartModeWithSound_m1x1, 130)
+/* eight riders' move, landing, land check and tick, then the scrolls */
+BRIDGE_DYN(HleHand_RaceMoveStep, RaceMoveStep_m1x1, g_ram[0x92] ? 2500 : 8)
+BRIDGE(HleHand_ScrollByPlayerSpeedLong, ScrollByPlayerSpeedLong_m1x1, 45)
+BRIDGE(HleHand_PlaceRiderShadowLong, PlaceRiderShadowLong_m1x1, 65)
+BRIDGE(HleHand_AddScoreLong, AddScoreLong_m1x1, 210)
+BRIDGE(HleHand_RiderJumpBase, RiderJumpBase_m1x1, 50)
 /* VramQueueTilesLong / QueueTileRowsLong ($80:B2D6 / $80:B431) are
  * verified but unhooked: trampolines whose cost is the callee's. */
 /* c/hand/s4/objects.c, part 26 */

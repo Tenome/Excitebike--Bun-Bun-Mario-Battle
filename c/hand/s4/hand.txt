@@ -338,3 +338,8 @@
 80BF5C  1 1  mem+A,X,Y,C,V   RiderLanding
 80FD7E  1 1  mem+A,X,Y,C,V   DrawShadowsAndMarkers
 8089B4  1 1  mem+A,X,Y,C,V   StartModeWithSound
+80BCBD  1 1  mem+A,X,Y,C,V   RaceMoveStep
+80BD09  1 1  mem+A,X,Y,C,V   ScrollByPlayerSpeedLong
+80CE8C  1 1  mem+A,X,Y,C,V   PlaceRiderShadowLong
+80FE64  1 1  mem+A,X,Y,C,V   AddScoreLong
+80F9A5  1 1  mem+A,X,Y,C,V   RiderJumpBase

@@ -350,3 +350,8 @@
 80BF5C RiderLanding
 80FD7E DrawShadowsAndMarkers
 8089B4 StartModeWithSound
+80BCBD RaceMoveStep
+80BD09 ScrollByPlayerSpeedLong
+80CE8C PlaceRiderShadowLong
+80FE64 AddScoreLong
+80F9A5 RiderJumpBase

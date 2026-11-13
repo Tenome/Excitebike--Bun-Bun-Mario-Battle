@@ -7969,3 +7969,90 @@ void StartModeWithSound_m1x1(void)
     push8(0x80); push16(0x89C7); QueueSoundB_m1x1();
     FinishModeSetup_m1x1();
 }
+
+void AddSpeedToX_m1x1(void);
+void RiderLanding_m1x1(void);
+void RiderLandCheck_m1x1(void);
+void Tick08CC_m1x1(void);
+void ScrollByPlayerSpeed_m1x1(void);
+void ScrollRivalsRelative_m1x1(void);
+void SetJumpBase_m1x1(void);
+void PlaceRiderShadow_m1x1(void);
+void AddScore_m1x1(void);
+
+/* $80:BCBD (RTS): while racing ($92), every rider moves, lands and ticks
+ * ($08CC); the screen scrolls with the player and the rivals follow; the
+ * player's speed high byte $0186 adds into the distance ($0994 fraction,
+ * $93), flipping $91 on each carry out. */
+void RaceMoveStep_m1x1(void)
+{
+    lda8(rd8(DP(0x92)));
+    if (fz) { ret(); return; }
+    ldx8(0x07);
+    do {
+        push16(0xBCC5); AddSpeedToX_m1x1();
+        push16(0xBCC8); RiderLanding_m1x1();
+        push16(0xBCCB); RiderLandCheck_m1x1();
+        push16(0xBCCE); Tick08CC_m1x1();
+        X = dec8((u8)X);
+    } while (!fn);
+    push16(0xBCD4); ScrollByPlayerSpeed_m1x1();
+    push16(0xBCD7); ScrollRivalsRelative_m1x1();
+    lda8(rd8(ABS(0x0186)));
+    lda8(lsr8((u8)A)); lda8(ror8((u8)A)); lda8(ror8((u8)A)); lda8(ror8((u8)A));
+    fc = 0; adc8(rd8(ABS(0x0994)));
+    wr8(ABS(0x0994), (u8)A);
+    lda8(rd8(ABS(0x0186)));
+    adc8(rd8(DP(0x93)));
+    wr8(DP(0x93), (u8)A);
+    if (fc) {
+        lda8(rd8(DP(0x91)));
+        eor8(0x01);
+        wr8(DP(0x91), (u8)A);
+    }
+    ret();
+}
+
+/* $80:BD09 (RTL): ScrollByPlayerSpeed for other banks. */
+void ScrollByPlayerSpeedLong_m1x1(void)
+{
+    push16(0xBD0B); ScrollByPlayerSpeed_m1x1();
+    retl();
+}
+
+/* $80:CE8C (RTL): PlaceRiderShadow with DB = $80. */
+void PlaceRiderShadowLong_m1x1(void)
+{
+    push8(DB);
+    lda8(0x80); push8(0x80);
+    DB = pull8(); nz8(DB);
+    push16(0xCE93); PlaceRiderShadow_m1x1();
+    DB = pull8(); nz8(DB);
+    retl();
+}
+
+/* $80:FE64 (RTL): AddScore for other banks. */
+void AddScoreLong_m1x1(void)
+{
+    push16(0xFE66); AddScore_m1x1();
+    retl();
+}
+
+/* $80:F9A5 (RTS, X = rider): SetRiderPair(4), the jump base at 8 (+$10
+ * more when $0206 is set), and $0246 = $40. */
+void RiderJumpBase_m1x1(void)
+{
+    lda8(0x04);
+    push16(0xF9A9); SetRiderPair_m1x1();
+    lda8(asl8((u8)A));
+    push16(0xF9AD); SetJumpBase_m1x1();
+    lda8(rd8(ABSX(0x0206)));
+    if (!fz) {
+        lda8(rd8(ABSX(0x01FE)));
+        fc = 0; adc8(0x10);
+        push16(0xF9BB); SetJumpBase_m1x1();
+    }
+    lda8(0x40);
+    wr8(ABSX(0x0246), 0x40);
+    ret();
+}
