@@ -153,3 +153,17 @@ table_lo:
     pace_target();
     ret();
 }
+
+/* $80:889B Mode02_SegmentCard (RTS): the course card waits for its minute
+ * ($80:88AF by course $7C * 2 + final $7D), then the next mode. */
+void Mode02_SegmentCard_m1x1(void)
+{
+    lda8(rd8(DP(0x7C)));
+    lda8(asl8((u8)A));
+    fc = 0; adc8(rd8(DP(0x7D)));
+    X = (u8)A; nz8((u8)X);
+    lda8(rd8(LONG(0x7FFFFF)));
+    cmp8((u8)A, rd8(ABSX(0x88AF)));
+    if (!fc) { ret(); return; }
+    NextMode_m1x1();
+}

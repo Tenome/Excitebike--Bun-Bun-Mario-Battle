@@ -282,3 +282,4 @@
 80D656  1 1  mem+X,Y,C,V     StartBonusCourse
 809FF3  1 1  mem+X,Y,C,V     ShowEntryCode
 819F3A  1 1  mem+X,C,V       SteerObjectStep
+80889B  1 1  mem+X,Y,C,V     Mode02_SegmentCard

@@ -1,15 +1,15 @@
 {
  "measures": {
-  "fuzzy_match_percent": 77.7105,
+  "fuzzy_match_percent": 77.7376,
   "total_code": "36930",
-  "matched_code": "20600",
-  "matched_code_percent": 55.7812,
+  "matched_code": "20620",
+  "matched_code_percent": 55.8354,
   "total_data": "0",
   "matched_data": "0",
   "matched_data_percent": 0.0,
   "total_functions": 532,
-  "matched_functions": 278,
-  "matched_functions_percent": 52.2556,
+  "matched_functions": 279,
+  "matched_functions_percent": 52.4436,
   "complete_code": "0",
   "complete_code_percent": 0.0,
   "complete_data": "0",
@@ -21,16 +21,16 @@
   {
    "name": "main/bank80",
    "measures": {
-    "fuzzy_match_percent": 78.9348,
+    "fuzzy_match_percent": 78.9753,
     "total_code": "24671",
-    "matched_code": "14410",
-    "matched_code_percent": 58.4087,
+    "matched_code": "14430",
+    "matched_code_percent": 58.4897,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 357,
-    "matched_functions": 183,
-    "matched_functions_percent": 51.2605,
+    "matched_functions": 184,
+    "matched_functions_percent": 51.5406,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -42,7 +42,7 @@
     {
      "name": ".text",
      "size": "24671",
-     "fuzzy_match_percent": 78.9348
+     "fuzzy_match_percent": 78.9753
     }
    ],
    "functions": [
@@ -137,7 +137,7 @@
     {
      "name": "Mode02_SegmentCard",
      "size": "20",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8423579"
      }
