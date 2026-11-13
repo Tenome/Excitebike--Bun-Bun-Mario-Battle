@@ -181,3 +181,10 @@
 80DDA7  1 1  mem+A,X,Y,C,V   PlayerStop
 80DD82  1 1  mem+A,X,Y,C,V   PlayerColumnCheck
 80D31F  1 1  mem+A,X,Y,C,V   MarkerObjectStep
+80E8B9  1 1  mem+A,X,Y,C,V   LanePieceAt
+80E8B4  1 1  mem+A,X,Y,C,V   RiderPieceAt
+80E8D5  1 1  mem+A,X,Y,C,V   LanePieceTablesLong
+8099BB  1 1  mem+A,X,Y,C,V   Mode0F_EndScreen
+80DE07  1 1  mem+X,Y,C,V     Mode0A
+80C805  1 1  mem+X,Y,C,V     ShowRaceClock
+80C7EB  1 1  mem+X,Y,C,V     TickRaceClock

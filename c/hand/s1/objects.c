@@ -386,3 +386,131 @@ void MarkerObjectStep_m1x1(void)
     }
     retl();
 }
+
+void LanePieceTables_m1x1(void);
+void BsxCheckSerial_m1x1(void);
+void AnimSourceFromFrame_m1x1(void);
+void EmptyHook_m1x1(void);
+void VramQueueTiles20_m1x1(void);
+
+/* $80:E8B9 LanePieceAt (RTS, Y = lane, $08 = column): lane Y's row
+ * pointer, $07 = lane, the piece's height byte into $10 and A = its type
+ * byte ($0180 further on). */
+static void lane_piece1(void)
+{
+    push16(0xE8BB); LanePieceTables_m1x1();
+    wr8(DP(0x07), (u8)Y);
+    Y = rd8(DP(0x08)); nz8((u8)Y);
+    lda8(rd8((((u32)DB << 16) + rd16(DP(0x03)) + Y) & 0xFFFFFF));
+    wr8(DP(0x10), (u8)A);
+    push8((u8)Y);
+    rep(0x30);
+    lda16(Y);
+    fc = 0; adc16(0x0180);
+    Y = A; nz16(Y);
+    sep(0x20);
+    lda8(rd8((((u32)DB << 16) + rd16(DP(0x03)) + Y) & 0xFFFFFF));
+    sep(0x10);
+    Y = pull8(); nz8((u8)Y);
+    ret();
+}
+
+void LanePieceAt_m1x1(void) { lane_piece1(); }
+
+/* $80:E8B4 RiderPieceAt (RTS, Y = lane): LanePieceAt at rider X's wheel
+ * column $0260. */
+void RiderPieceAt_m1x1(void)
+{
+    lda8(rd8(ABSX(0x0260)));
+    wr8(DP(0x08), (u8)A);
+    lane_piece1();
+}
+
+/* $80:E8D5 LanePieceTablesLong (RTL): LanePieceTables with DB = $80. */
+void LanePieceTablesLong_m1x1(void)
+{
+    push8(DB);
+    lda8(0x80); push8(0x80);
+    DB = pull8(); nz8(DB);
+    push16(0xE8DC); LanePieceTables_m1x1();
+    DB = pull8(); nz8(DB);
+    retl();
+}
+
+/* $80:99BB Mode0F_EndScreen (RTS): the serial check, then the end-screen
+ * step $0453 through $80:99D1 (JMP ($0000)). */
+void Mode0F_EndScreen_m1x1(void)
+{
+    push16(0x99BD); BsxCheckSerial_m1x1();
+    lda8(rd8(ABS(0x0453)));
+    lda8(asl8((u8)A));
+    X = (u8)A; nz8((u8)X);
+    lda8(rd8(ABSX(0x99D1))); wr8(DP(0x00), (u8)A);
+    lda8(rd8(ABSX(0x99D2))); wr8(DP(0x01), (u8)A);
+    r816_call_pc(0x800000u | rd16(LONG(0x000000)));
+}
+
+/* $80:DE07 Mode0A (RTS): the bonus course: its animation source, the
+ * empty hook, then (once $3A is clear) its step $77 through $80:DE1B. */
+void Mode0A_m1x1(void)
+{
+    push8(0x80); push16(0xDE0A); AnimSourceFromFrame_m1x1();
+    push8(0x80); push16(0xDE0E); EmptyHook_m1x1();
+    lda8(rd8(DP(0x3A)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(DP(0x77)));
+    lda8(asl8((u8)A));
+    X = (u8)A; nz8((u8)X);
+    r816_call_pc(0x800000u | rd16(LONGX(0x80DE1B)));
+}
+
+/* $80:C805 ShowRaceClock (RTS): the race time $03B1 (minutes), $03B2
+ * (seconds) and $03B3 (frames -> hundredths, $80:C6CE) as two-row digits
+ * at $03D2 (from the digit pairs $80:C70A), queued with $0F = $20. */
+void ShowRaceClock_m1x1(void)
+{
+    rep(0x20);
+    lda16(0x03D2); wr16(DP(0x02), 0x03D2);
+    X = rd8(ABS(0x03B3)); nz8((u8)X);
+    lda16(rd16(ABSX(0xC6CE)));
+    lda16(asl16(A));
+    X = (u8)A; nz8((u8)X);
+    lda16(rd16(ABSX(0xC70A))); wr16(ABS(0x03D8), A);
+    lda16(rd16(ABS(0x03B2)));
+    lda16(asl16(A));
+    X = (u8)A; nz8((u8)X);
+    lda16(rd16(ABSX(0xC70A))); wr16(ABS(0x03D5), A);
+    sep(0x20);
+    lda8(rd8(ABS(0x03B1))); wr8(ABS(0x03D3), (u8)A);
+    lda8(0x27); wr8(ABS(0x03D2), 0x27);
+    rep(0x20);
+    lda16(rd16(ABS(0x03D3))); ora16(0x9750); wr16(ABS(0x03D3), A);
+    fc = 0; adc16(0x6510); wr16(ABS(0x03DA), A);
+    lda16(rd16(ABS(0x03D5))); ora16(0x5050); wr16(ABS(0x03D5), A);
+    fc = 0; adc16(0x1010); wr16(ABS(0x03DC), A);
+    lda16(rd16(ABS(0x03D7))); ora16(0x5098); wr16(ABS(0x03D7), A);
+    fc = 0; adc16(0x1064); wr16(ABS(0x03DE), A);
+    sep(0x20);
+    lda8(rd8(ABS(0x03D9))); ora8(0x50); wr8(ABS(0x03D9), (u8)A);
+    fc = 0; adc8(0x10); wr8(ABS(0x03E0), (u8)A);
+    VramQueueTiles20_m1x1();
+}
+
+/* $80:C7EB TickRaceClock (RTS): at 60 frames ($03B3) carry into the
+ * seconds $03B2 and at 60 into the minutes $03B1; then ShowRaceClock. */
+void TickRaceClock_m1x1(void)
+{
+    lda8(rd8(ABS(0x03B3)));
+    cmp8((u8)A, 0x3C);
+    if (fc) {
+        wr8(ABS(0x03B2), inc8(rd8(ABS(0x03B2))));
+        lda8(rd8(ABS(0x03B2)));
+        cmp8((u8)A, 0x3C);
+        if (fc) {
+            wr8(ABS(0x03B1), inc8(rd8(ABS(0x03B1))));
+            wr8(ABS(0x03B2), 0);
+        }
+        wr8(ABS(0x03B3), 0);
+    }
+    ShowRaceClock_m1x1();
+}

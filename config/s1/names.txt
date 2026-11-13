@@ -203,3 +203,10 @@
 80DDA7 PlayerStop
 80DD82 PlayerColumnCheck
 80D31F MarkerObjectStep
+80E8B9 LanePieceAt
+80E8B4 RiderPieceAt
+80E8D5 LanePieceTablesLong
+8099BB Mode0F_EndScreen
+80DE07 Mode0A
+80C805 ShowRaceClock
+80C7EB TickRaceClock

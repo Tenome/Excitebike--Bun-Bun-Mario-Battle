@@ -397,6 +397,13 @@ BRIDGE(HleHand_PlayerHalt, PlayerHalt_m1x1, 30)
 BRIDGE(HleHand_PlayerStop, PlayerStop_m1x1, 40)
 BRIDGE(HleHand_PlayerColumnCheck, PlayerColumnCheck_m1x1, 60)
 BRIDGE(HleHand_MarkerObjectStep, MarkerObjectStep_m1x1, 260)
+BRIDGE(HleHand_LanePieceAt, LanePieceAt_m1x1, 58)
+BRIDGE(HleHand_RiderPieceAt, RiderPieceAt_m1x1, 63)
+BRIDGE(HleHand_LanePieceTablesLong, LanePieceTablesLong_m1x1, 36)
+BRIDGE(HleHand_Mode0F_EndScreen, Mode0F_EndScreen_m1x1, 190)
+BRIDGE(HleHand_Mode0A, Mode0A_m1x1, 120)
+BRIDGE(HleHand_ShowRaceClock, ShowRaceClock_m1x1, 1320)
+BRIDGE(HleHand_TickRaceClock, TickRaceClock_m1x1, 1340)
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */
