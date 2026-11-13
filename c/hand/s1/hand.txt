@@ -205,3 +205,7 @@
 809A52  1 1  mem+A,X,Y,C,V   EndScreenScore
 809AF9  1 1  mem+A,X,Y,C,V   EndScreenCode
 80C3B3  1 1  mem+A,X,Y,C,V   StartJump
+80AC9C  1 1  mem+A,X,Y,C,V   RiderOnRamp
+80CB47  1 1  mem+A,X,Y,C,V   BallHit
+81A126  1 1  mem+A,X,Y,C,V   SelectWheelPosition
+80C04B  1 1  mem+A,X,Y,C,V   UpdateRiderDistances

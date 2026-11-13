@@ -227,3 +227,7 @@
 809A52 EndScreenScore
 809AF9 EndScreenCode
 80C3B3 StartJump
+80AC9C RiderOnRamp
+80CB47 BallHit
+81A126 SelectWheelPosition
+80C04B UpdateRiderDistances

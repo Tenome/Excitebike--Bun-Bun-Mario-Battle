@@ -1053,3 +1053,196 @@ void StartJump_m1x1(void)
     if (fz) lda8(0x08);
     ret();
 }
+
+/* $80:AC9C RiderOnRamp (RTS): Stadium 4's $80:ACD6 with Stadium 1's
+ * addresses (piece $0210, table $80:ACF9, air $0208, fall $01B0). */
+void RiderOnRamp_m1x1(void)
+{
+    Y = rd8(ABSX(0x0210)); nz8((u8)Y);
+    lda8(rd8(ABSY(0xACF9)));
+    if (fz) {
+        lda8(0x03);
+        cmp8((u8)A, rd8(ABSX(0x0208)));
+        int ramp = 0;
+        if (fz) {
+            lda8(rd8(ABSX(0x0958)));
+            cmp8((u8)A, 0x03);
+            ramp = fc;
+        }
+        if (!ramp) {
+            lda8(rd8(ABSX(0x0958)));
+            if (!fz) {
+                lda8(0x01);
+                cmp8((u8)A, rd8(ABSX(0x08BC)));
+                if (fz) { ret(); return; }
+                lda8(lsr8((u8)A));
+                wr8(ABSX(0x08BC), (u8)A);
+                ret();
+                return;
+            }
+        }
+    }
+    lda8(0x01);
+    cmp8((u8)A, rd8(ABSX(0x08BC)));
+    if (!fz) {
+        push8((u8)A);
+        lda8(rd8(DP(0x76)));
+        cmp8((u8)A, 0x09);
+        if (fz) {
+            lda8(rd8(ABSY(0xACF9)));
+            if (fn) {
+                lda8(rd8(ABS(0x08BC)));
+                if (fz) {
+                    lda8(rd8(ABS(0x01B0)));
+                    cmp8((u8)A, 0xB0);
+                    if (fz) {
+                        lda8(0x46);
+                        push8(0x80); push16(0xACDB); QueueSound_m1x1();
+                    }
+                }
+            }
+        }
+        lda8(pull8());
+        lda8(asl8((u8)A));
+        wr8(ABSX(0x08BC), (u8)A);
+    }
+    lda8((u8)X);
+    if (fz) {
+        lda8(rd8(ABS(0x01B8)));
+        ora8(rd8(ABS(0x01C0)));
+    }
+    ret();
+}
+
+void GroundHeightAbove_m1x1(void);
+
+/* $80:CB47 BallHit (RTS): Stadium 4's $80:C997 with Stadium 1's
+ * addresses: the player running into the ball stops (A = 1). */
+void BallHit_m1x1(void)
+{
+    lda8(rd8(ABS(0x01D0)));
+    ora8(rd8(ABS(0x0940)));
+    if (!fz) { ret(); return; }
+    X = (u8)A; nz8((u8)X);
+    lda8(rd8(ABS(0x019B)));
+    lda8(lsr8((u8)A));
+    if (!fc) { ret(); return; }
+    lda8(rd8(ABS(0x08C7)));
+    if (fz) { ret(); return; }
+    lda8(rd8(ABS(0x01F0)));
+    fc = 1; sbc8(0x03);
+    cmp8((u8)A, rd8(ABS(0x097C)));
+    if (fc) { ret(); return; }
+    adc8(0x07);
+    cmp8((u8)A, rd8(ABS(0x097C)));
+    if (!fc) { ret(); return; }
+    lda8(rd8(ABS(0x0190)));
+    cmp8((u8)A, rd8(ABS(0x090F)));
+    if (fc) { ret(); return; }
+    adc8(0x12);
+    cmp8((u8)A, rd8(ABS(0x090F)));
+    if (!fc) { ret(); return; }
+    push16(0xCB7E); GroundHeightAbove_m1x1();
+    fc = 1; sbc8(0x08);
+    cmp8((u8)A, rd8(ABS(0x01B0)));
+    if (fc) { ret(); return; }
+    ldy8(0xFF); wr8(ABS(0x01C8), 0xFF);
+    Y = inc8((u8)Y); wr8(ABS(0x01AB), (u8)Y);
+    Y = inc8((u8)Y); wr8(ABS(0x01D3), (u8)Y);
+    Y = inc8((u8)Y); wr8(ABS(0x091F), (u8)Y);
+    lda8(0x01);
+    ret();
+}
+
+void SinCos_m1x1(void);
+
+/* $81:A126 (RTL, X = wheel): a select-screen wheel at angle $1547,X on a
+ * radius $40 around ($68, $50) into $154C / $1550; for wheel 0 a click
+ * (sound $41, $154B cleared) at the notches ($00 / $56 / $AA, or every
+ * $40 with $1E8B) while $154B is set and no d-pad is held. */
+void SelectWheelPosition_m1x1(void)
+{
+    push8((u8)X);
+    lda8(0x40); wr8(DP(0x08), 0x40);
+    lda8(rd8(ABSX(0x1547)));
+    X = (u8)A; nz8((u8)X);
+    push8(0x81); push16(0xA132); SinCos_m1x1();
+    X = pull8(); nz8((u8)X);
+    lda8(0x68);
+    fc = 0; adc8(rd8(DP(0x04)));
+    wr8(ABSX(0x154C), (u8)A);
+    lda8(0x50);
+    fc = 0; adc8(rd8(DP(0x00)));
+    wr8(ABSX(0x1550), (u8)A);
+    cmp8((u8)X, 0x00);
+    if (!fz) { retl(); return; }
+    int notch;
+    lda8(rd8(ABS(0x1E8B)));
+    if (!fz) {
+        lda8(rd8(ABSX(0x1547)));
+        and8(0x3F);
+        notch = fz;
+    } else {
+        lda8(rd8(ABS(0x1547)));
+        notch = fz;
+        if (!notch) { cmp8((u8)A, 0x56); notch = fz; }
+        if (!notch) { cmp8((u8)A, 0xAA); notch = fz; }
+    }
+    if (!notch) { retl(); return; }
+    lda8(rd8(ABS(0x154B)));
+    if (fz) { retl(); return; }
+    lda8(rd8(ABS(0x154B)));
+    if (fz) { retl(); return; }
+    lda8(rd8(DP(0x20)));
+    and8(0x03);
+    if (!fz) { retl(); return; }
+    lda8(0x41);
+    push8(0x81); push16(0xA178); QueueSound_m1x1();
+    wr8(ABS(0x154B), 0);
+    retl();
+}
+
+/* $80:C04B (RTS): during a race with rivals ($7D, $8E, not $84) each
+ * rider's distance $085E: riders on the track from their position
+ * ($0198:$0190 + $94 - $0100), the others advanced by their speed
+ * ($0158 fraction + $0D01). */
+void UpdateRiderDistances_m1x1(void)
+{
+    lda8(rd8(DP(0x7D)));
+    if (fz) { ret(); return; }
+    lda8(rd8(DP(0x8E)));
+    if (fz) { ret(); return; }
+    lda8(rd8(DP(0x84)));
+    if (!fz) { ret(); return; }
+    rep(0x20);
+    ldy8(0x0E);
+    ldx8(0x07);
+    do {
+        lda16(rd16(ABSX(0x01D8)));
+        and16(0x00FF);
+        if (!fz) {
+            lda16(rd16(ABSX(0x0190))); wr16(DP(0x00), A);
+            lda16(rd16(ABSX(0x0198))); wr16(DP(0x01), A);
+            lda16(rd16(DP(0x00)));
+            fc = 0; adc16(rd16(DP(0x94)));
+            fc = 1; sbc16(0x0100);
+            wr16(ABSY(0x085E), A);
+        } else {
+            lda16(rd16(ABSY(0x0158)));
+            fc = 0; adc16(rd16(ABSY(0x0D01)));
+            push16(A);
+            and16(0x00FF);
+            wr16(ABSY(0x0158), A);
+            lda16(pull16());
+            A = (u16)((A >> 8) | (A << 8)); nz8((u8)A);
+            and16(0x00FF);
+            fc = 0; adc16(rd16(ABSY(0x085E)));
+            wr16(ABSY(0x085E), A);
+        }
+        X = dec8((u8)X);
+        Y = dec8((u8)Y);
+        Y = dec8((u8)Y);
+    } while (!fn);
+    sep(0x20);
+    ret();
+}
