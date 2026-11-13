@@ -139,26 +139,16 @@
 8195EE  1 1  mem+Y,C,V      StepSpark
 80D038  1 1  mem+X,Y,C,V    ClearMidScreenRiders
 80A0AA  1 1  mem+X,Y,C,V    BsxCheckSerial
-81A17D  1 1  mem+Y          SinCos                 # from s4 81A29C
 80CB39  1 1  mem+A,X,Y,V    Reach20                # from s4 80C989
 80CB40  1 1  mem+A,X,Y,V    Reach2                 # from s4 80C990
-80BF29  1 1  mem+X,Y,C,V    RiderStartLane         # from s4 80BC41
-819481  1 1  mem+Y,C,V      StepFallingSprite      # from s4 819555
-80CFFA  1 1  mem            SortRidersByPosition   # from s4 80CE1F
-80C2EF  1 1  mem+X,Y,C,V    SetRiderLean           # from s4 80C057
-819623  1 1  mem+Y,C,V      DrawSpark              # from s4 8196F7
-819362  1 1  mem+X,Y,V      SpawnDustPuff          # from s4 819436
-819670  1 1  mem+X,V        MoveObjectX            # from s4 819744
-8194BE  1 1  mem+Y,C,V      DrawDustPair           # from s4 819592
 819957  1 1  mem+V          FadeSkyColours         # from s4 819A27
-80B17B  1 1  mem+X,Y,V      DrawBigSprite          # from s4 80B22B
-8193E2  1 1  mem+X,Y,C,V    SpawnExhaust           # from s4 8194B6
 80D198  1 1  mem+Y,C,V      MirrorJumpRider        # from s4 80D013
-819C98  1 1  mem+V          VelocityDirection      # from s4 819D71
-819D0B  1 1  mem+Y,V        DrawBigBall            # from s4 819DE4
 818C33  1 1  mem+X,Y        CopyTrackColumn        # from s4 818C3C
-80AFE9  1 1  mem+X,Y,V      CpuReleaseButtons      # from s4 80B0A4
-819F8C  1 1  mem+X,V        AimRatio               # from s4 81A065
-80BE3E  1 1  mem+X,Y,C,V    RiderRunOut            # from s4 80BB56
 81F9C8  0 0  mem+Y,C        BsxFindFile            # from s4 81F9C8
 809E8E  1 1  mem+X,Y,C,V    Mode11                 # from s4 809DBD
+80ED96  1 1  mem+X,Y,C,V    ItemFlashState         # from s4 80FE3A
+81A961  1 1  mem+A,X,Y,C,V  EmptyHook              # from s4 81AC0B
+80D345  1 1  mem+A,X,Y,C,V  StepObjectX8           # from s4 80D169
+819754  1 1  mem+A,X,Y,C,V  EmptyStep9828          # from s4 819828
+819480  1 1  mem+A,X,Y,C,V  EmptyStep9554          # from s4 819554
+80C5FE  1 1  mem+A,X,Y,C,V  FlagRidersAtLine       # from s4 80C38B

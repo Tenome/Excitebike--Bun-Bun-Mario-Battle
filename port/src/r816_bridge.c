@@ -378,6 +378,12 @@ BRIDGE(HleHand_CpuReleaseButtons, CpuReleaseButtons_m1x1, 25)
 BRIDGE_DYN(HleHand_AimRatio, AimRatio_m1x1, (A & 0xFF) ? 120 + 25 * (A & 0xFF) : 15)
 BRIDGE(HleHand_RiderRunOut, RiderRunOut_m1x1, 50)
 BRIDGE(HleHand_Mode11, Mode11_m1x1, 30)
+BRIDGE(HleHand_ItemFlashState, ItemFlashState_m1x1, 30)
+BRIDGE(HleHand_EmptyHook, EmptyHook_m1x1, 5)
+BRIDGE(HleHand_StepObjectX8, StepObjectX8_m1x1, 88)
+BRIDGE(HleHand_EmptyStep9828, EmptyStep9828_m1x1, 6)
+BRIDGE(HleHand_EmptyStep9554, EmptyStep9554_m1x1, 6)
+BRIDGE(HleHand_FlagRidersAtLine, FlagRidersAtLine_m1x1, 140)
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */

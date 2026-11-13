@@ -920,3 +920,78 @@ void Mode11_m1x1(void)
     sep(0x20);
     ret();
 }
+
+void StepObjectX_m1x1(void);
+
+/* $80:ED96 ItemFlashState (RTS): the item-hit flash $5E: cleared when the
+ * race is over or overheated; while it runs returns X = 6 (and A = $40 on
+ * its odd steps from $0D) or X = 0 on even steps from $0D, Y = 7. */
+void ItemFlashState_m1x1(void)
+{
+    lda8(rd8(DP(0x84)));
+    ora8(rd8(DP(0x60)));
+    if (!fz) { lda8(0x00); wr8(DP(0x5E), 0x00); ret(); return; }
+    lda8(rd8(DP(0x5E)));
+    if (fz) { ret(); return; }
+    ldx8(0x00);
+    ldy8(0x07);
+    lda8(rd8(DP(0x5E)));
+    cmp8((u8)A, 0x0D);
+    if (fc) {
+        lda8(lsr8((u8)A));
+        if (!fc) { ret(); return; }
+        lda8(0x40);
+    }
+    ldx8(0x06);
+    ret();
+}
+/* $81:A961 (RTL): an empty hook. */
+void EmptyHook_m1x1(void)
+{
+    retl();
+}
+/* $80:D345 (RTL): StepObjectX for object X + 8. */
+void StepObjectX8_m1x1(void)
+{
+    lda8((u8)X);
+    fc = 0; adc8(0x08);
+    X = (u8)A; nz8((u8)X);
+    StepObjectX_m1x1();
+}
+/* $81:9754 (RTS): an empty step. */
+void EmptyStep9828_m1x1(void)
+{
+    ret();
+}
+/* $81:9480 (RTS): an empty confetti state. */
+void EmptyStep9554_m1x1(void)
+{
+    ret();
+}
+/* $80:C5FE (RTS): riders 7-1 on screen page 1 ($019E odd) at X $30-$3F
+ * flag $092D (cleared elsewhere on that page); Y is left $40 or $80. */
+void FlagRidersAtLine_m1x1(void)
+{
+    ldx8(0x08);
+    for (;;) {
+        X = dec8((u8)X);
+        if (fz) break;
+        lda8(rd8(ABSX(0x019E)));
+        lda8(lsr8((u8)A));
+        if (!fc) continue;
+        ldy8(0x40);
+        lda8(rd8(ABSX(0x0196)));
+        cmp8((u8)A, 0x30);
+        if (fc) {
+            ldy8(0x80);
+            cmp8((u8)A, 0x40);
+            if (!fc) { lda8(0x01); wr8(ABSX(0x092D), 0x01); continue; }
+        }
+        lda8(rd8(ABSX(0x092D)));
+        if (fz) continue;
+        lda8((u8)Y);
+        lda8(0x00);
+        wr8(ABSX(0x092D), 0x00);
+    }
+    ret();
+}
