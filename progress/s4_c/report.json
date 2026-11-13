@@ -1,15 +1,15 @@
 {
  "measures": {
-  "fuzzy_match_percent": 77.3409,
+  "fuzzy_match_percent": 77.7105,
   "total_code": "36930",
-  "matched_code": "20327",
-  "matched_code_percent": 55.042,
+  "matched_code": "20600",
+  "matched_code_percent": 55.7812,
   "total_data": "0",
   "matched_data": "0",
   "matched_data_percent": 0.0,
   "total_functions": 532,
-  "matched_functions": 276,
-  "matched_functions_percent": 51.8797,
+  "matched_functions": 278,
+  "matched_functions_percent": 52.2556,
   "complete_code": "0",
   "complete_code_percent": 0.0,
   "complete_data": "0",
@@ -21,16 +21,16 @@
   {
    "name": "main/bank80",
    "measures": {
-    "fuzzy_match_percent": 78.6814,
+    "fuzzy_match_percent": 78.9348,
     "total_code": "24671",
-    "matched_code": "14285",
-    "matched_code_percent": 57.902,
+    "matched_code": "14410",
+    "matched_code_percent": 58.4087,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 357,
-    "matched_functions": 182,
-    "matched_functions_percent": 50.9804,
+    "matched_functions": 183,
+    "matched_functions_percent": 51.2605,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -42,7 +42,7 @@
     {
      "name": ".text",
      "size": "24671",
-     "fuzzy_match_percent": 78.6814
+     "fuzzy_match_percent": 78.9348
     }
    ],
    "functions": [
@@ -575,9 +575,9 @@
      }
     },
     {
-     "name": "sub_809FF3",
+     "name": "ShowEntryCode",
      "size": "125",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8429555"
      }
@@ -2911,16 +2911,16 @@
   {
    "name": "main/bank81",
    "measures": {
-    "fuzzy_match_percent": 76.7707,
+    "fuzzy_match_percent": 77.6486,
     "total_code": "8429",
-    "matched_code": "4513",
-    "matched_code_percent": 53.5413,
+    "matched_code": "4661",
+    "matched_code_percent": 55.2972,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 137,
-    "matched_functions": 75,
-    "matched_functions_percent": 54.7445,
+    "matched_functions": 76,
+    "matched_functions_percent": 55.4745,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -2932,7 +2932,7 @@
     {
      "name": ".text",
      "size": "8429",
-     "fuzzy_match_percent": 76.7707
+     "fuzzy_match_percent": 77.6486
     }
    ],
    "functions": [
@@ -3225,9 +3225,9 @@
      }
     },
     {
-     "name": "sub_819F3A",
+     "name": "SteerObjectStep",
      "size": "148",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8494906"
      }

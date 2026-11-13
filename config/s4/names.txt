@@ -295,3 +295,5 @@
 80A17E StoreEntryNumber
 80A070 LoadPackNumber
 80D656 StartBonusCourse
+809FF3 ShowEntryCode
+819F3A SteerObjectStep

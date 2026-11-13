@@ -6615,3 +6615,110 @@ void StartBonusCourse_m1x1(void)
     lda8(0x9C); wr8(ABS(0x190F), 0x9C);
     ret();
 }
+
+void ReadBroadcastDate_m1x1(void);
+void MergeBsxFlags_m1x1(void);
+void CountCourseBits_m1x1(void);
+void ObjectFacing_m1x1(void);
+void ApplyVelocityX_m1x1(void);
+
+/* $80:9FF3 ShowEntryCode (RTL): build the entry code (memory pack number,
+ * broadcast date, entered number, the BS-X flags, the course bits) and
+ * show its eleven bytes $0850-$085A as tiles ((b & $38) << 2 + (b & 7) *
+ * 2) in three groups: 4 at VRAM $0871, 4 at $0875, 4 at $0879 (sizes $14,
+ * $14, $13; attributes 7, 3, $0B). */
+void ShowEntryCode_m1x1(void)
+{
+    push8(0x80); push16(0x9FF6); LoadPackNumber_m1x1();
+    push8(0x80); push16(0x9FFA); ReadBroadcastDate_m1x1();
+    push8(0x80); push16(0x9FFE); StoreEntryNumber_m1x1();
+    push8(0x80); push16(0xA002); MergeBsxFlags_m1x1();
+    push8(0x80); push16(0xA006); CountCourseBits_m1x1();
+    ldx8(0x0A);
+    do {
+        lda8(rd8(ABSX(0x0850)));
+        and8(0x38);
+        lda8(asl8((u8)A)); lda8(asl8((u8)A));
+        wr8(DP(0x00), (u8)A);
+        lda8(rd8(ABSX(0x0850)));
+        and8(0x07);
+        lda8(asl8((u8)A));
+        fc = 0; adc8(rd8(DP(0x00)));
+        wr8(ABSX(0x03D0), (u8)A);
+        X = dec8((u8)X);
+    } while (!fn);
+    static const struct { u16 size_at, vram, src; u8 size, attr; u16 back; } g[3] = {
+        { 0x03CF, 0x0871, 0x03CF, 0x14, 0x07, 0xA03A },
+        { 0x03D3, 0x0875, 0x03D3, 0x14, 0x03, 0xA054 },
+        { 0x03D7, 0x0879, 0x03D7, 0x13, 0x0B, 0xA06E },
+    };
+    for (int i = 0; i < 3; i++) {
+        lda8(g[i].size); wr8(ABS(g[i].size_at), g[i].size);
+        rep(0x20);
+        lda16(g[i].vram); wr16(DP(0x00), g[i].vram);
+        lda16(g[i].src); wr16(DP(0x02), g[i].src);
+        sep(0x20);
+        lda8(g[i].attr); wr8(DP(0x0F), g[i].attr);
+        push16(g[i].back); VramQueueTiles_m1x1();
+    }
+    retl();
+}
+
+/* $81:9F3A SteerObjectStep (RTL, Y = flags): object X's velocity toward
+ * its target (AimVelocity) with sign-extended high bytes; flag bit 0
+ * reverses it (flee), bit 1 updates its facing, bit 2 moves it in X only,
+ * bit 3 in both. An axis that passes the target ($039F/$03A1) snaps onto
+ * it; C set when both did. */
+void SteerObjectStep_m1x1(void)
+{
+    wr8(DP(0x04), (u8)Y);
+    push8(0x81); push16(0x9F3F); AimVelocity_m1x1();
+    ldy8(0x00);
+    lda8(rd8(ABSX(0x029F)));
+    if (fn) Y = dec8((u8)Y);
+    lda8((u8)Y); wr8(ABSX(0x02A0), (u8)A);
+    ldy8(0x00);
+    lda8(rd8(ABSX(0x02AF)));
+    if (fn) Y = dec8((u8)Y);
+    lda8((u8)Y); wr8(ABSX(0x02B0), (u8)A);
+    rep(0x20);
+    wr16(DP(0x04), lsr16(rd16(DP(0x04))));      /* LSR $04 with A 16-bit */
+    if (fc) {
+        lda16(rd16(ABSX(0x029F))); eor16(0xFFFF); lda16(inc16(A)); wr16(ABSX(0x029F), A);
+        lda16(rd16(ABSX(0x02AF))); eor16(0xFFFF); lda16(inc16(A)); wr16(ABSX(0x02AF), A);
+    }
+    sep(0x20);
+    wr8(DP(0x04), lsr8(rd8(DP(0x04))));
+    if (fc) { push8(0x81); push16(0x9F7B); ObjectFacing_m1x1(); }
+    wr8(DP(0x04), lsr8(rd8(DP(0x04))));
+    if (fc) { push8(0x81); push16(0x9F83); ApplyVelocityX_m1x1(); }
+    wr8(DP(0x04), lsr8(rd8(DP(0x04))));
+    if (fc) { push8(0x81); push16(0x9F8B); ApplyVelocity_m1x1(); }
+    rep(0x20);
+    wr16(DP(0x00), 0);
+    lda16(rd16(ABSX(0x029F)));
+    if (!fz) {
+        lda16(rd16(ABSX(0x027F)));
+        fc = 1; sbc16(rd16(ABS(0x039F)));
+        eor16(rd16(ABSX(0x029F)));
+        if (!fn) {
+            lda16(rd16(ABS(0x039F))); wr16(ABSX(0x027F), A);
+            wr16(DP(0x00), inc16(rd16(DP(0x00))));
+        }
+    }
+    lda16(rd16(ABSX(0x028F)));
+    if (!fz) {
+        lda16(rd16(ABSX(0x028F)));
+        fc = 1; sbc16(rd16(ABS(0x03A1)));
+        eor16(rd16(ABSX(0x02AF)));
+        if (!fn) {
+            lda16(rd16(ABS(0x03A1))); wr16(ABSX(0x028F), A);
+            wr16(DP(0x00), inc16(rd16(DP(0x00))));
+        }
+    }
+    sep(0x20);
+    lda8(rd8(DP(0x00)));
+    cmp8((u8)A, 0x02);
+    fc = fz ? 1 : 0;
+    retl();
+}
