@@ -717,6 +717,11 @@ BRIDGE(HleHand_HeightBelow, HeightBelow_m1x1, 15)
 BRIDGE(HleHand_RiderPairHeight, RiderPairHeight_m1x1, 40)
 BRIDGE(HleHand_PlayerSpeedBoost, PlayerSpeedBoost_m1x1, 70)
 BRIDGE(HleHand_Mode0A, Mode0A_m1x1, 120)
+BRIDGE(HleHand_SetJumpBase, SetJumpBase_m1x1, 12)
+BRIDGE(HleHand_RiderDropStep, RiderDropStep_m1x1, 60)
+BRIDGE_DYN(HleHand_RiderLanding, RiderLanding_m1x1, g_ram[0x01EE + (X & 0xFF)] ? 90 : 8)
+BRIDGE(HleHand_DrawShadowsAndMarkers, DrawShadowsAndMarkers_m1x1, 1200)
+BRIDGE(HleHand_StartModeWithSound, StartModeWithSound_m1x1, 130)
 /* VramQueueTilesLong / QueueTileRowsLong ($80:B2D6 / $80:B431) are
  * verified but unhooked: trampolines whose cost is the callee's. */
 /* c/hand/s4/objects.c, part 26 */

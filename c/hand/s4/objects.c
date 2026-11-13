@@ -7746,3 +7746,226 @@ void Mode0A_m1x1(void)
     X = (u8)A; nz8((u8)X);
     r816_call_pc(0x800000u | rd16(LONGX(0x80DD5F)));
 }
+
+void HeightBelow_m1x1(void);
+void HeightAbove_m1x1(void);
+
+/* $80:F94B (RTS, X = rider): jump height $01FE and
+ * its base $026E = A. */
+void SetJumpBase_m1x1(void)
+{
+    wr8(ABSX(0x01FE), (u8)A);
+    wr8(ABSX(0x026E), (u8)A);
+    ret();
+}
+
+/* $80:F9D0 (RTS, X = rider): unless it is in jump state 1, SetRiderPair(3)
+ * and the height 6 below its base; in state 4 it crash-lands into
+ * state 2 ($08AC = 2 too). */
+void RiderDropStep_m1x1(void)
+{
+    lda8(rd8(ABSX(0x020E)));
+    if (!fz) {
+        cmp8((u8)A, 0x01);
+        if (fz) { ret(); return; }
+    }
+    lda8(0x03);
+    push16(0xF9DD); SetRiderPair_m1x1();
+    lda8(asl8((u8)A));
+    push16(0xF9E1); HeightBelow_m1x1();
+    lda8(rd8(ABSX(0x020E)));
+    cmp8((u8)A, 0x04);
+    if (!fz) { ret(); return; }
+    push16(0xF9EB); CrashLand_m1x1();
+    lda8(0x02);
+    wr8(ABSX(0x020E), 0x02);
+    wr8(ABSX(0x08AC), 0x02);
+    ret();
+}
+
+/* $80:BF5C (RTS, X = rider): an airborne rider ($01EE) whose height above
+ * the ground (less $09C4) has dropped below its fall speed $01B6 lands,
+ * unless held ($0904) or not falling ($08AC). The player lands with
+ * sound $21 (and in the jump contest, state $C7 = 2 and the landing
+ * rank from its pose, $80:C036, if none yet). On landing the jump state
+ * clears; then unless crashed ($01CE) or already at speed ($08F4), a
+ * landing angle $01E6 outside the window $80:BA73 / $80:BA83 for its
+ * speed (+8 when slow) crashes it (sound $3D for the player, $3D,X = $0A,
+ * then sound $24 / $29 if on screen); inside it, a changed angle on
+ * the flat bounces it ($08CC = 4, $08F4 = 2, $01EE = 1). The fall speed
+ * then becomes the height less one. With $84 set it only levels the
+ * angle ($01E6 = 6) when still. */
+void RiderLanding_m1x1(void)
+{
+    lda8(rd8(ABSX(0x01EE)));
+    if (fz) { ret(); return; }
+    push16(0xBF63); GroundHeightAbove_m1x1();
+    sbc8(rd8(ABS(0x09C4)));
+    wr8(DP(0x01), (u8)A);
+    cmp8((u8)A, rd8(ABSX(0x01B6)));
+    if (fc) { ret(); return; }
+    lda8(rd8(ABSX(0x0904)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABSX(0x08AC)));
+    if (fz) { ret(); return; }
+    lda8((u8)X);
+    if (fz) {
+        lda8(0x21);
+        push8(0x80); push16(0xBF80); QueueSoundB_m1x1();
+        lda8(rd8(DP(0xC7)));
+        if (!fz) {
+            lda8(0x02); wr8(DP(0xC7), 0x02);
+            lda8(rd8(ABS(0x156B)));
+            if (fn) {
+                Y = rd8(ABSX(0x1961)); nz8((u8)Y);
+                lda8(rd8(ABSY(0xC036)));
+                wr8(ABS(0x156B), (u8)A);
+            }
+        }
+    }
+    lda8(0x00);
+    wr8(ABSX(0x01EE), 0);
+    wr8(ABSX(0x08AC), 0);
+    lda8(rd8(ABS(0x09C4)));
+    wr8(ABS(0x09C7), (u8)A);
+    lda8(rd8(ABSX(0x01CE)));
+    if (!fz) goto fall;
+    lda8(rd8(DP(0x84)));
+    if (!fz) {
+        lda8(rd8(ABSX(0x01A6)));
+        if (!fz) { ret(); return; }
+        lda8(0x06); wr8(ABSX(0x01E6), 0x06);
+        ret();
+        return;
+    }
+    Y = rd8(ABSX(0x08F4));
+    wr8(ABSX(0x08F4), (u8)A);
+    lda8((u8)Y);
+    if (!fz) goto fall;
+    lda8(rd8(ABSX(0x01A6)));
+    Y = rd8(ABSX(0x01C6)); nz8((u8)Y);
+    cmp8((u8)Y, 0x02);
+    {
+        int slow = !fc;
+        if (!slow && fz) {
+            Y = rd8(ABSX(0x01BE)); nz8((u8)Y);
+            cmp8((u8)Y, 0x80);
+            slow = !fc;
+        }
+        if (slow) { fc = 0; adc8(0x08); }
+    }
+    Y = (u8)A; nz8((u8)Y);
+    lda8(rd8(ABSX(0x01E6)));
+    cmp8((u8)A, rd8(ABSY(0xBA73)));
+    if (fc) {
+        cmp8((u8)A, rd8(ABSY(0xBA83)));
+        if (!fc) {
+            lda8(rd8(ABSX(0x08B4)));
+            cmp8((u8)A, rd8(ABSX(0x01E6)));
+            if (!fz) {
+                lda8(rd8(ABSX(0x01A6)));
+                ora8(rd8(ABSX(0x0226)));
+                if (fz) {
+                    lda8(0x04); wr8(ABSX(0x08CC), 0x04);
+                    lda8(lsr8((u8)A)); wr8(ABSX(0x08F4), (u8)A);
+                    lda8(lsr8((u8)A)); wr8(ABSX(0x01EE), (u8)A);
+                }
+            }
+            goto fall;
+        }
+    }
+    cmp8((u8)X, 0x00);
+    if (fz) {
+        lda8(0x3D);
+        push8(0x80); push16(0xBFE4); QueueSoundB_m1x1();
+    }
+    lda8(0x0A); wr8(DPX(0x3D), 0x0A);
+    lda8(0xFF); wr8(ABSX(0x01CE), 0xFF);
+    lda8((u8)X);
+    if (!fz) lda8(0x05);
+    fc = 0; adc8(0x24);
+    wr8(DP(0x10), (u8)A);
+    lda8(rd8(ABSX(0x019E)));
+    cmp8((u8)A, 0x01);
+    if (!fz) { ret(); return; }
+    lda8(rd8(DP(0x10)));
+    push8(0x80); push16(0xC004); QueueSoundB_m1x1();
+    ret();
+    return;
+fall:
+    wr8(DP(0x01), dec8(rd8(DP(0x01))));
+    lda8(rd8(DP(0x01)));
+    wr8(ABSX(0x01B6), (u8)A);
+    ret();
+}
+
+/* $80:FD7E (RTS): every rider's shadow; an airborne rider near the left
+ * or right screen edge (page 0 from $F6, page 1 below $F4) also gets a
+ * marker sprite ($16A0 + 4X: X + $0A, the height above $B6, frame
+ * $80:F6CC by its $0981, attribute $2F, size 2). */
+void DrawShadowsAndMarkers_m1x1(void)
+{
+    ldx8(0x07);
+    do {
+        lda8((u8)X);
+        lda8(asl8((u8)A)); lda8(asl8((u8)A));
+        Y = (u8)A; nz8((u8)Y);
+        int marker;
+        lda8(rd8(ABSX(0x019E)));
+        cmp8((u8)A, 0x01);
+        if (fz) {
+            lda8(rd8(ABSX(0x0196)));
+            cmp8((u8)A, 0xF4);
+            marker = !fc;
+        } else {
+            cmp8((u8)A, 0x00);
+            marker = 0;
+            if (fz) {
+                lda8(rd8(ABSX(0x0196)));
+                cmp8((u8)A, 0xF6);
+                marker = fc;
+            }
+        }
+        if (marker) {
+            lda8(rd8(ABSX(0x01EE)));
+            if (!fz) {
+                lda8(0xB6);
+                push16(0xFDA8); HeightAbove_m1x1();
+                wr8(ABSY(0x16A1), (u8)A);
+                lda8(rd8(ABSX(0x0196)));
+                fc = 0; adc8(0x0A);
+                wr8(ABSY(0x16A0), (u8)A);
+                wr8(DP(0x01), (u8)Y);
+                Y = rd8(ABSX(0x0981)); nz8((u8)Y);
+                lda8(rd8(ABSY(0xF6CC)));
+                Y = rd8(DP(0x01)); nz8((u8)Y);
+                wr8(ABSY(0x16A2), (u8)A);
+                push8((u8)Y);
+                lda8((u8)Y);
+                fc = 0; adc8(0xA0);
+                lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
+                Y = (u8)A; nz8((u8)Y);
+                lda8(0x02); wr8(ABSY(0x1820), 0x02);
+                Y = pull8(); nz8((u8)Y);
+                lda8(0x2F); wr8(ABSY(0x16A3), 0x2F);
+            }
+        }
+        push16(0xFDD9); DrawRiderShadow_m1x1();
+        X = dec8((u8)X);
+    } while (!fn);
+    ret();
+}
+
+/* $80:89B4 (RTS): clear $9E / $A2 (words) and $9B, the empty hook, sound
+ * 3, then FinishModeSetup (into which it falls). */
+void StartModeWithSound_m1x1(void)
+{
+    rep(0x20);
+    wr16(DP(0x9E), 0); wr16(DP(0xA2), 0);
+    sep(0x20);
+    wr8(DP(0x9B), 0);
+    push8(0x80); push16(0x89C1); EmptyHook_m1x1();
+    lda8(0x03);
+    push8(0x80); push16(0x89C7); QueueSoundB_m1x1();
+    FinishModeSetup_m1x1();
+}

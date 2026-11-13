@@ -333,3 +333,8 @@
 80F969  1 1  mem+A,X,Y,C,V   RiderPairHeight
 80F97A  1 1  mem+A,X,Y,C,V   PlayerSpeedBoost
 80DD45  1 1  mem+A,X,Y,C,V   Mode0A
+80F94B  1 1  mem+A,X,Y,C,V   SetJumpBase
+80F9D0  1 1  mem+A,X,Y,C,V   RiderDropStep
+80BF5C  1 1  mem+A,X,Y,C,V   RiderLanding
+80FD7E  1 1  mem+A,X,Y,C,V   DrawShadowsAndMarkers
+8089B4  1 1  mem+A,X,Y,C,V   StartModeWithSound

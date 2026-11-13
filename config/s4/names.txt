@@ -345,3 +345,8 @@
 80F969 RiderPairHeight
 80F97A PlayerSpeedBoost
 80DD45 Mode0A
+80F94B SetJumpBase
+80F9D0 RiderDropStep
+80BF5C RiderLanding
+80FD7E DrawShadowsAndMarkers
+8089B4 StartModeWithSound
