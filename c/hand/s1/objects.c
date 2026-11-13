@@ -3572,3 +3572,154 @@ void BrakeRider_m1x1(void)
     wr8(ABSX(0x01B8), (u8)A);
     ret();
 }
+
+void MirrorJumpRider_m1x1(void);
+
+/* $80:EB39 (RTS, X = rider): on a slowing piece (on the ground, unless in
+ * jump states 1/2/5...): $08BC = 1, braking 6 (5 holding B), and on a
+ * $01 piece the player's $098F is capped at $1200. Y is kept. */
+void SlowPieceBrake_m1x1(void)
+{
+    lda8(rd8(ABSX(0x01E8)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABSX(0x0208)));
+    if (!fz) {
+        lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
+        if (!fc) { ret(); return; }
+    }
+    wr8(DP(0x01), (u8)Y);
+    ldy8(0x04);
+    lda8(rd8(ABSX(0x0178)));
+    lda8(asl8((u8)A)); lda8(asl8((u8)A));
+    if (fc) Y = dec8((u8)Y);
+    lda8(0x01); wr8(ABSX(0x08BC), 0x01);
+    Y = inc8((u8)Y); Y = inc8((u8)Y);
+    push16(0xEB5C); BrakeRider_m1x1();
+    Y = rd8(ABSX(0x0210)); nz8((u8)Y);
+    lda8(rd8(ABSY(0xACF9)));
+    cmp8((u8)A, 0x01);
+    if (fz) {
+        cmp8((u8)X, 0x00);
+        if (fz) {
+            rep(0x20);
+            lda16(rd16(ABS(0x098F)));
+            cmp16(A, 0x1200);
+            if (fc) { lda16(0x1200); wr16(ABS(0x098F), 0x1200); }
+        }
+        sep(0x20);
+    }
+    Y = rd8(DP(0x01)); nz8((u8)Y);
+    ret();
+}
+
+/* $80:CC3D DrawAllRiders (RTS, X = last slot): for slots X-0 the rider in
+ * slot $0950 (on the track, $01D8): its palette $04 ($80:BD9A), colour
+ * $0B ($80:BDA7 by $0CE0, or by place $1959 and entry $1542 from
+ * $80:BDAF, flashing 2/6 for the leader in a race), drawn with DrawRider;
+ * the player mirrored when its pose is $16. */
+void DrawAllRiders_m1x1(void)
+{
+    do {
+        wr8(DP(0x0D), (u8)X);
+        lda8(rd8(ABSX(0xBD9A))); wr8(DP(0x04), (u8)A);
+        lda8(rd8(ABS(0x0CE0)));
+        lda8(asl8((u8)A)); lda8(asl8((u8)A));
+        ora8(rd8(ABSX(0x0950)));
+        Y = (u8)A; nz8((u8)Y);
+        lda8(rd8(ABSX(0x0950)));
+        X = (u8)A; nz8((u8)X);
+        lda8(rd8(ABSX(0x01D8)));
+        if (!fz) {
+            lda8(rd8(ABSY(0xBDA7))); wr8(DP(0x0B), (u8)A);
+            lda8(rd8(ABSX(0x1959)));
+            if (!fz) {
+                cmp8((u8)A, 0x05);
+                if (!fc) {
+                    push8((u8)X);
+                    wr8(DP(0x0B), (u8)X);
+                    lda8(rd8(ABS(0x1542)));
+                    lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A));
+                    fc = 0; adc8(rd8(DP(0x0B)));
+                    X = (u8)A; nz8((u8)X);
+                    and8(0x07);
+                    int flash = fz;
+                    if (flash) { lda8(rd8(ABS(0x0CE0))); flash = !fz; }
+                    if (flash) { lda8(rd8(DP(0x76))); cmp8((u8)A, 0x03); flash = fz; }
+                    if (flash) { lda8(rd8(DP(0x63))); and8(0x02); flash = fz; }
+                    if (flash) { lda8(rd8(ABS(0x1923))); flash = fz; }
+                    if (flash) {
+                        lda8(rd8(ABS(0x1542)));
+                        cmp8((u8)A, 0x03);
+                        lda8(fz ? 0x02 : 0x06);
+                    } else lda8(rd8(ABSX(0xBDAF)));
+                    wr8(DP(0x0B), (u8)A);
+                    X = pull8(); nz8((u8)X);
+                }
+            }
+            push16(0xCCA2); DrawRider_m1x1();
+        }
+        cmp8((u8)X, 0x00);
+        if (fz) {
+            lda8(rd8(DP(0xA0)));
+            cmp8((u8)A, 0x16);
+            if (fz) { push16(0xCCAF); MirrorJumpRider_m1x1(); }
+        }
+        X = rd8(DP(0x0D)); nz8((u8)X);
+        X = dec8((u8)X);
+    } while (!fn);
+    ret();
+}
+
+/* $81:A0B5 (RTL): the engine sound (not during a fade $1923): every
+ * rider's distance to the player ($0198:$0190, signed at $10 + 2X,
+ * absolute at 2X); the nearest one's distance / 2 (signed) to APU port 1
+ * and its speed ($01C0:$01B8 >> 3) to port 3. */
+void EngineSound_m1x1(void)
+{
+    lda8(rd8(ABS(0x1923)));
+    if (!fz) { retl(); return; }
+    ldx8(0x07);
+    ldy8(0x0E);
+    lda8(rd8(ABS(0x0190))); wr8(DP(0x00), (u8)A);
+    lda8(rd8(ABS(0x0198))); wr8(DP(0x01), (u8)A);
+    do {
+        lda8(rd8(ABSX(0x0198)));
+        A = (u16)((A >> 8) | (A << 8)); nz8((u8)A);
+        lda8(rd8(ABSX(0x0190)));
+        rep(0x20);
+        fc = 1; sbc16(rd16(DP(0x00)));
+        wr16(ABSY(0x0010), A);
+        if (fn) { eor16(0xFFFF); lda16(inc16(A)); }
+        wr16(ABSY(0x0000), A);
+        sep(0x20);
+        Y = dec8((u8)Y); Y = dec8((u8)Y);
+        X = dec8((u8)X);
+    } while (!fz);
+    rep(0x20);
+    lda16(0x000E); wr16(DP(0x10), 0x000E);
+    ldx8(0x0C);
+    lda16(rd16(DP(0x0E)));
+    do {
+        cmp16(A, rd16(DPX(0x00)));
+        if (fc) { wr8(DP(0x10), (u8)X); lda16(rd16(DPX(0x00))); }
+        X = dec8((u8)X); X = dec8((u8)X);
+    } while (!fz);
+    sep(0x20);
+    X = rd8(DP(0x10)); nz8((u8)X);
+    lda8(rd8(DPX(0x00)));
+    lda8(lsr8((u8)A));
+    Y = rd8(ABSX(0x0011)); nz8((u8)Y);
+    if (fn) { eor8(0xFF); lda8(inc8((u8)A)); }
+    wr8(ABS(0x2141), (u8)A);
+    lda8((u8)X);
+    lda8(lsr8((u8)A));
+    X = (u8)A; nz8((u8)X);
+    lda8(rd8(ABSX(0x01C0)));
+    A = (u16)((A >> 8) | (A << 8)); nz8((u8)A);
+    lda8(rd8(ABSX(0x01B8)));
+    rep(0x20);
+    lda16(lsr16(A)); lda16(lsr16(A)); lda16(lsr16(A));
+    sep(0x20);
+    wr8(ABS(0x2143), (u8)A);
+    retl();
+}

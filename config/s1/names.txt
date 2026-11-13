@@ -289,3 +289,6 @@
 80C604 SpeedGauge
 819E61 SteerObjectStep
 80AE33 BrakeRider
+80EB39 SlowPieceBrake
+80CC3D DrawAllRiders
+81A0B5 EngineSound
