@@ -409,3 +409,4 @@
 80E938  1 1  mem+A,X,Y,C,V   ShowJumpCountLong
 80E994  1 1  mem+A,X,Y,C,V   ShowBonusPointsLong
 81C956  1 1  mem+A,X,Y,C,V   JumpResultSkip
+80E6D2  1 1  mem+A,X,Y,C,V   JumpContestMode

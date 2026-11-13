@@ -875,6 +875,8 @@ BRIDGE(HleHand_ShowJumpCountLong, ShowJumpCountLong_m1x1, 3010)
 BRIDGE(HleHand_ShowBonusPointsLong, ShowBonusPointsLong_m1x1, 2910)
 BRIDGE_DYN(HleHand_JumpResultSkip, JumpResultSkip_m1x1,
            (g_ram[0x21] | g_ram[0x26]) ? 4000 : 10)
+BRIDGE_DYN(HleHand_JumpContestMode, JumpContestMode_m1x1,
+           120 + ((g_ram[0x21] | g_ram[0x26]) ? 4000 : 10))
 /* VramQueueTilesLong / QueueTileRowsLong ($80:B2D6 / $80:B431) are
  * verified but unhooked: trampolines whose cost is the callee's. */
 /* c/hand/s4/objects.c, part 26 */

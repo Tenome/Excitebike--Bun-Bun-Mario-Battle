@@ -421,3 +421,4 @@
 80E938 ShowJumpCountLong
 80E994 ShowBonusPointsLong
 81C956 JumpResultSkip
+80E6D2 JumpContestMode

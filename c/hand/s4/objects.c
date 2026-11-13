@@ -10792,3 +10792,57 @@ void JumpResultSkip_m1x1(void)
     lda8(0x01); wr8(ABS(0x1999), 0x01);
     retl();
 }
+
+void DrawJumpRank_m1x1(void);
+void CheckCourseTime_m1x1(void);
+void JumpResultSkip_m1x1(void);
+void ShowEntryCode_m1x1(void);
+void QueueFontTime_m1x1(void);
+void QueueFontDigits_m1x1(void);
+void sub_82846B_m1x1(void);
+
+/* $80:E6D2 (RTS): the jump contest mode. At one of the broadcast minutes
+ * $80:E749 it ends: mode 4 (BG3 at $19, $1905 = $17, $86 cleared) after
+ * keeping the best distance and score ($156B set). Otherwise the rank,
+ * the course time, the result skip and the step $CD through $80:E739. */
+void JumpContestMode_m1x1(void)
+{
+    ldx8(0x03);
+    lda8(rd8(LONG(0x7FFFFF)));
+    for (;;) {
+        cmp8((u8)A, rd8(ABSX(0xE749)));
+        if (fz) break;
+        X = dec8((u8)X);
+        if (fn) {
+            push16(0xE72A); DrawJumpRank_m1x1();
+            push16(0xE72D); CheckCourseTime_m1x1();
+            push8(0x80); push16(0xE731); JumpResultSkip_m1x1();
+            lda8(rd8(DP(0xCD)));
+            lda8(asl8((u8)A));
+            X = (u8)A; nz8((u8)X);
+            r816_call_pc(0x800000u | rd16(LONGX(0x80E739)));
+            return;
+        }
+    }
+    lda8(0x04); wr8(DP(0x76), 0x04);
+    lda8(0x19); wr8(ABS(0x2109), 0x19);
+    lda8(0x01); wr8(ABS(0x210C), 0x01);
+    lda8(0x17); wr8(ABS(0x1905), 0x17);
+    wr8(DP(0x86), 0); wr8(DP(0x87), 0);
+    X = rd8(ABS(0x156B)); nz8((u8)X);
+    cmp8((u8)X, 0xFF);
+    if (!fz) {
+        rep(0x20);
+        lda16(rd16(ABS(0x1569)));
+        cmp16(A, rd16(ABS(0x1567)));
+        if (fc) wr16(ABS(0x1567), A);
+        push8(0x80); push16(0xE710); ScaleJumpCount_m0x1();
+        lda16(rd16(LONGX(0x80F155)));
+        and16(0x00FF);
+        fc = 0; adc16(rd16(DP(0x0C)));
+        cmp16(A, rd16(ABS(0x156D)));
+        if (fc) wr16(ABS(0x156D), A);
+    }
+    sep(0x20);
+    ChangeMode_m1x1();
+}
