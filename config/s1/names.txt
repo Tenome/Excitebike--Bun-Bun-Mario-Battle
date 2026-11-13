@@ -231,3 +231,9 @@
 80CB47 BallHit
 81A126 SelectWheelPosition
 80C04B UpdateRiderDistances
+80C37B CrashLand
+80C34C RiderLandCheck
+80EB0C SpeedBumpCrash
+80AB2A BallOrGauge
+808EF7 TurnSelectWheels
+80EB8E SlowPieceStep

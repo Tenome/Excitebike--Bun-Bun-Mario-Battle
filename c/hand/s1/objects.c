@@ -294,7 +294,7 @@ void GroundHeightAbove_m1x1(void);
 void StepObjectX_m1x1(void);
 void StepObjectX8_m1x1(void);
 void DrawSmallObject_m1x1(void);
-void sub_80C37B_m1x1(void);
+void CrashLand_m1x1(void);
 
 /* $80:DDAF PlayerHalt (RTS): the player's speed and jump state cleared. */
 static void player_halt1(void)
@@ -350,7 +350,7 @@ void PlayerColumnCheck_m1x1(void)
             if (!stop) goto ramp;
         } else stop = !fc;
         if (stop) { push16(0xDDD2); PlayerStop_m1x1(); }
-        push16(0xDDD5); CALL(sub_80C37B_m1x1, 0x80C37B, 2);
+        push16(0xDDD5); CrashLand_m1x1();
         lda8(rd8(ABS(0x08D4))); wr8(ABS(0x08E4), (u8)A);
         lda8(rd8(ABS(0x08DC))); wr8(ABS(0x08EC), (u8)A);
         ret();
@@ -1244,5 +1244,166 @@ void UpdateRiderDistances_m1x1(void)
         Y = dec8((u8)Y);
     } while (!fn);
     sep(0x20);
+    ret();
+}
+
+void RiderHeightStep_m1x1(void);
+void StartJump_m1x1(void);
+
+/* $80:C391: the crash steps: rider X's pad picks the tumble step
+ * ($80:BD42 -> $08FC), the height moves (RiderHeightStep from $01B0)
+ * and, off the ramp ($0220 = 0), $08AC = 1. */
+static void crash_tail1(void)
+{
+    lda8(rd8(ABSX(0x0178)));
+    and8(0x03);
+    Y = (u8)A; nz8((u8)Y);
+    lda8(rd8(ABSY(0xBD42)));
+    wr8(ABSX(0x08FC), (u8)A);
+    lda8(rd8(ABSX(0x01B0)));
+    wr8(DP(0x01), (u8)A);
+    push16(0xC3A4); RiderHeightStep_m1x1();
+    wr8(ABSX(0x01B0), (u8)A);
+    lda8(rd8(ABSX(0x0220)));
+    if (fz) { lda8(0x01); wr8(ABSX(0x08AC), 0x01); }
+}
+
+/* $80:C37E: A is the crash speed ($08EC); the crash starts (StartJump),
+ * then the steps. */
+static void crash_from1(void)
+{
+    wr8(ABSX(0x08EC), (u8)A);
+    push16(0xC383); StartJump_m1x1();
+    crash_tail1();
+}
+
+/* $80:C37B CrashLand (RTS): crash at rider X's speed $01C0. */
+void CrashLand_m1x1(void)
+{
+    lda8(rd8(ABSX(0x01C0)));
+    crash_from1();
+    ret();
+}
+
+/* $80:C34C RiderLandCheck (RTS): rider X in air state 2 continues the
+ * crash steps unless the player presses right ($0178 bit 0, $7F
+ * clear); any other nonzero state crashes it at speed 0. */
+void RiderLandCheck_m1x1(void)
+{
+    lda8(rd8(ABSX(0x01E8)));
+    if (fz) { ret(); return; }
+    cmp8((u8)A, 0x02);
+    if (!fz) { lda8(0x00); crash_from1(); ret(); return; }
+    lda8(rd8(ABSX(0x0178)));
+    lda8(lsr8((u8)A));
+    if (fc) {
+        lda8(rd8(DP(0x7F)));
+        if (fz) { ret(); return; }
+    }
+    crash_tail1();
+    ret();
+}
+
+/* $80:EB0C (RTS, X = rider): on the ground the speed $01C0:$01B8 grows
+ * by $0180, then a crash at speed 0. */
+void SpeedBumpCrash_m1x1(void)
+{
+    lda8(rd8(ABSX(0x01E8)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABS(0x01B8)));
+    fc = 0; adc8(0x80);
+    wr8(ABS(0x01B8), (u8)A);
+    lda8(rd8(ABS(0x01C0)));
+    adc8(0x01);
+    wr8(ABS(0x01C0), (u8)A);
+    lda8(0x00);
+    crash_from1();
+    ret();
+}
+
+void BallHit_m1x1(void);
+void FlagRidersAtLine_m1x1(void);
+
+/* $80:AB2A (RTS): on even frames the ball check; on frames 1 mod 4 the
+ * line flags and the speed gauge ($80:C604). */
+void BallOrGauge_m1x1(void)
+{
+    lda8(rd8(DP(0x63)));
+    lda8(lsr8((u8)A));
+    if (!fc) {
+        push16(0xAB31); BallHit_m1x1();
+        ret();
+        return;
+    }
+    lda8(lsr8((u8)A));
+    if (fc) { ret(); return; }
+    push16(0xAB38); FlagRidersAtLine_m1x1();
+    r816_call_pc(0x80C604);
+}
+
+void SelectWheelPosition_m1x1(void);
+
+/* $80:8EF7 (RTL): the select screen's wheels turn: a d-pad press sets the
+ * turn step $154B ($80:8F29), with sound $40 every 4 frames while it
+ * turns; the four wheel angles $1547 advance by it and are placed. */
+void TurnSelectWheels_m1x1(void)
+{
+    lda8(rd8(ABS(0x154B)));
+    int turning = !fz;
+    if (!turning) {
+        lda8(rd8(DP(0x20)));
+        and8(0x03);
+        if (!fz) {
+            X = (u8)A; nz8((u8)X);
+            lda8(rd8(ABSX(0x8F29)));
+            wr8(ABS(0x154B), (u8)A);
+            turning = 1;
+        }
+    }
+    if (turning) {
+        lda8(rd8(DP(0x63)));
+        and8(0x03);
+        if (fz) { lda8(0x40); push8(0x80); push16(0x8F14); QueueSound_m1x1(); }
+    }
+    ldx8(0x03);
+    do {
+        lda8(rd8(ABSX(0x1547)));
+        fc = 0; adc8(rd8(ABS(0x154B)));
+        wr8(ABSX(0x1547), (u8)A);
+        push8(0x80); push16(0x8F24); SelectWheelPosition_m1x1();
+        X = dec8((u8)X);
+    } while (!fn);
+    retl();
+}
+
+/* $80:EB8E (RTS, X = rider): a slow-down piece: on the ground and moving,
+ * $08F4 = 1 when slower than $0200 (speed high below 2 and low below
+ * $0240), else 0; then a crash at speed 0, or on a $0200 = 2 piece the
+ * jump state cleared ($09C4 / $09C7) and CrashLand. */
+void SlowPieceStep_m1x1(void)
+{
+    lda8(rd8(ABSX(0x01E8)));
+    if (!fz) { ret(); return; }
+    ldy8(0x00);
+    lda8(rd8(ABSX(0x01C0)));
+    if (fz) { ret(); return; }
+    cmp8((u8)A, 0x02);
+    if (!fc) {
+        lda8(rd8(ABSX(0x01B8)));
+        cmp8((u8)A, rd8(ABSX(0x0240)));
+        if (!fc) Y = inc8((u8)Y);
+    }
+    lda8((u8)Y);
+    wr8(ABSX(0x08F4), (u8)A);
+    lda8(rd8(ABSX(0x0200)));
+    cmp8((u8)A, 0x02);
+    if (fz) {
+        lda8(0x00);
+        wr8(ABS(0x09C4), 0); wr8(ABS(0x09C7), 0);
+        CrashLand_m1x1();
+        return;
+    }
+    lda8(0x00);
+    crash_from1();
     ret();
 }

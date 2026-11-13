@@ -209,3 +209,9 @@
 80CB47  1 1  mem+A,X,Y,C,V   BallHit
 81A126  1 1  mem+A,X,Y,C,V   SelectWheelPosition
 80C04B  1 1  mem+A,X,Y,C,V   UpdateRiderDistances
+80C37B  1 1  mem+A,X,Y,C,V   CrashLand
+80C34C  1 1  mem+A,X,Y,C,V   RiderLandCheck
+80EB0C  1 1  mem+A,X,Y,C,V   SpeedBumpCrash
+80AB2A  1 1  mem+A,X,Y,C,V   BallOrGauge
+808EF7  1 1  mem+A,X,Y,C,V   TurnSelectWheels
+80EB8E  1 1  mem+A,X,Y,C,V   SlowPieceStep
