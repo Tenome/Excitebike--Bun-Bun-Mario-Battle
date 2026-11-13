@@ -367,3 +367,5 @@
 81C085  1 1  mem+A,X,Y,C,V   FrameSequenceB
 81B96C  1 1  mem+A,X,Y,C,V   DriftUpObject
 81B9DB  1 1  mem+A,X,Y,C,V   ReleaseBalloons
+80997E  1 1  mem+A,X,Y,C,V   EndScreenRecord
+81973F  1 1  mem+A,X,Y,C,V   MoveObjectX8

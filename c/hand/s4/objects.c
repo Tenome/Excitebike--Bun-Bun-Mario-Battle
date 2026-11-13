@@ -8888,3 +8888,58 @@ void ReleaseBalloons_m1x1(void)
     X = rd8(ABS(0x03A3)); nz8((u8)X);
     ret();
 }
+
+void MoveObjectX_m1x1(void);
+
+/* $80:997E (RTS): the end screen's record entry. After the $88 delay the
+ * box (2 rows of $20 from $7E:5800) is queued at $0300; then a press of
+ * A ($26 bit 7) gives step $0450 = 1, $88 = $20, the next box ($7E:5980)
+ * and the record time at $11:572C at VRAM $09D3 with sound $43. */
+void EndScreenRecord_m1x1(void)
+{
+    lda8(rd8(DP(0x88)));
+    if (!fz) {
+        u8 t = dec8(rd8(DP(0x88)));
+        wr8(DP(0x88), t);
+        if (!fz) { ret(); return; }
+        lda8(0x00); wr8(DP(0x02), 0x00);
+        lda8(0x58); wr8(DP(0x03), 0x58);
+        lda8(0x7E); wr8(DP(0x04), 0x7E);
+        lda8(0x20); wr8(DP(0x10), 0x20);
+        lda8(0x02); wr8(DP(0x11), 0x02);
+        lda8(0x00); wr8(DP(0x00), 0x00);
+        lda8(0x03); wr8(DP(0x01), 0x03);
+        push16(0x99A4); QueueTileRows_m1x1();
+    }
+    lda8(rd8(DP(0x26)));
+    and8(0x80);
+    if (fz) { ret(); return; }
+    lda8(0x01); wr8(ABS(0x0450), 0x01);
+    lda8(0x20); wr8(DP(0x88), 0x20);
+    lda8(0x80); wr8(DP(0x02), 0x80);
+    lda8(0x59); wr8(DP(0x03), 0x59);
+    lda8(0x7E); wr8(DP(0x04), 0x7E);
+    lda8(0x20); wr8(DP(0x10), 0x20);
+    lda8(0x02); wr8(DP(0x11), 0x02);
+    lda8(0x00); wr8(DP(0x00), 0x00);
+    lda8(0x03); wr8(DP(0x01), 0x03);
+    push16(0x99D2); QueueTileRows_m1x1();
+    rep(0x20);
+    lda16(0x09D3); wr16(DP(0x00), 0x09D3);
+    lda16(0x572C); wr16(DP(0x18), 0x572C);
+    sep(0x20);
+    lda8(0x11); wr8(DP(0x1A), 0x11);
+    push8(0x80); push16(0x99E8); QueueTimeDigits_m1x1();
+    lda8(0x43);
+    push8(0x80); push16(0x99EE); QueueSoundB_m1x1();
+    ret();
+}
+
+/* $81:973F (RTS): MoveObjectX for object X + 8. */
+void MoveObjectX8_m1x1(void)
+{
+    lda8((u8)X);
+    fc = 0; adc8(0x08);
+    X = (u8)A; nz8((u8)X);
+    MoveObjectX_m1x1();
+}

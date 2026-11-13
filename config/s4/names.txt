@@ -379,3 +379,5 @@
 81C085 FrameSequenceB
 81B96C DriftUpObject
 81B9DB ReleaseBalloons
+80997E EndScreenRecord
+81973F MoveObjectX8

@@ -775,6 +775,10 @@ BRIDGE(HleHand_FrameSequenceA, FrameSequenceA_m1x1, 40)
 BRIDGE(HleHand_FrameSequenceB, FrameSequenceB_m1x1, 40)
 BRIDGE_DYN(HleHand_DriftUpObject, DriftUpObject_m1x1, (g_ram[0x63] & 3) ? 20 : 80)
 BRIDGE(HleHand_ReleaseBalloons, ReleaseBalloons_m1x1, 50)
+BRIDGE_DYN(HleHand_EndScreenRecord, EndScreenRecord_m1x1,
+           20 + (g_ram[0x88] == 1 ? 680 : 0) +
+           ((g_ram[0x88] <= 1 && (g_ram[0x26] & 0x80)) ? 1600 : 0))
+BRIDGE(HleHand_MoveObjectX8, MoveObjectX8_m1x1, 76)
 /* VramQueueTilesLong / QueueTileRowsLong ($80:B2D6 / $80:B431) are
  * verified but unhooked: trampolines whose cost is the callee's. */
 /* c/hand/s4/objects.c, part 26 */
