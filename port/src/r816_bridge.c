@@ -453,6 +453,9 @@ BRIDGE_DYN(HleHand_BonusCountUp, BonusCountUp_m1x1, g_ram[0x88] == 1 ? 700 : 12)
 BRIDGE(HleHand_RivalTarget, RivalTarget_m1x1, 60)
 BRIDGE_DYN(HleHand_RiderLanding, RiderLanding_m1x1, g_ram[0x01E8 + (X & 0xFF)] ? 90 : 8)
 BRIDGE_DYN(HleHand_LaunchBall, LaunchBall_m1x1, g_ram[0x092C] ? 80 : 8)
+BRIDGE_DYN(HleHand_RaceMoveStep, RaceMoveStep_m1x1, g_ram[0x8E] ? 2500 : 8)
+BRIDGE(HleHand_RetargetRival, RetargetRival_m1x1, 60)
+BRIDGE_DYN(HleHand_WheelSpark, WheelSpark_m1x1, g_ram[0x08BC + (X & 0xFF)] ? 120 : 8)
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */

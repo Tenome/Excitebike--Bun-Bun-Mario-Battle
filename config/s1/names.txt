@@ -259,3 +259,6 @@
 80C12C RivalTarget
 80C225 RiderLanding
 80C1C9 LaunchBall
+80BF88 RaceMoveStep
+80B015 RetargetRival
+80CDF6 WheelSpark

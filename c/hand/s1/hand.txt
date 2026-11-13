@@ -238,3 +238,6 @@
 80C12C  1 1  mem+A,X,Y,C,V   RivalTarget
 80C225  1 1  mem+A,X,Y,C,V   RiderLanding
 80C1C9  1 1  mem+A,X,C,V     LaunchBall
+80BF88  1 1  mem+A,X,Y,C,V   RaceMoveStep
+80B015  1 1  mem+A,X,Y,C,V   RetargetRival
+80CDF6  1 1  mem+A,X,Y,C,V   WheelSpark

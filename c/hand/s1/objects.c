@@ -2288,3 +2288,112 @@ void LaunchBall_m1x1(void)
     }
     ClearRiderState_m1x1();
 }
+
+void AddSpeedFraction_m1x1(void);
+void Tick08CC_m1x1(void);
+void ScrollByPlayerSpeed_m1x1(void);
+void ScrollRivalsRelative_m1x1(void);
+void DrawRiderShadowPair_m1x1(void);
+
+/* $80:BF88 RaceMoveStep (RTS): while racing ($8E) every rider moves,
+ * lands and ticks; the scrolls; then the player's speed $0180 adds into
+ * the distance ($0994 fraction, $8F), flipping $8D on each carry. */
+void RaceMoveStep_m1x1(void)
+{
+    lda8(rd8(DP(0x8E)));
+    if (fz) { ret(); return; }
+    ldx8(0x07);
+    do {
+        push16(0xBF90); AddSpeedFraction_m1x1();
+        push16(0xBF93); RiderLanding_m1x1();
+        push16(0xBF96); RiderLandCheck_m1x1();
+        push16(0xBF99); Tick08CC_m1x1();
+        X = dec8((u8)X);
+    } while (!fn);
+    push16(0xBF9F); ScrollByPlayerSpeed_m1x1();
+    push16(0xBFA2); ScrollRivalsRelative_m1x1();
+    lda8(rd8(ABS(0x0180)));
+    lda8(lsr8((u8)A)); lda8(ror8((u8)A)); lda8(ror8((u8)A)); lda8(ror8((u8)A));
+    fc = 0; adc8(rd8(ABS(0x0994)));
+    wr8(ABS(0x0994), (u8)A);
+    lda8(rd8(ABS(0x0180)));
+    adc8(rd8(DP(0x8F)));
+    wr8(DP(0x8F), (u8)A);
+    if (fc) {
+        lda8(rd8(DP(0x8D)));
+        eor8(0x01);
+        wr8(DP(0x8D), (u8)A);
+    }
+    ret();
+}
+
+/* $80:B015 (RTS, X = rival): rival X retargets its speed (class 1 when
+ * its random $2E is exactly $C0, else 0) every 16 pixels of X ($0190 bit
+ * 4) once $2E reaches $C0; rider 7 always does. */
+void RetargetRival_m1x1(void)
+{
+    ldy8(0x00);
+    cmp8((u8)X, 0x07);
+    if (!fz) {
+        lda8(rd8(ABSX(0x0190)));
+        and8(0x10);
+        if (fz) { ret(); return; }
+        lda8(rd8(DPX(0x2E)));
+        cmp8((u8)A, 0xC0);
+        if (!fc) { ret(); return; }
+        if (fz) Y = inc8((u8)Y);
+    }
+    push16(0xB02D); RivalTarget_m1x1();
+    ret();
+}
+
+/* $80:CDF6 (RTS, X = rider): the wheel spark of a moving rider on a ramp
+ * ($08BC), on screen page 1 past X $10 and not in the air: the shadow
+ * pair sprites, blinking every 4 frames, tile $0C (or the ramp's tile
+ * $80:ACF9; 0 hides it) unless high ($01B0 below $58), attribute | $21,
+ * and lowered ($F8) when the speed high byte is 0. */
+void WheelSpark_m1x1(void)
+{
+    lda8(rd8(ABSX(0x08BC)));
+    if (fz) { ret(); return; }
+    lda8(rd8(ABSX(0x01C0)));
+    ora8(rd8(ABSX(0x01B8)));
+    if (fz) { ret(); return; }
+    lda8(rd8(ABSX(0x01F8)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABSX(0x0198)));
+    lda8(lsr8((u8)A));
+    if (!fc) { ret(); return; }
+    lda8(rd8(ABSX(0x0190)));
+    cmp8((u8)A, 0x10);
+    if (!fc) { ret(); return; }
+    push16(0xCE17); DrawRiderShadowPair_m1x1();
+    lda8(rd8(DP(0x63)));
+    and8(0x04);
+    if (!fz) {
+        lda8(0xF0); wr8(ABSY(0x16C2), 0xF0);
+        lda8(0xE0); wr8(ABSY(0x16C6), 0xE0);
+    }
+    lda8(rd8(ABSX(0x0958)));
+    if (fz) {
+        lda8(0x0C); wr8(DP(0x02), 0x0C);
+    } else {
+        push8((u8)Y);
+        Y = rd8(ABSX(0x0210)); nz8((u8)Y);
+        lda8(rd8(ABSY(0xACF9)));
+        Y = pull8(); nz8((u8)Y);
+        wr8(DP(0x02), (u8)A);
+        cmp8((u8)A, 0x00);
+        if (fz) { lda8(0xF0); wr8(ABSY(0x16C1), 0xF0); wr8(ABSY(0x16C5), 0xF0); }
+    }
+    lda8(rd8(ABSX(0x01B0)));
+    cmp8((u8)A, 0x58);
+    if (!fc) lda8(0x0C);
+    else lda8(rd8(DP(0x02)));
+    ora8(0x21);
+    wr8(ABSY(0x16C3), (u8)A);
+    wr8(ABSY(0x16C7), (u8)A);
+    lda8(rd8(ABSX(0x01C0)));
+    if (fz) { lda8(0xF8); wr8(ABSY(0x16C5), 0xF8); }
+    ret();
+}
