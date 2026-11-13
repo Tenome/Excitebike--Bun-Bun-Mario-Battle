@@ -257,3 +257,5 @@
 80DE23 BonusResultStart
 80DEB3 BonusCountUp
 80C12C RivalTarget
+80C225 RiderLanding
+80C1C9 LaunchBall

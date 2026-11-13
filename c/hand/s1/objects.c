@@ -2177,3 +2177,114 @@ set:
     wr8(ABSX(0x0228), (u8)A);
     ret();
 }
+
+void ClearRiderState_m1x1(void);
+
+/* $80:C225 RiderLanding (RTS, X = rider): Stadium 4's $80:BF5C for
+ * Stadium 1 (no jump-contest rank; addresses 6 lower, windows $80:BD46 /
+ * $80:BD56): an airborne rider low enough lands; a bad angle crashes it,
+ * a changed one on the flat bounces it; the fall speed becomes the
+ * height less one. */
+void RiderLanding_m1x1(void)
+{
+    lda8(rd8(ABSX(0x01E8)));
+    if (fz) { ret(); return; }
+    push16(0xC22C); GroundHeightAbove_m1x1();
+    sbc8(rd8(ABS(0x09C4)));
+    wr8(DP(0x01), (u8)A);
+    cmp8((u8)A, rd8(ABSX(0x01B0)));
+    if (fc) { ret(); return; }
+    lda8(rd8(ABSX(0x0904)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABSX(0x08AC)));
+    if (fz) { ret(); return; }
+    lda8((u8)X);
+    if (fz) { lda8(0x21); push8(0x80); push16(0xC249); QueueSound_m1x1(); }
+    lda8(0x00);
+    wr8(ABSX(0x01E8), 0);
+    wr8(ABSX(0x08AC), 0);
+    lda8(rd8(ABS(0x09C4)));
+    wr8(ABS(0x09C7), (u8)A);
+    lda8(rd8(ABSX(0x01C8)));
+    if (!fz) goto fall;
+    lda8(rd8(DP(0x84)));
+    if (!fz) {
+        lda8(rd8(ABSX(0x01A0)));
+        if (!fz) { ret(); return; }
+        lda8(0x06); wr8(ABSX(0x01E0), 0x06);
+        ret();
+        return;
+    }
+    Y = rd8(ABSX(0x08F4));
+    wr8(ABSX(0x08F4), (u8)A);
+    lda8((u8)Y);
+    if (!fz) goto fall;
+    lda8(rd8(ABSX(0x01A0)));
+    Y = rd8(ABSX(0x01C0)); nz8((u8)Y);
+    cmp8((u8)Y, 0x02);
+    {
+        int slow = !fc;
+        if (!slow && fz) {
+            Y = rd8(ABSX(0x01B8)); nz8((u8)Y);
+            cmp8((u8)Y, 0x80);
+            slow = !fc;
+        }
+        if (slow) { fc = 0; adc8(0x08); }
+    }
+    Y = (u8)A; nz8((u8)Y);
+    lda8(rd8(ABSX(0x01E0)));
+    cmp8((u8)A, rd8(ABSY(0xBD46)));
+    if (fc) {
+        cmp8((u8)A, rd8(ABSY(0xBD56)));
+        if (!fc) {
+            lda8(rd8(ABSX(0x08B4)));
+            cmp8((u8)A, rd8(ABSX(0x01E0)));
+            if (!fz) {
+                lda8(rd8(ABSX(0x01A0)));
+                ora8(rd8(ABSX(0x0220)));
+                if (fz) {
+                    lda8(0x04); wr8(ABSX(0x08CC), 0x04);
+                    lda8(lsr8((u8)A)); wr8(ABSX(0x08F4), (u8)A);
+                    lda8(lsr8((u8)A)); wr8(ABSX(0x01E8), (u8)A);
+                }
+            }
+            goto fall;
+        }
+    }
+    cmp8((u8)X, 0x00);
+    if (fz) { lda8(0x3D); push8(0x80); push16(0xC297); QueueSound_m1x1(); }
+    lda8(0x0A); wr8(DPX(0x3D), 0x0A);
+    lda8(0xFF); wr8(ABSX(0x01C8), 0xFF);
+    lda8((u8)X);
+    if (!fz) lda8(0x05);
+    fc = 0; adc8(0x24);
+    push8(0x80); push16(0xC2AC); QueueSound_m1x1();
+    ret();
+    return;
+fall:
+    wr8(DP(0x01), dec8(rd8(DP(0x01))));
+    lda8(rd8(DP(0x01)));
+    wr8(ABSX(0x01B0), (u8)A);
+    ret();
+}
+
+/* $80:C1C9 (RTS): when the ball is due ($092C) and rider 7 is off screen
+ * (not page 1, page 0 left of $EA), it is cleared for reuse
+ * (ClearRiderState). */
+void LaunchBall_m1x1(void)
+{
+    lda8(rd8(ABS(0x092C)));
+    if (fz) { ret(); return; }
+    lda8(rd8(ABS(0x01DB)));
+    ldx8(0x07);
+    lda8(rd8(ABSX(0x0198)));
+    lda8(lsr8((u8)A));
+    if (fc) { ret(); return; }
+    lda8(lsr8((u8)A));
+    if (!fc) {
+        lda8(rd8(ABSX(0x0190)));
+        cmp8((u8)A, 0xEA);
+        if (fc) { ret(); return; }
+    }
+    ClearRiderState_m1x1();
+}

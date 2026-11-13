@@ -236,3 +236,5 @@
 80DE23  1 1  mem+X,Y,C,V     BonusResultStart
 80DEB3  1 1  mem+X,Y,C,V     BonusCountUp
 80C12C  1 1  mem+A,X,Y,C,V   RivalTarget
+80C225  1 1  mem+A,X,Y,C,V   RiderLanding
+80C1C9  1 1  mem+A,X,C,V     LaunchBall
