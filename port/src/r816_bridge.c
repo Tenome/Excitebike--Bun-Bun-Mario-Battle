@@ -456,6 +456,12 @@ BRIDGE_DYN(HleHand_LaunchBall, LaunchBall_m1x1, g_ram[0x092C] ? 80 : 8)
 BRIDGE_DYN(HleHand_RaceMoveStep, RaceMoveStep_m1x1, g_ram[0x8E] ? 2500 : 8)
 BRIDGE(HleHand_RetargetRival, RetargetRival_m1x1, 60)
 BRIDGE_DYN(HleHand_WheelSpark, WheelSpark_m1x1, g_ram[0x08BC + (X & 0xFF)] ? 120 : 8)
+BRIDGE(HleHand_PieceFlatish, PieceFlatish_m1x1, 14)
+BRIDGE(HleHand_PieceOK, PieceOK_m1x1, 80)
+BRIDGE(HleHand_CpuSteerUp, CpuSteerUp_m1x1, 150)
+BRIDGE(HleHand_CpuSteerDown, CpuSteerDown_m1x1, 150)
+BRIDGE(HleHand_CpuLaneDecision, CpuLaneDecision_m1x1, 150)
+BRIDGE(HleHand_CpuAvoidHurdle, CpuAvoidHurdle_m1x1, 180)
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */

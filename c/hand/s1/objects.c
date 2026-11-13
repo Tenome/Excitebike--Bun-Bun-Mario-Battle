@@ -2397,3 +2397,189 @@ void WheelSpark_m1x1(void)
     if (fz) { lda8(0xF8); wr8(ABSY(0x16C5), 0xF8); }
     ret();
 }
+
+/* $80:AF94 PieceFlatish (RTS): C clear when the piece type A is $3B-$3D. */
+static void piece_flatish(void)
+{
+    cmp8((u8)A, 0x3B);
+    if (fc) {
+        cmp8((u8)A, 0x3E);
+        if (!fc) { ret(); return; }
+    }
+    fc = 1;
+    ret();
+}
+void PieceFlatish_m1x1(void) { piece_flatish(); }
+
+/* $80:AF91 PieceOK (RTS, Y = lane): RiderPieceAt, then PieceFlatish. */
+void PieceOK_m1x1(void)
+{
+    push16(0xAF93); RiderPieceAt_m1x1();
+    piece_flatish();
+}
+
+/* $80:AF4C / $80:AF71: CPU rider X steers a lane up (lane $08A4 - 1;
+ * from lane 1 it tries down) or down (+ 1; from lane 4, up): the lane
+ * must be flatish (PieceOK) and clear of a rider ahead (row $0958 -/+ 1);
+ * then the steering $01A8 = +1 / -1. */
+static void steer_lane1(int up)
+{
+    for (;;) {
+        Y = rd8(ABSX(0x08A4)); nz8((u8)Y);
+        if (up) {
+            Y = dec8((u8)Y);
+            cmp8((u8)Y, 0x01);
+            if (fn) { up = 0; continue; }
+        } else {
+            Y = inc8((u8)Y);
+            cmp8((u8)Y, 0x05);
+            if (!fn) { up = 1; continue; }
+        }
+        break;
+    }
+    push16(up ? 0xAF56 : 0xAF7B); PieceOK_m1x1();
+    if (fc) { ret(); return; }
+    Y = rd8(ABSX(0x0958));
+    Y = up ? inc8((u8)Y) : dec8((u8)Y);
+    wr8(DP(0x02), (u8)Y);
+    ldy8(0x00);
+    push16(up ? 0xAF63 : 0xAF88); RiderAhead_m1x1();
+    if (fc) { ret(); return; }
+    lda8(up ? 0x01 : 0xFF);
+    wr8(ABSX(0x01A8), (u8)A);
+    ret();
+}
+
+void CpuSteerUp_m1x1(void) { steer_lane1(1); }
+void CpuSteerDown_m1x1(void) { steer_lane1(0); }
+
+/* $80:AF6A: down, unless rider X's piece $0210 is $E6 (then up). */
+static void steer_by_e6_1(void)
+{
+    lda8(rd8(ABSX(0x0210)));
+    cmp8((u8)A, 0xE6);
+    steer_lane1(fz);
+}
+
+/* $80:AF07 CpuLaneDecision (RTS, X = rider): on screen page 1, blocked by
+ * a rider ahead: let go of the buttons and in the right half steer away
+ * (by its pad bit 0 / $0210); otherwise, not steering, at X $80-$EF with
+ * its random $2D at $E0 or more: up ($F8 on) or by $0210. */
+void CpuLaneDecision_m1x1(void)
+{
+    lda8(rd8(ABSX(0x0198)));
+    lda8(lsr8((u8)A));
+    if (!fc) { ret(); return; }
+    lda8(rd8(ABSX(0x0958)));
+    wr8(DP(0x02), (u8)A);
+    ldy8(0x02);
+    push16(0xAF16); RiderAhead_m1x1();
+    if (fc) {
+        push16(0xAF1B); CpuReleaseButtons_m1x1();
+        lda8(rd8(ABSX(0x0190)));
+        lda8(asl8((u8)A));
+        if (!fc) { ret(); return; }
+        lda8(rd8(DPX(0x2C)));
+        lda8(lsr8((u8)A));
+        if (fc) steer_by_e6_1();
+        else steer_lane1(1);
+        return;
+    }
+    lda8(rd8(ABSX(0x01A8)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABSX(0x0198)));
+    lda8(lsr8((u8)A));
+    if (!fc) { ret(); return; }
+    lda8(rd8(ABSX(0x0190)));
+    cmp8((u8)A, 0xF0);
+    if (fc) { ret(); return; }
+    lda8(asl8((u8)A));
+    if (!fc) { ret(); return; }
+    lda8(rd8(DPX(0x2D)));
+    cmp8((u8)A, 0xE0);
+    if (!fc) { ret(); return; }
+    cmp8((u8)A, 0xF8);
+    if (!fc) { steer_by_e6_1(); return; }
+    steer_lane1(1);
+}
+
+/* $80:B02F CpuAvoidHurdle (RTS, X = rider): the eight pieces ahead
+ * ($0884 + 4X): a hurdle ($C0/$C1, $70-$73) sends the rider looking for
+ * a flatish lane at that column, up (stopping at a $FA piece) then down
+ * (stopping at $E4); a ramp top ($48-$4A) sets $0971 = 9; otherwise
+ * $0971 = the piece angle $08B4 (0 while landing). Returns A = hurdles. */
+void CpuAvoidHurdle_m1x1(void)
+{
+    lda8(0x00);
+    wr8(DP(0x09), 0); wr8(DP(0x0D), 0);
+    lda8((u8)X);
+    lda8(asl8((u8)A)); lda8(asl8((u8)A));
+    wr8(DP(0x0A), (u8)A);
+    ldy8(0x07);
+    for (;;) {
+        wr8(DP(0x0B), (u8)Y);
+        Y = rd8(DP(0x0A)); nz8((u8)Y);
+        lda8(rd8(ABSY(0x0884)));
+        int hurdle;
+        cmp8((u8)A, 0xC0); hurdle = fz;
+        if (!hurdle) { cmp8((u8)A, 0xC1); hurdle = fz; }
+        if (!hurdle) {
+            cmp8((u8)A, 0x70);
+            if (fc) { cmp8((u8)A, 0x74); hurdle = !fc; }
+        }
+        if (hurdle) goto avoid;
+        cmp8((u8)A, 0x48);
+        if (fc) {
+            cmp8((u8)A, 0x4B);
+            if (!fc) { lda8(0x09); goto store; }
+        }
+        wr8(DP(0x0A), inc8(rd8(DP(0x0A))));
+        Y = rd8(DP(0x0B)); nz8((u8)Y);
+        Y = dec8((u8)Y);
+        if (fn) goto angle;
+    }
+avoid:
+    wr8(DP(0x0D), inc8(rd8(DP(0x0D))));
+    lda8(rd8(DP(0x0A)));
+    and8(0x03);
+    Y = (u8)A; nz8((u8)Y);
+    Y = inc8((u8)Y);
+    lda8((u8)Y);
+    fc = 0; adc8(rd8(ABSX(0x0260)));
+    and8(0x3F);
+    wr8(DP(0x08), (u8)A);
+    lda8(0x40); wr8(DP(0x09), 0x40);
+    Y = rd8(ABSX(0x08A4)); nz8((u8)Y);
+    for (;;) {
+        Y = dec8((u8)Y);
+        cmp8((u8)Y, 0x01);
+        if (fn) break;
+        push16(0xB08F); LanePieceAt_m1x1();
+        Y = rd8(DP(0x07)); nz8((u8)Y);
+        cmp8((u8)A, 0xFA);
+        if (fz) break;
+        push16(0xB098); PieceFlatish_m1x1();
+        if (!fc) { push16(0xB09D); CpuSteerUp_m1x1(); goto angle; }
+    }
+    Y = rd8(ABSX(0x08A4)); nz8((u8)Y);
+    for (;;) {
+        Y = inc8((u8)Y);
+        cmp8((u8)Y, 0x06);
+        if (!fn) goto angle;
+        push16(0xB0AB); LanePieceAt_m1x1();
+        Y = rd8(DP(0x07)); nz8((u8)Y);
+        cmp8((u8)A, 0xE4);
+        if (fz) goto angle;
+        push16(0xB0B4); PieceFlatish_m1x1();
+        if (!fc) { push16(0xB0B9); CpuSteerDown_m1x1(); goto angle; }
+    }
+angle:
+    ldy8(0x00);
+    lda8(rd8(ABSX(0x0170)));
+    if (fz) { Y = rd8(ABSX(0x08B4)); nz8((u8)Y); }
+    lda8((u8)Y);
+store:
+    wr8(ABSX(0x0971), (u8)A);
+    lda8(rd8(DP(0x0D)));
+    ret();
+}

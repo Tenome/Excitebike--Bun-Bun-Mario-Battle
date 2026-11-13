@@ -241,3 +241,9 @@
 80BF88  1 1  mem+A,X,Y,C,V   RaceMoveStep
 80B015  1 1  mem+A,X,Y,C,V   RetargetRival
 80CDF6  1 1  mem+A,X,Y,C,V   WheelSpark
+80AF94  1 1  mem+A,X,Y,C,V   PieceFlatish
+80AF91  1 1  mem+A,X,Y,C,V   PieceOK
+80AF4C  1 1  mem+A,X,Y,C,V   CpuSteerUp
+80AF71  1 1  mem+A,X,Y,C,V   CpuSteerDown
+80AF07  1 1  mem+A,X,Y,C,V   CpuLaneDecision
+80B02F  1 1  mem+A,X,Y,C,V   CpuAvoidHurdle

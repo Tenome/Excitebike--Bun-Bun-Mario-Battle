@@ -262,3 +262,9 @@
 80BF88 RaceMoveStep
 80B015 RetargetRival
 80CDF6 WheelSpark
+80AF94 PieceFlatish
+80AF91 PieceOK
+80AF4C CpuSteerUp
+80AF71 CpuSteerDown
+80AF07 CpuLaneDecision
+80B02F CpuAvoidHurdle
