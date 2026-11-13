@@ -236,3 +236,7 @@
 809A43  1 1  mem+X,Y,C,V     EntryMenuStep
 80CAE5  1 1  mem+X,Y,V       DrawRider
 80C0E3  1 1  mem+A,X,Y,C,V   CrashLand
+80C0B4  1 1  mem+X,Y,C,V     RiderLandCheck
+80FB60  1 1  mem+A,X,Y,C,V   BoostOnTile
+80FC03  1 1  mem+A,X,Y,C,V   SlowTileCheck
+80FC41  1 1  mem+A,X,Y,C,V   LandFlat

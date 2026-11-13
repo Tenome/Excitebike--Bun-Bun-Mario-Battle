@@ -604,6 +604,11 @@ BRIDGE_DYN(HleHand_BonusSignStep, BonusSignStep_m1x1, g_ram[0x97] ? 700 : 10)
 BRIDGE_DYN(HleHand_EntryMenuStep, EntryMenuStep_m1x1, (g_ram[0x88] == 1 || (g_ram[0x26] & 0x80)) ? 1000 : 15)
 BRIDGE(HleHand_DrawRider, DrawRider_m1x1, 200)
 BRIDGE(HleHand_CrashLand, CrashLand_m1x1, 150)
+/* c/hand/s4/objects.c, part 16 */
+BRIDGE(HleHand_RiderLandCheck, RiderLandCheck_m1x1, 150)
+BRIDGE(HleHand_BoostOnTile, BoostOnTile_m1x1, 170)
+BRIDGE(HleHand_SlowTileCheck, SlowTileCheck_m1x1, 180)
+BRIDGE(HleHand_LandFlat, LandFlat_m1x1, 160)
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)

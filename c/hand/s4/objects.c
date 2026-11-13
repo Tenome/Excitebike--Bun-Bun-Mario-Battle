@@ -4623,11 +4623,11 @@ void DrawRider_m1x1(void)
  * $08FC from $80:BA6F by the d-pad (or $26 when the jump contest's player
  * is fast enough in the air), the height step, and the landed flag $08AC
  * once settled ($0226 = 0). */
-void CrashLand_m1x1(void)
+/* $80:C0F9: the lean step $08FC from $80:BA6F by the d-pad (or $26 when the
+ * jump contest's player is fast enough in the air), the height step, and
+ * the landed flag $08AC once settled ($0226 = 0). */
+static void crash_tail(void)
 {
-    lda8(rd8(ABSX(0x01C6)));
-    wr8(ABSX(0x08EC), (u8)A);
-    push16(0xC0EB); StartCrash_m1x1();
     lda8(rd8(ABSX(0x017E)));
     and8(0x03);
     Y = (u8)A; nz8((u8)Y);
@@ -4651,5 +4651,117 @@ void CrashLand_m1x1(void)
     wr8(ABSX(0x01B6), (u8)A);
     lda8(rd8(ABSX(0x0226)));
     if (fz) { lda8(0x01); wr8(ABSX(0x08AC), 0x01); }
+}
+
+/* $80:C0E6: A is the crash speed ($08EC); the crash starts, then the tail. */
+static void crash_from(void)
+{
+    wr8(ABSX(0x08EC), (u8)A);
+    push16(0xC0EB); StartCrash_m1x1();
+    crash_tail();
+}
+
+void CrashLand_m1x1(void)
+{
+    lda8(rd8(ABSX(0x01C6)));
+    crash_from();
+    ret();
+}
+
+/* $80:C0BD: crash at speed 0. */
+static void crash_stop(void)
+{
+    lda8(0x00);
+    crash_from();
+}
+
+/* $80:C0B4 RiderLandCheck (RTS): rider X in a crash state ($01EE): state 2
+ * (tumbling) continues the crash steps unless the player presses right
+ * ($017E bit 0 with $7F clear); any other state stops it at speed 0. */
+void RiderLandCheck_m1x1(void)
+{
+    lda8(rd8(ABSX(0x01EE)));
+    if (fz) { ret(); return; }
+    cmp8((u8)A, 0x02);
+    if (!fz) { crash_stop(); ret(); return; }
+    lda8(rd8(ABSX(0x017E)));
+    lda8(lsr8((u8)A));
+    if (fc) {
+        lda8(rd8(DP(0x7F)));
+        if (fz) { ret(); return; }
+    }
+    crash_tail();
+    ret();
+}
+
+/* $80:FB60 BoostOnTile (RTS): unless crashed, the player's speed grows by
+ * $0180 ($01FF in the jump contest) up to $0730; then the crash-stop steps
+ * for rider X. */
+void BoostOnTile_m1x1(void)
+{
+    lda8(rd8(ABSX(0x01EE)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(DP(0x76)));
+    cmp8((u8)A, 0x14);
+    lda8(fz ? 0xFF : 0x80);
+    fc = 0; adc8(rd8(ABS(0x01BE)));
+    wr8(ABS(0x01BE), (u8)A);
+    lda8(rd8(ABS(0x01C6)));
+    adc8(0x01);
+    wr8(ABS(0x01C6), (u8)A);
+    cmp8((u8)A, 0x07);
+    int cap = 0;
+    if (fc) {
+        if (!fz) cap = 1;
+        else {
+            lda8(rd8(ABS(0x01BE)));
+            cmp8((u8)A, 0x30);
+            cap = fc;
+        }
+    }
+    if (cap) {
+        lda8(0x07); wr8(ABS(0x01C6), 0x07);
+        lda8(0x30); wr8(ABS(0x01BE), 0x30);
+    }
+    crash_stop();
+    ret();
+}
+
+/* $80:FC41 LandFlat (RTS): clear the landing flags $09C4/$09C7, then
+ * CrashLand. */
+void LandFlat_m1x1(void)
+{
+    lda8(0x00);
+    wr8(ABS(0x09C4), 0x00);
+    wr8(ABS(0x09C7), 0x00);
+    CrashLand_m1x1();
+}
+
+/* $80:FC03 SlowTileCheck (RTS): unless crashed or stopped, mark rider X
+ * slow ($08F4 = 1) below speed $0200 and its threshold $0246; then by the
+ * tile: $0206 = 2 lands flat (LandFlat), the player on boost ground ($0176
+ * = $18) BoostOnTile, otherwise the crash-stop steps. */
+void SlowTileCheck_m1x1(void)
+{
+    lda8(rd8(ABSX(0x01EE)));
+    if (!fz) { ret(); return; }
+    ldy8(0x00);
+    lda8(rd8(ABSX(0x01C6)));
+    if (fz) { ret(); return; }
+    cmp8((u8)A, 0x02);
+    if (!fc) {
+        lda8(rd8(ABSX(0x01BE)));
+        cmp8((u8)A, rd8(ABSX(0x0246)));
+        if (!fc) Y = inc8((u8)Y);
+    }
+    lda8((u8)Y);
+    wr8(ABSX(0x08F4), (u8)A);
+    lda8(rd8(ABSX(0x0206)));
+    cmp8((u8)A, 0x02);
+    if (fz) { LandFlat_m1x1(); return; }
+    lda8(rd8(ABS(0x0176)));
+    cmp8((u8)A, 0x18);
+    if (fz) { BoostOnTile_m1x1(); return; }
+    crash_stop();
     ret();
 }

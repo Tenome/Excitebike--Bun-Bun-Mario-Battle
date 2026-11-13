@@ -253,3 +253,7 @@
 809A43 EntryMenuStep
 80CAE5 DrawRider
 80C0E3 CrashLand
+80C0B4 RiderLandCheck
+80FB60 BoostOnTile
+80FC03 SlowTileCheck
+80FC41 LandFlat
