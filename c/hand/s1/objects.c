@@ -3369,3 +3369,120 @@ slide:
     lda8(0x02); wr8(DP(0x3B), 0x02);
     crash_loop1(1);
 }
+
+void DivideAX_m1x1(void);
+void DrawBigSprite_m1x1(void);
+
+/* $80:DB6F (RTS): the bonus time: every 60 frames ($AD) the count $AC
+ * goes down; at 0 the run ends ($84 = 2, sound $2D). Then the label. */
+void BonusTimerStep_m1x1(void)
+{
+    wr8(DP(0xAD), dec8(rd8(DP(0xAD))));
+    if (fz) {
+        lda8(0x3C); wr8(DP(0xAD), 0x3C);
+        wr8(DP(0xAC), dec8(rd8(DP(0xAC))));
+        if (fz) {
+            lda8(0x02); wr8(DP(0x84), 0x02);
+            lda8(0x2D);
+            push8(0x80); push16(0xDB84); QueueSound_m1x1();
+        }
+    }
+    push16(0xDB87); ShowBonusLabel_m1x1();
+    ret();
+}
+
+/* $80:CCE1 DrawRider (RTS, X = rider): unless held off the top ($0904
+ * with Y $EC+), its pose (RiderPose, $A0) picks the frame ($80:BD6C) and
+ * the slot's pose $1961 ($80:CD34; the winner's wave $14 after the race),
+ * then the big sprite at (X, height - 8). */
+void DrawRider_m1x1(void)
+{
+    lda8(rd8(ABSX(0x0190))); wr8(DP(0x00), (u8)A);
+    lda8(rd8(ABSX(0x01B0)));
+    fc = 1; sbc8(0x08);
+    wr8(DP(0x01), (u8)A);
+    lda8(rd8(ABSX(0x0904)));
+    if (!fz) {
+        lda8(rd8(DP(0x01)));
+        cmp8((u8)A, 0xEC);
+        if (!fc) { ret(); return; }
+    }
+    push16(0xCCFB); RiderPose_m1x1();
+    wr8(DP(0xA0), (u8)A);
+    lda8(asl8((u8)A));
+    Y = (u8)A; nz8((u8)Y);
+    rep(0x20);
+    lda16(rd16(ABSY(0xBD6C))); wr16(DP(0x02), A);
+    sep(0x20);
+    Y = rd8(DP(0xA0)); nz8((u8)Y);
+    push8((u8)X);
+    X = rd8(DP(0x0D)); nz8((u8)X);
+    lda8(rd8(ABSX(0x0950)));
+    X = (u8)A; nz8((u8)X);
+    lda8(rd8(ABSY(0xCD34)));
+    wr8(ABSX(0x1961), (u8)A);
+    cmp8((u8)A, 0x05);
+    if (fz) {
+        lda8(rd8(ABS(0x01C8)));
+        ora8(rd8(ABS(0x01E8)));
+        if (fz) {
+            lda8(rd8(DP(0x84)));
+            cmp8((u8)A, 0x01);
+            if (fz) { lda8(0x14); wr8(ABSX(0x1961), 0x14); }
+        }
+    }
+    X = pull8(); nz8((u8)X);
+    push16(0xCD32); DrawBigSprite_m1x1();
+    ret();
+}
+
+/* $80:C604 SpeedGauge (RTS): X = the gauge reading for the player while
+ * $092D is set and it is not the CPU's turn: speed ($01C0:$01B8 >> 3)
+ * - 2 divided by 2 (4 in the air), at least 1, at most $2F (blinking
+ * $2E every 8 frames), + $80 unless a button is held. */
+void SpeedGauge_m1x1(void)
+{
+    ldx8(0x00);
+    lda8(rd8(ABS(0x092D)));
+    if (fz) { ret(); return; }
+    lda8(rd8(DP(0x7F)));
+    lda8(lsr8((u8)A));
+    if (fc) { ret(); return; }
+    ldx8(0x02);
+    lda8(rd8(ABS(0x01C0))); wr8(DP(0x00), (u8)A);
+    lda8(rd8(ABS(0x01B8))); wr8(DP(0x01), (u8)A);
+    do {
+        u8 h = rd8(DP(0x00));
+        fc = h & 1; h >>= 1; wr8(DP(0x00), h); nz8(h);
+        u8 l = rd8(DP(0x01));
+        u8 c = fc; fc = l & 1; l = (u8)((l >> 1) | (c << 7)); wr8(DP(0x01), l); nz8(l);
+        X = dec8((u8)X);
+    } while (!fn);
+    lda8(0x02);
+    Y = rd8(ABS(0x01E8)); nz8((u8)Y);
+    if (!fz) lda8(0x04);
+    X = (u8)A; nz8((u8)X);
+    lda8(rd8(DP(0x01)));
+    fc = 1; sbc8(0x02);
+    int one = fn;
+    if (!one) {
+        push16(0xC636); DivideAX_m1x1();
+        lda8((u8)X);
+        one = fz;
+    }
+    if (one) ldx8(0x01);
+    cmp8((u8)X, 0x2F);
+    if (fc) {
+        ldx8(0x2F);
+        lda8(rd8(DP(0x63)));
+        and8(0x08);
+        if (fz) X = dec8((u8)X);
+    }
+    lda8(rd8(ABS(0x0178)));
+    lda8(asl8((u8)A));
+    if (fc) { ret(); return; }
+    lda8((u8)X);
+    ora8(0x80);
+    X = (u8)A; nz8((u8)X);
+    ret();
+}

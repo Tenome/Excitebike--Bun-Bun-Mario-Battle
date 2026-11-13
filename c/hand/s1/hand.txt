@@ -263,3 +263,6 @@
 80CD54  1 1  mem+A,X,Y,C,V   RiderPose
 80C475  1 1  mem+A,X,Y,C,V   CrashRecovery
 80DD0E  1 1  mem+A,X,Y,C,V   PlayerCrashStep
+80DB6F  1 1  mem+X,Y,C,V     BonusTimerStep
+80CCE1  1 1  mem+A,X,Y,C,V   DrawRider
+80C604  1 1  mem+A,X,Y,C,V   SpeedGauge

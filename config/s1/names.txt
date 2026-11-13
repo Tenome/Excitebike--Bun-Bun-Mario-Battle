@@ -284,3 +284,6 @@
 80CD54 RiderPose
 80C475 CrashRecovery
 80DD0E PlayerCrashStep
+80DB6F BonusTimerStep
+80CCE1 DrawRider
+80C604 SpeedGauge
