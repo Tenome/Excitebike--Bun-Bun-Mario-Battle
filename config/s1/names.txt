@@ -237,3 +237,7 @@
 80AB2A BallOrGauge
 808EF7 TurnSelectWheels
 80EB8E SlowPieceStep
+81B6C2 DriftUpObject
+808EA0 SelectTimerDigits
+80E059 ShowBonusBest
+80EDEF PaceBonus

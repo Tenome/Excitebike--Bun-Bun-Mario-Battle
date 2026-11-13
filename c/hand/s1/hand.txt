@@ -215,3 +215,7 @@
 80AB2A  1 1  mem+A,X,Y,C,V   BallOrGauge
 808EF7  1 1  mem+A,X,Y,C,V   TurnSelectWheels
 80EB8E  1 1  mem+A,X,Y,C,V   SlowPieceStep
+81B6C2  1 1  mem+A,X,Y,C,V   DriftUpObject
+808EA0  1 1  mem+X,Y,C,V     SelectTimerDigits
+80E059  1 1  mem+X,Y,C,V     ShowBonusBest
+80EDEF  1 1  mem+A,X,Y,C,V   PaceBonus

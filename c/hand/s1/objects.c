@@ -1407,3 +1407,170 @@ void SlowPieceStep_m1x1(void)
     crash_from1();
     ret();
 }
+
+void FindObjectSlot_m1x1(void);
+
+/* $81:B6C2 DriftUpObject (RTS): Stadium 4's $81:B96C with Stadium 1's
+ * object arrays (6 bytes lower, slot in $039D, Random $81:A1E5). */
+void DriftUpObject_m1x1(void)
+{
+    X = rd8(ABS(0x039D)); nz8((u8)X);
+    lda8(rd8(DP(0x63)));
+    and8(0x03);
+    if (fz) {
+        rep(0x20);
+        lda16(rd16(ABSX(0x0319)));
+        fc = 0; adc16(rd16(ABSX(0x0279)));
+        wr16(ABSX(0x0279), A);
+        wr16(ABSX(0x0329), dec16(rd16(ABSX(0x0329))));
+        if (fz) {
+            lda16(0x0008); wr16(ABSX(0x0329), 0x0008);
+            lda16(rd16(ABSX(0x0319)));
+            eor16(0xFFFF);
+            lda16(inc16(A));
+            wr16(ABSX(0x0319), A);
+        }
+    }
+    sep(0x20);
+    lda8(rd8(DP(0x63)));
+    and8(0x03);
+    if (!fz) { ret(); return; }
+    wr8(ABSX(0x0289), dec8(rd8(ABSX(0x0289))));
+    lda8(rd8(ABSX(0x0289)));
+    cmp8((u8)A, 0x48);
+    if (fc) { ret(); return; }
+    rep(0x20);
+    lda16(0x00F0);
+    wr16(ABSX(0x0279), 0x00F0);
+    wr16(ABSX(0x0289), 0x00F0);
+    sep(0x20);
+    wr8(ABSX(0x0309), inc8(rd8(ABSX(0x0309))));
+    lda8(0x09);
+    push8(0x81); push16(0xB713); FindObjectSlot_m1x1();
+    lda8(0x00); wr8(ABSY(0x02E9), 0x00);
+    lda8(0x00);
+    push8(0x81); push16(0xB71E); FindObjectSlot_m1x1();
+    lda8(0x00); wr8(ABSY(0x02E9), 0x00);
+    push8(0x81); push16(0xB727); Random_m1x1();
+    and8(0x7F);
+    fc = 0; adc8(0x80);
+    wr8(ABSX(0x0369), (u8)A);
+    ret();
+}
+
+/* $80:8EA0 (RTS): the select screen's timer: $88:$89 / 60 (the hardware
+ * divider) as two digits ($03D3-$03D6, tiles +$50 / +$60), size $22,
+ * at VRAM $1A8F. */
+void SelectTimerDigits_m1x1(void)
+{
+    lda8(rd8(DP(0x88))); wr8(ABS(0x4204), (u8)A);
+    lda8(rd8(DP(0x89))); wr8(ABS(0x4205), (u8)A);
+    lda8(0x3C); wr8(ABS(0x4206), 0x3C);
+    wr8(DP(0x00), 0);
+    lda8(rd8(ABS(0x4214)));
+    for (;;) {
+        cmp8((u8)A, 0x0A);
+        if (!fc) break;
+        sbc8(0x0A);
+        wr8(DP(0x00), inc8(rd8(DP(0x00))));
+        WAIT_TICK();
+    }
+    fc = 0; adc8(0x50); wr8(ABS(0x03D4), (u8)A);
+    fc = 0; adc8(0x10); wr8(ABS(0x03D6), (u8)A);
+    lda8(rd8(DP(0x00)));
+    fc = 0; adc8(0x50); wr8(ABS(0x03D3), (u8)A);
+    fc = 0; adc8(0x10); wr8(ABS(0x03D5), (u8)A);
+    lda8(0x22); wr8(ABS(0x03D2), 0x22);
+    rep(0x20);
+    lda16(0x1A8F); wr16(DP(0x00), 0x1A8F);
+    lda16(0x03D2); wr16(DP(0x02), 0x03D2);
+    sep(0x20);
+    push16(0x8EF5); VramQueueTiles20_m1x1();
+    ret();
+}
+
+/* $80:E059 (RTS): the bonus best: the label $80:E0BC at VRAM $194D and
+ * the best count $1E88 as two digits (tens blank $FC when both are 0)
+ * at $1959. */
+void ShowBonusBest_m1x1(void)
+{
+    rep(0x20);
+    lda16(0x194D); wr16(DP(0x00), 0x194D);
+    lda16(0xE0BC); wr16(DP(0x02), 0xE0BC);
+    sep(0x20);
+    push16(0xE069); VramQueueTiles20_m1x1();
+    wr8(DP(0x00), 0);
+    lda8(rd8(ABS(0x1E88)));
+    for (;;) {
+        cmp8((u8)A, 0x0A);
+        if (!fc) break;
+        sbc8(0x0A);
+        wr8(DP(0x00), inc8(rd8(DP(0x00))));
+        WAIT_TICK();
+    }
+    wr8(DP(0x01), (u8)A);
+    ora8(rd8(DP(0x00)));
+    if (!fz) {
+        lda8(rd8(DP(0x00)));
+        fc = 0; adc8(0x50); wr8(ABS(0x03D3), (u8)A);
+        fc = 0; adc8(0x10); wr8(ABS(0x03D5), (u8)A);
+    } else {
+        lda8(0xFC); wr8(ABS(0x03D3), 0xFC); wr8(ABS(0x03D5), 0xFC);
+    }
+    lda8(rd8(DP(0x01)));
+    fc = 0; adc8(0x50); wr8(ABS(0x03D4), (u8)A);
+    fc = 0; adc8(0x10); wr8(ABS(0x03D6), (u8)A);
+    lda8(0x22); wr8(ABS(0x03D2), 0x22);
+    rep(0x20);
+    lda16(0x1959); wr16(DP(0x00), 0x1959);
+    lda16(0x03D2); wr16(DP(0x02), 0x03D2);
+    sep(0x20);
+    push16(0xE0BA); VramQueueTiles20_m1x1();
+    ret();
+}
+
+/* $80:EDEF (RTS): the pace bonus: while racing ($8E, not $84, not the
+ * special course $0CD7) count frames $0995 and the player's speed into
+ * $0996; each 60 the frame count is ranked against $80:E733 (the last
+ * slot below in $00, at or above in $01) and with rivals the bonus
+ * $80:E73B / $80:E743 goes to $09B0 / $09B1; past $46 frames, restart. */
+void PaceBonus_m1x1(void)
+{
+    lda8(rd8(ABS(0x0CD7)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(DP(0x8E)));
+    if (fz) { ret(); return; }
+    lda8(rd8(DP(0x84)));
+    if (!fz) { ret(); return; }
+    wr8(ABS(0x0995), inc8(rd8(ABS(0x0995))));
+    lda8(rd8(ABS(0x0995)));
+    cmp8((u8)A, 0x46);
+    if (!fc) {
+        lda8(rd8(ABS(0x0180)));
+        fc = 0; adc8(rd8(ABS(0x0996)));
+        wr8(ABS(0x0996), (u8)A);
+        cmp8((u8)A, 0x3C);
+        if (!fc) { ret(); return; }
+        lda8(rd8(ABS(0x0996)));
+        fc = 1; sbc8(0x3C);
+        wr8(ABS(0x0996), (u8)A);
+        ldx8(0x07);
+        do {
+            lda8(rd8(ABS(0x0995)));
+            cmp8((u8)A, rd8(ABSX(0xE733)));
+            if (!fc) wr8(DP(0x00), (u8)X);
+            else wr8(DP(0x01), (u8)X);
+            X = dec8((u8)X);
+        } while (!fz);
+        lda8(rd8(DP(0x7D)));
+        if (!fz) {
+            X = rd8(DP(0x00)); nz8((u8)X);
+            lda8(rd8(ABSX(0xE73B))); wr8(ABS(0x09B0), (u8)A);
+            lda8(rd8(ABSX(0xE743))); wr8(ABS(0x09B1), (u8)A);
+        }
+    }
+    lda8(0x00);
+    wr8(ABS(0x0995), 0);
+    wr8(ABS(0x0996), 0);
+    ret();
+}
