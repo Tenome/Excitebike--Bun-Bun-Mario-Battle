@@ -247,3 +247,6 @@
 80AF71  1 1  mem+A,X,Y,C,V   CpuSteerDown
 80AF07  1 1  mem+A,X,Y,C,V   CpuLaneDecision
 80B02F  1 1  mem+A,X,Y,C,V   CpuAvoidHurdle
+80AEC6  1 1  mem+A,X,Y,C,V   CpuRidersStep
+80ECE4  1 1  mem+A,X,Y,C,V   DrawSparksAndMarkers
+80C09F  1 1  mem+A,X,Y,C,V   PlaceRival

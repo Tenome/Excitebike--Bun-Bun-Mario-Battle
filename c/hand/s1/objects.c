@@ -2583,3 +2583,162 @@ store:
     lda8(rd8(DP(0x0D)));
     ret();
 }
+
+void CpuSteer_m1x1(void);
+void CpuThrottle_m1x1(void);
+
+/* $80:AEC6 CpuRidersStep (RTS): the CPU riders 1-7 on the track ($01D8),
+ * not crashed or off it: steer; on the ground also throttle, look for
+ * hurdles, and with none (when $092A) retarget and (unless $84) decide
+ * on a lane; in the air $0971 follows the piece angle $08B4. */
+void CpuRidersStep_m1x1(void)
+{
+    ldx8(0x01);
+    do {
+        wr8(DP(0x0F), (u8)X);
+        lda8(rd8(ABSX(0x01D8)));
+        if (fz) goto next;
+        lda8(rd8(ABSX(0x01C8)));
+        ora8(rd8(ABSX(0x01D0)));
+        if (!fz) goto next;
+        push16(0xAED9); CpuSteer_m1x1();
+        lda8(rd8(ABSX(0x01E8)));
+        if (!fz) {
+            lda8(rd8(ABSX(0x08B4)));
+            wr8(ABSX(0x0971), (u8)A);
+            goto next;
+        }
+        push16(0xAEE1); CpuThrottle_m1x1();
+        push16(0xAEE4); CpuAvoidHurdle_m1x1();
+        if (!fz) goto next;
+        lda8(rd8(ABS(0x092A)));
+        if (fz) goto next;
+        push16(0xAEEE); RetargetRival_m1x1();
+        lda8(rd8(DP(0x84)));
+        if (!fz) goto next;
+        push16(0xAEF5); CpuLaneDecision_m1x1();
+    next:
+        X = rd8(DP(0x0F)); nz8((u8)X);
+        X = inc8((u8)X);
+        cmp8((u8)X, 0x08);
+    } while (!fc);
+    ret();
+}
+
+void HeightAbove_m1x1(void);
+
+/* $80:ECE4 (RTS): every rider's wheel spark; an airborne rider near the
+ * screen edges (page 0 from $F6, page 1 from $F4) also gets a marker
+ * sprite ($16A0 + 4X, frame $80:E6EE by $0981, attribute $21). */
+void DrawSparksAndMarkers_m1x1(void)
+{
+    ldx8(0x07);
+    do {
+        lda8((u8)X);
+        lda8(asl8((u8)A)); lda8(asl8((u8)A));
+        Y = (u8)A; nz8((u8)Y);
+        int marker;
+        lda8(rd8(ABSX(0x0198)));
+        lda8(lsr8((u8)A));
+        if (fc) {
+            lda8(rd8(ABSX(0x0190)));
+            cmp8((u8)A, 0xF4);
+            marker = !fc;
+        } else {
+            lda8(lsr8((u8)A));
+            marker = 0;
+            if (!fc) {
+                lda8(rd8(ABSX(0x0190)));
+                cmp8((u8)A, 0xF6);
+                marker = fc;
+            }
+        }
+        if (marker) {
+            lda8(rd8(ABSX(0x01E8)));
+            if (!fz) {
+                lda8(0xB6);
+                push16(0xED0C); HeightAbove_m1x1();
+                wr8(ABSY(0x16A1), (u8)A);
+                lda8(rd8(ABSX(0x0190)));
+                fc = 0; adc8(0x0A);
+                wr8(ABSY(0x16A0), (u8)A);
+                wr8(DP(0x01), (u8)Y);
+                Y = rd8(ABSX(0x0981)); nz8((u8)Y);
+                lda8(rd8(ABSY(0xE6EE)));
+                Y = rd8(DP(0x01)); nz8((u8)Y);
+                wr8(ABSY(0x16A2), (u8)A);
+                push8((u8)Y);
+                lda8((u8)Y);
+                fc = 0; adc8(0xA0);
+                lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
+                Y = (u8)A; nz8((u8)Y);
+                lda8(0x02); wr8(ABSY(0x1820), 0x02);
+                Y = pull8(); nz8((u8)Y);
+                lda8(0x21); wr8(ABSY(0x16A3), 0x21);
+            }
+        }
+        push16(0xED3D); WheelSpark_m1x1();
+        X = dec8((u8)X);
+    } while (!fn);
+    ret();
+}
+
+/* $80:C09F PlaceRival (RTS, X = rival): clear it, then Stadium 4's
+ * $80:BDDC for Stadium 1 (lanes $80:BDDA, columns $80:BDE8, Random). */
+void PlaceRival_m1x1(void)
+{
+    push16(0xC0A1); ClearRiderState_m1x1();
+    push8(0x80); push16(0xC0A5); Random_m1x1();
+    and8(0x03);
+    Y = (u8)A; nz8((u8)Y);
+    lda8(rd8(ABSY(0xBDDA)));
+    wr8(ABSX(0x01F0), (u8)A);
+    Y = rd8(ABSX(0x0198)); nz8((u8)Y);
+    lda8(fz ? 0xA0 : 0x40);
+    wr8(ABSX(0x0190), (u8)A);
+    lda8(0x06); wr8(ABSX(0x01E0), 0x06);
+    lda8(rd8(ABS(0x0260)));
+    fc = 0; adc8(rd8(ABSY(0xBDE8)));
+    and8(0x3F);
+    wr8(ABSX(0x0260), (u8)A);
+    lda8(rd8(ABS(0x0188)));
+    wr8(ABSX(0x0188), (u8)A);
+    lda8((u8)Y);
+    if (!fz) {
+        ldy8(0x05);
+        push16(0xC0DB); RiderPieceAt_m1x1();
+        lda8(rd8(DP(0x10)));
+        cmp8((u8)A, 0xE4);
+        if (!fz) {
+            cmp8((u8)A, 0x3B);
+            if (!fc) { lda8(0x00); ret(); return; }
+            cmp8((u8)A, 0x93);
+            if (fc) { lda8(0x00); ret(); return; }
+            ldy8(0x02);
+            push16(0xC0EE); RiderPieceAt_m1x1();
+            cmp8((u8)A, 0xE6);
+            if (fz) {
+                lda8(rd8(ABSX(0x01F0)));
+                cmp8((u8)A, 0x20);
+                if (fc) {
+                    lda8(0x30); wr8(ABSX(0x01F8), 0x30);
+                    lda8(0x01);
+                } else lda8(0x03);
+                wr8(ABSX(0x0208), (u8)A);
+            }
+        }
+    }
+    Y = rd8(ABSX(0x0198)); nz8((u8)Y);
+    push16(0xC10D); RivalTarget_m1x1();
+    push8(0x80); push16(0xC111); Random_m1x1();
+    and8(0x3F);
+    if (fz) {
+        lda8(rd8(ABSX(0x0198)));
+        eor8(0x02);
+        lda8(asl8((u8)A));
+        wr8(ABSX(0x01C0), (u8)A);
+    }
+    lda8(0x10); wr8(DP(0x3B), 0x10);
+    lda8(0x01); wr8(ABSX(0x01D8), 0x01);
+    ret();
+}

@@ -268,3 +268,6 @@
 80AF71 CpuSteerDown
 80AF07 CpuLaneDecision
 80B02F CpuAvoidHurdle
+80AEC6 CpuRidersStep
+80ECE4 DrawSparksAndMarkers
+80C09F PlaceRival

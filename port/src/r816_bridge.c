@@ -462,6 +462,20 @@ BRIDGE(HleHand_CpuSteerUp, CpuSteerUp_m1x1, 150)
 BRIDGE(HleHand_CpuSteerDown, CpuSteerDown_m1x1, 150)
 BRIDGE(HleHand_CpuLaneDecision, CpuLaneDecision_m1x1, 150)
 BRIDGE(HleHand_CpuAvoidHurdle, CpuAvoidHurdle_m1x1, 180)
+static uint32 cpu_riders_cost1(void)
+{
+    uint32 c = 10;
+    for (int x = 1; x < 8; x++) {
+        if (g_ram[0x01D8 + x] && !(g_ram[0x01C8 + x] | g_ram[0x01D0 + x]))
+            c += g_ram[0x01E8 + x] ? 60 : 450;
+        else
+            c += 20;
+    }
+    return c;
+}
+BRIDGE_DYN(HleHand_CpuRidersStep, CpuRidersStep_m1x1, cpu_riders_cost1())
+BRIDGE(HleHand_DrawSparksAndMarkers, DrawSparksAndMarkers_m1x1, 1000)
+BRIDGE(HleHand_PlaceRival, PlaceRival_m1x1, 380)
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */
