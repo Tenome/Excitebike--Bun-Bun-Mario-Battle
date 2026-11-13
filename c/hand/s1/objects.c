@@ -514,3 +514,112 @@ void TickRaceClock_m1x1(void)
     }
     ShowRaceClock_m1x1();
 }
+
+/* $80:AF9F RiderAhead (RTS, X = rider, Y = window, $02 = row, $0F = self):
+ * C set when another rider on screen page 1 in row $02 sits between
+ * rider X's position + $80:B86F,Y and that less $80:B870,Y (riders
+ * from $7E up). */
+void RiderAhead_m1x1(void)
+{
+    lda8(rd8(ABSX(0x0190)));
+    fc = 0; adc8(rd8(ABSY(0xB86F)));
+    wr8(DP(0x00), (u8)A);
+    fc = 1; sbc8(rd8(ABSY(0xB870)));
+    wr8(DP(0x01), (u8)A);
+    Y = rd8(DP(0x7E)); nz8((u8)Y);
+    do {
+        cmp8((u8)Y, rd8(DP(0x0F)));
+        if (!fz) {
+            lda8(rd8(ABSY(0x0198)));
+            lda8(lsr8((u8)A));
+            if (fc) {
+                lda8(rd8(ABSY(0x0958)));
+                if (!fz) {
+                    cmp8((u8)A, rd8(DP(0x02)));
+                    if (fz) {
+                        lda8(rd8(ABSY(0x0190)));
+                        cmp8((u8)A, rd8(DP(0x00)));
+                        if (!fc) {
+                            cmp8((u8)A, rd8(DP(0x01)));
+                            if (fc) { ret(); return; }
+                        }
+                    }
+                }
+            }
+        }
+        Y = inc8((u8)Y);
+        cmp8((u8)Y, 0x08);
+    } while (!fc);
+    fc = 0;
+    ret();
+}
+
+void QueueSound_m1x1(void);
+
+/* $80:ED42 CrossFinish (RTS, X = rider): the player crossing the finish
+ * once ($03AF, not $84): $5E = $A4 = $1D; with a finish result $093F
+ * sound $4A (1st) or $28, a win counted ($1E87) without rivals and $5E
+ * cleared when $60; with none, $84 = 1 and sounds $2B, $2D, $80, $5E
+ * cleared. */
+void CrossFinish_m1x1(void)
+{
+    cmp8((u8)X, 0x00);
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABS(0x03AF)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(DP(0x84)));
+    if (!fz) { ret(); return; }
+    wr8(ABS(0x03AF), inc8(rd8(ABS(0x03AF))));
+    lda8(0x1D); wr8(DP(0x5E), 0x1D); wr8(DP(0xA4), 0x1D);
+    lda8(rd8(ABS(0x093F)));
+    if (!fz) {
+        cmp8((u8)A, 0x01);
+        if (fz) { lda8(0x4A); push8(0x80); push16(0xED66); QueueSound_m1x1(); }
+        else { lda8(0x28); push8(0x80); push16(0xED6E); QueueSound_m1x1(); }
+        lda8(rd8(DP(0x7D)));
+        if (fz) wr8(ABS(0x1E87), inc8(rd8(ABS(0x1E87))));
+        lda8(rd8(DP(0x60)));
+        if (fz) { ret(); return; }
+    } else {
+        lda8(0x01); wr8(DP(0x84), 0x01);
+        lda8(0x2B); push8(0x80); push16(0xED84); QueueSound_m1x1();
+        lda8(0x2D); push8(0x80); push16(0xED8A); QueueSound_m1x1();
+        lda8(0x80); push8(0x80); push16(0xED90); QueueSound_m1x1();
+    }
+    lda8(0x00); wr8(DP(0x5E), 0x00);
+    ret();
+}
+
+/* $80:DA31 (RTS): the bonus banner sprites: for banner $BB (1-based; at
+ * 4 only while $8A counts down) four OAM words from $80:DA65 + 8 *
+ * ($BB - 1) into $16A0-$16A7, size 2 for both. X is kept. */
+void BonusBannerSprites_m1x1(void)
+{
+    lda8(rd8(DP(0xBB)));
+    if (fz) { ret(); return; }
+    cmp8((u8)A, 0x04);
+    if (fz) {
+        lda8(rd8(DP(0x8A)));
+        if (fz) { ret(); return; }
+        wr8(DP(0x8A), dec8(rd8(DP(0x8A))));
+    }
+    push8((u8)X);
+    lda8(rd8(DP(0xBB)));
+    lda8(dec8((u8)A));
+    lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A));
+    X = (u8)A; nz8((u8)X);
+    ldy8(0xA0);
+    rep(0x20);
+    do {
+        lda16(rd16(ABSX(0xDA65)));
+        wr16(ABSY(0x1600), A);
+        X = inc8((u8)X); X = inc8((u8)X);
+        Y = inc8((u8)Y); Y = inc8((u8)Y);
+        cmp8((u8)Y, 0xA8);
+    } while (!fc);
+    ldy8(0x28);
+    lda16(0x0202); wr16(ABSY(0x1820), 0x0202);
+    sep(0x20);
+    X = pull8(); nz8((u8)X);
+    ret();
+}

@@ -210,3 +210,6 @@
 80DE07 Mode0A
 80C805 ShowRaceClock
 80C7EB TickRaceClock
+80AF9F RiderAhead
+80ED42 CrossFinish
+80DA31 BonusBannerSprites

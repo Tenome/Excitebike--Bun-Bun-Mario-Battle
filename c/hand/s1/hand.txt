@@ -188,3 +188,6 @@
 80DE07  1 1  mem+X,Y,C,V     Mode0A
 80C805  1 1  mem+X,Y,C,V     ShowRaceClock
 80C7EB  1 1  mem+X,Y,C,V     TickRaceClock
+80AF9F  1 1  mem+A,X,Y,C,V   RiderAhead
+80ED42  1 1  mem+A,X,Y,C,V   CrossFinish
+80DA31  1 1  mem+A,X,Y,C,V   BonusBannerSprites
