@@ -995,3 +995,58 @@ void FlagRidersAtLine_m1x1(void)
     }
     ret();
 }
+
+void MoveObjectX_m1x1(void);
+
+/* $80:E8DF LanePieceTables (RTS, Y = lane): the pointer $03:$04 to lane
+ * Y's track-piece row ($80:E6E2 / $80:E6E8). */
+void LanePieceTables_m1x1(void)
+{
+    lda8(rd8(ABSY(0xE6E2))); wr8(DP(0x03), (u8)A);
+    lda8(rd8(ABSY(0xE6E8))); wr8(DP(0x04), (u8)A);
+    ret();
+}
+
+/* $80:C2E1 HeightAbove (RTS): A - rider X's jump height $01F8 - its lane
+ * $01F0 - $09C7 - 8. */
+void HeightAbove_m1x1(void)
+{
+    fc = 1;
+    sbc8(rd8(ABSX(0x01F8)));
+    sbc8(rd8(ABSX(0x01F0)));
+    sbc8(rd8(ABS(0x09C7)));
+    fc = 1;
+    sbc8(0x08);
+    ret();
+}
+
+/* $80:C2DE GroundHeightAbove (RTS): HeightAbove from the ground line
+ * $0CD5. */
+void GroundHeightAbove_m1x1(void)
+{
+    lda8(rd8(ABS(0x0CD5)));
+    HeightAbove_m1x1();
+}
+
+/* $81:9755 FindObjectSlot (RTL, A = type): Y = the slot (even 14-0) of
+ * the object of type A ($02F9), or negative when none. */
+void FindObjectSlot_m1x1(void)
+{
+    ldy8(0x0E);
+    do {
+        cmp8((u8)A, rd8(ABSY(0x02F9)));
+        if (fz) break;
+        Y = dec8((u8)Y);
+        Y = dec8((u8)Y);
+    } while (!fn);
+    retl();
+}
+
+/* $81:966B (RTS): MoveObjectX for object X + 8. */
+void MoveObjectX8_m1x1(void)
+{
+    lda8((u8)X);
+    fc = 0; adc8(0x08);
+    X = (u8)A; nz8((u8)X);
+    MoveObjectX_m1x1();
+}

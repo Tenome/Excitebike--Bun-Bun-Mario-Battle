@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 148 hand-written (36.4%), 147 of them in the port.
+407 functions in the static map; 153 hand-written (37.6%), 152 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -74,6 +74,8 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:BFD0` | ScrollByPlayerSpeed | `mem+X,Y` | `physics.c` | yes |
 | `$80:BFE5` | ScrollRivalsRelative | `mem+X,Y` | `physics.c` | yes |
 | `$80:C187` | ClearRiderState | `mem+A,X,C,V` | `race.c` | yes |
+| `$80:C2DE` | GroundHeightAbove | `mem+A,X,Y,C,V` | `from_s4.c` | yes |
+| `$80:C2E1` | HeightAbove | `mem+A,X,Y,C,V` | `from_s4.c` | yes |
 | `$80:C337` | Tick08CC | `mem+X,Y,C,V` | `misc.c` | yes |
 | `$80:C3F5` | RiderHeightStep | `mem+A,X,Y,C,V` | `physics.c` | yes |
 | `$80:C5FE` | FlagRidersAtLine | `mem+A,X,Y,C,V` | `from_s4.c` | yes |
@@ -101,6 +103,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:E043` | AnimSourceFromFrame | `mem+X,Y,C,V` | `misc.c` | yes |
 | `$80:E3FB` | StartMode01 | `mem+X,Y,C,V` | `misc.c` | yes |
 | `$80:E775` | AnimateWheels | `mem+V` | `race.c` | yes |
+| `$80:E8DF` | LanePieceTables | `mem+A,X,Y,C,V` | `from_s4.c` | yes |
 | `$80:E8EA` | MarkFastRider | `mem+A,X,Y,C,V` | `physics.c` | yes |
 | `$80:EAD1` | PlayerOverheatWarn | `mem+A,X,Y,C,V` | `race.c` | yes |
 | `$80:ED96` | ItemFlashState | `mem+X,Y,C,V` | `from_s4.c` | yes |
@@ -110,7 +113,9 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$81:932A` | SpawnPlayerSpark | `mem+X,C,V` | `objects.c` | yes |
 | `$81:9480` | EmptyStep9554 | `mem+A,X,Y,C,V` | `from_s4.c` | yes |
 | `$81:95EE` | StepSpark | `mem+Y,C,V` | `objects.c` | yes |
+| `$81:966B` | MoveObjectX8 | `mem+A,X,Y,C,V` | `from_s4.c` | yes |
 | `$81:9754` | EmptyStep9828 | `mem+A,X,Y,C,V` | `from_s4.c` | yes |
+| `$81:9755` | FindObjectSlot | `mem+A,X,Y,C,V` | `from_s4.c` | yes |
 | `$81:9761` | RivalDispatch_9761 | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:97CC` | RivalCountdown_97CC | `mem+V` | `misc.c` | yes |
 | `$81:9957` | FadeSkyColours | `mem+V` | `from_s4.c` | yes |

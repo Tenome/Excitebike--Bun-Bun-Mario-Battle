@@ -152,3 +152,8 @@
 819754  1 1  mem+A,X,Y,C,V  EmptyStep9828          # from s4 819828
 819480  1 1  mem+A,X,Y,C,V  EmptyStep9554          # from s4 819554
 80C5FE  1 1  mem+A,X,Y,C,V  FlagRidersAtLine       # from s4 80C38B
+80E8DF  1 1  mem+A,X,Y,C,V   LanePieceTables        # from s4 80F901
+80C2E1  1 1  mem+A,X,Y,C,V   HeightAbove            # from s4 80C049
+80C2DE  1 1  mem+A,X,Y,C,V   GroundHeightAbove      # from s4 80C046
+819755  1 1  mem+A,X,Y,C,V   FindObjectSlot         # from s4 819829
+81966B  1 1  mem+A,X,Y,C,V   MoveObjectX8           # from s4 81973F

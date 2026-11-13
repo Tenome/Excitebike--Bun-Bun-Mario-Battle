@@ -384,6 +384,11 @@ BRIDGE(HleHand_StepObjectX8, StepObjectX8_m1x1, 88)
 BRIDGE(HleHand_EmptyStep9828, EmptyStep9828_m1x1, 6)
 BRIDGE(HleHand_EmptyStep9554, EmptyStep9554_m1x1, 6)
 BRIDGE(HleHand_FlagRidersAtLine, FlagRidersAtLine_m1x1, 140)
+BRIDGE(HleHand_LanePieceTables, LanePieceTables_m1x1, 15)
+BRIDGE(HleHand_HeightAbove, HeightAbove_m1x1, 18)
+BRIDGE(HleHand_GroundHeightAbove, GroundHeightAbove_m1x1, 21)
+BRIDGE(HleHand_FindObjectSlot, FindObjectSlot_m1x1, 60)
+BRIDGE(HleHand_MoveObjectX8, MoveObjectX8_m1x1, 76)
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */
