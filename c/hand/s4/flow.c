@@ -296,3 +296,69 @@ void TitlePushStart_m1x1(void)
     ldy8(0x00);
     demo_exit();
 }
+
+void SpawnDustPuff_m1x1(void);
+void QueueSoundB_m1x1(void);
+
+/* $80:ABAC: a dust puff every 16 frames; while overheated ($60 odd)
+ * $00 = $58, X = 7, Y = $1C. */
+static void overheat_dust(void)
+{
+    lda8(rd8(DP(0x63)));
+    and8(0x0F);
+    if (fz) { push8(0x80); push16(0xABB5); SpawnDustPuff_m1x1(); }
+    lda8(rd8(DP(0x60)));
+    lda8(lsr8((u8)A));
+    if (fc) {
+        lda8(0x58); wr8(DP(0x00), 0x58);
+        ldx8(0x07);
+        lda8((u8)X);
+        lda8(asl8((u8)A)); lda8(asl8((u8)A));
+        Y = (u8)A; nz8((u8)Y);
+    }
+}
+
+/* $80:C19B OverheatStep (RTS): while the engine is overheated ($60 or
+ * $0940): above step 8 the stopped player cools down standing (speed 0, or
+ * $C0 while landing; steering toward lane $80:BACF) with dust puffs; at
+ * step 8 the overheat ends (sound $2D, heat $0990 = $08CC = 5, finish
+ * state 5 unless set). */
+void OverheatStep_m1x1(void)
+{
+    lda8(rd8(DP(0x60)));
+    ora8(rd8(ABS(0x0940)));
+    if (fz) { ret(); return; }
+    lda8(rd8(DP(0x60)));
+    cmp8((u8)A, 0x08);
+    if (fz) {
+        lda8(0x00); wr8(ABS(0x0940), 0x00);
+        lda8(0x2D);
+        push8(0x80); push16(0xC1DF); QueueSoundB_m1x1();
+        lda8(0x05);
+        wr8(ABS(0x0990), 0x05);
+        wr8(ABS(0x08CC), 0x05);
+        Y = rd8(ABS(0x01D6)); nz8((u8)Y);
+        if (fz) wr8(ABS(0x01D6), (u8)A);
+        ret();
+        return;
+    }
+    if (!fc) { ret(); return; }
+    lda8(rd8(ABS(0x01C6)));
+    ora8(rd8(ABS(0x01CE)));
+    ora8(rd8(ABS(0x01D6)));
+    if (fz) {
+        lda8(rd8(ABS(0x0176)));
+        if (!fz) {
+            lda8(0xC0); wr8(ABS(0x01BE), 0xC0);
+        } else {
+            wr8(ABS(0x01BE), (u8)A);
+            ldx8(0x01);
+            lda8(rd8(ABS(0x01F6)));
+            cmp8((u8)A, rd8(ABS(0xBACF)));
+            if (fz) X = dec8((u8)X);
+            wr8(ABS(0x01AE), (u8)X);
+        }
+    }
+    overheat_dust();
+    ret();
+}

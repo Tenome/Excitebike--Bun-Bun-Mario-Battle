@@ -699,6 +699,8 @@ BRIDGE(HleHand_Mode0F_EndScreen, Mode0F_EndScreen_m1x1, 190)
 /* c/hand/s4/flow.c, part 3 */
 BRIDGE(HleHand_DemoInputStep, DemoInputStep_m1x1, 60)
 BRIDGE_DYN(HleHand_TitlePushStart, TitlePushStart_m1x1, g_ram[0x1FFFF] >= 6 ? 1450 : 15)
+/* c/hand/s4/flow.c, part 4 */
+BRIDGE(HleHand_OverheatStep, OverheatStep_m1x1, 60)
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)

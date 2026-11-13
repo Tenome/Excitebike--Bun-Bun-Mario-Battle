@@ -1,15 +1,15 @@
 {
  "measures": {
-  "fuzzy_match_percent": 78.0531,
+  "fuzzy_match_percent": 78.1722,
   "total_code": "36930",
-  "matched_code": "20853",
-  "matched_code_percent": 56.4663,
+  "matched_code": "20941",
+  "matched_code_percent": 56.7046,
   "total_data": "0",
   "matched_data": "0",
   "matched_data_percent": 0.0,
   "total_functions": 532,
-  "matched_functions": 283,
-  "matched_functions_percent": 53.1955,
+  "matched_functions": 284,
+  "matched_functions_percent": 53.3835,
   "complete_code": "0",
   "complete_code_percent": 0.0,
   "complete_data": "0",
@@ -21,16 +21,16 @@
   {
    "name": "main/bank80",
    "measures": {
-    "fuzzy_match_percent": 79.4475,
+    "fuzzy_match_percent": 79.6259,
     "total_code": "24671",
-    "matched_code": "14663",
-    "matched_code_percent": 59.4342,
+    "matched_code": "14751",
+    "matched_code_percent": 59.7908,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 357,
-    "matched_functions": 188,
-    "matched_functions_percent": 52.6611,
+    "matched_functions": 189,
+    "matched_functions_percent": 52.9412,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -42,7 +42,7 @@
     {
      "name": ".text",
      "size": "24671",
-     "fuzzy_match_percent": 79.4475
+     "fuzzy_match_percent": 79.6259
     }
    ],
    "functions": [
@@ -1343,9 +1343,9 @@
      }
     },
     {
-     "name": "sub_80C19B",
+     "name": "OverheatStep",
      "size": "88",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8438171"
      }
