@@ -10456,3 +10456,102 @@ void DemoPadDisplay_m1x1(void)
     push16(0xF4AD); TitlePushStart_m1x1();
     ret();
 }
+
+void sub_81C8E1_m0x1(void);
+void LoadRiderPalettes_m1x1(void);
+void FillBonusColumns_m1x1(void);
+
+/* $80:F107 (RTS): the jump contest's HUD numbers: the last distance $1567
+ * (half-units, $81:C8E1) at VRAM $1856, and the best score $156D (raised
+ * to ScaleJumpCount's $0C + the rank points when higher) at $1897. */
+void JumpHudNumbers_m1x1(void)
+{
+    rep(0x20);
+    lda16(0x1856); wr16(DP(0x00), 0x1856);
+    lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+    lda16(0x0020); wr16(DP(0x0F), 0x0020);
+    lda16(rd16(ABS(0x1567)));
+    push8(0x80); push16(0xF11E); CALL(sub_81C8E1_m0x1, 0x81C8E1, 3);
+    push8(0x80); push16(0xF122); ScaleJumpCount_m1x1();
+    rep(0x20);
+    Y = rd8(ABS(0x156B)); nz8((u8)Y);
+    lda16(rd16(ABSY(0xF155)));
+    and16(0x00FF);
+    fc = 0; adc16(rd16(DP(0x0C)));
+    cmp16(A, rd16(ABS(0x156D)));
+    if (fc) wr16(ABS(0x156D), A);
+    lda16(rd16(ABS(0x156D)));
+    push16(0xF13E); BuildScoreDigits_m0x1();
+    rep(0x20);
+    lda16(0x1897); wr16(DP(0x00), 0x1897);
+    lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+    sep(0x20);
+    lda8(0x20); wr8(DP(0x0F), 0x20);
+    push16(0xF153); VramQueueTiles_m1x1();
+    ret();
+}
+
+/* $80:E5B0 (RTS): set up the jump contest: rider palettes; the lane rows
+ * ($09D3 ramps $FC, three empty rows, six scenery rows $3B); the streamer
+ * start; the player at column 9, X $30, angle 6 on page 1 ($94 = 2,
+ * $1905 = $17, HDMA scene 3), drawn once at ground $80 then $B8; HDMA
+ * channels 6/7 ($82:97B1 -> $210D, $82:9AB2 -> $210F); BG offsets $0100,
+ * $88 = $78, the line buffer $1000-$13FF cleared, scores cleared,
+ * $190F = $DC; the bonus columns and the HUD numbers; $156B = $FF and
+ * BG34NBA = 1. */
+void SetupJumpContest_m1x1(void)
+{
+    push8(0x80); push16(0xE5B3); LoadRiderPalettes_m1x1();
+    ldx8(0x3F);
+    do {
+        lda8(0xFC); wr8(ABSX(0x09D3), 0xFC);
+        lda8(0x00);
+        wr8(ABSX(0x0A13), 0); wr8(ABSX(0x0A53), 0); wr8(ABSX(0x0A93), 0);
+        lda8(0x3B);
+        wr8(ABSX(0x0B53), 0x3B); wr8(ABSX(0x0B93), 0x3B); wr8(ABSX(0x0BD3), 0x3B);
+        wr8(ABSX(0x0C13), 0x3B); wr8(ABSX(0x0C53), 0x3B); wr8(ABSX(0x0C93), 0x3B);
+        X = dec8((u8)X);
+    } while (!fn);
+    lda8(0x34); wr8(ABS(0x0276), 0x34);
+    lda8(0x0A); wr8(ABS(0x0279), 0x0A);
+    lda8(0x05); wr8(ABS(0x0278), 0x05);
+    lda8(0x74); wr8(ABS(0x0277), 0x74);
+    lda8(0x08); wr8(ABS(0x018E), 0x08);
+    lda8(0x09); wr8(ABS(0x0266), 0x09);
+    lda8(0x30); wr8(ABS(0x0196), 0x30);
+    lda8(0x06); wr8(ABS(0x01E6), 0x06);
+    lda8(0x01);
+    wr8(ABS(0x019E), 0x01); wr8(ABS(0x01DE), 0x01); wr8(ABS(0x0958), 0x01);
+    lda8(asl8((u8)A));
+    wr8(DP(0x94), (u8)A);
+    lda8(0x17); wr8(ABS(0x1905), 0x17);
+    lda8(0x03);
+    push8(0x80); push16(0xE61D); LoadHdmaScene_m1x1();
+    ldx8(0x00);
+    lda8(0x80); wr8(ABS(0x0CD5), 0x80); wr8(ABS(0x01B6), 0x80);
+    push16(0xE62A); DrawAllRiders_m1x1();
+    lda8(0xB8); wr8(ABS(0x0CD5), 0xB8); wr8(ABS(0x01B6), 0xB8);
+    static const u8 ch7[6][2] = { {0x70,0x42},{0x71,0x0F},{0x72,0xB2},{0x73,0x9A},{0x74,0x82},{0x77,0x00} };
+    static const u8 ch6[6][2] = { {0x60,0x42},{0x61,0x0D},{0x62,0xB1},{0x63,0x97},{0x64,0x82},{0x67,0x00} };
+    for (int i = 0; i < 6; i++) { lda8(ch7[i][1]); wr8(ABS(0x4300 | ch7[i][0]), ch7[i][1]); }
+    for (int i = 0; i < 6; i++) { lda8(ch6[i][1]); wr8(ABS(0x4300 | ch6[i][0]), ch6[i][1]); }
+    wr8(ABS(0x0096), inc8(rd8(ABS(0x0096))));
+    rep(0x30);
+    lda16(0x0100); wr16(DP(0x9E), 0x0100); wr16(DP(0xA2), 0x0100);
+    lda16(0x0078); wr16(DP(0x88), 0x0078);
+    X = 0x03FE; nz16(X);
+    do {
+        wr16(ABSX(0x1000), 0);
+        X = dec16(X);
+        X = dec16(X);
+    } while (!fn);
+    wr16(ABS(0x1993), 0); wr16(ABS(0x1997), 0);
+    sep(0x30);
+    wr8(ABS(0x1999), 0);
+    lda8(0xDC); wr8(ABS(0x190F), 0xDC);
+    push16(0xE69C); FillBonusColumns_m1x1();
+    push16(0xE69F); JumpHudNumbers_m1x1();
+    lda8(0xFF); wr8(ABS(0x156B), 0xFF);
+    lda8(0x01); wr8(ABS(0x210C), 0x01);
+    ret();
+}

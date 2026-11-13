@@ -400,3 +400,5 @@
 828DC7  1 1  mem+A,X,Y,C,V   BestTimeBlink
 819926  1 1  mem+A,X,Y,C,V   ResultsBonusCount
 80F3DD  1 1  mem+A,X,Y,C,V   DemoPadDisplay
+80F107  1 1  mem+A,X,Y,C,V   JumpHudNumbers
+80E5B0  1 1  mem+A,X,Y,C,V   SetupJumpContest

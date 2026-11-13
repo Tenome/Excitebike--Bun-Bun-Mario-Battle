@@ -412,3 +412,5 @@
 828DC7 BestTimeBlink
 819926 ResultsBonusCount
 80F3DD DemoPadDisplay
+80F107 JumpHudNumbers
+80E5B0 SetupJumpContest
