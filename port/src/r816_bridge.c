@@ -644,6 +644,10 @@ BRIDGE(HleHand_Mul16, Mul16_m1x1, 230)
  * contest run diverges within a few frames whatever its cost, and the
  * difftest cannot check multiplier reads (the harness serves them from a
  * table). Left recompiled until the difference is found. */
+/* c/hand/s4/objects.c, part 22 */
+BRIDGE_DYN(HleHand_TitleScrollStep, TitleScrollStep_m1x1, g_ram[0x8A] ? 40 : 1500)
+BRIDGE(HleHand_StartEndScreen, StartEndScreen_m1x1, 3600)
+BRIDGE(HleHand_LoadHdmaScene, LoadHdmaScene_m1x1, 2500)
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)

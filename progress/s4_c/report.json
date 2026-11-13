@@ -1,15 +1,15 @@
 {
  "measures": {
-  "fuzzy_match_percent": 73.6082,
+  "fuzzy_match_percent": 74.2892,
   "total_code": "36930",
-  "matched_code": "17570",
-  "matched_code_percent": 47.5765,
+  "matched_code": "18073",
+  "matched_code_percent": 48.9385,
   "total_data": "0",
   "matched_data": "0",
   "matched_data_percent": 0.0,
   "total_functions": 532,
-  "matched_functions": 254,
-  "matched_functions_percent": 47.7444,
+  "matched_functions": 257,
+  "matched_functions_percent": 48.3083,
   "complete_code": "0",
   "complete_code_percent": 0.0,
   "complete_data": "0",
@@ -21,16 +21,16 @@
   {
    "name": "main/bank80",
    "measures": {
-    "fuzzy_match_percent": 74.393,
+    "fuzzy_match_percent": 75.001,
     "total_code": "24671",
-    "matched_code": "12169",
-    "matched_code_percent": 49.3251,
+    "matched_code": "12469",
+    "matched_code_percent": 50.5411,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 357,
-    "matched_functions": 166,
-    "matched_functions_percent": 46.4986,
+    "matched_functions": 168,
+    "matched_functions_percent": 47.0588,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -42,7 +42,7 @@
     {
      "name": ".text",
      "size": "24671",
-     "fuzzy_match_percent": 74.393
+     "fuzzy_match_percent": 75.001
     }
    ],
    "functions": [
@@ -103,9 +103,9 @@
      }
     },
     {
-     "name": "sub_80865A",
+     "name": "TitleScrollStep",
      "size": "135",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8423002"
      }
@@ -127,9 +127,9 @@
      }
     },
     {
-     "name": "sub_8086F8",
+     "name": "StartEndScreen",
      "size": "165",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8423160"
      }
@@ -2911,16 +2911,16 @@
   {
    "name": "main/bank81",
    "measures": {
-    "fuzzy_match_percent": 74.3742,
+    "fuzzy_match_percent": 75.5784,
     "total_code": "8429",
-    "matched_code": "4109",
-    "matched_code_percent": 48.7484,
+    "matched_code": "4312",
+    "matched_code_percent": 51.1567,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 137,
-    "matched_functions": 71,
-    "matched_functions_percent": 51.8248,
+    "matched_functions": 72,
+    "matched_functions_percent": 52.5547,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -2932,7 +2932,7 @@
     {
      "name": ".text",
      "size": "8429",
-     "fuzzy_match_percent": 74.3742
+     "fuzzy_match_percent": 75.5784
     }
    ],
    "functions": [
@@ -3313,9 +3313,9 @@
      }
     },
     {
-     "name": "sub_81A747",
+     "name": "LoadHdmaScene",
      "size": "203",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8496967"
      }

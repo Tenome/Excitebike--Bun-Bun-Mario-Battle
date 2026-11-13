@@ -273,3 +273,6 @@
 80BB56 RiderRunOut
 80B98E Mul16
 80B9FA Mul16b
+80865A TitleScrollStep
+8086F8 StartEndScreen
+81A747 LoadHdmaScene

@@ -5382,3 +5382,193 @@ static void mul16b(void)
 }
 void Mul16b_m1x1(void) { mul16b(); }
 void Mul16b_m1x0(void) { mul16b(); }
+
+void ChangeMode_m1x1(void);
+
+/* $80:865A TitleScrollStep (RTS): the scrolling title picture. With the
+ * debug flag ($81:800E) Select jumps straight to the jump contest (screen
+ * off, mode $14, final flag, course 1) and Start leaves. Every 5 frames
+ * ($8A) the picture scrolls one line ($A6 + 1) and its next row is queued
+ * ($7E:4800 + row, $20 x 2 at VRAM $2800 + line); when the timer $88 runs
+ * out, or on Start, back to mode 0 (fade). */
+void TitleScrollStep_m1x1(void)
+{
+    lda8(rd8(LONG(0x81800E)));
+    if (!fz) {
+        lda8(rd8(DP(0x21)));
+        and8(0x20);
+        if (!fz) {
+            lda8(0x80);
+            wr8(ABS(0x2100), 0x80);
+            wr8(ABS(0x1903), 0x80);
+            lda8(0x19); wr8(ABS(0x2109), 0x19);
+            lda8(0x17); wr8(ABS(0x1905), 0x17);
+            lda8(0x14); wr8(DP(0x76), 0x14);
+            lda8(0x01); wr8(DP(0x7D), 0x01);
+            lda8(0x01); wr8(DP(0x7C), 0x01);
+            ChangeMode_m1x1();
+            return;
+        }
+        lda8(rd8(DP(0x21)));
+        and8(0x10);
+        if (!fz) goto leave;
+    }
+    lda8(rd8(DP(0x8A)));
+    if (fz) {
+        lda8(0x05); wr8(DP(0x8A), 0x05);
+        rep(0x20);
+        wr16(DP(0xA6), inc16(rd16(DP(0xA6))));
+        lda16(rd16(DP(0xA6)));
+        and16(0xFFF8);
+        lda16(asl16(A)); lda16(asl16(A)); lda16(asl16(A));
+        fc = 0; adc16(0x4800);
+        wr16(DP(0x02), A);
+        sep(0x20);
+        lda8(0x7E); wr8(DP(0x04), 0x7E);
+        rep(0x20);
+        lda16(0x0220); wr16(DP(0x10), 0x0220);
+        lda16(rd16(ABS(0x00A6)));
+        fc = 0; adc16(0x00E0);
+        and16(0x01F8);
+        lda16(asl16(A)); lda16(asl16(A));
+        fc = 0; adc16(0x2800);
+        wr16(DP(0x00), A);
+        sep(0x20);
+        push16(0x86CA); QueueTileRows_m1x1();
+    }
+    wr8(DP(0x8A), dec8(rd8(DP(0x8A))));
+    rep(0x20);
+    {
+        u16 t = dec16(rd16(DP(0x88)));
+        wr16(DP(0x88), t);
+    }
+    sep(0x20);
+    if (!fz) { ret(); return; }
+leave:
+    lda8(0x00);
+    wr8(DP(0x76), 0x00);
+    wr8(DP(0x75), 0);
+    wr8(DP(0x77), 0);
+    wr8(ABS(0x1923), dec8(rd8(ABS(0x1923))));
+    ret();
+}
+
+/* Queue `rows`x`cols` tiles from $80:src at VRAM `vram` (QueueTileRows). */
+static void queue_rows80(u16 vram, u16 src, u16 size, u16 back)
+{
+    rep(0x20);
+    lda16(vram); wr16(DP(0x00), vram);
+    lda16(src); wr16(DP(0x02), src);
+    lda16(size); wr16(DP(0x10), size);
+    sep(0x20);
+    lda8(0x80); wr8(DP(0x04), 0x80);
+    push16(back); QueueTileRows_m1x1();
+}
+
+/* $80:86F8 StartEndScreen (RTS): the end of the broadcast: a $0384-frame
+ * timer, BG3 at $1900, $1905 = $17, scrolling on ($90, $9A = $84 = 2),
+ * sounds $2D and $45, and the end picture's panels queued (the "please
+ * wait" panel too before minute 4; the Stadium 2/4 badge with $81:800C). */
+void StartEndScreen_m1x1(void)
+{
+    rep(0x20);
+    lda16(0x0384); wr16(DP(0x88), 0x0384);
+    sep(0x20);
+    lda8(0x19); wr8(ABS(0x2109), 0x19);
+    lda8(0x01); wr8(ABS(0x210C), 0x01);
+    lda8(0x17); wr8(ABS(0x1905), 0x17);
+    lda8(0x01); wr8(DP(0x90), 0x01);
+    ldx8(0x02);
+    wr8(DP(0x9A), 0x02);
+    wr8(DP(0x84), 0x02);
+    lda8(0x2D);
+    push8(0x80); push16(0x871F); QueueSoundB_m1x1();
+    lda8(0x45);
+    push8(0x80); push16(0x8725); QueueSoundB_m1x1();
+    lda8(rd8(LONG(0x7FFFFF)));
+    cmp8((u8)A, 0x04);
+    if (!fc) queue_rows80(0x06C5, 0x87ED, 0x0218, 0x8747);
+    queue_rows80(0x0726, 0x879D, 0x0214, 0x8761);
+    queue_rows80(0x0573, 0x884D, 0x030B, 0x877B);
+    lda8(rd8(LONG(0x81800C)));
+    if (!fz) queue_rows80(0x057B, 0x888F, 0x0302, 0x879B);
+    ret();
+}
+
+/* $81:A747 LoadHdmaScene (RTL, A = scene or $FF): stop HDMA and clear its
+ * state ($190x, colour math $190D = $20); for a scene, copy its three
+ * line tables ($81:A812/$A905/$A9F8 from $81:A727, lengths $81:A737) to
+ * $0692/$0712/$0792 and its colour tables ($81:AAEB/$AB4B/$ABAB from
+ * $81:A72F, lengths $81:A73F) to $0452/$0512/$05D2, point HDMA channels
+ * 2-4 at the line tables (mode $40 -> $2132), enable them ($190F = $1C,
+ * $0812 = 1), clear colour 0 and flag the palette upload. */
+void LoadHdmaScene_m1x1(void)
+{
+    wr8(ABS(0x420C), 0);
+    wr8(ABS(0x190F), 0);
+    wr8(ABS(0x190A), 0);
+    wr8(ABS(0x190B), 0);
+    wr8(ABS(0x1907), 0);
+    wr8(ABS(0x1908), 0);
+    wr8(ABS(0x1909), 0);
+    wr8(ABS(0x190C), 0);
+    ldx8(0x20);
+    wr8(ABS(0x190D), 0x20);
+    cmp8((u8)A, 0xFF);
+    if (fz) { retl(); return; }
+    push8(DB);
+    push8(0x81);
+    DB = pull8(); nz8(DB);
+    rep(0x30);
+    wr16(DP(0x00), A);
+    and16(0x00FF);
+    lda16(asl16(A));
+    Y = A; nz16(Y);
+    push16(Y);
+    lda16(rd16(ABSY(0xA737)));
+    wr16(DP(0x02), A);
+    X = rd16(ABSY(0xA727)); nz16(X);
+    Y = 0; nz16(Y);
+    sep(0x20);
+    do {
+        lda8(rd8(ABSX(0xA812))); wr8(ABSY(0x0692), (u8)A);
+        lda8(rd8(ABSX(0xA905))); wr8(ABSY(0x0712), (u8)A);
+        lda8(rd8(ABSX(0xA9F8))); wr8(ABSY(0x0792), (u8)A);
+        X = inc16(X);
+        Y = inc16(Y);
+        cmp16(Y, rd16(DP(0x02)));
+        WAIT_TICK();
+    } while (!fz);
+    rep(0x20);
+    Y = pull16(); nz16(Y);
+    lda16(rd16(ABSY(0xA73F)));
+    wr16(DP(0x02), A);
+    X = rd16(ABSY(0xA72F)); nz16(X);
+    Y = 0; nz16(Y);
+    sep(0x20);
+    do {
+        lda8(rd8(ABSX(0xAAEB))); wr8(ABSY(0x0452), (u8)A);
+        lda8(rd8(ABSX(0xAB4B))); wr8(ABSY(0x0512), (u8)A);
+        lda8(rd8(ABSX(0xABAB))); wr8(ABSY(0x05D2), (u8)A);
+        X = inc16(X);
+        Y = inc16(Y);
+        cmp16(Y, rd16(DP(0x02)));
+        WAIT_TICK();
+    } while (!fz);
+    X = 0x3240; nz16(X);
+    wr16(ABS(0x4320), 0x3240); wr16(ABS(0x4330), 0x3240); wr16(ABS(0x4340), 0x3240);
+    X = 0x0692; wr16(ABS(0x4322), 0x0692);
+    X = 0x0712; wr16(ABS(0x4332), 0x0712);
+    X = 0x0792; wr16(ABS(0x4342), 0x0792); nz16(X);
+    lda8(0x00);
+    wr8(ABS(0x4324), 0); wr8(ABS(0x4334), 0); wr8(ABS(0x4344), 0);
+    wr8(ABS(0x4327), 0); wr8(ABS(0x4337), 0); wr8(ABS(0x4347), 0);
+    lda8(0x01); wr8(ABS(0x0812), 0x01);
+    lda8(0x1C); wr8(ABS(0x190F), 0x1C);
+    sep(0x10);
+    wr8(ABS(0x1C00), 0);
+    wr8(ABS(0x1C01), 0);
+    wr8(ABS(0x1915), inc8(rd8(ABS(0x1915))));
+    DB = pull8(); nz8(DB);
+    retl();
+}

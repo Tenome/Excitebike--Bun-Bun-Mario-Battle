@@ -257,3 +257,6 @@
 80B98E  1 1  mem+Y           Mul16
 80B9FA  1 1  mem             Mul16b
 80B9FA  1 0  mem             Mul16b
+80865A  1 1  mem+X,Y,C,V     TitleScrollStep
+8086F8  1 1  mem+X,Y,C,V     StartEndScreen
+81A747  1 1  mem+X,Y,C,V     LoadHdmaScene
