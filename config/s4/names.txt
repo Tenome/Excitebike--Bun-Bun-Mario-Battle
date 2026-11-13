@@ -334,3 +334,6 @@
 80DC9D PlayerHalt
 80EF5C PlayerStopB
 80EF64 PlayerHaltB
+81AC0B EmptyHook
+80F9C2 SetRiderPair
+80F8D3 RiderLanePieceAt

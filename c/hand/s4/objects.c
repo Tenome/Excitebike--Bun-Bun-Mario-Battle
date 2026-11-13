@@ -7488,3 +7488,27 @@ void PlayerStop_m1x1(void)
 void PlayerHalt_m1x1(void) { player_halt(); }
 void PlayerStopB_m1x1(void) { PlayerStop_m1x1(); }
 void PlayerHaltB_m1x1(void) { player_halt(); }
+
+/* $81:AC0B (RTL): an empty hook. */
+void EmptyHook_m1x1(void)
+{
+    retl();
+}
+
+/* $80:F9C2 (RTS): rider X's $01A6 = $0981 = A, then A = its $024E -
+ * $023E. */
+void SetRiderPair_m1x1(void)
+{
+    wr8(ABSX(0x01A6), (u8)A);
+    wr8(ABSX(0x0981), (u8)A);
+    lda8(rd8(ABSX(0x024E)));
+    fc = 1; sbc8(rd8(ABSX(0x023E)));
+    ret();
+}
+
+/* $80:F8D3 RiderLanePieceAt (RTS): RiderPieceAt in rider X's lane $08A4. */
+void RiderLanePieceAt_m1x1(void)
+{
+    Y = rd8(ABSX(0x08A4)); nz8((u8)Y);
+    RiderPieceAt_m1x1();
+}

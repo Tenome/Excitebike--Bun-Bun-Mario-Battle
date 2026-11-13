@@ -322,3 +322,6 @@
 80DC9D  1 1  mem+A,X,Y,C,V   PlayerHalt
 80EF5C  1 1  mem+A,X,Y,C,V   PlayerStopB
 80EF64  1 1  mem+A,X,Y,C,V   PlayerHaltB
+81AC0B  1 1  mem+A,X,Y,C,V   EmptyHook
+80F9C2  1 1  mem+A,X,Y,C,V   SetRiderPair
+80F8D3  1 1  mem+A,X,Y,C,V   RiderLanePieceAt
