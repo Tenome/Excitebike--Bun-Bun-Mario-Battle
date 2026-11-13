@@ -258,3 +258,6 @@
 80A1BC  1 1  mem+A,X,Y,C,V   PackRecordTime
 809053  1 1  mem+A,X,Y,C,V   SpriteTextRow
 80C8EE  1 1  mem+X,Y,C,V     RecordCourseTime
+81982B  1 1  mem+A,X,Y,C,V   FadeInObject
+80D906  1 1  mem+X,Y,C,V     ShowBonusLabel
+80CD54  1 1  mem+A,X,Y,C,V   RiderPose

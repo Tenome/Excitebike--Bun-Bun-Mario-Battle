@@ -3105,3 +3105,129 @@ static void record_course_time(void)
 
 /* (RTL) */
 void RecordCourseTime_m1x1(void) { record_course_time(); retl(); }
+
+void FadePaletteStep_m1x1(void);
+
+/* $81:982B (RTS): object $039D fades the palette in steps: every $C0
+ * frames ($88) the fade limit $B1 grows by 8, until $16, then its state
+ * steps; each frame FadePaletteStep. */
+void FadeInObject_m1x1(void)
+{
+    X = rd8(ABS(0x039D)); nz8((u8)X);
+    lda8(rd8(DP(0x88)));
+    if (fz) {
+        lda8(rd8(DP(0xB1)));
+        cmp8((u8)A, 0x16);
+        if (fc) {
+            wr8(ABSX(0x0309), inc8(rd8(ABSX(0x0309))));
+            X = rd8(ABS(0x039D)); nz8((u8)X);
+            ret();
+            return;
+        }
+        fc = 0; adc8(0x08);
+        wr8(DP(0xB1), (u8)A);
+        lda8(0xC0); wr8(DP(0x88), 0xC0);
+    }
+    wr8(DP(0x88), dec8(rd8(DP(0x88))));
+    push8(0x81); push16(0x984D); FadePaletteStep_m1x1();
+    X = rd8(ABS(0x039D)); nz8((u8)X);
+    ret();
+}
+
+/* $80:D906 (RTS): the bonus label "BONUS" plus the count $AC as two
+ * digits ($03D2, size $27, $0F = $20) at VRAM $184D. */
+void ShowBonusLabel_m1x1(void)
+{
+    rep(0x20);
+    lda16(0x184D); wr16(DP(0x00), 0x184D);
+    lda16(0x03D2); wr16(DP(0x02), 0x03D2);
+    sep(0x20);
+    lda8(0x27); wr8(ABS(0x03D2), 0x27);
+    static const u8 t[5] = { 0x7D, 0x72, 0x76, 0x5E, 0x96 };
+    for (int i = 0; i < 5; i++) {
+        lda8(t[i]); wr8(ABS(0x03D3 + i), t[i]);
+        fc = 0; adc8(0x10); wr8(ABS(0x03DA + i), (u8)A);
+    }
+    ldy8(0x00);
+    lda8(rd8(DP(0xAC)));
+    for (;;) {
+        cmp8((u8)A, 0x0A);
+        if (!fc) break;
+        sbc8(0x0A);
+        Y = inc8((u8)Y);
+        WAIT_TICK();
+    }
+    fc = 0; adc8(0x50); wr8(ABS(0x03D9), (u8)A);
+    fc = 0; adc8(0x10); wr8(ABS(0x03E0), (u8)A);
+    lda8((u8)Y);
+    fc = 0; adc8(0x50); wr8(ABS(0x03D8), (u8)A);
+    fc = 0; adc8(0x10); wr8(ABS(0x03DF), (u8)A);
+    lda8(0x20); wr8(DP(0x0F), 0x20);
+    push16(0xD97C); VramQueueTiles_m1x1();
+    ret();
+}
+
+/* $80:CD54 RiderPose (RTS, X = rider): A = rider X's pose. Starting or
+ * off the track ($01D0 not 0/5): $12 / $16 (walking, $099E) less one on
+ * a step ($56,X), | $10. After the race on angle $0A: $0E = 2. Upright
+ * on the ground: still ($0E + 1), steering $14 / $15 by $01A8, or
+ * blinking $13 every 2 frames; otherwise its angle $01E0. */
+void RiderPose_m1x1(void)
+{
+    lda8(0x00); wr8(DP(0x0E), 0x00);
+    lda8(rd8(ABSX(0x01D0)));
+    if (!fz) {
+        cmp8((u8)A, 0x05);
+        if (!fz) {
+            ldy8(0x06);
+            lda8(rd8(ABSX(0x099E)));
+            if (fz) ldy8(0x02);
+            lda8((u8)Y);
+            Y = rd8(DPX(0x56)); nz8((u8)Y);
+            if (!fz) { Y = dec8((u8)Y); lda8((u8)Y); }
+            ora8(0x10);
+            ret();
+            return;
+        }
+    }
+    Y = rd8(DP(0x84)); nz8((u8)Y);
+    Y = dec8((u8)Y);
+    if (fz) {
+        lda8(rd8(ABSX(0x01E0)));
+        cmp8((u8)A, 0x0A);
+        if (fz) { ldy8(0x02); wr8(DP(0x0E), 0x02); ret(); return; }
+    }
+    lda8(rd8(ABSX(0x01C8)));
+    ora8(rd8(ABSX(0x01E8)));
+    if (!fz) goto angle;
+    lda8(rd8(ABSX(0x0170)));
+    if (!fz) {
+        cmp8((u8)A, 0x0D);
+        if (!fz) goto angle;
+        lda8(rd8(ABSX(0x01F0)));
+        cmp8((u8)A, 0x20);
+    }
+    lda8(rd8(ABSX(0x01B8)));
+    ora8(rd8(ABSX(0x01C0)));
+    if (fz) {
+        wr8(DP(0x0E), inc8(rd8(DP(0x0E))));
+        goto angle;
+    }
+    lda8(rd8(ABSX(0x01E0)));
+    cmp8((u8)A, 0x06);
+    if (!fz) goto angle;
+    ldy8(0x14);
+    lda8(rd8(ABSX(0x01A8)));
+    if (!fz) {
+        if (!fn) Y = inc8((u8)Y);
+        lda8((u8)Y);
+        ret();
+        return;
+    }
+    lda8(rd8(DP(0x63)));
+    and8(0x02);
+    if (!fz) { lda8(0x13); ret(); return; }
+angle:
+    lda8(rd8(ABSX(0x01E0)));
+    ret();
+}

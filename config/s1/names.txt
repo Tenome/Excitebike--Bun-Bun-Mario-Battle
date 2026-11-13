@@ -279,3 +279,6 @@
 80A1BC PackRecordTime
 809053 SpriteTextRow
 80C8EE RecordCourseTime
+81982B FadeInObject
+80D906 ShowBonusLabel
+80CD54 RiderPose
