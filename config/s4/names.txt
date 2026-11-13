@@ -395,3 +395,4 @@
 80BB82 WalkToStartLane
 80C57E RaceClockStep
 8282EA QueueFontTime
+80DDEF BonusCountUp

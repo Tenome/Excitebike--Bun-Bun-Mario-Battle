@@ -3262,11 +3262,19 @@ all4:
  * ($1E87) queue the result banner ($80:DF26 at VRAM $1950) and the count
  * box at VRAM $1956 ("1 0000" for a full score $09C9, else the count with
  * blank leading digits), then wait $0180 frames and step $77. */
+static void bonus_result_body(void);
+
 void BonusResultStep_m1x1(void)
 {
     u8 t = dec8(rd8(DP(0x88)));
     wr8(DP(0x88), t);
     if (!fz) { ret(); return; }
+    bonus_result_body();
+}
+
+/* $80:DE65: the result itself (also entered from $80:DDEF). */
+static void bonus_result_body(void)
+{
     lda8(rd8(ABS(0x09C5)));
     cmp8((u8)A, rd8(ABS(0x1E88)));
     if (fc) wr8(ABS(0x1E88), (u8)A);
@@ -9329,4 +9337,55 @@ void QueueFontTime_m1x1(void)
     X = pull8(); nz8((u8)X);
     DB = pull8(); nz8(DB);
     retl();
+}
+
+void QueueResultsCount_m1x1(void);
+void QueueNameplate_m1x1(void);
+
+/* $80:DDEF (RTS): the bonus result count-up. A button skips to the final
+ * count ($09C6 = $09C5, the nameplate when it is a full score $09C9) and
+ * straight on to the result. Otherwise every 4 frames ($88) the shown
+ * count $09C6 steps up with sound $44; at the end, next step ($77), a
+ * $40 wait and for a full score the banner $80:DE4F at VRAM $18F4. */
+void BonusCountUp_m1x1(void)
+{
+    lda8(rd8(DP(0x21)));
+    ora8(rd8(DP(0x26)));
+    if (!fz) {
+        lda8(rd8(ABS(0x09C5)));
+        wr8(ABS(0x09C6), (u8)A);
+        wr8(DP(0x10), (u8)A);
+        push16(0xDDFF); QueueResultsCount_m1x1();
+        wr8(DP(0x77), inc8(rd8(DP(0x77))));
+        lda8(rd8(ABS(0x09C5)));
+        cmp8((u8)A, rd8(ABS(0x09C9)));
+        if (fz) { push16(0xDE0C); QueueNameplate_m1x1(); }
+        bonus_result_body();
+        return;
+    }
+    u8 t = dec8(rd8(DP(0x88)));
+    wr8(DP(0x88), t);
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABS(0x09C6)));
+    cmp8((u8)A, rd8(ABS(0x09C5)));
+    if (!fz) {
+        lda8(inc8((u8)A));
+        wr8(ABS(0x09C6), (u8)A);
+        wr8(DP(0x10), (u8)A);
+        lda8(0x44);
+        push8(0x80); push16(0xDE27); QueueSoundB_m1x1();
+        lda8(0x04); wr8(DP(0x88), 0x04);
+        QueueResultsCount_m1x1();
+        return;
+    }
+    wr8(DP(0x77), inc8(rd8(DP(0x77))));
+    lda8(0x40); wr8(DP(0x88), 0x40);
+    lda8(rd8(ABS(0x09C5)));
+    cmp8((u8)A, rd8(ABS(0x09C9)));
+    if (!fz) { ret(); return; }
+    rep(0x20);
+    lda16(0x18F4); wr16(DP(0x00), 0x18F4);
+    lda16(0xDE4F); wr16(DP(0x02), 0xDE4F);
+    sep(0x20);
+    VramQueueTiles20_m1x1();
 }

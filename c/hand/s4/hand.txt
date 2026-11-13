@@ -383,3 +383,4 @@
 80BB82  1 1  mem+A,X,Y,C,V   WalkToStartLane
 80C57E  1 1  mem+A,X,Y,C,V   RaceClockStep
 8282EA  1 1  mem+A,X,Y,C,V   QueueFontTime
+80DDEF  1 1  mem+A,X,Y,C,V   BonusCountUp
