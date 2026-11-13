@@ -8056,3 +8056,203 @@ void RiderJumpBase_m1x1(void)
     wr8(ABSX(0x0246), 0x40);
     ret();
 }
+
+void PlaceRiderShadowLong_m1x1(void);
+void AddScoreLong_m1x1(void);
+void LanePieceAt_m1x1(void);
+void IsPieceFlat_m1x1(void);
+void CpuSteerUp_m1x1(void);
+void CpuSteerDown_m1x1(void);
+void RandomB_m1x1(void);
+void RivalTarget_m1x1(void);
+
+/* $81:C5D7 (RTS, Y = slot): the shadow of the rider in slot Y ($0950),
+ * with $07 from $81:C5CF; a rider in the middle of screen page 1 ($70-
+ * $8F) sets $092A. */
+void SlotRiderShadow_m1x1(void)
+{
+    wr8(DP(0x05), (u8)Y);
+    lda8(rd8(ABSY(0x0950)));
+    X = (u8)A; nz8((u8)X);
+    lda8(rd8(ABSY(0xC5CF)));
+    wr8(DP(0x07), (u8)A);
+    lda8(rd8(ABSX(0x019E)));
+    cmp8((u8)A, 0x01);
+    if (fz) {
+        lda8(rd8(ABSX(0x0196)));
+        cmp8((u8)A, 0x70);
+        if (fc) {
+            cmp8((u8)A, 0x90);
+            if (!fc) { lda8(0x01); wr8(ABS(0x092A), 0x01); }
+        }
+    }
+    push8(0x81); push16(0xC5FC); PlaceRiderShadowLong_m1x1();
+    ret();
+}
+
+/* $82:9159 (RTL): the stadium bonus for $0928 (3 bytes at $82:9131 + 4 *
+ * (stadium - 2)) into $09AD-$09AF and added to the score; $00 = stadium
+ * - 2. X is kept. */
+void AddStadiumBonus_m1x1(void)
+{
+    push8(DB);
+    lda8(0x82); push8(0x82);
+    DB = pull8(); nz8(DB);
+    push8((u8)X);
+    lda8(rd8(ABS(0x0928)));
+    lda8(dec8((u8)A)); lda8(dec8((u8)A));
+    wr8(DP(0x00), (u8)A);
+    lda8(asl8((u8)A)); lda8(asl8((u8)A));
+    X = (u8)A; nz8((u8)X);
+    lda8(rd8(ABSX(0x9131))); wr8(ABS(0x09AD), (u8)A);
+    lda8(rd8(ABSX(0x9132))); wr8(ABS(0x09AE), (u8)A);
+    lda8(rd8(ABSX(0x9133))); wr8(ABS(0x09AF), (u8)A);
+    push8(0x82); push16(0x917E); AddScoreLong_m1x1();
+    X = pull8(); nz8((u8)X);
+    DB = pull8(); nz8(DB);
+    retl();
+}
+
+/* $80:B0EA (RTS, X = rider): look at the four pieces ahead ($0884 + 4X).
+ * A hurdle ($C0/$C1 or $70-$73) sends the rider looking for a flat lane
+ * at that column ($40 rows), up first (lanes above, from $08A4 - 1 to
+ * 1) and then down (to 5), steering into the first one found; a ramp
+ * top ($48-$4A) sets the target angle $0971 = 9; otherwise $0971 = the
+ * piece angle $08B4 (0 while landing, $0176). Returns A = the hurdle
+ * count $0D. */
+void CpuAvoidHurdle_m1x1(void)
+{
+    lda8(0x00);
+    wr8(DP(0x09), 0); wr8(DP(0x0D), 0);
+    lda8((u8)X);
+    lda8(asl8((u8)A)); lda8(asl8((u8)A));
+    wr8(DP(0x0A), (u8)A);
+    ldy8(0x03);
+    for (;;) {
+        wr8(DP(0x0B), (u8)Y);
+        Y = rd8(DP(0x0A)); nz8((u8)Y);
+        lda8(rd8(ABSY(0x0884)));
+        int hurdle;
+        cmp8((u8)A, 0xC0); hurdle = fz;
+        if (!hurdle) { cmp8((u8)A, 0xC1); hurdle = fz; }
+        if (!hurdle) {
+            cmp8((u8)A, 0x70);
+            if (fc) { cmp8((u8)A, 0x74); hurdle = !fc; }
+        }
+        if (hurdle) goto avoid;
+        cmp8((u8)A, 0x48);
+        if (fc) {
+            cmp8((u8)A, 0x4B);
+            if (!fc) { lda8(0x09); goto store; }
+        }
+        wr8(DP(0x0A), inc8(rd8(DP(0x0A))));
+        Y = rd8(DP(0x0B)); nz8((u8)Y);
+        Y = dec8((u8)Y);
+        if (fn) goto angle;
+    }
+avoid:
+    wr8(DP(0x0D), inc8(rd8(DP(0x0D))));
+    lda8(rd8(DP(0x0A)));
+    and8(0x03);
+    Y = (u8)A; nz8((u8)Y);
+    Y = inc8((u8)Y);
+    lda8((u8)Y);
+    fc = 0; adc8(rd8(ABSX(0x0266)));
+    and8(0x3F);
+    wr8(DP(0x08), (u8)A);
+    lda8(0x40); wr8(DP(0x09), 0x40);
+    Y = rd8(ABSX(0x08A4)); nz8((u8)Y);
+    for (;;) {
+        Y = dec8((u8)Y);
+        cmp8((u8)Y, 0x01);
+        if (fn) break;
+        push16(0xB14A); LanePieceAt_m1x1();
+        Y = rd8(DP(0x07)); nz8((u8)Y);
+        push16(0xB14F); IsPieceFlat_m1x1();
+        if (!fc) { push16(0xB154); CpuSteerUp_m1x1(); goto angle; }
+    }
+    Y = rd8(ABSX(0x08A4)); nz8((u8)Y);
+    for (;;) {
+        Y = inc8((u8)Y);
+        cmp8((u8)Y, 0x06);
+        if (!fn) goto angle;
+        push16(0xB162); LanePieceAt_m1x1();
+        Y = rd8(DP(0x07)); nz8((u8)Y);
+        push16(0xB167); IsPieceFlat_m1x1();
+        if (!fc) { push16(0xB16C); CpuSteerDown_m1x1(); goto angle; }
+    }
+angle:
+    ldy8(0x00);
+    lda8(rd8(ABSX(0x0176)));
+    if (fz) { Y = rd8(ABSX(0x08B4)); nz8((u8)Y); }
+    lda8((u8)Y);
+store:
+    wr8(ABSX(0x0971), (u8)A);
+    lda8(rd8(DP(0x0D)));
+    ret();
+}
+
+/* $80:BDDC (RTS, X = rival): place a rival entering the screen: a random
+ * lane ($80:BAF2), X $A0 on page 0 or $40 on page 1, angle 6, the
+ * player's column + $80:BB00 and $018E. Entering on page 1 it must not
+ * land on a piece taller than $3B-$92 (then A = 0 and nothing more);
+ * on a $E6 ramp it starts mid-jump (state 1 at height $30 from lane $20
+ * down, else state 3). Then its target speed (RivalTarget), a 1-in-64
+ * chance of a fast start ($01C6 = (page ^ 2) * 2), $3B = $10 and
+ * $01DE = 1. */
+void PlaceRival_m1x1(void)
+{
+    push8(0x80); push16(0xBDDF); RandomB_m1x1();
+    and8(0x03);
+    Y = (u8)A; nz8((u8)Y);
+    lda8(rd8(ABSY(0xBAF2)));
+    wr8(ABSX(0x01F6), (u8)A);
+    Y = rd8(ABSX(0x019E)); nz8((u8)Y);
+    lda8(fz ? 0xA0 : 0x40);
+    wr8(ABSX(0x0196), (u8)A);
+    lda8(0x06); wr8(ABSX(0x01E6), 0x06);
+    lda8(rd8(ABS(0x0266)));
+    fc = 0; adc8(rd8(ABSY(0xBB00)));
+    and8(0x3F);
+    wr8(ABSX(0x0266), (u8)A);
+    lda8(rd8(ABS(0x018E)));
+    wr8(ABSX(0x018E), (u8)A);
+    lda8((u8)Y);
+    if (!fz) {
+        ldy8(0x05);
+        push16(0xBE15); RiderPieceAt_m1x1();
+        lda8(rd8(DP(0x10)));
+        cmp8((u8)A, 0xE4);
+        if (!fz) {
+            cmp8((u8)A, 0x3B);
+            if (!fc) { lda8(0x00); ret(); return; }
+            cmp8((u8)A, 0x93);
+            if (fc) { lda8(0x00); ret(); return; }
+            ldy8(0x02);
+            push16(0xBE28); RiderPieceAt_m1x1();
+            cmp8((u8)A, 0xE6);
+            if (fz) {
+                lda8(rd8(ABSX(0x01F6)));
+                cmp8((u8)A, 0x20);
+                if (fc) {
+                    lda8(0x30); wr8(ABSX(0x01FE), 0x30);
+                    lda8(0x01);
+                } else lda8(0x03);
+                wr8(ABSX(0x020E), (u8)A);
+            }
+        }
+    }
+    Y = rd8(ABSX(0x019E)); nz8((u8)Y);
+    push16(0xBE47); RivalTarget_m1x1();
+    push8(0x80); push16(0xBE4B); RandomB_m1x1();
+    and8(0x3F);
+    if (fz) {
+        lda8(rd8(ABSX(0x019E)));
+        eor8(0x02);
+        lda8(asl8((u8)A));
+        wr8(ABSX(0x01C6), (u8)A);
+    }
+    lda8(0x10); wr8(DP(0x3B), 0x10);
+    lda8(0x01); wr8(ABSX(0x01DE), 0x01);
+    ret();
+}

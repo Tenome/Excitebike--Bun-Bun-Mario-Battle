@@ -355,3 +355,7 @@
 80CE8C PlaceRiderShadowLong
 80FE64 AddScoreLong
 80F9A5 RiderJumpBase
+81C5D7 SlotRiderShadow
+829159 AddStadiumBonus
+80B0EA CpuAvoidHurdle
+80BDDC PlaceRival

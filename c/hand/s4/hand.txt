@@ -343,3 +343,7 @@
 80CE8C  1 1  mem+A,X,Y,C,V   PlaceRiderShadowLong
 80FE64  1 1  mem+A,X,Y,C,V   AddScoreLong
 80F9A5  1 1  mem+A,X,Y,C,V   RiderJumpBase
+81C5D7  1 1  mem+A,X,Y,C,V   SlotRiderShadow
+829159  1 1  mem+A,X,Y,C,V   AddStadiumBonus
+80B0EA  1 1  mem+A,X,Y,C,V   CpuAvoidHurdle
+80BDDC  1 1  mem+A,X,Y,C,V   PlaceRival
