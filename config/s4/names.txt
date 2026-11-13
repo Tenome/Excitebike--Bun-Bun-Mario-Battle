@@ -268,3 +268,6 @@
 80C290 RaceStartLights
 80C1F3 CrashRecovery
 81A065 AimRatio
+80C391 SpeedGauge
+81B8F4 FallingObjectStep
+80BB56 RiderRunOut

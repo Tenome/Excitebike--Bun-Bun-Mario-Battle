@@ -1,15 +1,15 @@
 {
  "measures": {
-  "fuzzy_match_percent": 73.0774,
+  "fuzzy_match_percent": 73.3157,
   "total_code": "36930",
-  "matched_code": "17178",
-  "matched_code_percent": 46.515,
+  "matched_code": "17354",
+  "matched_code_percent": 46.9916,
   "total_data": "0",
   "matched_data": "0",
   "matched_data_percent": 0.0,
   "total_functions": 532,
-  "matched_functions": 249,
-  "matched_functions_percent": 46.8045,
+  "matched_functions": 252,
+  "matched_functions_percent": 47.3684,
   "complete_code": "0",
   "complete_code_percent": 0.0,
   "complete_data": "0",
@@ -21,16 +21,16 @@
   {
    "name": "main/bank80",
    "measures": {
-    "fuzzy_match_percent": 73.7039,
+    "fuzzy_match_percent": 73.9553,
     "total_code": "24671",
-    "matched_code": "11829",
-    "matched_code_percent": 47.947,
+    "matched_code": "11953",
+    "matched_code_percent": 48.4496,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 357,
-    "matched_functions": 162,
-    "matched_functions_percent": 45.3782,
+    "matched_functions": 164,
+    "matched_functions_percent": 45.9384,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -42,7 +42,7 @@
     {
      "name": ".text",
      "size": "24671",
-     "fuzzy_match_percent": 73.7039
+     "fuzzy_match_percent": 73.9553
     }
    ],
    "functions": [
@@ -1135,9 +1135,9 @@
      }
     },
     {
-     "name": "sub_80BB56",
+     "name": "RiderRunOut",
      "size": "44",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8436566"
      }
@@ -1383,9 +1383,9 @@
      }
     },
     {
-     "name": "sub_80C391",
+     "name": "SpeedGauge",
      "size": "80",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8438673"
      }
@@ -2911,16 +2911,16 @@
   {
    "name": "main/bank81",
    "measures": {
-    "fuzzy_match_percent": 74.0657,
+    "fuzzy_match_percent": 74.3742,
     "total_code": "8429",
-    "matched_code": "4057",
-    "matched_code_percent": 48.1315,
+    "matched_code": "4109",
+    "matched_code_percent": 48.7484,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 137,
-    "matched_functions": 70,
-    "matched_functions_percent": 51.0949,
+    "matched_functions": 71,
+    "matched_functions_percent": 51.8248,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -2932,7 +2932,7 @@
     {
      "name": ".text",
      "size": "8429",
-     "fuzzy_match_percent": 74.0657
+     "fuzzy_match_percent": 74.3742
     }
    ],
    "functions": [
@@ -3337,9 +3337,9 @@
      }
     },
     {
-     "name": "sub_81B8F4",
+     "name": "FallingObjectStep",
      "size": "52",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8501492"
      }

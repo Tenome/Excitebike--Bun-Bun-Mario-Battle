@@ -632,6 +632,10 @@ BRIDGE(HleHand_RaceStartLights, RaceStartLights_m1x1, 450)
 /* c/hand/s4/objects.c, part 19 */
 BRIDGE_DYN(HleHand_CrashRecovery, CrashRecovery_m1x1, ((g_ram[0x63] & 3) == g_ram[0x0998]) ? 700 : 15)
 BRIDGE_DYN(HleHand_AimRatio, AimRatio_m1x1, (A & 0xFF) ? 120 + 25 * (A & 0xFF) : 15)
+/* c/hand/s4/objects.c, part 20 */
+BRIDGE_DYN(HleHand_SpeedGauge, SpeedGauge_m1x1, (g_ram[0x092D] && !(g_ram[0x7F] & 1)) ? 260 : 15)
+BRIDGE(HleHand_FallingObjectStep, FallingObjectStep_m1x1, 130)
+BRIDGE(HleHand_RiderRunOut, RiderRunOut_m1x1, 50)
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)

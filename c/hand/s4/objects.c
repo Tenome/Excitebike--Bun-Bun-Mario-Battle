@@ -5209,3 +5209,116 @@ void AimRatio_m1x1(void)
     X = pull8(); nz8((u8)X);
     retl();
 }
+
+void DivideAX_m1x1(void);
+void ApplyVelocity_m1x1(void);
+
+/* $80:C391 SpeedGauge (RTS): returns X = the speedometer needle: 0 unless
+ * the gauge is on ($092D) and it is not the CPU's frame ($7F bit 0); else
+ * the player's speed $01C6:$01BE / 8, minus 2, divided by 2 (4 when
+ * crashed), at least 1, capped at $2F (wobbling to $2E every 8 frames);
+ * bit 7 set when the turbo button is up. */
+void SpeedGauge_m1x1(void)
+{
+    ldx8(0x00);
+    lda8(rd8(ABS(0x092D)));
+    if (fz) { ret(); return; }
+    lda8(rd8(DP(0x7F)));
+    lda8(lsr8((u8)A));
+    if (fc) { ret(); return; }
+    ldx8(0x02);
+    lda8(rd8(ABS(0x01C6))); wr8(DP(0x00), (u8)A);
+    lda8(rd8(ABS(0x01BE))); wr8(DP(0x01), (u8)A);
+    do {
+        wr8(DP(0x00), lsr8(rd8(DP(0x00))));
+        wr8(DP(0x01), ror8(rd8(DP(0x01))));
+        X = dec8((u8)X);
+    } while (!fn);
+    lda8(0x02);
+    Y = rd8(ABS(0x01EE)); nz8((u8)Y);
+    if (!fz) lda8(0x04);
+    X = (u8)A; nz8((u8)X);
+    lda8(rd8(DP(0x01)));
+    fc = 1; sbc8(0x02);
+    int one = fn;
+    if (!one) {
+        push16(0xC3C3); DivideAX_m1x1();
+        lda8((u8)X);
+        one = fz;
+    }
+    if (one) ldx8(0x01);
+    cmp8((u8)X, 0x2F);
+    if (fc) {
+        ldx8(0x2F);
+        lda8(rd8(DP(0x63)));
+        and8(0x08);
+        if (fz) X = dec8((u8)X);
+    }
+    lda8(rd8(ABS(0x017E)));
+    lda8(asl8((u8)A));
+    if (!fc) {
+        lda8((u8)X);
+        ora8(0x80);
+        X = (u8)A; nz8((u8)X);
+    }
+    ret();
+}
+
+/* $81:B8F4 FallingObjectStep (RTS): object $03A3 flaps every 4 frames
+ * ($034F toggles 0/1) and moves (ApplyVelocity), falling ($02AF + 1); when
+ * it reaches the ground ($02AF wraps to 0) it lands: next state, pose 2,
+ * timer cleared, $036F = 4, sound $49. */
+void FallingObjectStep_m1x1(void)
+{
+    X = rd8(ABS(0x03A3)); nz8((u8)X);
+    lda8(rd8(DP(0x63)));
+    and8(0x03);
+    if (fz) {
+        lda8(rd8(ABSX(0x034F)));
+        lda8(inc8((u8)A));
+        and8(0x01);
+        wr8(ABSX(0x034F), (u8)A);
+    }
+    push8(0x81); push16(0xB909); ApplyVelocity_m1x1();
+    wr8(ABSX(0x02AF), inc8(rd8(ABSX(0x02AF))));
+    lda8(rd8(ABSX(0x02AF)));
+    if (!fz) { ret(); return; }
+    wr8(ABSX(0x030F), inc8(rd8(ABSX(0x030F))));
+    lda8(0x02); wr8(ABSX(0x034F), 0x02);
+    wr8(ABSX(0x031F), 0);
+    lda8(0x04); wr8(ABSX(0x036F), 0x04);
+    lda8(0x49);
+    push8(0x81); push16(0xB927); QueueSoundB_m1x1();
+    ret();
+}
+
+/* $80:BB56 RiderRunOut (RTS): rider X past the finish ($08C4) and not
+ * stopped ($01FE) waves ($099E = 1) and on even frames rolls on ($090C +
+ * 1) until it is $80:BB30 (by lane $0948) past its column; then, or when
+ * not running out, its finish state advances ($01D6 + 1) and the wave
+ * timer $45 = 8. */
+void RiderRunOut_m1x1(void)
+{
+    lda8(rd8(ABSX(0x08C4)));
+    int done = fz;
+    if (!done) {
+        lda8(rd8(ABSX(0x01FE)));
+        done = !fz;
+    }
+    if (!done) {
+        lda8(0x01); wr8(ABSX(0x099E), 0x01);
+        lda8(rd8(DP(0x63)));
+        lda8(lsr8((u8)A));
+        if (fc) { ret(); return; }
+        wr8(ABSX(0x090C), inc8(rd8(ABSX(0x090C))));
+        Y = rd8(ABSX(0x0948)); nz8((u8)Y);
+        lda8(rd8(ABSX(0x0196)));
+        fc = 0; adc8(rd8(ABSY(0xBB30)));
+        cmp8((u8)A, rd8(ABSX(0x090C)));
+        if (fc) { ret(); return; }
+    }
+    u8 v = inc8(rd8(ABSX(0x01D6)));
+    wr8(ABSX(0x01D6), v);
+    if (!fz) { lda8(0x08); wr8(DPX(0x45), 0x08); }
+    ret();
+}
