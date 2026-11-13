@@ -9841,3 +9841,126 @@ void UpdateObjects_m1x1(void)
     DB = pull8(); nz8(DB);
     retl();
 }
+
+void UpdateObjects_m1x1(void);
+void ResultsPlacePoints_m0x1(void);
+void ResultsJumpPoints_m0x1(void);
+void ShowCourseRecord_m1x1(void);
+
+/* $80:9713: the course records list (before the results, $7D = 0): every
+ * $20 frames ($0088) the next of up to ten times ($0819, three bytes;
+ * $FF ends the list) at its VRAM row ($80:97A5) with sound $42, sound
+ * $43 after the tenth; past ten the course record itself. Leaving ($8A
+ * runs out, or Start with the debug flag $81:800E) goes to the results
+ * (mode 2, $7D + 1). */
+static void course_records_step(void)
+{
+    X = rd8(DP(0x7C)); nz8((u8)X);
+    rep(0x20);
+    wr16(DP(0x8A), dec16(rd16(DP(0x8A))));
+    if (!fz) {
+        sep(0x20);
+        lda8(rd8(LONG(0x81800E)));
+        int leave = 0;
+        if (!fz) {
+            lda8(rd8(DP(0x21)));
+            and8(0x10);
+            leave = !fz;
+        }
+        if (!leave) {
+            wr8(ABS(0x0088), dec8(rd8(ABS(0x0088))));
+            if (!fz) { ret(); return; }
+            lda8(0x20); wr8(ABS(0x0088), 0x20);
+            lda8(rd8(ABS(0x044F)));
+            cmp8((u8)A, 0x0A);
+            if (fc) { push16(0x973C); ShowCourseRecord_m1x1(); ret(); return; }
+            lda8(asl8((u8)A));
+            X = (u8)A; nz8((u8)X);
+            fc = 0; adc8(rd8(ABS(0x044F)));
+            Y = (u8)A; nz8((u8)Y);
+            lda8(rd8(ABSY(0x0819)));
+            cmp8((u8)A, 0xFF);
+            if (!fz) {
+                wr8(ABS(0x03AE), (u8)A);
+                lda8(rd8(ABSY(0x081A))); wr8(ABS(0x03AF), (u8)A);
+                lda8(rd8(ABSY(0x081B))); wr8(ABS(0x03B0), (u8)A);
+                lda8(0x42);
+                push8(0x80); push16(0x9770); QueueSoundB_m1x1();
+                rep(0x20);
+                lda16(rd16(ABSX(0x97A5))); wr16(DP(0x00), A);
+                sep(0x20);
+                push16(0x977C); TickRaceClock_m1x1();
+            } else {
+                lda8(rd8(ABS(0x044F)));
+                if (fz) {
+                    lda8(0x0A); wr8(ABS(0x044F), 0x0A);
+                    lda8(0x01); wr8(ABS(0x0088), 0x01);
+                    ret();
+                    return;
+                }
+                lda8(0x09); wr8(ABS(0x044F), 0x09);
+            }
+            wr8(ABS(0x044F), inc8(rd8(ABS(0x044F))));
+            lda8(rd8(ABS(0x044F)));
+            cmp8((u8)A, 0x0A);
+            if (fz) { lda8(0x43); push8(0x80); push16(0x97A3); QueueSoundB_m1x1(); }
+            ret();
+            return;
+        }
+    }
+    sep(0x20);
+    lda8(0x02); wr8(DP(0x76), 0x02);
+    wr8(DP(0x75), 0); wr8(DP(0x77), 0);
+    wr8(ABS(0x1923), dec8(rd8(ABS(0x1923))));
+    wr8(DP(0x7D), inc8(rd8(DP(0x7D))));
+    ret();
+}
+
+/* $80:95A2 (RTS): the end-of-broadcast screens. Before the results
+ * ($7D = 0) the course records; then the results: objects, the place and
+ * jump points lines at timer $04EC / $0474 of $8A, and when $8A runs out
+ * (or Start with the debug flag) the next broadcast part: entries 1 and 3
+ * go to mode $17 with $1E87 - $0A, the others to the next entry ($7C + 1)
+ * in mode $18 with $1905 = $15. */
+void BroadcastEndScreens_m1x1(void)
+{
+    lda8(rd8(DP(0x7D)));
+    if (fz) { course_records_step(); return; }
+    push8(0x80); push16(0x95AF); UpdateObjects_m1x1();
+    X = rd8(DP(0x7C)); nz8((u8)X);
+    rep(0x20);
+    wr16(DP(0x8A), dec16(rd16(DP(0x8A))));
+    if (!fz) {
+        lda16(rd16(DP(0x8A)));
+        cmp16(A, 0x04EC);
+        if (fz) { push16(0x95C1); ResultsPlacePoints_m0x1(); }
+        else {
+            cmp16(A, 0x0474);
+            if (fz) { push16(0x95CB); ResultsJumpPoints_m0x1(); }
+        }
+        sep(0x20);
+        lda8(rd8(LONG(0x81800E)));
+        if (fz) { ret(); return; }
+        lda8(rd8(DP(0x21)));
+        and8(0x10);
+        if (fz) { ret(); return; }
+    }
+    sep(0x20);
+    wr8(DP(0x75), 0); wr8(DP(0x77), 0);
+    wr8(ABS(0x1923), dec8(rd8(ABS(0x1923))));
+    cmp8((u8)X, 0x03);
+    int bonus = fz;
+    if (!bonus) { cmp8((u8)X, 0x01); bonus = fz; }
+    if (bonus) {
+        lda8(0x17); wr8(DP(0x76), 0x17);
+        lda8(rd8(ABS(0x1E87)));
+        fc = 1; sbc8(0x0A);
+        wr8(ABS(0x1E87), (u8)A);
+    } else {
+        wr8(DP(0x7D), 0);
+        wr8(DP(0x7C), inc8(rd8(DP(0x7C))));
+        lda8(0x18); wr8(DP(0x76), 0x18);
+        lda8(0x15); wr8(ABS(0x1905), 0x15);
+    }
+    ret();
+}

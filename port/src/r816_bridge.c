@@ -838,6 +838,18 @@ static uint32 update_objects_cost(void)
     return c;
 }
 BRIDGE_DYN(HleHand_UpdateObjects, UpdateObjects_m1x1, update_objects_cost())
+/* the results (objects, and the points lines on their timer frames) or
+ * the course records list (a line every $20 frames) */
+static uint32 end_screens_cost(void)
+{
+    if (g_ram[0x7D]) {
+        uint16 t = (uint16)(g_ram[0x8A] | g_ram[0x8B] << 8);
+        return 60 + update_objects_cost() +
+               (t == 0x04ED ? 2700 : t == 0x0475 ? 2400 : 0);
+    }
+    return g_ram[0x88] == 1 ? 1500 : 30;
+}
+BRIDGE_DYN(HleHand_BroadcastEndScreens, BroadcastEndScreens_m1x1, end_screens_cost())
 /* VramQueueTilesLong / QueueTileRowsLong ($80:B2D6 / $80:B431) are
  * verified but unhooked: trampolines whose cost is the callee's. */
 /* c/hand/s4/objects.c, part 26 */
