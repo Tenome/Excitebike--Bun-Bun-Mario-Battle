@@ -301,3 +301,13 @@
 80F4C8 TitlePushStart
 80C19B OverheatStep
 80FE3A ItemFlashState
+80B2D6 VramQueueTilesLong
+80B431 QueueTileRowsLong
+80F901 LanePieceTables
+80F8F7 LanePieceTablesLong
+80F8DB LanePieceAt
+80F8D6 RiderPieceAt
+80B051 IsPieceFlat
+80B04E RiderOnFlat
+80C049 HeightAbove
+80C046 GroundHeightAbove

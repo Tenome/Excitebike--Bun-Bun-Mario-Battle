@@ -289,3 +289,13 @@
 80F4C8  1 1  mem+X,Y,C,V     TitlePushStart
 80C19B  1 1  mem+X,Y,C,V     OverheatStep
 80FE3A  1 1  mem+X,Y,C,V     ItemFlashState
+80B2D6  1 1  mem+X,Y,C,V     VramQueueTilesLong
+80B431  1 1  mem+X,Y,C,V     QueueTileRowsLong
+80F901  1 1  mem+X,Y,V       LanePieceTables
+80F8F7  1 1  mem+X           LanePieceTablesLong
+80F8DB  1 1  mem+A,X,Y,V     LanePieceAt
+80F8D6  1 1  mem+A,X,Y,V     RiderPieceAt
+80B051  1 1  mem+A,X,C,V     IsPieceFlat
+80B04E  1 1  mem+A,X,C,V     RiderOnFlat
+80C049  1 1  mem+A,X,Y,C,V   HeightAbove
+80C046  1 1  mem+A,X,Y,C,V   GroundHeightAbove

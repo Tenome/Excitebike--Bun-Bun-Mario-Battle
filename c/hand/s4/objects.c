@@ -6722,3 +6722,108 @@ void SteerObjectStep_m1x1(void)
     fc = fz ? 1 : 0;
     retl();
 }
+
+/* $80:B2D6 VramQueueTilesLong (RTL): VramQueueTiles for bank $81/$82. */
+void VramQueueTilesLong_m1x1(void)
+{
+    push16(0xB2D8); VramQueueTiles_m1x1();
+    retl();
+}
+
+/* $80:B431 QueueTileRowsLong (RTL): QueueTileRows for other banks. */
+void QueueTileRowsLong_m1x1(void)
+{
+    push16(0xB433); QueueTileRows_m1x1();
+    retl();
+}
+
+/* $80:F901 LanePieceTables (RTS, Y = lane): the pointer $03:$04 to lane
+ * Y's track-piece row ($80:F6C0 / $80:F6C6). */
+void LanePieceTables_m1x1(void)
+{
+    lda8(rd8(ABSY(0xF6C0))); wr8(DP(0x03), (u8)A);
+    lda8(rd8(ABSY(0xF6C6))); wr8(DP(0x04), (u8)A);
+    ret();
+}
+
+/* $80:F8F7 LanePieceTablesLong (RTL): LanePieceTables with DB = $80. */
+void LanePieceTablesLong_m1x1(void)
+{
+    push8(DB);
+    lda8(0x80);
+    push8(0x80);
+    DB = pull8(); nz8(DB);
+    push16(0xF8FE); LanePieceTables_m1x1();
+    DB = pull8(); nz8(DB);
+    retl();
+}
+
+/* $80:F8DB body: lane Y's row pointer, $07 = lane, then the piece at
+ * column $08: its height byte into $10 and A = its type byte ($0180
+ * further on). */
+static void lane_piece(void)
+{
+    push16(0xF8DD); LanePieceTables_m1x1();
+    wr8(DP(0x07), (u8)Y);
+    Y = rd8(DP(0x08)); nz8((u8)Y);
+    lda8(rd8((((u32)DB << 16) + rd16(DP(0x03)) + Y) & 0xFFFFFF));
+    wr8(DP(0x10), (u8)A);
+    push8((u8)Y);
+    rep(0x30);
+    lda16(Y);
+    fc = 0; adc16(0x0180);
+    Y = A; nz16(Y);
+    sep(0x20);
+    lda8(rd8((((u32)DB << 16) + rd16(DP(0x03)) + Y) & 0xFFFFFF));
+    sep(0x10);
+    Y = pull8(); nz8((u8)Y);
+    ret();
+}
+
+/* $80:F8DB LanePieceAt (RTS, Y = lane, $08 = column). */
+void LanePieceAt_m1x1(void) { lane_piece(); }
+
+/* $80:F8D6 RiderPieceAt (RTS, Y = lane): LanePieceAt at rider X's wheel
+ * column $0266. */
+void RiderPieceAt_m1x1(void)
+{
+    lda8(rd8(ABSX(0x0266)));
+    wr8(DP(0x08), (u8)A);
+    lane_piece();
+}
+
+/* $80:B051 IsPieceFlat (RTS): C clear when the piece type A is $1F. */
+void IsPieceFlat_m1x1(void)
+{
+    cmp8((u8)A, 0x1F);
+    fc = fz ? 0 : 1;
+    ret();
+}
+
+/* $80:B04E RiderOnFlat (RTS, Y = lane): RiderPieceAt, then IsPieceFlat. */
+void RiderOnFlat_m1x1(void)
+{
+    push16(0xB050); RiderPieceAt_m1x1();
+    IsPieceFlat_m1x1();
+}
+
+/* $80:C049 HeightAbove (RTS): A - rider X's jump height $01FE - its lane
+ * $01F6 - $09C7 - 8. */
+void HeightAbove_m1x1(void)
+{
+    fc = 1;
+    sbc8(rd8(ABSX(0x01FE)));
+    sbc8(rd8(ABSX(0x01F6)));
+    sbc8(rd8(ABS(0x09C7)));
+    fc = 1;
+    sbc8(0x08);
+    ret();
+}
+
+/* $80:C046 GroundHeightAbove (RTS): HeightAbove from the ground line
+ * $0CD5. */
+void GroundHeightAbove_m1x1(void)
+{
+    lda8(rd8(ABS(0x0CD5)));
+    HeightAbove_m1x1();
+}

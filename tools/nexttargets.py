@@ -3,6 +3,9 @@
 can also run in the port), smallest first.
 
     python tools/nexttargets.py s1 [--min 10] [--max 200]
+    python tools/nexttargets.py s4 --allow 2   (also routines with up to two
+                                              callees not yet hand-written;
+                                              those are listed, for CALL())
 """
 import argparse
 import bisect
@@ -14,6 +17,7 @@ def main():
     ap.add_argument('ver')
     ap.add_argument('--min', type=int, default=8)
     ap.add_argument('--max', type=int, default=400)
+    ap.add_argument('--allow', type=int, default=0, help='callees not yet hand-written to allow')
     a = ap.parse_args()
     j = json.load(open('build/%s/code.json' % a.ver))
     ins = {int(k, 16): v for k, v in j['insn'].items()}
@@ -43,12 +47,16 @@ def main():
         if f in hand:
             continue
         cs = callees.get(f, set())
-        if cs <= hand:
+        missing = sorted(c for c in cs - hand if c is not None)
+        if None in cs - hand:
+            continue
+        if len(missing) <= a.allow:
             n = len(body.get(f, []))
             if a.min <= n <= a.max:
-                out.append((n, f))
-    for n, f in sorted(out):
-        print('%06X %-22s %d' % (f, names.get(f, ''), n))
+                out.append((n, f, missing))
+    for n, f, missing in sorted(out):
+        print('%06X %-22s %d %s' % (f, names.get(f, ''), n,
+                                    ' '.join('%06X' % c for c in missing)))
     print(len(out), 'candidates')
 
 

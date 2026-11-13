@@ -667,6 +667,16 @@ BRIDGE(HleHand_BsxFindFile, BsxFindFile_m0x0, 600)
 /* c/hand/s4/objects.c, part 25 */
 BRIDGE(HleHand_ShowItemPoints, ShowItemPoints_m1x1, 1650)
 BRIDGE(HleHand_UpdateLanes, UpdateLanes_m1x1, 520)
+BRIDGE(HleHand_LanePieceTables, LanePieceTables_m1x1, 15)
+BRIDGE(HleHand_LanePieceTablesLong, LanePieceTablesLong_m1x1, 36)
+BRIDGE(HleHand_LanePieceAt, LanePieceAt_m1x1, 58)
+BRIDGE(HleHand_RiderPieceAt, RiderPieceAt_m1x1, 63)
+BRIDGE(HleHand_IsPieceFlat, IsPieceFlat_m1x1, 10)
+BRIDGE(HleHand_RiderOnFlat, RiderOnFlat_m1x1, 77)
+BRIDGE(HleHand_HeightAbove, HeightAbove_m1x1, 18)
+BRIDGE(HleHand_GroundHeightAbove, GroundHeightAbove_m1x1, 21)
+/* VramQueueTilesLong / QueueTileRowsLong ($80:B2D6 / $80:B431) are
+ * verified but unhooked: trampolines whose cost is the callee's. */
 /* c/hand/s4/objects.c, part 26 */
 /* UnpackToWram / UnpackToLowRam ($82:8BFE / $82:8BD8) pass difftest but
  * are not hooked: an unpack runs for several frames' worth of cycles and
