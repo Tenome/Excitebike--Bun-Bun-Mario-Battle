@@ -668,3 +668,28 @@ all4:
     wr8(ABS(0x189E), (u8)A); wr8(ABS(0x189F), (u8)A);
     ret();
 }
+/* $81:8C33 CopyTrackColumn (RTL): the track streamer's column: from the
+ * piece words at ($05) + Y + 2, ... each tile (& $07FF | $0800, palette 2)
+ * into the VRAM queue $7F:000C + X and its height bits (high byte >> 3)
+ * into $7F:200C + X, until X = $1E. */
+void CopyTrackColumn_m1x1(void)
+{
+    do {
+        Y = inc8((u8)Y); Y = inc8((u8)Y);
+        rep(0x20);
+        lda16(rd16((((u32)DB << 16) + rd16(DP(0x05)) + Y) & 0xFFFFFF));
+        push16(A);
+        and16(0x07FF);
+        ora16(0x0800);
+        wr16(LONGX(0x7F000C), A);
+        lda16(pull16());
+        A = (u16)((A >> 8) | (A << 8)); nz8((u8)A);
+        and16(0x00FF);
+        lda16(lsr16(A)); lda16(lsr16(A)); lda16(lsr16(A));
+        wr16(LONGX(0x7F200C), A);
+        X = inc8((u8)X); X = inc8((u8)X);
+        cmp8((u8)X, 0x1E);
+    } while (!fz);
+    sep(0x20);
+    retl();
+}
