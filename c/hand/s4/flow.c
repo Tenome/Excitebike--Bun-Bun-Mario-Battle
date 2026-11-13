@@ -362,3 +362,26 @@ void OverheatStep_m1x1(void)
     overheat_dust();
     ret();
 }
+
+/* $80:FE3A ItemFlashState (RTS): the item-hit flash $5E: cleared when the
+ * race is over or overheated; while it runs returns X = 6 (and A = $40 on
+ * its odd steps from $0D) or X = 0 on even steps from $0D, Y = 7. */
+void ItemFlashState_m1x1(void)
+{
+    lda8(rd8(DP(0x84)));
+    ora8(rd8(DP(0x60)));
+    if (!fz) { lda8(0x00); wr8(DP(0x5E), 0x00); ret(); return; }
+    lda8(rd8(DP(0x5E)));
+    if (fz) { ret(); return; }
+    ldx8(0x00);
+    ldy8(0x07);
+    lda8(rd8(DP(0x5E)));
+    cmp8((u8)A, 0x0D);
+    if (fc) {
+        lda8(lsr8((u8)A));
+        if (!fc) { ret(); return; }
+        lda8(0x40);
+    }
+    ldx8(0x06);
+    ret();
+}

@@ -1,15 +1,15 @@
 {
  "measures": {
-  "fuzzy_match_percent": 78.1722,
+  "fuzzy_match_percent": 78.2101,
   "total_code": "36930",
-  "matched_code": "20941",
-  "matched_code_percent": 56.7046,
+  "matched_code": "20969",
+  "matched_code_percent": 56.7804,
   "total_data": "0",
   "matched_data": "0",
   "matched_data_percent": 0.0,
   "total_functions": 532,
-  "matched_functions": 284,
-  "matched_functions_percent": 53.3835,
+  "matched_functions": 285,
+  "matched_functions_percent": 53.5714,
   "complete_code": "0",
   "complete_code_percent": 0.0,
   "complete_data": "0",
@@ -21,16 +21,16 @@
   {
    "name": "main/bank80",
    "measures": {
-    "fuzzy_match_percent": 79.6259,
+    "fuzzy_match_percent": 79.6826,
     "total_code": "24671",
-    "matched_code": "14751",
-    "matched_code_percent": 59.7908,
+    "matched_code": "14779",
+    "matched_code_percent": 59.9043,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 357,
-    "matched_functions": 189,
-    "matched_functions_percent": 52.9412,
+    "matched_functions": 190,
+    "matched_functions_percent": 53.2213,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -42,7 +42,7 @@
     {
      "name": ".text",
      "size": "24671",
-     "fuzzy_match_percent": 79.6259
+     "fuzzy_match_percent": 79.6826
     }
    ],
    "functions": [
@@ -2799,9 +2799,9 @@
      }
     },
     {
-     "name": "sub_80FE3A",
+     "name": "ItemFlashState",
      "size": "28",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8453690"
      }

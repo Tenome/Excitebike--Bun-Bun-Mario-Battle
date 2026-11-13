@@ -288,3 +288,4 @@
 80F330  1 1  mem+X,Y,C,V     DemoInputStep
 80F4C8  1 1  mem+X,Y,C,V     TitlePushStart
 80C19B  1 1  mem+X,Y,C,V     OverheatStep
+80FE3A  1 1  mem+X,Y,C,V     ItemFlashState

@@ -300,3 +300,4 @@
 80F330 DemoInputStep
 80F4C8 TitlePushStart
 80C19B OverheatStep
+80FE3A ItemFlashState
