@@ -180,3 +180,5 @@
 819D0B DrawBigBall           # from s4 819DE4
 818C33 CopyTrackColumn       # from s4 818C3C
 80AFE9 CpuReleaseButtons     # from s4 80B0A4
+819F8C AimRatio              # from s4 81A065
+80BE3E RiderRunOut           # from s4 80BB56

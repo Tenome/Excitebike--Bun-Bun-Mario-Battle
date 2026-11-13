@@ -371,6 +371,8 @@ BRIDGE(HleHand_VelocityDirection, VelocityDirection_m1x1, 120)
 BRIDGE(HleHand_DrawBigBall, DrawBigBall_m1x1, 90)
 BRIDGE(HleHand_CopyTrackColumn, CopyTrackColumn_m1x1, 400)
 BRIDGE(HleHand_CpuReleaseButtons, CpuReleaseButtons_m1x1, 25)
+BRIDGE_DYN(HleHand_AimRatio, AimRatio_m1x1, (A & 0xFF) ? 120 + 25 * (A & 0xFF) : 15)
+BRIDGE(HleHand_RiderRunOut, RiderRunOut_m1x1, 50)
 #else
 /* Stadium 3-4 (Gen B) routines from c/hand/s4 */
 BRIDGE(HleHand_RiderGfxCycle,     RiderGfxCycle_m1x1,     60)

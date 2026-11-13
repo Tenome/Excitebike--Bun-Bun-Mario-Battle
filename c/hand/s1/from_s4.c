@@ -709,3 +709,109 @@ void CpuReleaseButtons_m1x1(void)
     input_and_a();
     ret();
 }
+/* $81:9F8C AimRatio (RTL, A = steps): for object X, the direction to the
+ * target ($039F/$03A1 vs $027F/$028F) as a step pair: the larger axis gets
+ * A, the smaller its share (Bresenham over A steps), signed by direction,
+ * into $00 (vertical) and $0A (horizontal). A = 0: $00 = 0. */
+void AimRatio_m1x1(void)
+{
+    wr8(DP(0x0A), (u8)A);
+    cmp8((u8)A, 0x00);
+    if (fz) { wr8(DP(0x00), 0); retl(); return; }
+    push8((u8)X);
+    push8((u8)Y);
+    rep(0x20);
+    ldy8(0x00);
+    lda16(rd16(ABS(0x039B)));
+    fc = 1; sbc16(rd16(ABSX(0x0289)));
+    wr16(DP(0x12), A);
+    if (fn) Y = inc8((u8)Y);
+    wr8(DP(0x02), (u8)Y);
+    lda16(rd16(DP(0x12)));
+    if (fn) { eor16(0xFFFF); lda16(inc16(A)); }
+    wr16(DP(0x10), A);
+    ldy8(0x00);
+    lda16(rd16(ABS(0x0399)));
+    fc = 1; sbc16(rd16(ABSX(0x0279)));
+    wr16(DP(0x16), A);
+    if (fn) Y = inc8((u8)Y);
+    rep(0x20);
+    wr8(DP(0x03), (u8)Y);
+    lda16(rd16(DP(0x16)));
+    if (fn) { eor16(0xFFFF); lda16(inc16(A)); }
+    wr16(DP(0x14), A);
+    ldy8(0x00);
+    cmp16(A, rd16(DP(0x10)));
+    if (!fc) {
+        Y = inc8((u8)Y);
+        push16(A);
+        lda16(rd16(DP(0x10)));
+        wr16(DP(0x14), A);
+        lda16(pull16());
+        wr16(DP(0x10), A);
+    }
+    wr16(DP(0x1E), 0);
+    wr16(DP(0x00), 0);
+    X = rd8(DP(0x0A)); nz8((u8)X);
+    do {
+        lda16(rd16(DP(0x1E)));
+        fc = 0; adc16(rd16(DP(0x10)));
+        cmp16(A, rd16(DP(0x14)));
+        if (fc) {
+            sbc16(rd16(DP(0x14)));
+            wr16(DP(0x00), inc16(rd16(DP(0x00))));
+        }
+        wr16(DP(0x1E), A);
+        X = dec8((u8)X);
+        WAIT_TICK();
+    } while (!fz);
+    sep(0x20);
+    lda8((u8)Y);
+    if (!fz) {
+        lda8(rd8(DP(0x00)));
+        push8((u8)A);
+        lda8(rd8(DP(0x0A)));
+        wr8(DP(0x00), (u8)A);
+        lda8(pull8());
+        wr8(DP(0x0A), (u8)A);
+    }
+    lda8(rd8(DP(0x00)));
+    Y = rd8(DP(0x02)); nz8((u8)Y);
+    if (!fz) { eor8(0xFF); lda8(inc8((u8)A)); wr8(DP(0x00), (u8)A); }
+    lda8(rd8(DP(0x0A)));
+    Y = rd8(DP(0x03)); nz8((u8)Y);
+    if (!fz) { eor8(0xFF); lda8(inc8((u8)A)); wr8(DP(0x0A), (u8)A); }
+    Y = pull8(); nz8((u8)Y);
+    X = pull8(); nz8((u8)X);
+    retl();
+}
+/* $80:BE3E RiderRunOut (RTS): rider X past the finish ($08C4) and not
+ * stopped ($01FE) waves ($099E = 1) and on even frames rolls on ($090C +
+ * 1) until it is $80:BB30 (by lane $0948) past its column; then, or when
+ * not running out, its finish state advances ($01D6 + 1) and the wave
+ * timer $45 = 8. */
+void RiderRunOut_m1x1(void)
+{
+    lda8(rd8(ABSX(0x08C4)));
+    int done = fz;
+    if (!done) {
+        lda8(rd8(ABSX(0x01F8)));
+        done = !fz;
+    }
+    if (!done) {
+        lda8(0x01); wr8(ABSX(0x099E), 0x01);
+        lda8(rd8(DP(0x63)));
+        lda8(lsr8((u8)A));
+        if (fc) { ret(); return; }
+        wr8(ABSX(0x090C), inc8(rd8(ABSX(0x090C))));
+        Y = rd8(ABSX(0x0948)); nz8((u8)Y);
+        lda8(rd8(ABSX(0x0190)));
+        fc = 0; adc8(rd8(ABSY(0xBE18)));
+        cmp8((u8)A, rd8(ABSX(0x090C)));
+        if (fc) { ret(); return; }
+    }
+    u8 v = inc8(rd8(ABSX(0x01D0)));
+    wr8(ABSX(0x01D0), v);
+    if (!fz) { lda8(0x08); wr8(DPX(0x45), 0x08); }
+    ret();
+}

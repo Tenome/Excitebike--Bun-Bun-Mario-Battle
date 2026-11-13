@@ -1,15 +1,15 @@
 {
  "measures": {
-  "fuzzy_match_percent": 64.3626,
+  "fuzzy_match_percent": 64.6968,
   "total_code": "27972",
-  "matched_code": "8689",
-  "matched_code_percent": 31.0632,
+  "matched_code": "8876",
+  "matched_code_percent": 31.7317,
   "total_data": "0",
   "matched_data": "0",
   "matched_data_percent": 0.0,
   "total_functions": 407,
-  "matched_functions": 154,
-  "matched_functions_percent": 37.8378,
+  "matched_functions": 156,
+  "matched_functions_percent": 38.3292,
   "complete_code": "0",
   "complete_code_percent": 0.0,
   "complete_data": "0",
@@ -21,16 +21,16 @@
   {
    "name": "main/bank80",
    "measures": {
-    "fuzzy_match_percent": 61.5824,
+    "fuzzy_match_percent": 61.6843,
     "total_code": "21606",
-    "matched_code": "5563",
-    "matched_code_percent": 25.7475,
+    "matched_code": "5607",
+    "matched_code_percent": 25.9511,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 306,
-    "matched_functions": 93,
-    "matched_functions_percent": 30.3922,
+    "matched_functions": 94,
+    "matched_functions_percent": 30.719,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -42,7 +42,7 @@
     {
      "name": ".text",
      "size": "21606",
-     "fuzzy_match_percent": 61.5824
+     "fuzzy_match_percent": 61.6843
     }
    ],
    "functions": [
@@ -1159,9 +1159,9 @@
      }
     },
     {
-     "name": "sub_80BE3E",
+     "name": "RiderRunOut",
      "size": "44",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8437310"
      }
@@ -2503,16 +2503,16 @@
   {
    "name": "main/bank81",
    "measures": {
-    "fuzzy_match_percent": 73.7983,
+    "fuzzy_match_percent": 74.9215,
     "total_code": "6366",
-    "matched_code": "3126",
-    "matched_code_percent": 49.1046,
+    "matched_code": "3269",
+    "matched_code_percent": 51.3509,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 101,
-    "matched_functions": 61,
-    "matched_functions_percent": 60.396,
+    "matched_functions": 62,
+    "matched_functions_percent": 61.3861,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -2524,7 +2524,7 @@
     {
      "name": ".text",
      "size": "6366",
-     "fuzzy_match_percent": 73.7983
+     "fuzzy_match_percent": 74.9215
     }
    ],
    "functions": [
@@ -2857,9 +2857,9 @@
      }
     },
     {
-     "name": "sub_819F8C",
+     "name": "AimRatio",
      "size": "143",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8494988"
      }
