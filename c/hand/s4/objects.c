@@ -9492,3 +9492,84 @@ void ResultsJumpPoints_m0x1(void)
     } while (!fc);
     results_score_tail();
 }
+
+void RaceClockStep_m1x1(void);
+void BrakeRider_m1x1(void);
+
+/* $80:C3E1 (RTS): while racing ($92) the race time runs: frames $82 (to
+ * 60), seconds $81 (to 60) and minutes $80, with the hundredths
+ * ($80:C470 -> two digits $80:C4AC at $09B8) and seconds digits ($09B5)
+ * and minutes ($09B3) copied to $09BB-$09C1, and the clock shown. At
+ * the broadcast's end minute for this race ($80:C468, entry $7C * 2 +
+ * $7D; past frame $0708 of it, $CA = 1) or after 4 minutes the race
+ * ends: $085E cleared, $84 = 2, sound $2D. */
+void RaceTimer_m1x1(void)
+{
+    lda8(rd8(DP(0x92)));
+    if (fz) { ret(); return; }
+    lda8(rd8(DP(0x82)));
+    lda8(inc8((u8)A));
+    cmp8((u8)A, 0x3C);
+    if (fc) {
+        lda8(rd8(DP(0x81)));
+        lda8(inc8((u8)A));
+        cmp8((u8)A, 0x3C);
+        if (fc) { wr8(DP(0x80), inc8(rd8(DP(0x80)))); lda8(0x00); }
+        wr8(DP(0x81), (u8)A);
+        lda8(0x00);
+    }
+    wr8(DP(0x82), (u8)A);
+    X = (u8)A; nz8((u8)X);
+    rep(0x20);
+    lda16(rd16(ABSX(0xC470)));
+    lda16(asl16(A));
+    X = (u8)A; nz8((u8)X);
+    lda16(rd16(ABSX(0xC4AC))); wr16(ABS(0x09B8), A);
+    lda16(rd16(DP(0x81)));
+    lda16(asl16(A));
+    X = (u8)A; nz8((u8)X);
+    lda16(rd16(ABSX(0xC4AC))); wr16(ABS(0x09B5), A);
+    sep(0x20);
+    lda8(rd8(DP(0x80))); wr8(ABS(0x09B3), (u8)A);
+    ldx8(0x06);
+    do {
+        lda8(rd8(ABSX(0x09B3)));
+        wr8(ABSX(0x09BB), (u8)A);
+        X = dec8((u8)X);
+    } while (!fn);
+    push16(0xC42A); RaceClockStep_m1x1();
+    push8((u8)X);
+    lda8(rd8(DP(0x7C)));
+    lda8(asl8((u8)A));
+    fc = 0; adc8(rd8(DP(0x7D)));
+    X = (u8)A; nz8((u8)X);
+    lda8(rd8(ABSX(0xC468)));
+    X = pull8(); nz8((u8)X);
+    cmp8((u8)A, rd8(LONG(0x7FFFFF)));
+    if (fc) {
+        if (!fz) goto check_minutes;
+        rep(0x20);
+        lda16(rd16(LONG(0x7FFFFA)));
+        cmp16(A, 0x0708);
+        sep(0x20);
+        if (fc) { lda8(0x01); wr8(ABS(0x00CA), 0x01); }
+    check_minutes:
+        lda8(rd8(DP(0x80)));
+        cmp8((u8)A, 0x04);
+        if (!fc) { ret(); return; }
+    }
+    wr8(ABS(0x085E), 0); wr8(ABS(0x085F), 0);
+    lda8(0x02); wr8(DP(0x84), 0x02);
+    lda8(0x2D);
+    push8(0x80); push16(0xC466); QueueSoundB_m1x1();
+    ret();
+}
+
+/* $80:AE93 (RTS, X = rider): BrakeRider (into which it falls) on the
+ * rider whose turn it is ($7F). */
+void BrakeOnTurn_m1x1(void)
+{
+    cmp8((u8)X, rd8(DP(0x7F)));
+    if (!fz) { ret(); return; }
+    BrakeRider_m1x1();
+}

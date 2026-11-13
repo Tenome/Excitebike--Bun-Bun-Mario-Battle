@@ -398,3 +398,5 @@
 80DDEF BonusCountUp
 809608 ResultsPlacePoints
 8096E0 ResultsJumpPoints
+80C3E1 RaceTimer
+80AE93 BrakeOnTurn

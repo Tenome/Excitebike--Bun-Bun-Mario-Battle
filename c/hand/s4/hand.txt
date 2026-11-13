@@ -386,3 +386,5 @@
 80DDEF  1 1  mem+A,X,Y,C,V   BonusCountUp
 809608  0 1  mem+A,X,Y,C,V   ResultsPlacePoints
 8096E0  0 1  mem+A,X,Y,C,V   ResultsJumpPoints
+80C3E1  1 1  mem+A,X,Y,C,V   RaceTimer
+80AE93  1 1  mem+A,X,Y,C,V   BrakeOnTurn
