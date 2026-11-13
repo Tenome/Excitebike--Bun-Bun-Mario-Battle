@@ -280,3 +280,5 @@
 80D81B BonusCourseFrame
 81CA20 ScaleJumpCount
 81F9C8 BsxFindFile
+809471 ShowItemPoints
+80FC5F UpdateLanes

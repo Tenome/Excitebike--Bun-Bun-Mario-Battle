@@ -265,3 +265,5 @@
 81CA20  1 1  mem+X,Y         ScaleJumpCount
 81CA20  0 1  mem+X,Y         ScaleJumpCount
 81F9C8  0 0  mem+Y,C         BsxFindFile
+809471  1 1  mem+X,Y,V       ShowItemPoints
+80FC5F  1 1  mem+X,Y,C,V     UpdateLanes

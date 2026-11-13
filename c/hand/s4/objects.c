@@ -5886,3 +5886,235 @@ void BsxFindFile_m0x0(void)
     fc = 1;
     retl();
 }
+
+void AddBcdDigits_m1x1(void);
+
+/* $80:9471 ShowItemPoints (RTS): the items' points, $1548 * 10 + $1547 * 8
+ * + $1546 * 6 + $1545 * 4 + $1544 * 2, as four digits plus a zero
+ * ($03D0-$03D4, lower row +$10), the bonus digits added (AddBcdDigits),
+ * leading zeros blank, size $25, queued at VRAM $1977. */
+void ShowItemPoints_m1x1(void)
+{
+    rep(0x20);
+    lda16(rd16(ABS(0x1548)));
+    and16(0x00FF);
+    lda16(asl16(A));
+    wr16(DP(0x00), A);
+    lda16(asl16(A)); lda16(asl16(A));
+    fc = 0; adc16(rd16(DP(0x00)));
+    wr16(DP(0x02), A);
+    lda16(rd16(ABS(0x1547)));
+    and16(0x00FF);
+    lda16(asl16(A)); lda16(asl16(A)); lda16(asl16(A));
+    fc = 0; adc16(rd16(DP(0x02)));
+    wr16(DP(0x02), A);
+    lda16(rd16(ABS(0x1546)));
+    and16(0x00FF);
+    lda16(asl16(A));
+    wr16(DP(0x00), A);
+    lda16(asl16(A));
+    fc = 0; adc16(rd16(DP(0x00)));
+    fc = 0; adc16(rd16(DP(0x02)));
+    wr16(DP(0x02), A);
+    lda16(rd16(ABS(0x1545)));
+    and16(0x00FF);
+    lda16(asl16(A)); lda16(asl16(A));
+    fc = 0; adc16(rd16(DP(0x02)));
+    wr16(DP(0x02), A);
+    lda16(rd16(ABS(0x1544)));
+    and16(0x00FF);
+    lda16(asl16(A));
+    fc = 0; adc16(rd16(DP(0x02)));
+    wr16(DP(0x02), A);
+    static const u16 pow10[3] = { 1000, 100, 10 };
+    for (int i = 0; i < 3; i++) {
+        ldy8(0x00);
+        for (;;) {
+            cmp16(A, pow10[i]);
+            if (!fc) break;
+            sbc16(pow10[i]);
+            Y = inc8((u8)Y);
+            WAIT_TICK();
+        }
+        wr16(DP(i < 2 ? 0x02 : 0x04), A);
+        lda16((u16)(Y & 0xFF));
+        wr16(ABS(0x03D0 + i), A);
+        ora16(0x0010);
+        wr16(ABS(0x03D5 + i), A);
+        if (i < 2) lda16(rd16(DP(0x02)));
+    }
+    lda16(0x1977); wr16(DP(0x00), 0x1977);
+    lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+    sep(0x20);
+    lda8(rd8(DP(0x04)));
+    wr8(ABS(0x03D3), (u8)A);
+    ora8(0x10); wr8(ABS(0x03D8), (u8)A);
+    lda8(0x00); wr8(ABS(0x03D4), 0x00);
+    ora8(0x10); wr8(ABS(0x03D9), (u8)A);
+    push16(0x952D); AddBcdDigits_m1x1();
+    lda8(0x25); wr8(ABS(0x03CF), 0x25);
+    lda8(0x20); wr8(DP(0x0F), 0x20);
+    ldx8(0x01);
+    for (;;) {
+        lda8(rd8(ABSX(0x03CF)));
+        if (!fz) break;
+        lda8(0xFF);
+        wr8(ABSX(0x03CF), 0xFF);
+        wr8(ABSX(0x03D4), 0xFF);
+        X = inc8((u8)X);
+        cmp8((u8)X, 0x05);
+        if (fc) break;
+    }
+    VramQueueTiles_m1x1();
+}
+
+/* $80:FC5F UpdateLanes (RTS): every rider's lane position $01F6 moves by
+ * its steering $01AE (not while landing from a jump, $0176 = $14/$15),
+ * stops at a target lane $19A6 or one of the lane lines $80:F6AB, bounces
+ * between rows 8 and $39 (the edge flips the steering), and the jump
+ * states $020E settle (landing with CrashLand). Then the player's d-pad
+ * (up $08 / down $04) steers, with sound $22 on a press or every 4 frames. */
+void UpdateLanes_m1x1(void)
+{
+    ldx8(0x07);
+    for (;;) {
+        lda8(rd8(ABSX(0x0176)));
+        cmp8((u8)A, 0x15);
+        int move;
+        if (fz) {
+            lda8(rd8(ABSX(0x01D6)));
+            move = !fz;
+        } else {
+            cmp8((u8)A, 0x14);
+            move = !fz;
+        }
+        if (move) {
+            lda8(rd8(ABSX(0x01F6)));
+            fc = 0; adc8(rd8(ABSX(0x01AE)));
+            wr8(ABSX(0x01F6), (u8)A);
+        }
+        lda8(rd8(ABSX(0x199E)));
+        if (!fz) {
+            lda8(rd8(ABSX(0x01F6)));
+            cmp8((u8)A, rd8(ABSX(0x19A6)));
+            if (!fz) goto next;
+            wr8(ABSX(0x199E), 0);
+            goto stop;
+        }
+        ldy8(0x07);
+        do {
+            lda8(rd8(ABSX(0x01F6)));
+            cmp8((u8)A, rd8(ABSY(0xF6AB)));
+            if (fz) goto stop;
+            Y = dec8((u8)Y);
+        } while (!fn);
+        lda8(rd8(ABSX(0x020E)));
+        if (!fz) {
+            cmp8((u8)A, 0x01);
+            if (fz) {
+                lda8(rd8(ABSX(0x01F6)));
+                cmp8((u8)A, 0x20);
+                if (!fc) {
+                    lda8(0x04); wr8(ABSX(0x020E), 0x04);
+                    lda8(rd8(ABSX(0x0176)));
+                    int land = fz;
+                    if (!land) { cmp8((u8)A, 0x12); land = fz; }
+                    if (!land) { cmp8((u8)A, 0x10); land = fz; }
+                    if (!land) { cmp8((u8)A, 0x0D); land = fz; }
+                    if (!land) goto next;
+                    lda8(0x00); wr8(ABSX(0x01FE), 0x00);
+                    push16(0xFCCD); CrashLand_m1x1();
+                    {
+                        u8 v = dec8(rd8(ABSX(0x020E)));
+                        wr8(ABSX(0x020E), v);
+                    }
+                    if (!fz) goto next;
+                    /* falls on with A as CrashLand left it */
+                    cmp8((u8)A, 0x03);
+                    if (fz) goto rows;
+                    goto drift;
+                }
+                goto rows;
+            }
+            cmp8((u8)A, 0x03);
+            if (fz) goto rows;
+        drift:
+            lda8(rd8(ABSX(0x01F6)));
+            cmp8((u8)A, 0x20);
+            if (fc) wr8(ABSX(0x01F6), dec8(rd8(ABSX(0x01F6))));
+        }
+    rows:
+        lda8(rd8(ABSX(0x01F6)));
+        cmp8((u8)A, 0x08);
+        if (!fc) {
+            lda8(rd8(ABSX(0x01D6)));
+            if (fz) lda8(0x07);
+            else {
+                lda8(rd8(ABSX(0x01F6)));
+                cmp8((u8)A, 0x02);
+                if (!fc) lda8(0x01);
+            }
+            wr8(ABSX(0x01F6), (u8)A);
+            cmp8((u8)X, 0x00);
+            if (fz) goto flip;
+            goto edge;
+        }
+        cmp8((u8)A, 0x3A);
+        if (!fc) goto next;
+        lda8(0x39); wr8(ABSX(0x01F6), 0x39);
+    edge:
+        lda8(rd8(ABSX(0x01D6)));
+        ora8(rd8(ABSX(0x0940)));
+        if (!fz) goto next;
+    flip:
+        lda8(rd8(ABSX(0x01AE)));
+        if (fz) lda8(0xFF);
+        eor8(0xFE);
+        wr8(ABSX(0x01AE), (u8)A);
+        goto next;
+    stop:
+        lda8(0x00);
+        wr8(ABSX(0x01AE), 0x00);
+    next:
+        X = dec8((u8)X);
+        if (fn) break;
+    }
+    lda8(rd8(DP(0x92)));
+    if (fz) { ret(); return; }
+    lda8(rd8(ABS(0x01CE)));
+    ora8(rd8(ABS(0x0940)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABS(0x01EE)));
+    if (!fz) {
+        lda8(rd8(ABS(0x08F4)));
+        cmp8((u8)A, 0x02);
+        if (!fz) { ret(); return; }
+        wr8(ABS(0x08F4), inc8(rd8(ABS(0x08F4))));
+    }
+    lda8(rd8(ABS(0x01D6)));
+    if (!fz) {
+        cmp8((u8)A, 0x05);
+        if (!fz) { ret(); return; }
+    }
+    Y = rd8(ABS(0x01AE)); nz8((u8)Y);
+    lda8(rd8(ABS(0x017E)));
+    and8(0x04);
+    if (!fz) lda8(0xFF);
+    else {
+        lda8(rd8(ABS(0x017E)));
+        and8(0x08);
+        if (fz) { ret(); return; }
+        lda8(0x01);
+    }
+    wr8(ABS(0x01AE), (u8)A);
+    lda8(rd8(DP(0x21)));
+    and8(0x0C);
+    if (fz) {
+        lda8(rd8(DP(0x63)));
+        and8(0x03);
+        if (!fz) { ret(); return; }
+    }
+    lda8(0x22);
+    push8(0x80); push16(0xFD7C); QueueSoundB_m1x1();
+    ret();
+}

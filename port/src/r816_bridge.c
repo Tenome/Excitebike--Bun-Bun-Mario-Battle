@@ -656,6 +656,9 @@ BRIDGE_DYN(HleHand_ShowCoinRank, ShowCoinRank_m1x1, (!(g_ram[0x63] & 1) && g_ram
 /* c/hand/s4/objects.c, part 24 */
 BRIDGE(HleHand_ScaleJumpCount, ScaleJumpCount_m1x1, 200)
 BRIDGE(HleHand_BsxFindFile, BsxFindFile_m0x0, 600)
+/* c/hand/s4/objects.c, part 25 */
+BRIDGE(HleHand_ShowItemPoints, ShowItemPoints_m1x1, 1650)
+BRIDGE(HleHand_UpdateLanes, UpdateLanes_m1x1, 520)
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)
