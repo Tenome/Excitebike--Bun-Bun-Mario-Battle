@@ -287,3 +287,5 @@
 80DB6F BonusTimerStep
 80CCE1 DrawRider
 80C604 SpeedGauge
+819E61 SteerObjectStep
+80AE33 BrakeRider

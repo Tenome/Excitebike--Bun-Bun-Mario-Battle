@@ -3486,3 +3486,89 @@ void SpeedGauge_m1x1(void)
     X = (u8)A; nz8((u8)X);
     ret();
 }
+
+void ObjectFacing_m1x1(void);
+void ApplyVelocityX_m1x1(void);
+void ApplyVelocity_m1x1(void);
+
+/* $81:9E61 SteerObjectStep (RTL, Y = flags): Stadium 4's $81:9F3A with
+ * Stadium 1's object arrays (6 bytes lower, target $0399 / $039B). */
+void SteerObjectStep_m1x1(void)
+{
+    wr8(DP(0x04), (u8)Y);
+    push8(0x81); push16(0x9E66); AimVelocity_m1x1();
+    ldy8(0x00);
+    lda8(rd8(ABSX(0x0299)));
+    if (fn) Y = dec8((u8)Y);
+    lda8((u8)Y); wr8(ABSX(0x029A), (u8)A);
+    ldy8(0x00);
+    lda8(rd8(ABSX(0x02A9)));
+    if (fn) Y = dec8((u8)Y);
+    lda8((u8)Y); wr8(ABSX(0x02AA), (u8)A);
+    rep(0x20);
+    wr16(DP(0x04), lsr16(rd16(DP(0x04))));      /* LSR $04 with A 16-bit */
+    if (fc) {
+        lda16(rd16(ABSX(0x0299))); eor16(0xFFFF); lda16(inc16(A)); wr16(ABSX(0x0299), A);
+        lda16(rd16(ABSX(0x02A9))); eor16(0xFFFF); lda16(inc16(A)); wr16(ABSX(0x02A9), A);
+    }
+    sep(0x20);
+    wr8(DP(0x04), lsr8(rd8(DP(0x04))));
+    if (fc) { push8(0x81); push16(0x9EA2); ObjectFacing_m1x1(); }
+    wr8(DP(0x04), lsr8(rd8(DP(0x04))));
+    if (fc) { push8(0x81); push16(0x9EAA); ApplyVelocityX_m1x1(); }
+    wr8(DP(0x04), lsr8(rd8(DP(0x04))));
+    if (fc) { push8(0x81); push16(0x9EB2); ApplyVelocity_m1x1(); }
+    rep(0x20);
+    wr16(DP(0x00), 0);
+    lda16(rd16(ABSX(0x0299)));
+    if (!fz) {
+        lda16(rd16(ABSX(0x0279)));
+        fc = 1; sbc16(rd16(ABS(0x0399)));
+        eor16(rd16(ABSX(0x0299)));
+        if (!fn) {
+            lda16(rd16(ABS(0x0399))); wr16(ABSX(0x0279), A);
+            wr16(DP(0x00), inc16(rd16(DP(0x00))));
+        }
+    }
+    lda16(rd16(ABSX(0x0289)));
+    if (!fz) {
+        lda16(rd16(ABSX(0x0289)));
+        fc = 1; sbc16(rd16(ABS(0x039B)));
+        eor16(rd16(ABSX(0x02A9)));
+        if (!fn) {
+            lda16(rd16(ABS(0x039B))); wr16(ABSX(0x0289), A);
+            wr16(DP(0x00), inc16(rd16(DP(0x00))));
+        }
+    }
+    sep(0x20);
+    lda8(rd8(DP(0x00)));
+    cmp8((u8)A, 0x02);
+    fc = fz ? 1 : 0;
+    retl();
+}
+
+/* $80:AE33 BrakeRider (RTS, X = rider, Y = how hard): slow rider X by
+ * $80:B85A,Y unless already below the minimum $80:B865 for its air state
+ * (speed high 0); the speed $01C0:$01B8 stops at 0. */
+void BrakeRider_m1x1(void)
+{
+    wr8(DP(0x00), (u8)Y);
+    lda8(rd8(ABSX(0x01C0)));
+    if (fz) {
+        lda8(rd8(ABSX(0x01E8)));
+        lda8(lsr8((u8)A));
+        Y = (u8)A; nz8((u8)Y);
+        lda8(rd8(ABSX(0x01B8)));
+        cmp8((u8)A, rd8(ABSY(0xB865)));
+        if (!fc) { ret(); return; }
+    }
+    Y = rd8(DP(0x00)); nz8((u8)Y);
+    lda8(rd8(ABSX(0x01B8)));
+    fc = 1; sbc8(rd8(ABSY(0xB85A)));
+    wr8(ABSX(0x01B8), (u8)A);
+    if (fc) { ret(); return; }
+    lda8(rd8(ABSX(0x01C0)));
+    if (!fz) { wr8(ABSX(0x01C0), dec8(rd8(ABSX(0x01C0)))); ret(); return; }
+    wr8(ABSX(0x01B8), (u8)A);
+    ret();
+}

@@ -266,3 +266,5 @@
 80DB6F  1 1  mem+X,Y,C,V     BonusTimerStep
 80CCE1  1 1  mem+A,X,Y,C,V   DrawRider
 80C604  1 1  mem+A,X,Y,C,V   SpeedGauge
+819E61  1 1  mem+A,X,Y,C,V   SteerObjectStep
+80AE33  1 1  mem+A,X,Y,C,V   BrakeRider
