@@ -14,9 +14,10 @@
  * Races show the wide view; every other screen is pillarboxed. Gen B
  * (Stadium 3-4) only: the addresses below are that engine's.
  *
- * Not yet: riders and objects past the original edges. The game hides them
- * there (PlaceRiderShadow and the rider sprite routines), so the margins
- * show the track and the field but no sprites yet.
+ * Riders in the margins: PlaceRiderShadow ($80:CE96, hand C) ends with
+ * port_ws_rider_sprites (src/roster.c), which unhides a rider's sprites
+ * inside the wide view. Not yet: ground shadows, dust and other effects
+ * past the original edges.
  *
  * Track lookahead. The race's track layer lives in a 64-column tilemap, and
  * the game streams one 8-pixel column into it ($81:8A4D) just before that
@@ -74,6 +75,8 @@ static int ws_extra(void)
     }
     return extra;
 }
+
+int BunbunWsExtra(void) { return ws_extra(); }
 
 void BunbunWsPrepareFrame(int drawable_w, int drawable_h, int *frame_w, int *frame_h)
 {

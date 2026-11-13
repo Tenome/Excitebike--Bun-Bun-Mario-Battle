@@ -72,3 +72,4 @@ void roster_note_choice(int ch) { (void)ch; }
 int port_hide_clock(void) { return 0; }
 int port_race_is_final(void) { return rd8(DP(0x7D)) != 0; }
 int port_rival_pace(void) { return 100; }
+void port_ws_rider_sprites(void) { }

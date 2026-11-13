@@ -70,5 +70,8 @@ int port_hide_clock(void);                      /* draw the broadcast clock blan
 int port_race_is_final(void);
 /* Percent applied to a CPU rival's target speed ($80:BE66); 100 original. */
 int port_rival_pace(void);
+/* Widescreen: after PlaceRiderShadow, show rider X's four sprites (OAM
+ * buffer $1600 + $07) wherever they fall in the wide view. No-op otherwise. */
+void port_ws_rider_sprites(void);
 
 #endif

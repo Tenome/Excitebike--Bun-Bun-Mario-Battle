@@ -3037,6 +3037,8 @@ void QueueTileBlock_m1x1(void)
     ret();
 }
 
+void port_ws_rider_sprites(void);   /* roster.h: the port's widescreen riders */
+
 /* $80:CE96 PlaceRiderShadow (RTS): rider X's shadow sprites at OAM
  * buffer $1600 + $07. On the ground ($019E = 0) near the right edge
  * (column $E1+) they become small/large wrapped sprites; further left, at
@@ -3057,7 +3059,7 @@ void PlaceRiderShadow_m1x1(void)
                 lda8((u8)Y); lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); Y = (u8)A; nz8((u8)Y);
                 lda8(0x03);
                 wr8(ABSY(0x1820), 0x03); wr8(ABSY(0x1822), 0x03);
-                ret();
+                port_ws_rider_sprites(); ret();
                 return;
             }
             lda8(0xF0);
@@ -3065,7 +3067,7 @@ void PlaceRiderShadow_m1x1(void)
             lda8((u8)Y); lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); Y = (u8)A; nz8((u8)Y);
             lda8(0x03);
             wr8(ABSY(0x1821), 0x03); wr8(ABSY(0x1823), 0x03);
-            ret();
+            port_ws_rider_sprites(); ret();
             return;
         }
         int marker;
@@ -3102,7 +3104,7 @@ void PlaceRiderShadow_m1x1(void)
             if (fz) {
                 lda8(rd8(ABSX(0x0196)));
                 cmp8((u8)A, 0xF0);
-                if (!fc) { ret(); return; }
+                if (!fc) { port_ws_rider_sprites(); ret(); return; }
                 hide_top = 0;
             }
         }
@@ -3113,7 +3115,7 @@ void PlaceRiderShadow_m1x1(void)
     }
     lda8(0xF0);
     wr8(ABSY(0x1605), 0xF0); wr8(ABSY(0x160D), 0xF0);
-    ret();
+    port_ws_rider_sprites(); ret();
 }
 
 /* $80:E4CB ShowJumpResult (RTS): freeze the sprites ($1958 + 1), draw the

@@ -389,3 +389,31 @@ void RivalsAfterFrame(void)
         g_ram[0x7D] = 1;
     }
 }
+
+/* Widescreen riders (src/widescreen_bunbun.c). A rider's screen X is
+ * ($019E - 1) * 256 + $0196: page 0 left of the original screen, 1 on it,
+ * 2 right of it. DrawBigSprite wrote its four 16x16 sprites at $1600 + $07
+ * (columns X and X + 16, rows Y and Y + 16) with the low byte of X, and
+ * PlaceRiderShadow hid the ones off page 1. Inside the wide view, give each
+ * column its X9 bit and put the rows back. */
+int BunbunWsExtra(void);
+void port_ws_rider_sprites(void)
+{
+    int extra = BunbunWsExtra();
+    if (!extra || g_ram[0x76] != 0x03)
+        return;
+    unsigned r = X & 0xFF;
+    int x = ((int)g_ram[0x019E + r] - 1) * 256 + g_ram[0x0196 + r];
+    if (x <= -32 - extra || x >= 256 + extra)
+        return;                                        /* outside the wide view */
+    if (x >= 0 && x <= 256 - 32)
+        return;                                        /* the original handles it */
+    unsigned o = g_ram[0x07];
+    uint8_t y = (uint8_t)(g_ram[0x01B6 + r] - 8);
+    g_ram[0x1601 + o] = y;       g_ram[0x1605 + o] = y;
+    g_ram[0x1609 + o] = (uint8_t)(y + 16); g_ram[0x160D + o] = (uint8_t)(y + 16);
+    unsigned k = o >> 2;
+    uint8_t x9a = (uint8_t)((x >> 8) & 1), x9b = (uint8_t)(((x + 16) >> 8) & 1);
+    g_ram[0x1820 + k] = (uint8_t)(2 | x9a); g_ram[0x1822 + k] = (uint8_t)(2 | x9a);
+    g_ram[0x1821 + k] = (uint8_t)(2 | x9b); g_ram[0x1823 + k] = (uint8_t)(2 | x9b);
+}

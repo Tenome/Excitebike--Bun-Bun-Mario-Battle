@@ -116,8 +116,9 @@ state, so you continue where you were.
     right margin is filled by replaying the track streamer ($81:8A4D) a few
     columns ahead into the unused part of its 64-column tilemap; the bottom
     HUD's checkered flag is reflected into the margins; every other screen
-    is pillarboxed. Riders past the original edges are hidden by the game
-    and not shown yet. Restart to apply.
+    is pillarboxed. Riders in the margins are shown too: PlaceRiderShadow
+    ($80:CE96) ends with a port hook that unhides a rider's sprites inside
+    the wide view and sets each column's X9 bit. Restart to apply.
   * *Sprite swaps*: pick a PNG rider sheet per character (export the
     originals with `tools/assets.py export`).
   * *Music & sound*: pick a folder of replacement samples (WAV files named as
