@@ -682,6 +682,9 @@ BRIDGE(HleHand_JumpResultWait, JumpResultWait_m1x1, 360)
 BRIDGE(HleHand_StartPlayerSelect, StartPlayerSelect_m1x1, 5700)
 BRIDGE_DYN(HleHand_JumpResultTally, JumpResultTally_m1x1, 360 + ((g_ram[0xCF] == 1 && g_ram[0xCE] >= 3) ? 300 : 0))
 BRIDGE(HleHand_ResetRaceBoard, ResetRaceBoard_m1x1, 4600)
+/* c/hand/s4/objects.c, part 28 */
+BRIDGE(HleHand_StoreEntryNumber, StoreEntryNumber_m1x1, 820)
+BRIDGE(HleHand_LoadPackNumber, LoadPackNumber_m1x1, 1370)
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)

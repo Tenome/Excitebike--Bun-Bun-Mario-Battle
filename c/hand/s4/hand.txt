@@ -277,3 +277,5 @@
 808F26  1 1  mem+X,Y,C,V     StartPlayerSelect
 80E8E5  1 1  mem+X,Y,C,V     JumpResultTally
 8091FC  1 1  mem+X,Y,C,V     ResetRaceBoard
+80A17E  1 1  mem+Y           StoreEntryNumber
+80A070  1 1  mem+Y           LoadPackNumber

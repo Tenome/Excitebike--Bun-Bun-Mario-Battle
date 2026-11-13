@@ -292,3 +292,5 @@
 808F26 StartPlayerSelect
 80E8E5 JumpResultTally
 8091FC ResetRaceBoard
+80A17E StoreEntryNumber
+80A070 LoadPackNumber

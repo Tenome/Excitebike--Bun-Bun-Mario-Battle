@@ -6464,3 +6464,84 @@ void ResetRaceBoard_m1x1(void)
     lda8(0x05); wr8(ABS(0x0278), 0x05);
     ret();
 }
+
+void Add32_m1x1(void);
+
+/* The 32-bit accumulation both code routines do: $10-$13 += value * mult
+ * (Mul16 into $04-$07, then Add32), `call` being the JSL's return address
+ * (the JSR to Add32 follows it). */
+static void acc_mul(u8 value, u16 mult, u16 call)
+{
+    rep(0x20);
+    lda16(value);
+    wr16(DP(0x00), A);
+    lda16(mult); wr16(DP(0x02), mult);
+    sep(0x20);
+    push8(0x80); push16(call); Mul16_m1x1();
+    push16((u16)(call + 3)); Add32_m1x1();
+}
+
+/* $80:A17E StoreEntryNumber (RTL): the three entered digits ($1570-$1572)
+ * as a number (100s, 10s, 1s), whose bits are spread over the code bytes
+ * $0850-$0854 (two bits each into bits 4-5). */
+void StoreEntryNumber_m1x1(void)
+{
+    rep(0x20);
+    wr16(DP(0x10), 0);
+    wr16(DP(0x12), 0);
+    sep(0x20);
+    acc_mul(rd8(ABS(0x1570)), 0x0064, 0xA196);
+    acc_mul(rd8(ABS(0x1571)), 0x000A, 0xA1AE);
+    lda8(rd8(ABS(0x1572)));
+    wr8(DP(0x04), (u8)A);
+    wr8(DP(0x05), 0); wr8(DP(0x06), 0); wr8(DP(0x07), 0);
+    push16(0xA1BF); Add32_m1x1();
+    lda8(rd8(DP(0x10)));
+    lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A));
+    and8(0x30); ora8(rd8(ABS(0x0854))); wr8(ABS(0x0854), (u8)A);
+    lda8(rd8(DP(0x10)));
+    lda8(asl8((u8)A)); lda8(asl8((u8)A));
+    and8(0x30); ora8(rd8(ABS(0x0853))); wr8(ABS(0x0853), (u8)A);
+    lda8(rd8(DP(0x10)));
+    and8(0x30); ora8(rd8(ABS(0x0852))); wr8(ABS(0x0852), (u8)A);
+    lda8(rd8(DP(0x10)));
+    lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
+    and8(0x30); ora8(rd8(ABS(0x0851))); wr8(ABS(0x0851), (u8)A);
+    lda8(rd8(DP(0x11)));
+    lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A));
+    and8(0x30); ora8(rd8(ABS(0x0850))); wr8(ABS(0x0850), (u8)A);
+    retl();
+}
+
+/* $80:A070 LoadPackNumber (RTL): the five decimal digits at $11:5730
+ * (the memory pack) as a number, stored as nibbles in $0850-$0853 and the
+ * top bits (<< 4, & $1E) in $0855. */
+void LoadPackNumber_m1x1(void)
+{
+    rep(0x20);
+    wr16(DP(0x10), 0);
+    wr16(DP(0x12), 0);
+    sep(0x20);
+    acc_mul(rd8(LONG(0x115730)), 0x2710, 0xA089);
+    acc_mul(rd8(LONG(0x115731)), 0x03E8, 0xA0A2);
+    acc_mul(rd8(LONG(0x115732)), 0x0064, 0xA0BB);
+    acc_mul(rd8(LONG(0x115733)), 0x000A, 0xA0D4);
+    lda8(rd8(LONG(0x115734)));
+    wr8(DP(0x04), (u8)A);
+    wr8(DP(0x05), 0); wr8(DP(0x06), 0); wr8(DP(0x07), 0);
+    push16(0xA0E6); Add32_m1x1();
+    lda8(rd8(DP(0x12)));
+    lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A));
+    and8(0x1E); wr8(ABS(0x0855), (u8)A);
+    lda8(rd8(DP(0x11)));
+    lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
+    wr8(ABS(0x0850), (u8)A);
+    lda8(rd8(DP(0x11)));
+    and8(0x0F); wr8(ABS(0x0851), (u8)A);
+    lda8(rd8(DP(0x10)));
+    lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
+    wr8(ABS(0x0852), (u8)A);
+    lda8(rd8(DP(0x10)));
+    and8(0x0F); wr8(ABS(0x0853), (u8)A);
+    retl();
+}
