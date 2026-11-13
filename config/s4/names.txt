@@ -371,3 +371,6 @@
 80B208 RaceFrameStep
 828424 QueueFontDigits
 819828 EmptyStep9828
+819788 SpawnObject
+819829 FindObjectSlot
+828259 QueueTimeDigits

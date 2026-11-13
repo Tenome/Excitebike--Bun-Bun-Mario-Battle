@@ -8567,3 +8567,120 @@ void EmptyStep9828_m1x1(void)
 {
     ret();
 }
+
+/* $81:9788 SpawnObject (RTL, Y = type, $00 / $02 = X / Y position): take
+ * the first free object slot (even 14-0, $02EF): type $02FF, active,
+ * script $81:AD67, position, and its timers, frames and velocities
+ * cleared; then the type's init routine ($81:AD7B, $0E = slot). C set
+ * when no slot is free. X is kept. */
+void SpawnObject_m1x1(void)
+{
+    push8(DB);
+    lda8(0x81); push8(0x81);
+    DB = pull8(); nz8(DB);
+    push8((u8)X);
+    ldx8(0x0E);
+    for (;;) {
+        lda8(rd8(ABSX(0x02EF)));
+        if (fz) break;
+        X = dec8((u8)X);
+        X = dec8((u8)X);
+        if (fn) {
+            X = pull8(); nz8((u8)X);
+            DB = pull8(); nz8(DB);
+            fc = 1;
+            retl();
+            return;
+        }
+    }
+    lda8((u8)Y);
+    wr8(ABSX(0x02FF), (u8)A);
+    lda8(0x01); wr8(ABSX(0x02EF), 0x01);
+    rep(0x20);
+    lda16(Y);
+    lda16(asl16(A));
+    Y = (u8)A; nz8((u8)Y);
+    lda16(rd16(ABSY(0xAD67))); wr16(ABSX(0x038F), A);
+    lda16(rd16(DP(0x00))); wr16(ABSX(0x027F), A);
+    lda16(rd16(DP(0x02))); wr16(ABSX(0x028F), A);
+    static const u16 clr[11] = { 0x031F, 0x032F, 0x036F, 0x037F, 0x030F, 0x035F,
+                                 0x034F, 0x029F, 0x02AF, 0x02BF, 0x02CF };
+    for (int i = 0; i < 11; i++) wr16(ABSX(clr[i]), 0);
+    sep(0x20);
+    wr8(DP(0x0E), (u8)X);
+    X = Y; nz8((u8)X);
+    push16(0x97E3);
+    r816_call_pc(0x810000u | rd16(LONGX(0x81AD7B)));
+    X = pull8(); nz8((u8)X);
+    DB = pull8(); nz8(DB);
+    fc = 0;
+    retl();
+}
+
+/* $81:9829 FindObjectSlot (RTL, A = type): Y = the slot (even 14-0) of
+ * the object of type A, or negative when none. */
+void FindObjectSlot_m1x1(void)
+{
+    ldy8(0x0E);
+    do {
+        cmp8((u8)A, rd8(ABSY(0x02FF)));
+        if (fz) break;
+        Y = dec8((u8)Y);
+        Y = dec8((u8)Y);
+    } while (!fn);
+    retl();
+}
+
+/* $82:8259 (RTL): the three bytes at [$18] (minutes, seconds, hundredths)
+ * as a time "M'SS"HH" in two rows ($03D0-$03D7, lower row +$10; a
+ * leading zero minute tens blank $0C, the marks $0A / $0B), size $28,
+ * queued at VRAM $00. X and Y are kept. */
+void QueueTimeDigits_m1x1(void)
+{
+    push8((u8)X); push8((u8)Y);
+    ldx8(0x00); ldy8(0x00);
+    lda8(rd8((ILDP(0x18) + Y) & 0xFFFFFF));
+    for (;;) {
+        cmp8((u8)A, 0x0A);
+        if (!fc) break;
+        sbc8(0x0A);
+        X = inc8((u8)X);
+    }
+    wr8(ABS(0x03D1), (u8)A);
+    ora8(0x10); wr8(ABS(0x03D9), (u8)A);
+    lda8((u8)X);
+    cmp8((u8)A, 0x00);
+    if (fz) lda8(0x0C);
+    wr8(ABS(0x03D0), (u8)A);
+    ora8(0x10); wr8(ABS(0x03D8), (u8)A);
+    static const u16 lo[2] = { 0x03D4, 0x03D7 };
+    for (int i = 0; i < 2; i++) {
+        Y = inc8((u8)Y);
+        ldx8(0x00);
+        lda8(rd8((ILDP(0x18) + Y) & 0xFFFFFF));
+        for (;;) {
+            cmp8((u8)A, 0x0A);
+            if (!fc) break;
+            sbc8(0x0A);
+            X = inc8((u8)X);
+        }
+        wr8(ABS(lo[i]), (u8)A);
+        ora8(0x10); wr8(ABS(lo[i] + 8), (u8)A);
+        lda8((u8)X);
+        wr8(ABS(lo[i] - 1), (u8)A);
+        ora8(0x10); wr8(ABS(lo[i] + 7), (u8)A);
+    }
+    lda8(0x0A); wr8(ABS(0x03D2), 0x0A);
+    lda8(inc8((u8)A)); wr8(ABS(0x03D5), (u8)A);
+    lda8(0x1A); wr8(ABS(0x03DA), 0x1A);
+    lda8(inc8((u8)A)); wr8(ABS(0x03DD), (u8)A);
+    lda8(0x28); wr8(ABS(0x03CF), 0x28);
+    rep(0x20);
+    lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+    sep(0x20);
+    lda8(0x01); wr8(DP(0x0F), 0x01);
+    push8(0x82); push16(0x82E6); VramQueueTilesLong_m1x1();
+    Y = pull8(); nz8((u8)Y);
+    X = pull8(); nz8((u8)X);
+    retl();
+}
