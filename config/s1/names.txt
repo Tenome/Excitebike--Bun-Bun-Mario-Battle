@@ -292,3 +292,4 @@
 80EB39 SlowPieceBrake
 80CC3D DrawAllRiders
 81A0B5 EngineSound
+80DB44 BonusRunOut

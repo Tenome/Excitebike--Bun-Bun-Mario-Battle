@@ -3723,3 +3723,29 @@ void EngineSound_m1x1(void)
     wr8(ABS(0x2143), (u8)A);
     retl();
 }
+
+void ScrollByPlayerSpeed_m1x1(void);
+
+/* $80:DB44 (RTS): the bonus run: while it runs the screen follows the
+ * player; once over ($84) the player rides off by its speed $0180, and
+ * past X $F0 the run ends ($84 = $0198 = 2, sound $2D, the label); else
+ * the speed is cleared. */
+void BonusRunOut_m1x1(void)
+{
+    lda8(rd8(DP(0x84)));
+    if (fz) { ScrollByPlayerSpeed_m1x1(); return; }
+    lda8(rd8(ABS(0x0180)));
+    fc = 0; adc8(rd8(ABS(0x0190)));
+    wr8(ABS(0x0190), (u8)A);
+    cmp8((u8)A, 0xF0);
+    if (fc) {
+        lda8(0x02); wr8(DP(0x84), 0x02); wr8(ABS(0x0198), 0x02);
+        lda8(0x2D);
+        push8(0x80); push16(0xDB65); QueueSound_m1x1();
+        push16(0xDB87); ShowBonusLabel_m1x1();
+        ret();
+        return;
+    }
+    lda8(0x00); wr8(ABS(0x0180), 0x00);
+    ret();
+}

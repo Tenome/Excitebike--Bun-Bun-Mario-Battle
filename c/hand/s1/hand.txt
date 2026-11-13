@@ -271,3 +271,4 @@
 80EB39  1 1  mem+A,X,Y,C,V   SlowPieceBrake
 80CC3D  1 1  mem+A,X,Y,C,V   DrawAllRiders
 81A0B5  1 1  mem+A,X,Y,C,V   EngineSound
+80DB44  1 1  mem+X,Y,C,V     BonusRunOut
