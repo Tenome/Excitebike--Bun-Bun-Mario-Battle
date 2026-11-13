@@ -396,3 +396,5 @@
 80C57E RaceClockStep
 8282EA QueueFontTime
 80DDEF BonusCountUp
+809608 ResultsPlacePoints
+8096E0 ResultsJumpPoints

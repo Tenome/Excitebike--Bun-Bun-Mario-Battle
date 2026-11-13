@@ -9389,3 +9389,106 @@ void BonusCountUp_m1x1(void)
     sep(0x20);
     VramQueueTiles20_m1x1();
 }
+
+void QueuePlaceBadge_m1x1(void);
+void VramQueueTiles_m1x1(void);
+
+/* $80:96B1: add the result points to the score, sound $43, and the score
+ * ($0CE5, six digits) at VRAM $1B16. */
+static void results_score_tail(void)
+{
+    push16(0x96B3); AddScore_m1x1();
+    lda8(0x43);
+    push8(0x80); push16(0x96B9); QueueSoundB_m1x1();
+    rep(0x20);
+    lda16(0x0CE5); wr16(DP(0x02), 0x0CE5);
+    lda16(0x1B16); wr16(DP(0x00), 0x1B16);
+    sep(0x20);
+    lda8(0x20); wr8(DP(0x0F), 0x20);
+    ldy8(0x05);
+    push8(0x80); push16(0x96D1); QueueDigitsAt_m1x1();
+    ret();
+}
+
+/* $80:9608 (RTS, 16-bit A on entry): the race results' place line: the
+ * place badge at VRAM $1A08 (or the "no time" text $80:9462 at $1A04
+ * when $085E is 0), then the place points for place $086E ($80:944A /
+ * $80:9452 digits, $BA from $80:945A; a leading zero blank, from 8th
+ * place all blank) at $1A17, added into $09AD / $09AE and the score. */
+void ResultsPlacePoints_m0x1(void)
+{
+    sep(0x20);
+    lda8(0x20); wr8(DP(0x0F), 0x20);
+    lda8(rd8(ABS(0x085E)));
+    ora8(rd8(ABS(0x085F)));
+    if (!fz) {
+        rep(0x20);
+        lda16(0x1A08); wr16(DP(0x00), 0x1A08);
+        sep(0x20);
+        push16(0x9621); QueuePlaceBadge_m1x1();
+    } else {
+        rep(0x20);
+        lda16(0x1A04); wr16(DP(0x00), 0x1A04);
+        lda16(0x9462); wr16(DP(0x02), 0x9462);
+        sep(0x20);
+        push16(0x9634); VramQueueTiles_m1x1();
+    }
+    X = rd8(ABS(0x086E)); nz8((u8)X);
+    X = dec8((u8)X);
+    lda8(rd8(ABSX(0x944A))); wr8(ABS(0x03D0), (u8)A);
+    ora8(0x10); wr8(ABS(0x03D5), (u8)A);
+    lda8(rd8(ABSX(0x9452))); wr8(ABS(0x03D1), (u8)A);
+    ora8(0x10); wr8(ABS(0x03D6), (u8)A);
+    lda8(rd8(ABSX(0x945A))); wr8(DP(0xBA), (u8)A);
+    lda8(0x25); wr8(ABS(0x03CF), 0x25);
+    wr8(ABS(0x03D2), 0); wr8(ABS(0x03D3), 0); wr8(ABS(0x03D4), 0);
+    lda8(0x10);
+    wr8(ABS(0x03D7), 0x10); wr8(ABS(0x03D8), 0x10); wr8(ABS(0x03D9), 0x10);
+    lda8(rd8(ABSX(0x944A)));
+    if (fz) {
+        lda8(0xFF);
+        wr8(ABS(0x03D0), 0xFF); wr8(ABS(0x03D5), 0xFF);
+        cmp8((u8)X, 0x07);
+        if (fc) {
+            wr8(ABS(0x03D1), 0xFF); wr8(ABS(0x03D6), 0xFF);
+            wr8(ABS(0x03D2), 0xFF); wr8(ABS(0x03D7), 0xFF);
+            wr8(ABS(0x03D3), 0xFF); wr8(ABS(0x03D8), 0xFF);
+        }
+    }
+    rep(0x20);
+    lda16(0x1A17); wr16(DP(0x00), 0x1A17);
+    lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+    sep(0x20);
+    push16(0x96A0); VramQueueTiles20_m1x1();
+    lda8(rd8(ABS(0x03D0)));
+    if (!fn) wr8(ABS(0x09AD), (u8)A);
+    lda8(rd8(ABS(0x03D1)));
+    if (!fn) wr8(ABS(0x09AE), (u8)A);
+    results_score_tail();
+}
+
+/* $80:96E0 (RTS, 16-bit A): the jump results' score line: the score
+ * $156D at VRAM $1AB6, its digits 2-5 into $09AD-$09B0 (blanks skipped),
+ * then into the score as above. */
+void ResultsJumpPoints_m0x1(void)
+{
+    lda16(rd16(ABS(0x156D)));
+    push16(0x96E5); BuildScoreDigits_m0x1();
+    rep(0x20);
+    lda16(0x1AB6); wr16(DP(0x00), 0x1AB6);
+    lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+    sep(0x20);
+    push16(0x96F6); VramQueueTiles20_m1x1();
+    rep(0x20);
+    lda16(rd16(ABS(0x156D)));
+    push16(0x96FE); BuildScoreDigits_m0x1();
+    sep(0x20);
+    ldx8(0x02);
+    do {
+        lda8(rd8(ABSX(0x03CF)));
+        if (!fn) wr8(ABSX(0x09AB), (u8)A);
+        X = inc8((u8)X);
+        cmp8((u8)X, 0x06);
+    } while (!fc);
+    results_score_tail();
+}
