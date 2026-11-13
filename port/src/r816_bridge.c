@@ -673,6 +673,15 @@ BRIDGE(HleHand_UpdateLanes, UpdateLanes_m1x1, 520)
  * cannot; with them hooked the race run diverges whatever the cost. The C
  * counts the original's cycles (g_unpack_cycles) for when the bridge can
  * yield. */
+/* c/hand/s4/objects.c, part 27 */
+BRIDGE_DYN(HleHand_AimVelocity, AimVelocity_m1x1, (A & 0xFF) ? 150 + 25 * (A & 0xFF) : 45)
+BRIDGE(HleHand_StartBonusTry, StartBonusTry_m1x1, 2600)
+BRIDGE_DYN(HleHand_JumpResultCount, JumpResultCount_m1x1, 340 + (g_ram[0x8C] == 1 ? 3060 : 20))
+BRIDGE_DYN(HleHand_JumpResultBonus, JumpResultBonus_m1x1, 340 + (g_ram[0x8C] == 1 ? 2960 : 20))
+BRIDGE(HleHand_JumpResultWait, JumpResultWait_m1x1, 360)
+BRIDGE(HleHand_StartPlayerSelect, StartPlayerSelect_m1x1, 5700)
+BRIDGE_DYN(HleHand_JumpResultTally, JumpResultTally_m1x1, 360 + ((g_ram[0xCF] == 1 && g_ram[0xCE] >= 3) ? 300 : 0))
+BRIDGE(HleHand_ResetRaceBoard, ResetRaceBoard_m1x1, 4600)
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)

@@ -269,3 +269,11 @@
 80FC5F  1 1  mem+X,Y,C,V     UpdateLanes
 828BFE  1 1  mem+V           UnpackToWram
 828BD8  1 1  mem+V           UnpackToLowRam
+81A053  1 1  mem+X,V         AimVelocity
+80DD2B  1 1  mem+X,Y,C,V     StartBonusTry
+80E93C  1 1  mem+X,Y,C,V     JumpResultCount
+80E998  1 1  mem+X,Y,C,V     JumpResultBonus
+80EA3E  1 1  mem+X,Y,C,V     JumpResultWait
+808F26  1 1  mem+X,Y,C,V     StartPlayerSelect
+80E8E5  1 1  mem+X,Y,C,V     JumpResultTally
+8091FC  1 1  mem+X,Y,C,V     ResetRaceBoard

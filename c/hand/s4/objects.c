@@ -6275,3 +6275,192 @@ void UnpackToLowRam_m1x1(void)
     lda8(0x00); wr8(DP(0x02), 0x00);
     unpack_stream();
 }
+
+void AimRatio_m1x1(void);
+void LoadHdmaScene_m1x1(void);
+void DrawAllRiders_m1x1(void);
+void ShowJumpCount_m1x1(void);
+void ShowBonusPoints_m1x1(void);
+void SelectMain_m1x1(void);
+void ScaleJumpCount_m1x1(void);
+void QueuePlaceBadgeHud_m1x1(void);
+
+/* $81:A053 AimVelocity (RTL, A = steps): object X's velocity toward its
+ * target from AimRatio ($02AF vertical, $029F horizontal). */
+void AimVelocity_m1x1(void)
+{
+    push8(0x81); push16(0xA056); AimRatio_m1x1();
+    lda8(rd8(DP(0x00))); wr8(ABSX(0x02AF), (u8)A);
+    lda8(rd8(DP(0x0A))); wr8(ABSX(0x029F), (u8)A);
+    retl();
+}
+
+/* $80:DD2B StartBonusTry (RTS): count the try ($1E95), load the bonus HDMA
+ * scene (3 before minute $28, else 2) and set $3A = $20. */
+void StartBonusTry_m1x1(void)
+{
+    wr8(ABS(0x1E95), inc8(rd8(ABS(0x1E95))));
+    lda8(rd8(LONG(0x7FFFFF)));
+    cmp8((u8)A, 0x28);
+    lda8(fc ? 0x02 : 0x03);
+    push8(0x80); push16(0xDD3F); LoadHdmaScene_m1x1();
+    lda8(0x20); wr8(DP(0x3A), 0x20);
+    ret();
+}
+
+/* The jump result screens draw the player (DrawAllRiders, slot 0) in the
+ * waving pose $19 and count $8C down; at 0 sound $42, next step ($CD) and
+ * $8C = $20. Returns 1 when the step changed. */
+static int jump_result_wave(u16 back)
+{
+    ldx8(0x00);
+    push16(back); DrawAllRiders_m1x1();
+    lda8(0x19); wr8(ABS(0x1961), 0x19);
+    u8 t = dec8(rd8(DP(0x8C)));
+    wr8(DP(0x8C), t);
+    if (!fz) return 0;
+    lda8(0x42);
+    push8(0x80); push16((u16)(back + 0x0F)); QueueSoundB_m1x1();
+    wr8(DP(0xCD), inc8(rd8(DP(0xCD))));
+    lda8(0x20); wr8(DP(0x8C), 0x20);
+    return 1;
+}
+
+/* $80:E93C JumpResultCount (RTS): the wave, then the jump count
+ * (ShowJumpCount, into which it falls). */
+void JumpResultCount_m1x1(void)
+{
+    if (!jump_result_wave(0xE940)) { ret(); return; }
+    ShowJumpCount_m1x1();
+}
+
+/* $80:E998 JumpResultBonus (RTS): the wave, then the bonus points
+ * (ShowBonusPoints, into which it falls). */
+void JumpResultBonus_m1x1(void)
+{
+    if (!jump_result_wave(0xE99C)) { ret(); return; }
+    ShowBonusPoints_m1x1();
+}
+
+/* $80:EA3E JumpResultWait (RTS): the waving player; after $B4 frames
+ * ($88) or a button on either pad, back to the jump contest (mode $14,
+ * sprites frozen). */
+void JumpResultWait_m1x1(void)
+{
+    ldx8(0x00);
+    push16(0xEA42); DrawAllRiders_m1x1();
+    lda8(0x19); wr8(ABS(0x1961), 0x19);
+    rep(0x20);
+    wr16(DP(0x88), inc16(rd16(DP(0x88))));
+    lda16(rd16(DP(0x88)));
+    cmp16(A, 0x00B4);
+    if (!fz) {
+        sep(0x20);
+        lda8(rd8(DP(0x21)));
+        ora8(rd8(DP(0x26)));
+        if (fz) { ret(); return; }
+    }
+    sep(0x20);
+    lda8(0x14); wr8(DP(0x76), 0x14);
+    wr8(ABS(0x1958), inc8(rd8(ABS(0x1958))));
+    ChangeMode_m1x1();
+}
+
+/* $80:8F26 StartPlayerSelect (RTS): reset the select state ($1E8B, the
+ * five name letters from $80:8F64), step on, no fade ($1923 = 1), BG1 at
+ * $0100, clear the held buttons, $198E = $50, the select screen itself,
+ * a $0708-frame timer, an empty track and no HDMA scene. */
+void StartPlayerSelect_m1x1(void)
+{
+    wr8(ABS(0x1E8B), 0);
+    ldx8(0x04);
+    do {
+        lda8(rd8(ABSX(0x8F64)));
+        wr8(ABSX(0x1554), (u8)A);
+        X = dec8((u8)X);
+    } while (!fn);
+    wr8(DP(0x75), inc8(rd8(DP(0x75))));
+    lda8(0x01); wr8(ABS(0x1923), 0x01);
+    lda8(0x01); wr8(ABS(0x2107), 0x01);
+    wr8(DP(0x20), 0);
+    wr8(DP(0x24), 0);
+    lda8(0x50); wr8(ABS(0x198E), 0x50);
+    push16(0x8F4B); SelectMain_m1x1();
+    rep(0x20);
+    lda16(0x0708); wr16(ABS(0x0088), 0x0708);
+    lda16(0x0000); wr16(LONG(0x7F4000), 0x0000);
+    sep(0x20);
+    lda8(0x00);
+    push8(0x80); push16(0x8F62); LoadHdmaScene_m1x1();
+    ret();
+}
+
+/* $80:E8E5 JumpResultTally (RTS): the waving player; every 8 frames ($CF)
+ * the pose frame $CE steps (frames $80:E92F); after the fourth, next
+ * step ($CD), timers $88 = $80, $8A = $8C = $20, and the total
+ * $1995 = ScaleJumpCount's $0C + the rank points $80:F155. */
+void JumpResultTally_m1x1(void)
+{
+    ldx8(0x00);
+    push16(0xE8E9); DrawAllRiders_m1x1();
+    u8 t = dec8(rd8(DP(0xCF)));
+    wr8(DP(0xCF), t);
+    lda8(t);
+    if (fz) {
+        wr8(DP(0xCE), inc8(rd8(DP(0xCE))));
+        lda8(rd8(DP(0xCE)));
+        cmp8((u8)A, 0x04);
+        if (fc) {
+            wr8(DP(0xCE), dec8(rd8(DP(0xCE))));
+            wr8(DP(0xCD), inc8(rd8(DP(0xCD))));
+            rep(0x20);
+            lda16(0x0080); wr16(DP(0x88), 0x0080);
+            lda16(0x0020); wr16(DP(0x8A), 0x0020);
+            lda16(0x0020); wr16(DP(0x8C), 0x0020);
+            push8(0x80); push16(0xE910); ScaleJumpCount_m0x1();
+            Y = rd8(ABS(0x156B)); nz8((u8)Y);
+            lda16(rd16(ABSY(0xF155)));
+            and16(0x00FF);
+            fc = 0; adc16(rd16(DP(0x0C)));
+            wr16(ABS(0x1995), A);
+            sep(0x20);
+        }
+        lda8(0x08); wr8(DP(0xCF), 0x08);
+    }
+    X = rd8(DP(0xCE)); nz8((u8)X);
+    lda8(rd8(ABSX(0xE92F)));
+    wr8(ABS(0x1961), (u8)A);
+    ret();
+}
+
+/* $80:91FC ResetRaceBoard (RTS): every rider's place $086E = $7D * 8
+ * (high byte 0), the place badge, the six track rows $09D3-$0CD2 cleared
+ * to $3B, sprite 0 parked, and the streamer's start ($0276 = $34, column
+ * $14 on page 5, $0279 = $0A). */
+void ResetRaceBoard_m1x1(void)
+{
+    lda8(rd8(DP(0x7D)));
+    lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A));
+    ldx8(0x07);
+    do {
+        wr8(ABSX(0x086E), (u8)A);
+        wr8(ABSX(0x086F), 0);
+        X = dec8((u8)X);
+    } while (!fn);
+    push16(0x920E); QueuePlaceBadgeHud_m1x1();
+    ldx8(0x7F);
+    lda8(0x3B);
+    do {
+        wr8(ABSX(0x09D3), 0x3B); wr8(ABSX(0x0A53), 0x3B); wr8(ABSX(0x0AD3), 0x3B);
+        wr8(ABSX(0x0B53), 0x3B); wr8(ABSX(0x0BD3), 0x3B); wr8(ABSX(0x0C53), 0x3B);
+        X = dec8((u8)X);
+    } while (!fn);
+    lda8(0xBF); wr8(ABS(0x1601), 0xBF);
+    lda8(0xF7); wr8(ABS(0x1600), 0xF7);
+    lda8(0xFF); wr8(ABS(0x1602), 0xFF);
+    lda8(0x34); wr8(ABS(0x0276), 0x34);
+    lda8(0x14); wr8(ABS(0x0277), 0x14);
+    lda8(0x0A); wr8(ABS(0x0279), 0x0A);
+    lda8(0x05); wr8(ABS(0x0278), 0x05);
+    ret();
+}

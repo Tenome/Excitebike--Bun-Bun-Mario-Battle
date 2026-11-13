@@ -1,15 +1,15 @@
 {
  "measures": {
-  "fuzzy_match_percent": 76.0601,
+  "fuzzy_match_percent": 76.5394,
   "total_code": "36930",
-  "matched_code": "19381",
-  "matched_code_percent": 52.4804,
+  "matched_code": "19735",
+  "matched_code_percent": 53.4389,
   "total_data": "0",
   "matched_data": "0",
   "matched_data_percent": 0.0,
   "total_functions": 532,
-  "matched_functions": 265,
-  "matched_functions_percent": 49.812,
+  "matched_functions": 273,
+  "matched_functions_percent": 51.3158,
   "complete_code": "0",
   "complete_code_percent": 0.0,
   "complete_data": "0",
@@ -21,16 +21,16 @@
   {
    "name": "main/bank80",
    "measures": {
-    "fuzzy_match_percent": 76.8007,
+    "fuzzy_match_percent": 77.4817,
     "total_code": "24671",
-    "matched_code": "13357",
-    "matched_code_percent": 54.1405,
+    "matched_code": "13693",
+    "matched_code_percent": 55.5024,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 357,
-    "matched_functions": 172,
-    "matched_functions_percent": 48.1793,
+    "matched_functions": 179,
+    "matched_functions_percent": 50.1401,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -42,7 +42,7 @@
     {
      "name": ".text",
      "size": "24671",
-     "fuzzy_match_percent": 76.8007
+     "fuzzy_match_percent": 77.4817
     }
    ],
    "functions": [
@@ -255,9 +255,9 @@
      }
     },
     {
-     "name": "sub_808F26",
+     "name": "StartPlayerSelect",
      "size": "62",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8425254"
      }
@@ -311,9 +311,9 @@
      }
     },
     {
-     "name": "sub_8091FC",
+     "name": "ResetRaceBoard",
      "size": "80",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8425980"
      }
@@ -1895,9 +1895,9 @@
      }
     },
     {
-     "name": "sub_80DD2B",
+     "name": "StartBonusTry",
      "size": "26",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8445227"
      }
@@ -2055,9 +2055,9 @@
      }
     },
     {
-     "name": "sub_80E8E5",
+     "name": "JumpResultTally",
      "size": "74",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448229"
      }
@@ -2079,9 +2079,9 @@
      }
     },
     {
-     "name": "sub_80E93C",
+     "name": "JumpResultCount",
      "size": "26",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448316"
      }
@@ -2103,9 +2103,9 @@
      }
     },
     {
-     "name": "sub_80E998",
+     "name": "JumpResultBonus",
      "size": "26",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448408"
      }
@@ -2135,9 +2135,9 @@
      }
     },
     {
-     "name": "sub_80EA3E",
+     "name": "JumpResultWait",
      "size": "42",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448574"
      }
@@ -2911,16 +2911,16 @@
   {
    "name": "main/bank81",
    "measures": {
-    "fuzzy_match_percent": 76.6639,
+    "fuzzy_match_percent": 76.7707,
     "total_code": "8429",
-    "matched_code": "4495",
-    "matched_code_percent": 53.3278,
+    "matched_code": "4513",
+    "matched_code_percent": 53.5413,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 137,
-    "matched_functions": 74,
-    "matched_functions_percent": 54.0146,
+    "matched_functions": 75,
+    "matched_functions_percent": 54.7445,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -2932,7 +2932,7 @@
     {
      "name": ".text",
      "size": "8429",
-     "fuzzy_match_percent": 76.6639
+     "fuzzy_match_percent": 76.7707
     }
    ],
    "functions": [
@@ -3257,9 +3257,9 @@
      }
     },
     {
-     "name": "sub_81A053",
+     "name": "AimVelocity",
      "size": "18",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8495187"
      }

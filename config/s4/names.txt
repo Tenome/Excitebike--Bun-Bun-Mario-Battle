@@ -284,3 +284,11 @@
 80FC5F UpdateLanes
 828BFE UnpackToWram
 828BD8 UnpackToLowRam
+81A053 AimVelocity
+80DD2B StartBonusTry
+80E93C JumpResultCount
+80E998 JumpResultBonus
+80EA3E JumpResultWait
+808F26 StartPlayerSelect
+80E8E5 JumpResultTally
+8091FC ResetRaceBoard
