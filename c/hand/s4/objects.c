@@ -9214,3 +9214,119 @@ slide:
 
 void PlayerCrashStep_m1x1(void) { player_crash_step(0); }
 void PlayerCrashStepB_m1x1(void) { player_crash_step(1); }
+
+/* $80:BB82 (RTS, X = rider): a rider walking to its start lane steers
+ * toward $80:BACF (by rider; lane 4's entry for a CPU rider in the air);
+ * on arrival it stops steering, $091C = 0 and steps $01D6; the player
+ * also clears $0CDF / $0CE0 ($0990 too when $0CE0 was set), resets the
+ * coin counts and plays sound $80. Then $45,X = 8. */
+void WalkToStartLane_m1x1(void)
+{
+    lda8((u8)X);
+    Y = (u8)A; nz8((u8)Y);
+    if (!fz) {
+        lda8(rd8(ABSX(0x01FE)));
+        if (!fz) ldy8(0x04);
+    }
+    lda8(rd8(ABSX(0x01F6)));
+    cmp8((u8)A, rd8(ABSY(0xBACF)));
+    if (!fz) {
+        ldy8(0x01);
+        if (fc) ldy8(0xFF);
+        lda8((u8)Y);
+        wr8(ABSX(0x01AE), (u8)A);
+        ret();
+        return;
+    }
+    lda8(0x00);
+    wr8(ABSX(0x091C), 0);
+    wr8(ABSX(0x01AE), 0);
+    wr8(ABSX(0x01D6), inc8(rd8(ABSX(0x01D6))));
+    lda8((u8)X);
+    if (fz) {
+        Y = rd8(ABS(0x0CE0)); nz8((u8)Y);
+        if (!fz) wr8(ABS(0x0990), (u8)A);
+        wr8(ABS(0x0CE0), (u8)A);
+        wr8(ABS(0x0CDF), (u8)A);
+        push8(0x80); push16(0xBBC1); ResetCoinCounts_m1x1();
+        lda8(0x80);
+        push8(0x80); push16(0xBBC7); QueueSoundB_m1x1();
+        lda8(0x02);
+    }
+    lda8(0x08);
+    wr8(DPX(0x45), 0x08);
+    ret();
+}
+
+/* $80:C57E (RTS): the race clock at VRAM $1897, counting $03B0 up unless
+ * the race is over ($84); then TickRaceClock (into which it falls). */
+void RaceClockStep_m1x1(void)
+{
+    lda8(0x97); wr8(DP(0x00), 0x97);
+    lda8(0x18); wr8(DP(0x01), 0x18);
+    lda8(rd8(DP(0x84)));
+    if (fz) wr8(ABS(0x03B0), inc8(rd8(ABS(0x03B0))));
+    TickRaceClock_m1x1();
+}
+
+/* $82:82EA (RTL): as QueueTimeDigits, through the font table
+ * (ByteTable84BA, lower row +$20, a leading zero minute $0A, the marks
+ * $56 / $58), size $28 from $03CF with $0F = $10. X and Y are kept. */
+void QueueFontTime_m1x1(void)
+{
+    push8(DB);
+    lda8(0x82); push8(0x82);
+    DB = pull8(); nz8(DB);
+    push8((u8)X); push8((u8)Y);
+    ldx8(0x00); ldy8(0x00);
+    lda8(rd8((ILDP(0x18) + Y) & 0xFFFFFF));
+    for (;;) {
+        cmp8((u8)A, 0x0A);
+        if (!fc) break;
+        sbc8(0x0A);
+        X = inc8((u8)X);
+    }
+    push8(0x82); push16(0x8303); ByteTable84BA_m1x1();
+    wr8(ABS(0x03D1), (u8)A);
+    fc = 0; adc8(0x20); wr8(ABS(0x03D9), (u8)A);
+    lda8((u8)X);
+    cmp8((u8)A, 0x00);
+    if (fz) lda8(0x0A);
+    push8(0x82); push16(0x8317); ByteTable84BA_m1x1();
+    wr8(ABS(0x03D0), (u8)A);
+    fc = 0; adc8(0x20); wr8(ABS(0x03D8), (u8)A);
+    static const u16 lo[2] = { 0x03D4, 0x03D7 };
+    static const u16 back[2][2] = { { 0x8332, 0x8340 }, { 0x835B, 0x8369 } };
+    for (int i = 0; i < 2; i++) {
+        Y = inc8((u8)Y);
+        ldx8(0x00);
+        lda8(rd8((ILDP(0x18) + Y) & 0xFFFFFF));
+        for (;;) {
+            cmp8((u8)A, 0x0A);
+            if (!fc) break;
+            sbc8(0x0A);
+            X = inc8((u8)X);
+        }
+        push8(0x82); push16(back[i][0]); ByteTable84BA_m1x1();
+        wr8(ABS(lo[i]), (u8)A);
+        fc = 0; adc8(0x20); wr8(ABS(lo[i] + 8), (u8)A);
+        lda8((u8)X);
+        push8(0x82); push16(back[i][1]); ByteTable84BA_m1x1();
+        wr8(ABS(lo[i] - 1), (u8)A);
+        fc = 0; adc8(0x20); wr8(ABS(lo[i] + 7), (u8)A);
+    }
+    lda8(0x56); wr8(ABS(0x03D2), 0x56);
+    lda8(inc8((u8)A)); lda8(inc8((u8)A)); wr8(ABS(0x03D5), (u8)A);
+    lda8(0x76); wr8(ABS(0x03DA), 0x76);
+    lda8(inc8((u8)A)); lda8(inc8((u8)A)); wr8(ABS(0x03DD), (u8)A);
+    lda8(0x28); wr8(ABS(0x03CF), 0x28);
+    rep(0x20);
+    lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+    sep(0x20);
+    lda8(0x10); wr8(DP(0x0F), 0x10);
+    push8(0x82); push16(0x839C); VramQueueTilesLong_m1x1();
+    Y = pull8(); nz8((u8)Y);
+    X = pull8(); nz8((u8)X);
+    DB = pull8(); nz8(DB);
+    retl();
+}

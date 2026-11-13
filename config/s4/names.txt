@@ -392,3 +392,6 @@
 819538 ConfettiAll
 80DBFC PlayerCrashStep
 80EEBB PlayerCrashStepB
+80BB82 WalkToStartLane
+80C57E RaceClockStep
+8282EA QueueFontTime

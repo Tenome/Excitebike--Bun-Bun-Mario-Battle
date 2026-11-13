@@ -380,3 +380,6 @@
 819538  1 1  mem+A,X,Y,C,V   ConfettiAll
 80DBFC  1 1  mem+A,X,Y,C,V   PlayerCrashStep
 80EEBB  1 1  mem+A,X,Y,C,V   PlayerCrashStepB
+80BB82  1 1  mem+A,X,Y,C,V   WalkToStartLane
+80C57E  1 1  mem+A,X,Y,C,V   RaceClockStep
+8282EA  1 1  mem+A,X,Y,C,V   QueueFontTime
