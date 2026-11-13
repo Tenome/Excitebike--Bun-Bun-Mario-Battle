@@ -821,6 +821,23 @@ BRIDGE_DYN(HleHand_RaceTimer, RaceTimer_m1x1, g_ram[0x92] ? 1500 : 8)
 BRIDGE_DYN(HleHand_BrakeOnTurn, BrakeOnTurn_m1x1, (X & 0xFF) == g_ram[0x7F] ? 45 : 8)
 /* about 60 units of checks, the accelerate or brake call and the lean */
 BRIDGE(HleHand_RiderThrottle, RiderThrottle_m1x1, 150)
+static uint32 riders_throttle_cost(void)
+{
+    uint32 c = 25;
+    for (int x = 0; x <= (X & 0xFF) && x < 8; x++)
+        c += g_ram[0x01DE + x] ? 165 : 10;
+    return c;
+}
+BRIDGE_DYN(HleHand_RidersThrottle, RidersThrottle_m1x1, riders_throttle_cost())
+/* object steps and draws dispatched per active slot */
+static uint32 update_objects_cost(void)
+{
+    uint32 c = 30;
+    for (int x = 0; x <= 14; x += 2)
+        c += g_ram[0x02EF + x] ? 350 : 12;
+    return c;
+}
+BRIDGE_DYN(HleHand_UpdateObjects, UpdateObjects_m1x1, update_objects_cost())
 /* VramQueueTilesLong / QueueTileRowsLong ($80:B2D6 / $80:B431) are
  * verified but unhooked: trampolines whose cost is the callee's. */
 /* c/hand/s4/objects.c, part 26 */

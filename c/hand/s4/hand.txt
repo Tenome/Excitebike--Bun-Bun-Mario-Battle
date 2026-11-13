@@ -389,3 +389,5 @@
 80C3E1  1 1  mem+A,X,Y,C,V   RaceTimer
 80AE93  1 1  mem+A,X,Y,C,V   BrakeOnTurn
 80AC0E  1 1  mem+A,X,Y,C,V   RiderThrottle
+80ABCD  1 1  mem+A,X,Y,C,V   RidersThrottle
+8197E8  1 1  mem+A,X,Y,C,V   UpdateObjects

@@ -9766,3 +9766,78 @@ after:
     ldy8(0x05);
     lean_toward();
 }
+
+void RiderThrottle_m1x1(void);
+
+/* $80:ABCD (RTS, X = last rider): the throttle step for riders X-0 on the
+ * track ($01DE); crashed, off-track or line-changing riders (not on the
+ * $05 start walk) get no pad input. Then, unless $54, the player's
+ * button flags $092D (once, not after the race $84). */
+void RidersThrottle_m1x1(void)
+{
+    do {
+        lda8(rd8(ABSX(0x01DE)));
+        if (!fz) {
+            lda8(rd8(ABSX(0x01D6)));
+            cmp8((u8)A, 0x05);
+            if (!fz) {
+                ora8(rd8(ABSX(0x01CE)));
+                ora8(rd8(ABSX(0x0940)));
+                if (!fz) { lda8(0x00); wr8(ABSX(0x017E), 0x00); }
+            }
+            push16(0xABE8); RiderThrottle_m1x1();
+        }
+        X = dec8((u8)X);
+    } while (!fn);
+    lda8(rd8(DP(0x54)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABS(0x017E)));
+    and8(0xC0);
+    if (fz) { ret(); return; }
+    lda8(rd8(ABS(0x092D)));
+    ora8(rd8(DP(0x84)));
+    if (!fz) { ret(); return; }
+    lda8(0x01); wr8(ABS(0x092D), 0x01);
+    ret();
+}
+
+/* $81:97E8 (RTL): the object list (even slots 14-0, $03A3 = slot): each
+ * active object ($02EF) counts its timers $036F / $037F down, runs its
+ * type's step ($81:AD8F) and, if still active, its draw ($81:ADA3);
+ * $1958 cleared first. */
+void UpdateObjects_m1x1(void)
+{
+    wr8(ABS(0x1958), 0);
+    push8(DB);
+    lda8(0x81); push8(0x81);
+    DB = pull8(); nz8(DB);
+    ldx8(0x0E);
+    do {
+        wr8(ABS(0x03A3), (u8)X);
+        lda8(rd8(ABSX(0x02EF)));
+        if (!fz) {
+            lda8(rd8(ABSX(0x036F)));
+            if (!fz) wr8(ABSX(0x036F), dec8(rd8(ABSX(0x036F))));
+            lda8(rd8(ABSX(0x037F)));
+            if (!fz) wr8(ABSX(0x037F), dec8(rd8(ABSX(0x037F))));
+            lda8(rd8(ABSX(0x02FF)));
+            lda8(asl8((u8)A));
+            X = (u8)A; nz8((u8)X);
+            push8((u8)X);
+            push16(0x9812);
+            r816_call_pc(0x810000u | rd16(LONGX(0x81AD8F)));
+            X = pull8(); nz8((u8)X);
+            Y = rd8(ABS(0x03A3)); nz8((u8)Y);
+            lda8(rd8(ABSY(0x02EF)));
+            if (!fz) {
+                push16(0x981E);
+                r816_call_pc(0x810000u | rd16(LONGX(0x81ADA3)));
+            }
+        }
+        X = rd8(ABS(0x03A3)); nz8((u8)X);
+        X = dec8((u8)X);
+        X = dec8((u8)X);
+    } while (!fn);
+    DB = pull8(); nz8(DB);
+    retl();
+}

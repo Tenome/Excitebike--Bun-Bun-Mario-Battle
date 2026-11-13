@@ -401,3 +401,5 @@
 80C3E1 RaceTimer
 80AE93 BrakeOnTurn
 80AC0E RiderThrottle
+80ABCD RidersThrottle
+8197E8 UpdateObjects
