@@ -422,3 +422,8 @@
 80E994 ShowBonusPointsLong
 81C956 JumpResultSkip
 80E6D2 JumpContestMode
+81C56E ParkJumpRider
+80AC04 RiderThrottleLong
+80BCEF AddSpeedToXLong
+80CD0A DrawRiderShadowPairLong
+81C483 JumpRiderStep

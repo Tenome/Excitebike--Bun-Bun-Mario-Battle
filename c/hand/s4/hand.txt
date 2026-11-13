@@ -410,3 +410,8 @@
 80E994  1 1  mem+A,X,Y,C,V   ShowBonusPointsLong
 81C956  1 1  mem+A,X,Y,C,V   JumpResultSkip
 80E6D2  1 1  mem+A,X,Y,C,V   JumpContestMode
+81C56E  1 1  mem+A,X,Y,C,V   ParkJumpRider
+80AC04  1 1  mem+A,X,Y,C,V   RiderThrottleLong
+80BCEF  1 1  mem+A,X,Y,C,V   AddSpeedToXLong
+80CD0A  1 1  mem+A,X,Y,C,V   DrawRiderShadowPairLong
+81C483  1 1  mem+A,X,Y,C,V   JumpRiderStep

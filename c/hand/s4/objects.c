@@ -10846,3 +10846,146 @@ void JumpContestMode_m1x1(void)
     sep(0x20);
     ChangeMode_m1x1();
 }
+
+void ScrollJumpRider_m1x1(void);
+void DispatchByDistance_m1x1(void);
+void SlotRiderShadow_m1x1(void);
+
+/* $81:C56E (RTS): park the jump rider at X $38, ground $B8. */
+void ParkJumpRider_m1x1(void)
+{
+    lda8(0x38); wr8(ABS(0x0196), 0x38);
+    lda8(0xB8); wr8(ABS(0x01B6), 0xB8);
+    ret();
+}
+
+/* $80:AC04 (RTL): RiderThrottle with DB = $80. */
+void RiderThrottleLong_m1x1(void)
+{
+    push8(DB);
+    lda8(0x80); push8(0x80);
+    DB = pull8(); nz8(DB);
+    push16(0xAC0B); RiderThrottle_m1x1();
+    DB = pull8(); nz8(DB);
+    retl();
+}
+
+/* $80:BCEF (RTL): AddSpeedToX for other banks. */
+void AddSpeedToXLong_m1x1(void)
+{
+    push16(0xBCF1); AddSpeedToX_m1x1();
+    retl();
+}
+
+/* $80:CD0A (RTL): DrawRiderShadowPair for other banks. */
+void DrawRiderShadowPairLong_m1x1(void)
+{
+    push16(0xCD0C); DrawRiderShadowPair_m1x1();
+    retl();
+}
+
+/* $81:C483 (RTS): the jump contest rider. In the run ($197F = 2) the
+ * player rides (on the track, A held: throttle, move, scroll); otherwise
+ * (or with $56) it is parked. Then it is drawn with its shadow, and its
+ * pose $1961: by $197F off the run ($81:C469), by $56 while landing
+ * ($80:CB58, $A8), else by the run frame count $1981 against $81:C473
+ * (the run-up poses $81:C46B, walking at speed $0080 with the wheel
+ * spark sprites $16C0 cycling through $1987; past the table speed $0500)
+ * and the distance step. */
+void JumpRiderStep_m1x1(void)
+{
+    lda8(rd8(ABS(0x197F)));
+    cmp8((u8)A, 0x02);
+    if (!fz) {
+        push16(0xC48C); ParkJumpRider_m1x1();
+    } else {
+        lda8(0x01); wr8(ABS(0x01DE), 0x01);
+        lda8(0x80); wr8(ABS(0x017E), 0x80);
+        ldx8(0x00);
+        push8(0x81); push16(0xC49E); RiderThrottleLong_m1x1();
+        push8(0x81); push16(0xC4A2); AddSpeedToXLong_m1x1();
+        ldy8(0x00);
+        push16(0xC4A7); ScrollJumpRider_m1x1();
+    }
+    lda8(rd8(DP(0x56)));
+    if (!fz) { push16(0xC4AE); ParkJumpRider_m1x1(); }
+    ldx8(0x00);
+    wr8(ABS(0x0950), 0);
+    push8(0x81); push16(0xC4B7); DrawAllRidersLong_m1x1();
+    ldy8(0x00);
+    push16(0xC4BC); SlotRiderShadow_m1x1();
+    lda8(rd8(ABS(0x197F)));
+    cmp8((u8)A, 0x02);
+    if (!fz) {
+        X = rd8(ABS(0x197F)); nz8((u8)X);
+        lda8(rd8(ABSX(0xC469)));
+        wr8(ABS(0x1961), (u8)A);
+        ret();
+        return;
+    }
+    lda8(rd8(DP(0x56)));
+    if (!fz) {
+        cmp8((u8)A, 0x01);
+        if (!fz) {
+            lda8(dec8((u8)A));
+            ora8(0x10);
+            wr8(DP(0xA8), (u8)A);
+            X = (u8)A; nz8((u8)X);
+            lda8(rd8(LONGX(0x80CB58)));
+        }
+        wr8(ABS(0x1961), (u8)A);
+        ret();
+        return;
+    }
+    rep(0x20);
+    wr16(ABS(0x1981), inc16(rd16(ABS(0x1981))));
+    ldx8(0x00);
+    lda16(rd16(ABS(0x1981)));
+    int past = 0;
+    for (;;) {
+        cmp16(A, rd16(ABSX(0xC473)));
+        if (!fc) break;
+        X = inc8((u8)X);
+        X = inc8((u8)X);
+        cmp8((u8)X, 0x10);
+        if (fz) { past = 1; break; }
+    }
+    if (past) {
+        sep(0x20);
+        lda8(0x00); wr8(ABS(0x01BE), 0x00);
+        lda8(0x05); wr8(ABS(0x01C6), 0x05);
+    } else {
+        sep(0x20);
+        lda8((u8)X);
+        lda8(lsr8((u8)A));
+        X = (u8)A; nz8((u8)X);
+        if (fz) { lda8(rd8(DP(0x63))); and8(0x01); }
+        else lda8(rd8(ABSX(0xC46B)));
+        wr8(ABS(0x1961), (u8)A);
+        lda8(0x80); wr8(ABS(0x01BE), 0x80);
+        lda8(0x00); wr8(ABS(0x01C6), 0x00);
+        lda8(rd8(ABS(0x019E)));
+        cmp8((u8)A, 0x02);
+        if (!fc) {
+            ldx8(0x00);
+            Y = X; nz8((u8)Y);
+            lda8(rd8(ABS(0x0196)));
+            push8(0x81); push16(0xC52C); DrawRiderShadowPairLong_m1x1();
+            wr8(ABS(0x1987), inc8(rd8(ABS(0x1987))));
+            lda8(rd8(ABS(0x1987)));
+            cmp8((u8)A, 0x01);
+            if (fz) {
+                lda8(0xF0); wr8(ABSY(0x16C2), 0xF0);
+                lda8(0xE0); wr8(ABSY(0x16C6), 0xE0);
+            } else {
+                cmp8((u8)A, 0x02);
+                if (fz) {
+                    lda8(0xF0); wr8(ABSY(0x16C1), 0xF0); wr8(ABSY(0x16C5), 0xF0);
+                } else wr8(ABS(0x1987), 0);
+            }
+            lda8(0x2F); wr8(ABSY(0x16C3), 0x2F); wr8(ABSY(0x16C7), 0x2F);
+        }
+    }
+    push16(0xC56C); DispatchByDistance_m1x1();
+    ret();
+}
