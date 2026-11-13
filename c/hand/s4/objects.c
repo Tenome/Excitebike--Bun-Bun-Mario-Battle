@@ -7783,6 +7783,30 @@ void RiderDropStep_m1x1(void)
     ret();
 }
 
+/* $80:BFDB: rider X crashes on landing: sound $3D for the player, $3D,X
+ * = $0A, crashed ($01CE), then sound $24 (player) / $29 if on screen
+ * page 1. */
+static void landing_crash(void)
+{
+    cmp8((u8)X, 0x00);
+    if (fz) {
+        lda8(0x3D);
+        push8(0x80); push16(0xBFE4); QueueSoundB_m1x1();
+    }
+    lda8(0x0A); wr8(DPX(0x3D), 0x0A);
+    lda8(0xFF); wr8(ABSX(0x01CE), 0xFF);
+    lda8((u8)X);
+    if (!fz) lda8(0x05);
+    fc = 0; adc8(0x24);
+    wr8(DP(0x10), (u8)A);
+    lda8(rd8(ABSX(0x019E)));
+    cmp8((u8)A, 0x01);
+    if (!fz) { ret(); return; }
+    lda8(rd8(DP(0x10)));
+    push8(0x80); push16(0xC004); QueueSoundB_m1x1();
+    ret();
+}
+
 /* $80:BF5C (RTS, X = rider): an airborne rider ($01EE) whose height above
  * the ground (less $09C4) has dropped below its fall speed $01B6 lands,
  * unless held ($0904) or not falling ($08AC). The player lands with
@@ -7874,23 +7898,7 @@ void RiderLanding_m1x1(void)
             goto fall;
         }
     }
-    cmp8((u8)X, 0x00);
-    if (fz) {
-        lda8(0x3D);
-        push8(0x80); push16(0xBFE4); QueueSoundB_m1x1();
-    }
-    lda8(0x0A); wr8(DPX(0x3D), 0x0A);
-    lda8(0xFF); wr8(ABSX(0x01CE), 0xFF);
-    lda8((u8)X);
-    if (!fz) lda8(0x05);
-    fc = 0; adc8(0x24);
-    wr8(DP(0x10), (u8)A);
-    lda8(rd8(ABSX(0x019E)));
-    cmp8((u8)A, 0x01);
-    if (!fz) { ret(); return; }
-    lda8(rd8(DP(0x10)));
-    push8(0x80); push16(0xC004); QueueSoundB_m1x1();
-    ret();
+    landing_crash();
     return;
 fall:
     wr8(DP(0x01), dec8(rd8(DP(0x01))));
@@ -8255,4 +8263,218 @@ void PlaceRival_m1x1(void)
     lda8(0x10); wr8(DP(0x3B), 0x10);
     lda8(0x01); wr8(ABSX(0x01DE), 0x01);
     ret();
+}
+
+void CpuSteer_m1x1(void);
+void CpuThrottle_m1x1(void);
+void CpuAvoidHurdle_m1x1(void);
+void CheckLaneTile_m1x1(void);
+void RetargetRival_m1x1(void);
+void CpuLaneDecision_m1x1(void);
+void UpdateRiderDistances_m1x1(void);
+void PlaceRival_m1x1(void);
+void AddStadiumBonus_m1x1(void);
+void StepObjectX_m1x1(void);
+void DrawRiderMarker_m1x1(void);
+void QueueBonusDigits_m1x1(void);
+
+/* $80:AF3F (RTS): the CPU riders 1-7 on the track ($01DE) and not crashed,
+ * off the track or changing lanes: steer; on the ground also throttle,
+ * look for hurdles, and with none the lane tile check, retargeting (when
+ * $092A) and (unless $84) a lane decision. In the air the target angle
+ * $0971 follows the piece angle $08B4. */
+void CpuRidersStep_m1x1(void)
+{
+    ldx8(0x01);
+    do {
+        wr8(DP(0x0F), (u8)X);
+        lda8(rd8(ABSX(0x01DE)));
+        if (fz) goto next;
+        lda8(rd8(ABSX(0x01CE)));
+        ora8(rd8(ABSX(0x01D6)));
+        ora8(rd8(ABSX(0x199E)));
+        if (!fz) goto next;
+        push16(0xAF55); CpuSteer_m1x1();
+        lda8(rd8(ABSX(0x01EE)));
+        if (!fz) {
+            lda8(rd8(ABSX(0x08B4)));
+            wr8(ABSX(0x0971), (u8)A);
+            goto next;
+        }
+        push16(0xAF5D); CpuThrottle_m1x1();
+        push16(0xAF60); CpuAvoidHurdle_m1x1();
+        if (!fz) goto next;
+        push8(0x80); push16(0xAF66); CheckLaneTile_m1x1();
+        lda8(rd8(ABS(0x092A)));
+        if (fz) goto next;
+        push16(0xAF6E); RetargetRival_m1x1();
+        lda8(rd8(DP(0x84)));
+        if (!fz) goto next;
+        push16(0xAF75); CpuLaneDecision_m1x1();
+    next:
+        X = rd8(DP(0x0F)); nz8((u8)X);
+        X = inc8((u8)X);
+        cmp8((u8)X, 0x08);
+    } while (!fc);
+    ret();
+}
+
+/* $80:BD4F (RTS): distances, then every rival slot 7-1 not on the track
+ * whose distance $085E is ahead of the player's $9C by $170 or more, or
+ * behind by up to $A0 (when the player is that far in), gets placed
+ * (PlaceRival), unless $84. */
+void SpawnRivals_m1x1(void)
+{
+    push16(0xBD51); UpdateRiderDistances_m1x1();
+    ldy8(0x0E);
+    ldx8(0x07);
+    do {
+        lda8(rd8(ABSX(0x01DE)));
+        if (fz) {
+            rep(0x20);
+            lda16(rd16(DP(0x9C)));
+            fc = 0; adc16(0x0170);
+            cmp16(A, rd16(ABSY(0x085E)));
+            int place = fc;
+            if (!place) {
+                lda16(rd16(DP(0x9C)));
+                fc = 1; sbc16(0x00A0);
+                if (!fn) {
+                    cmp16(A, rd16(ABSY(0x085E)));
+                    place = fc;
+                }
+            }
+            if (place) {
+                sep(0x20);
+                lda8(rd8(DP(0x84)));
+                if (fz) {
+                    push8((u8)Y);
+                    push16(0xBD7E); PlaceRival_m1x1();
+                    Y = pull8(); nz8((u8)Y);
+                }
+            }
+        }
+        sep(0x20);
+        X = dec8((u8)X);
+        Y = dec8((u8)Y);
+        Y = dec8((u8)Y);
+    } while (!fz);
+    ret();
+}
+
+/* $80:FDDE (RTS, X = rider): the player crossing the finish once ($03AC,
+ * not $84): $5E = $AC = $1D; with a finish result $093F sound $4A (1st)
+ * or $28, the stadium bonus, $D4 = $80, a win counted ($1E87) without
+ * rivals, and $5E cleared when $60; with none, $84 = 1 and sounds $2B,
+ * $2D, $80, $5E cleared. */
+void CrossFinish_m1x1(void)
+{
+    cmp8((u8)X, 0x00);
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABS(0x03AC)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(DP(0x84)));
+    if (!fz) { ret(); return; }
+    wr8(ABS(0x03AC), inc8(rd8(ABS(0x03AC))));
+    lda8(0x1D); wr8(DP(0x5E), 0x1D); wr8(DP(0xAC), 0x1D);
+    lda8(rd8(ABS(0x093F)));
+    if (!fz) {
+        cmp8((u8)A, 0x01);
+        if (fz) { lda8(0x4A); push8(0x80); push16(0xFE02); QueueSoundB_m1x1(); }
+        else { lda8(0x28); push8(0x80); push16(0xFE0A); QueueSoundB_m1x1(); }
+        push8(0x80); push16(0xFE0E); AddStadiumBonus_m1x1();
+        lda8(0x80); wr8(DP(0xD4), 0x80);
+        lda8(rd8(DP(0x7D)));
+        if (fz) wr8(ABS(0x1E87), inc8(rd8(ABS(0x1E87))));
+        lda8(rd8(DP(0x60)));
+        if (fz) { ret(); return; }
+    } else {
+        lda8(0x01); wr8(DP(0x84), 0x01);
+        lda8(0x2B); push8(0x80); push16(0xFE28); QueueSoundB_m1x1();
+        lda8(0x2D); push8(0x80); push16(0xFE2E); QueueSoundB_m1x1();
+        lda8(0x80); push8(0x80); push16(0xFE34); QueueSoundB_m1x1();
+    }
+    lda8(0x00); wr8(DP(0x5E), 0x00);
+    ret();
+}
+
+/* $82:84B2 (RTL): A = the byte at $82:84BA + A. X is kept. */
+void ByteTable84BA_m1x1(void)
+{
+    push8((u8)X);
+    X = (u8)A; nz8((u8)X);
+    lda8(rd8(LONGX(0x8284BA)));
+    X = pull8(); nz8((u8)X);
+    retl();
+}
+
+/* $80:BF03 (RTS): when the ball is due ($092C) and rider 7 is off screen
+ * (not page 1, page 0 left of $EA), it enters as rider 3 on page 2 via
+ * PlaceRival, with $01C9 = 0, $01B9 = $08C7 = $92, and crashes into its
+ * landing state. */
+void LaunchBall_m1x1(void)
+{
+    lda8(rd8(ABS(0x092C)));
+    if (fz) { ret(); return; }
+    lda8(rd8(ABS(0x01E1)));
+    ldx8(0x07);
+    lda8(rd8(ABSX(0x019E)));
+    lda8(lsr8((u8)A));
+    if (fc) { ret(); return; }
+    lda8(lsr8((u8)A));
+    if (!fc) {
+        lda8(rd8(ABSX(0x0196)));
+        cmp8((u8)A, 0xEA);
+        if (fc) { ret(); return; }
+    }
+    ldy8(0x00);
+    wr8(ABS(0x092C), 0);
+    Y = inc8((u8)Y);
+    ldx8(0x02);
+    wr8(ABS(0x01A1), 0x02);
+    X = inc8((u8)X);
+    push16(0xBF2B); PlaceRival_m1x1();
+    if (fz) { ret(); return; }
+    lda8(0x00); wr8(ABS(0x01C9), 0x00);
+    lda8(0x92); wr8(ABS(0x01B9), 0x92); wr8(ABS(0x08C7), 0x92);
+    landing_crash();
+}
+
+/* $80:D169 (RTL): StepObjectX for object X + 8. */
+void StepObjectX8_m1x1(void)
+{
+    lda8((u8)X);
+    fc = 0; adc8(0x08);
+    X = (u8)A; nz8((u8)X);
+    StepObjectX_m1x1();
+}
+
+/* $80:D145 (RTL, X = object): move object X and X + 8, count up its timer
+ * $1518 and draw its marker; once the timer turns positive, clear $1530
+ * and count $1541 up to 5. */
+void MarkerObjectStep_m1x1(void)
+{
+    push8(0x80); push16(0xD148); StepObjectX_m1x1();
+    push8((u8)X);
+    push8(0x80); push16(0xD14D); StepObjectX8_m1x1();
+    X = pull8(); nz8((u8)X);
+    wr8(ABSX(0x1518), inc8(rd8(ABSX(0x1518))));
+    push8(0x80); push16(0xD155); DrawRiderMarker_m1x1();
+    lda8(rd8(ABSX(0x1518)));
+    if (!fn) {
+        wr8(ABSX(0x1530), 0);
+        lda8(rd8(ABS(0x1541)));
+        cmp8((u8)A, 0x05);
+        if (!fc) wr8(ABS(0x1541), inc8(rd8(ABS(0x1541))));
+    }
+    retl();
+}
+
+/* $80:FF00 (RTS): QueueBonusDigits at VRAM $1B38, size $20. */
+void QueueBonusDigitsAt_m1x1(void)
+{
+    lda8(0x38); wr8(DP(0x00), 0x38);
+    lda8(0x1B); wr8(DP(0x01), 0x1B);
+    lda8(0x20); wr8(DP(0x0F), 0x20);
+    QueueBonusDigits_m1x1();
 }

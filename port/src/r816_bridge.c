@@ -732,6 +732,29 @@ BRIDGE(HleHand_CpuAvoidHurdle, CpuAvoidHurdle_m1x1, 150)
 BRIDGE(HleHand_PlaceRival, PlaceRival_m1x1, 350)
 BRIDGE(HleHand_SlotRiderShadow, SlotRiderShadow_m1x1, 110)
 BRIDGE(HleHand_AddStadiumBonus, AddStadiumBonus_m1x1, 270)
+/* CpuRidersStep: about 450 units for each active CPU rider on the ground
+ * (steer, throttle, hurdles, lane checks), 60 in the air, 20 idle */
+static uint32 cpu_riders_cost(void)
+{
+    uint32 c = 10;
+    for (int x = 1; x < 8; x++) {
+        if (g_ram[0x01DE + x] &&
+            !(g_ram[0x01CE + x] | g_ram[0x01D6 + x] | g_ram[0x199E + x]))
+            c += g_ram[0x01EE + x] ? 60 : 450;
+        else
+            c += 20;
+    }
+    return c;
+}
+BRIDGE_DYN(HleHand_CpuRidersStep, CpuRidersStep_m1x1, cpu_riders_cost())
+BRIDGE(HleHand_SpawnRivals, SpawnRivals_m1x1, 420)
+BRIDGE_DYN(HleHand_CrossFinish, CrossFinish_m1x1,
+           ((X & 0xFF) == 0 && !g_ram[0x03AC] && !g_ram[0x84]) ? 450 : 10)
+BRIDGE(HleHand_ByteTable84BA, ByteTable84BA_m1x1, 20)
+BRIDGE_DYN(HleHand_LaunchBall, LaunchBall_m1x1, g_ram[0x092C] ? 500 : 8)
+BRIDGE(HleHand_StepObjectX8, StepObjectX8_m1x1, 88)
+BRIDGE(HleHand_MarkerObjectStep, MarkerObjectStep_m1x1, 260)
+BRIDGE(HleHand_QueueBonusDigitsAt, QueueBonusDigitsAt_m1x1, 1310)
 /* VramQueueTilesLong / QueueTileRowsLong ($80:B2D6 / $80:B431) are
  * verified but unhooked: trampolines whose cost is the callee's. */
 /* c/hand/s4/objects.c, part 26 */

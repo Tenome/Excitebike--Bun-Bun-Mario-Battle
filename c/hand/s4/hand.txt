@@ -347,3 +347,11 @@
 829159  1 1  mem+A,X,Y,C,V   AddStadiumBonus
 80B0EA  1 1  mem+A,X,Y,C,V   CpuAvoidHurdle
 80BDDC  1 1  mem+A,X,Y,C,V   PlaceRival
+80AF3F  1 1  mem+A,X,Y,C,V   CpuRidersStep
+80BD4F  1 1  mem+A,X,Y,C,V   SpawnRivals
+80FDDE  1 1  mem+A,X,Y,C,V   CrossFinish
+8284B2  1 1  mem+A,X,Y,C,V   ByteTable84BA
+80BF03  1 1  mem+A,X,Y,C,V   LaunchBall
+80D169  1 1  mem+A,X,Y,C,V   StepObjectX8
+80D145  1 1  mem+A,X,Y,C,V   MarkerObjectStep
+80FF00  1 1  mem+A,X,Y,C,V   QueueBonusDigitsAt

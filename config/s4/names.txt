@@ -359,3 +359,11 @@
 829159 AddStadiumBonus
 80B0EA CpuAvoidHurdle
 80BDDC PlaceRival
+80AF3F CpuRidersStep
+80BD4F SpawnRivals
+80FDDE CrossFinish
+8284B2 ByteTable84BA
+80BF03 LaunchBall
+80D169 StepObjectX8
+80D145 MarkerObjectStep
+80FF00 QueueBonusDigitsAt
