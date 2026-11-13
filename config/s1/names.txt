@@ -179,3 +179,4 @@
 819C98 VelocityDirection     # from s4 819D71
 819D0B DrawBigBall           # from s4 819DE4
 818C33 CopyTrackColumn       # from s4 818C3C
+80AFE9 CpuReleaseButtons     # from s4 80B0A4

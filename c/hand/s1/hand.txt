@@ -157,3 +157,4 @@
 819C98  1 1  mem+V          VelocityDirection      # from s4 819D71
 819D0B  1 1  mem+Y,V        DrawBigBall            # from s4 819DE4
 818C33  1 1  mem+X,Y        CopyTrackColumn        # from s4 818C3C
+80AFE9  1 1  mem+X,Y,V      CpuReleaseButtons      # from s4 80B0A4

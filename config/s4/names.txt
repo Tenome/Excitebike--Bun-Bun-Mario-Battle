@@ -264,3 +264,5 @@
 80CF8B QueuePlaceBadgeHud
 80CA98 DrawAllRiders
 80A457 ShowCourseRecord
+80C2BB DrawStartFlags
+80C290 RaceStartLights

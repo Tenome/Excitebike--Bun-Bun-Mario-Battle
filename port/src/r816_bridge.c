@@ -370,6 +370,7 @@ BRIDGE(HleHand_MirrorJumpRider, MirrorJumpRider_m1x1, 240)
 BRIDGE(HleHand_VelocityDirection, VelocityDirection_m1x1, 120)
 BRIDGE(HleHand_DrawBigBall, DrawBigBall_m1x1, 90)
 BRIDGE(HleHand_CopyTrackColumn, CopyTrackColumn_m1x1, 400)
+BRIDGE(HleHand_CpuReleaseButtons, CpuReleaseButtons_m1x1, 25)
 #else
 /* Stadium 3-4 (Gen B) routines from c/hand/s4 */
 BRIDGE(HleHand_RiderGfxCycle,     RiderGfxCycle_m1x1,     60)
@@ -625,6 +626,9 @@ static uint32 draw_all_riders_cost(void)
 }
 BRIDGE_DYN(HleHand_DrawAllRiders, DrawAllRiders_m1x1, draw_all_riders_cost())
 BRIDGE_DYN(HleHand_ShowCourseRecord, ShowCourseRecord_m1x1, g_ram[0x084C] ? 1700 : 15)
+/* c/hand/s4/objects.c, part 18 */
+BRIDGE(HleHand_DrawStartFlags, DrawStartFlags_m1x1, 420)
+BRIDGE(HleHand_RaceStartLights, RaceStartLights_m1x1, 450)
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)

@@ -1,15 +1,15 @@
 {
  "measures": {
-  "fuzzy_match_percent": 64.3465,
+  "fuzzy_match_percent": 64.3626,
   "total_code": "27972",
-  "matched_code": "8680",
-  "matched_code_percent": 31.031,
+  "matched_code": "8689",
+  "matched_code_percent": 31.0632,
   "total_data": "0",
   "matched_data": "0",
   "matched_data_percent": 0.0,
   "total_functions": 407,
-  "matched_functions": 153,
-  "matched_functions_percent": 37.5921,
+  "matched_functions": 154,
+  "matched_functions_percent": 37.8378,
   "complete_code": "0",
   "complete_code_percent": 0.0,
   "complete_data": "0",
@@ -21,16 +21,16 @@
   {
    "name": "main/bank80",
    "measures": {
-    "fuzzy_match_percent": 61.5616,
+    "fuzzy_match_percent": 61.5824,
     "total_code": "21606",
-    "matched_code": "5554",
-    "matched_code_percent": 25.7058,
+    "matched_code": "5563",
+    "matched_code_percent": 25.7475,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 306,
-    "matched_functions": 92,
-    "matched_functions_percent": 30.0654,
+    "matched_functions": 93,
+    "matched_functions_percent": 30.3922,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -42,7 +42,7 @@
     {
      "name": ".text",
      "size": "21606",
-     "fuzzy_match_percent": 61.5616
+     "fuzzy_match_percent": 61.5824
     }
    ],
    "functions": [
@@ -919,9 +919,9 @@
      }
     },
     {
-     "name": "sub_80AFE9",
+     "name": "CpuReleaseButtons",
      "size": "9",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8433641"
      }

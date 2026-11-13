@@ -4933,3 +4933,115 @@ void ShowCourseRecord_m1x1(void)
     wr8(ABS(0x0088), 0x01);
     ret();
 }
+
+/* $80:C2BB body: the eight start-line flag poles ($0936 - scroll $9A, Y
+ * from $80:BB07, tile Y = $E1-$E3, attribute $3F; retired off the left edge
+ * via $025E), then the countdown beeps: $3C at $B4, $78 or $3C plays sound
+ * $26 and counts ($C3); with $54 set, $3C = $B5. */
+static void start_flags(void)
+{
+    wr8(DP(0x00), (u8)Y);
+    ldy8(0x07);
+    do {
+        lda8(rd8(ABSY(0x025E)));
+        if (fz) {
+            wr8(DP(0x08), 0);
+            lda8(rd8(ABSY(0x0936)));
+            fc = 1;
+            sbc8(rd8(ABS(0x009A)));
+            wr8(DP(0x01), (u8)A);
+            cmp8((u8)A, 0xF0);
+            if (fc) {
+                cmp8((u8)A, 0xF9);
+                if (fc) wr8(DP(0x08), inc8(rd8(DP(0x08))));
+                lda8(0x01);
+                wr8(ABSY(0x025E), 0x01);
+            } else {
+                lda8((u8)Y);
+                lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A));
+                X = (u8)A; nz8((u8)X);
+                lda8(rd8(ABSY(0xBB07)));
+                wr8(ABSX(0x17A1), (u8)A);
+                fc = 0; adc8(0x08);
+                wr8(ABSX(0x17A5), (u8)A);
+                lda8(rd8(DP(0x00)));
+                wr8(ABSX(0x17A2), (u8)A);
+                ora8(0x10);
+                wr8(ABSX(0x17A6), (u8)A);
+                lda8(0x3F);
+                wr8(ABSX(0x17A3), 0x3F); wr8(ABSX(0x17A7), 0x3F);
+                lda8(rd8(DP(0x01)));
+                wr8(ABSX(0x17A0), (u8)A); wr8(ABSX(0x17A4), (u8)A);
+                lda8((u8)X);
+                lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
+                X = (u8)A; nz8((u8)X);
+                lda8(rd8(DP(0x08)));
+                wr8(ABSX(0x1888), (u8)A);
+            }
+        }
+        Y = dec8((u8)Y);
+    } while (!fn);
+    lda8(rd8(DP(0x54)));
+    if (!fz) { lda8(0xB5); wr8(DP(0x3C), 0xB5); return; }
+    lda8(rd8(DP(0x3C)));
+    cmp8((u8)A, 0xB4);
+    if (!fz) { cmp8((u8)A, 0x78); if (!fz) cmp8((u8)A, 0x3C); }
+    if (fz) {
+        lda8(0x26);
+        push8(0x80); push16(0xC32E); QueueSoundB_m1x1();
+        wr8(DP(0xC3), inc8(rd8(DP(0xC3))));
+    }
+}
+
+/* $80:C2BB DrawStartFlags (RTS, Y = the flag tile). */
+void DrawStartFlags_m1x1(void)
+{
+    start_flags();
+    ret();
+}
+
+/* $80:C290 RaceStartLights (RTS): the start of a race. When the lights
+ * begin ($3C = 1): unless already running ($92) count ($C3), set the
+ * countdown $8A = $40 and play sound $27 (with the coin turbo also $2D and
+ * 1); then $92 = 1, $3C = 2. Before the run ($92 clear) ping the APU every
+ * 16 frames of $3C. Then the flags with tile $E1/$E2/$E3 by $3C
+ * (DrawStartFlags). */
+void RaceStartLights_m1x1(void)
+{
+    lda8(rd8(DP(0x3C)));
+    cmp8((u8)A, 0x01);
+    if (fz) {
+        lda8(rd8(DP(0x92)));
+        if (fz) {
+            wr8(DP(0xC3), inc8(rd8(DP(0xC3))));
+            lda8(0x40); wr8(DP(0x8A), 0x40);
+            lda8(0x27);
+            push8(0x80); push16(0xC347); QueueSoundB_m1x1();
+            lda8(rd8(ABS(0x0CE0)));
+            if (!fz) {
+                lda8(0x2D);
+                push8(0x80); push16(0xC352); QueueSoundB_m1x1();
+                lda8(0x01);
+                push8(0x80); push16(0xC358); QueueSoundB_m1x1();
+            }
+        }
+        lda8(0x01); wr8(DP(0x92), 0x01);
+        lda8(0x02); wr8(DP(0x3C), 0x02);
+    } else {
+        Y = rd8(DP(0x92)); nz8((u8)Y);
+        if (!fz) { ret(); return; }
+        Y = rd8(DP(0x63)); nz8((u8)Y);
+        and8(0x0F);
+        if (fz) { ldy8(0x01); wr8(ABS(0x2142), 0x01); }
+    }
+    ldy8(0xE1);
+    lda8(rd8(DP(0x3C)));
+    cmp8((u8)A, 0x10);
+    if (!fc) {
+        ldy8(0xE2);
+        cmp8((u8)A, 0x08);
+        if (!fc) ldy8(0xE3);
+    }
+    start_flags();
+    ret();
+}

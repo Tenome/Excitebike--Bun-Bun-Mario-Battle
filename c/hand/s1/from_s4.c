@@ -43,6 +43,12 @@ static void fade_field(u16 m, u16 target, u16 u)
     else { fc = 0; adc16(u); }
     wr16(ABSX(0x1C38), A);
 }
+/* $80:B0AF: AND A into rider X's input $017E. */
+static void input_and_a(void)
+{
+    and8(rd8(ABSX(0x017E)));
+    wr8(ABSX(0x017E), (u8)A);
+}
 
 /*
  * $81:A17D SinCos (RTL), X = angle: $00 = y offset, $04 = x offset for the
@@ -692,4 +698,14 @@ void CopyTrackColumn_m1x1(void)
     } while (!fz);
     sep(0x20);
     retl();
+}
+/* $80:AFE9 CpuReleaseButtons (RTS): a moving CPU rider lets go of the
+ * buttons (input $017E & $0F). */
+void CpuReleaseButtons_m1x1(void)
+{
+    lda8(rd8(ABSX(0x01C0)));
+    if (fz) { ret(); return; }
+    lda8(0x0F);
+    input_and_a();
+    ret();
 }
