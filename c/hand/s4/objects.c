@@ -8684,3 +8684,207 @@ void QueueTimeDigits_m1x1(void)
     X = pull8(); nz8((u8)X);
     retl();
 }
+
+void QueueTimeDigits_m1x1(void);
+void SpawnObject_m1x1(void);
+void FindObjectSlot_m1x1(void);
+
+/* $80:98DE (RTS): the results list, one line every $20 frames ($88): the
+ * time of entry $044F (3 bytes at $083D) at its VRAM row ($80:993F),
+ * sound $42; after five, the next end-screen steps ($0450 = 4 and
+ * $0451 = 1, or 2 when $085C is set). */
+void EndScreenTimes_m1x1(void)
+{
+    u8 t = dec8(rd8(DP(0x88)));
+    wr8(DP(0x88), t);
+    if (!fz) { ret(); return; }
+    lda8(0x20); wr8(DP(0x88), 0x20);
+    lda8(rd8(ABS(0x044F)));
+    lda8(asl8((u8)A));
+    X = (u8)A; nz8((u8)X);
+    fc = 0; adc8(rd8(ABS(0x044F)));
+    Y = (u8)A; nz8((u8)Y);
+    lda8(rd8(ABSY(0x083D))); wr8(ABS(0x03AE), (u8)A);
+    lda8(rd8(ABSY(0x083E))); wr8(ABS(0x03AF), (u8)A);
+    lda8(rd8(ABSY(0x083F))); wr8(ABS(0x03B0), (u8)A);
+    rep(0x20);
+    lda16(rd16(ABSX(0x993F))); wr16(DP(0x00), A);
+    lda16(0x03AE); wr16(DP(0x18), 0x03AE);
+    sep(0x20);
+    lda8(0x00); wr8(DP(0x1A), 0x00);
+    push8(0x80); push16(0x9917); QueueTimeDigits_m1x1();
+    lda8(0x42);
+    push8(0x80); push16(0x991D); QueueSoundB_m1x1();
+    wr8(ABS(0x044F), inc8(rd8(ABS(0x044F))));
+    lda8(rd8(ABS(0x044F)));
+    cmp8((u8)A, 0x05);
+    if (!fc) { ret(); return; }
+    lda8(rd8(ABS(0x085C)));
+    if (fz) {
+        lda8(0x04); wr8(ABS(0x0450), 0x04);
+        lda8(0x01); wr8(ABS(0x0451), 0x01);
+    } else {
+        lda8(0x02); wr8(ABS(0x0450), 0x02);
+    }
+    ret();
+}
+
+/* $81:C018 / $81:C085: object $03A3's frame sequence. When its timer
+ * $036F runs out it steps $031F (timer from the table at times), and on
+ * frame `spawn` spawns a type-8 object (state 1, $032F = 4) at its
+ * position less ($16, dy); past the last frame it goes to state 4 with
+ * a timer of 8. Its frame $034F comes from the table at frames. */
+static void frame_sequence(u8 count, u16 times, u8 spawn, u16 dy,
+                           u16 frames, u16 back)
+{
+    X = rd8(ABS(0x03A3)); nz8((u8)X);
+    lda8(rd8(ABSX(0x036F)));
+    if (fz) {
+        lda8(rd8(ABSX(0x031F)));
+        lda8(inc8((u8)A));
+        cmp8((u8)A, count);
+        if (fc) {
+            lda8(0x04); wr8(ABSX(0x030F), 0x04);
+            lda8(0x08); wr8(ABSX(0x036F), 0x08);
+            wr8(ABSX(0x031F), 0);
+            ret();
+            return;
+        }
+        wr8(ABSX(0x031F), (u8)A);
+        Y = (u8)A; nz8((u8)Y);
+        lda8(rd8(ABSY(times)));
+        wr8(ABSX(0x036F), (u8)A);
+        lda8(rd8(ABSX(0x031F)));
+        cmp8((u8)A, spawn);
+        if (fz) {
+            push8((u8)Y);
+            rep(0x20);
+            lda16(rd16(ABSX(0x027F)));
+            fc = 1; sbc16(0x0016);
+            wr16(DP(0x00), A);
+            lda16(rd16(ABSX(0x028F)));
+            fc = 1; sbc16(dy);
+            wr16(DP(0x02), A);
+            sep(0x20);
+            ldy8(0x08);
+            push8(0x81); push16(back); SpawnObject_m1x1();
+            Y = rd8(DP(0x0E)); nz8((u8)Y);
+            lda8(0x01); wr8(ABSY(0x031F), 0x01);
+            lda8(0x04); wr8(ABSY(0x032F), 0x04);
+            Y = pull8(); nz8((u8)Y);
+        }
+    }
+    Y = rd8(ABSX(0x031F)); nz8((u8)Y);
+    lda8(rd8(ABSY(frames)));
+    wr8(ABSX(0x034F), (u8)A);
+    ret();
+}
+
+void FrameSequenceA_m1x1(void) { frame_sequence(0x04, 0xC081, 0x02, 0x001C, 0xC07D, 0xC055); }
+void FrameSequenceB_m1x1(void) { frame_sequence(0x06, 0xC0F0, 0x03, 0x0018, 0xC0EA, 0xC0C2); }
+
+/* $81:B96C (RTS): object $03A3 drifts every 4 frames, its X by the word
+ * $031F (reversing every 8 steps, $032F) and its Y up; above row $48 it
+ * parks at ($F0, $F0), steps its state, removes the type-9 and type-0
+ * objects and waits $80-$FF frames. */
+void DriftUpObject_m1x1(void)
+{
+    X = rd8(ABS(0x03A3)); nz8((u8)X);
+    lda8(rd8(DP(0x63)));
+    and8(0x03);
+    if (fz) {
+        rep(0x20);
+        lda16(rd16(ABSX(0x031F)));
+        fc = 0; adc16(rd16(ABSX(0x027F)));
+        wr16(ABSX(0x027F), A);
+        wr16(ABSX(0x032F), dec16(rd16(ABSX(0x032F))));
+        if (fz) {
+            lda16(0x0008); wr16(ABSX(0x032F), 0x0008);
+            lda16(rd16(ABSX(0x031F)));
+            eor16(0xFFFF);
+            lda16(inc16(A));
+            wr16(ABSX(0x031F), A);
+        }
+    }
+    sep(0x20);
+    lda8(rd8(DP(0x63)));
+    and8(0x03);
+    if (!fz) { ret(); return; }
+    wr8(ABSX(0x028F), dec8(rd8(ABSX(0x028F))));
+    lda8(rd8(ABSX(0x028F)));
+    cmp8((u8)A, 0x48);
+    if (fc) { ret(); return; }
+    rep(0x20);
+    lda16(0x00F0);
+    wr16(ABSX(0x027F), 0x00F0);
+    wr16(ABSX(0x028F), 0x00F0);
+    sep(0x20);
+    wr8(ABSX(0x030F), inc8(rd8(ABSX(0x030F))));
+    lda8(0x09);
+    push8(0x81); push16(0xB9BD); FindObjectSlot_m1x1();
+    lda8(0x00); wr8(ABSY(0x02EF), 0x00);
+    lda8(0x00);
+    push8(0x81); push16(0xB9C8); FindObjectSlot_m1x1();
+    lda8(0x00); wr8(ABSY(0x02EF), 0x00);
+    push8(0x81); push16(0xB9D1); RandomB_m1x1();
+    and8(0x7F);
+    fc = 0; adc8(0x80);
+    wr8(ABSX(0x036F), (u8)A);
+    ret();
+}
+
+/* $81:B9DB (RTS): object $03A3 releases balloons: sound $2B once at the
+ * start (before place 4, $086E), then on odd-high frames of the counter
+ * $8A whenever its timer $036F is out: count ($033F), wait $20-$5F
+ * frames and spawn a type-9 object at X $40-$BF, Y $D0 with sound $48
+ * and a random rise $B6-$C5 ($02AF). From place 4 on, only until the
+ * first one. */
+void ReleaseBalloons_m1x1(void)
+{
+    X = rd8(ABS(0x03A3)); nz8((u8)X);
+    lda8(rd8(ABS(0x086E)));
+    cmp8((u8)A, 0x04);
+    if (fc) {
+        lda8(rd8(ABSX(0x033F)));
+        if (!fz) { ret(); return; }
+    } else {
+        lda8(rd8(DP(0x8A)));
+        if (fz) {
+            lda8(rd8(ABSX(0x033F)));
+            if (fz) {
+                lda8(0x2B);
+                push8(0x81); push16(0xB9FA); QueueSoundB_m1x1();
+            }
+        }
+    }
+    rep(0x20);
+    wr16(DP(0x8A), inc16(rd16(DP(0x8A))));
+    sep(0x20);
+    lda8(rd8(DP(0x8B)));
+    and8(0x01);
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABSX(0x036F)));
+    if (!fz) { ret(); return; }
+    wr8(ABSX(0x033F), inc8(rd8(ABSX(0x033F))));
+    push8(0x81); push16(0xBA12); RandomB_m1x1();
+    and8(0x3F);
+    fc = 0; adc8(0x20);
+    wr8(ABSX(0x036F), (u8)A);
+    ldy8(0x09);
+    push8(0x81); push16(0xBA20); SpawnObject_m1x1();
+    if (fc) { ret(); return; }
+    X = rd8(DP(0x0E)); nz8((u8)X);
+    push8(0x81); push16(0xBA28); RandomB_m1x1();
+    and8(0x7F);
+    fc = 0; adc8(0x40);
+    wr8(ABSX(0x027F), (u8)A);
+    lda8(0xD0); wr8(ABSX(0x028F), 0xD0);
+    lda8(0x48);
+    push8(0x81); push16(0xBA3B); QueueSoundB_m1x1();
+    push8(0x81); push16(0xBA3F); RandomB_m1x1();
+    and8(0x0F);
+    fc = 0; adc8(0xB6);
+    wr8(ABSX(0x02AF), (u8)A);
+    X = rd8(ABS(0x03A3)); nz8((u8)X);
+    ret();
+}
