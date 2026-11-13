@@ -160,3 +160,4 @@
 80AFE9  1 1  mem+X,Y,V      CpuReleaseButtons      # from s4 80B0A4
 819F8C  1 1  mem+X,V        AimRatio               # from s4 81A065
 80BE3E  1 1  mem+X,Y,C,V    RiderRunOut            # from s4 80BB56
+81F9C8  0 0  mem+Y,C        BsxFindFile            # from s4 81F9C8

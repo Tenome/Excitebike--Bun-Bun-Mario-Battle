@@ -815,3 +815,90 @@ void RiderRunOut_m1x1(void)
     if (!fz) { lda8(0x08); wr8(DPX(0x45), 0x08); }
     ret();
 }
+/* $81:F9C8 BsxFindFile (M=0 X=0, RTL): look up the broadcast directory
+ * ($7E:9BEC, $7E:9BF2 entries) for the channel $13D3 and file $13D5: on a
+ * match copy its 13-byte record to $13F3 and return C clear; otherwise C
+ * set and $7E:13C9 = 3. Entries that are not the channel are skipped by
+ * their size (count * 13 + 3 bytes). */
+void BsxFindFile_m0x0(void)
+{
+    push8(getP());
+    sep(0x20);
+    rep(0x10);
+    push8(DB);
+    push16(0x7E7E);
+    DB = pull8(); nz8(DB);
+    DB = pull8(); nz8(DB);
+    lda8(rd8(LONG(0x7E9BF2)));
+    wr8(LONG(0x7E004B), (u8)A);
+    X = 0x0008; nz16(X);
+    for (;;) {
+        rep(0x20);
+        lda16(rd16(LONGX(0x7E9BEC)));
+        cmp16(A, rd16(LONG(0x0013D3)));
+        sep(0x20);
+        if (fz) {
+            X = inc16(X); X = inc16(X);
+            lda8(rd8(LONGX(0x7E9BEC)));
+            wr8(LONG(0x7E0047), (u8)A);
+            X = inc16(X);
+            for (;;) {
+                rep(0x20);
+                lda16(rd16(LONGX(0x7E9BED)));
+                cmp16(A, rd16(LONG(0x0013D5)));
+                sep(0x20);
+                if (fz) {
+                    Y = 0; nz16(Y);
+                    do {
+                        lda8(rd8(LONGX(0x7E9BEC)));
+                        push16(X);                       /* PHX; TYX */
+                        wr8(LONG(0x0013F3 + Y), (u8)A);
+                        X = pull16();                    /* PLX */
+                        X = inc16(X);
+                        Y = inc16(Y);
+                        cmp16(Y, 0x000D);
+                    } while (!fz);
+                    DB = pull8(); nz8(DB);
+                    setP(pull8());
+                    fc = 0;
+                    retl();
+                    return;
+                }
+                rep(0x20);
+                lda16(X);
+                fc = 0; adc16(0x000D);
+                X = A; nz16(X);
+                sep(0x20);
+                u8 n = dec8(rd8(ABS(0x0047)));
+                wr8(ABS(0x0047), n);
+                WAIT_TICK();
+                if (fz) break;
+            }
+        } else {
+            rep(0x20);
+            lda16(rd16(LONGX(0x7E9BEE)));
+            and16(0x00FF);
+            wr16(LONG(0x7E0047), A);
+            lda16(asl16(A));
+            adc16(rd16(LONG(0x7E0047)));
+            lda16(asl16(A));
+            lda16(asl16(A));
+            adc16(rd16(LONG(0x7E0047)));
+            wr16(ABS(0x0047), X);
+            adc16(rd16(LONG(0x7E0047)));
+            adc16(0x0003);
+            X = A; nz16(X);
+            sep(0x20);
+        }
+        u8 c = dec8(rd8(ABS(0x004B)));
+        wr8(ABS(0x004B), c);
+        WAIT_TICK();
+        if (fz) break;
+    }
+    lda8(0x03);
+    wr8(LONG(0x7E13C9), 0x03);
+    DB = pull8(); nz8(DB);
+    setP(pull8());
+    fc = 1;
+    retl();
+}
