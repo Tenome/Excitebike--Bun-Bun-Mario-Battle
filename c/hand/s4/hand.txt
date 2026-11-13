@@ -262,3 +262,6 @@
 81A747  1 1  mem+X,Y,C,V     LoadHdmaScene
 809004  1 1  mem+X,Y,C,V     ShowCoinRank
 80D81B  1 1  mem+X,Y,C,V     BonusCourseFrame
+81CA20  1 1  mem+X,Y         ScaleJumpCount
+81CA20  0 1  mem+X,Y         ScaleJumpCount
+81F9C8  0 0  mem+Y,C         BsxFindFile

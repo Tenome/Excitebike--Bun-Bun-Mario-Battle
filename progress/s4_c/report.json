@@ -1,15 +1,15 @@
 {
  "measures": {
-  "fuzzy_match_percent": 74.8037,
+  "fuzzy_match_percent": 75.0514,
   "total_code": "36930",
-  "matched_code": "18453",
-  "matched_code_percent": 49.9675,
+  "matched_code": "18636",
+  "matched_code_percent": 50.463,
   "total_data": "0",
   "matched_data": "0",
   "matched_data_percent": 0.0,
   "total_functions": 532,
-  "matched_functions": 259,
-  "matched_functions_percent": 48.6842,
+  "matched_functions": 261,
+  "matched_functions_percent": 49.0602,
   "complete_code": "0",
   "complete_code_percent": 0.0,
   "complete_data": "0",
@@ -2911,16 +2911,16 @@
   {
    "name": "main/bank81",
    "measures": {
-    "fuzzy_match_percent": 75.5784,
+    "fuzzy_match_percent": 76.6639,
     "total_code": "8429",
-    "matched_code": "4312",
-    "matched_code_percent": 51.1567,
+    "matched_code": "4495",
+    "matched_code_percent": 53.3278,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 137,
-    "matched_functions": 72,
-    "matched_functions_percent": 52.5547,
+    "matched_functions": 74,
+    "matched_functions_percent": 54.0146,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -2932,7 +2932,7 @@
     {
      "name": ".text",
      "size": "8429",
-     "fuzzy_match_percent": 75.5784
+     "fuzzy_match_percent": 76.6639
     }
    ],
    "functions": [
@@ -3969,9 +3969,9 @@
      }
     },
     {
-     "name": "sub_81CA20",
+     "name": "ScaleJumpCount",
      "size": "23",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8505888"
      }
@@ -4009,9 +4009,9 @@
      }
     },
     {
-     "name": "sub_81F9C8",
+     "name": "BsxFindFile",
      "size": "160",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8518088"
      }

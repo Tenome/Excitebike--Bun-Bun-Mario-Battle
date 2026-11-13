@@ -278,3 +278,5 @@
 81A747 LoadHdmaScene
 809004 ShowCoinRank
 80D81B BonusCourseFrame
+81CA20 ScaleJumpCount
+81F9C8 BsxFindFile
