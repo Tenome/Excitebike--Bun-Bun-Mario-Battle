@@ -64,11 +64,16 @@ static const Choice kPace[] = {
     { "easy", "Easy: rivals 15% slower" },
     { "hard", "Hard: rivals 15% faster" },
 };
+static const Choice kWide[] = {
+    { "off", "Off (4:3, the original picture)" },
+    { "16:9", "16:9: races wide, other screens pillarboxed" },
+};
 static const Opt kGameOpts[] = {
     { "flow", "Game flow", "Without the clock the port moves on as soon as a screen is done; the original waits for the satellite broadcast's schedule.", "game.flow", "menu", RECOMP_MOD_OPTION_CHOICE, kFlow, 2 },
     { "stadium", "Stadium", "Which Stadium's rules, schedule and end screen to play.", "game.stadium", "4", RECOMP_MOD_OPTION_CHOICE, kStadium, 2 },
     { "courses", "Courses", "Play the Stadium 1 or 2 courses in this engine.", "game.courses", "own", RECOMP_MOD_OPTION_CHOICE, kCourses, 3 },
     { "luigi", "Expanded roster", "Add Luigi (from data/s3.sfc) as a sixth character.", "game.luigi", "1", RECOMP_MOD_OPTION_CHOICE, kOnOff, 2 },
+    { "widescreen", "Widescreen", "Show more of the track to both sides in races. Takes effect when the game restarts.", "display.widescreen", "off", RECOMP_MOD_OPTION_CHOICE, kWide, 2 },
     { "pace", "Rival pace", "The target speed every CPU rival accelerates toward.", "game.pace", "normal", RECOMP_MOD_OPTION_CHOICE, kPace, 3 },
     { "rivals", "CPU rivals", "The original runs the course alone and meets the seven rivals only in the final; this fills every race with them.", "game.rivals", "all", RECOMP_MOD_OPTION_CHOICE, kRivals, 2 },
 };

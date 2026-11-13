@@ -52,6 +52,7 @@ function(bunbun_game tgt gendir cfgdir identity title)
       ${CMAKE_SOURCE_DIR}/src/bunbun_data.c
       ${CMAKE_SOURCE_DIR}/src/bunbun_settings.c
       ${CMAKE_SOURCE_DIR}/src/launcher_mods.c
+      ${CMAKE_SOURCE_DIR}/src/widescreen_bunbun.c
   )
 
   # The player's own dumps built in (port/tools/embed_roms.py, run by the

@@ -61,6 +61,10 @@ static void GameConfigureLauncher(struct RecompLauncherCGameInfo *info)
     info->dashboard_quick_controls = 1;
 }
 
+/* Widescreen policy (src/widescreen_bunbun.c). */
+void BunbunWsPrepareFrame(int drawable_w, int drawable_h, int *frame_w, int *frame_h);
+void BunbunWsBeginFrame(unsigned number);
+
 static const SnesDesktopHostGame kGameHost = {
     .display_name        = SNES_GAME_TITLE,
     .window_title        = SNES_GAME_TITLE,
@@ -80,6 +84,9 @@ static const SnesDesktopHostGame kGameHost = {
      * game: controls, display, audio and the Mods page, without quitting. */
     .in_game_launcher    = 1,
     .configure_launcher  = GameConfigureLauncher,
+    .native_widescreen   = 1,
+    .prepare_frame       = BunbunWsPrepareFrame,
+    .begin_sim_frame     = BunbunWsBeginFrame,
 };
 
 #ifndef __ANDROID__

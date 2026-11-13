@@ -112,6 +112,12 @@ state, so you continue where you were.
     towards); *Rival pace*: easy (rivals 15% slower), normal (the
     original) or hard (15% faster), applied to the target speed the rival
     AI ($80:BE66) picks.
+  * *Widescreen*: 16:9 races (`src/widescreen_bunbun.c`). The track's
+    right margin is filled by replaying the track streamer ($81:8A4D) a few
+    columns ahead into the unused part of its 64-column tilemap; the bottom
+    HUD's checkered flag is reflected into the margins; every other screen
+    is pillarboxed. Riders past the original edges are hidden by the game
+    and not shown yet. Restart to apply.
   * *Sprite swaps*: pick a PNG rider sheet per character (export the
     originals with `tools/assets.py export`).
   * *Music & sound*: pick a folder of replacement samples (WAV files named as
