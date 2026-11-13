@@ -373,7 +373,9 @@ BRIDGE(HleHand_CopyTrackColumn, CopyTrackColumn_m1x1, 400)
 BRIDGE(HleHand_CpuReleaseButtons, CpuReleaseButtons_m1x1, 25)
 BRIDGE_DYN(HleHand_AimRatio, AimRatio_m1x1, (A & 0xFF) ? 120 + 25 * (A & 0xFF) : 15)
 BRIDGE(HleHand_RiderRunOut, RiderRunOut_m1x1, 50)
-BRIDGE(HleHand_BsxFindFile, BsxFindFile_m0x0, 600)
+/* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
+ * with it the Gen A race run diverges (it is hooked in Gen B, where both
+ * runs are unchanged). */
 #else
 /* Stadium 3-4 (Gen B) routines from c/hand/s4 */
 BRIDGE(HleHand_RiderGfxCycle,     RiderGfxCycle_m1x1,     60)
