@@ -266,3 +266,5 @@
 80A457 ShowCourseRecord
 80C2BB DrawStartFlags
 80C290 RaceStartLights
+80C1F3 CrashRecovery
+81A065 AimRatio

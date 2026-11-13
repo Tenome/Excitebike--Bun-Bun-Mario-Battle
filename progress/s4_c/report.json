@@ -1,15 +1,15 @@
 {
  "measures": {
-  "fuzzy_match_percent": 72.6713,
+  "fuzzy_match_percent": 73.0774,
   "total_code": "36930",
-  "matched_code": "16878",
-  "matched_code_percent": 45.7027,
+  "matched_code": "17178",
+  "matched_code_percent": 46.515,
   "total_data": "0",
   "matched_data": "0",
   "matched_data_percent": 0.0,
   "total_functions": 532,
-  "matched_functions": 247,
-  "matched_functions_percent": 46.4286,
+  "matched_functions": 249,
+  "matched_functions_percent": 46.8045,
   "complete_code": "0",
   "complete_code_percent": 0.0,
   "complete_data": "0",
@@ -21,16 +21,16 @@
   {
    "name": "main/bank80",
    "measures": {
-    "fuzzy_match_percent": 73.3858,
+    "fuzzy_match_percent": 73.7039,
     "total_code": "24671",
-    "matched_code": "11672",
-    "matched_code_percent": 47.3106,
+    "matched_code": "11829",
+    "matched_code_percent": 47.947,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 357,
-    "matched_functions": 161,
-    "matched_functions_percent": 45.098,
+    "matched_functions": 162,
+    "matched_functions_percent": 45.3782,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -42,7 +42,7 @@
     {
      "name": ".text",
      "size": "24671",
-     "fuzzy_match_percent": 73.3858
+     "fuzzy_match_percent": 73.7039
     }
    ],
    "functions": [
@@ -1351,9 +1351,9 @@
      }
     },
     {
-     "name": "sub_80C1F3",
+     "name": "CrashRecovery",
      "size": "157",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8438259"
      }
@@ -2911,16 +2911,16 @@
   {
    "name": "main/bank81",
    "measures": {
-    "fuzzy_match_percent": 73.2175,
+    "fuzzy_match_percent": 74.0657,
     "total_code": "8429",
-    "matched_code": "3914",
-    "matched_code_percent": 46.4349,
+    "matched_code": "4057",
+    "matched_code_percent": 48.1315,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 137,
-    "matched_functions": 69,
-    "matched_functions_percent": 50.365,
+    "matched_functions": 70,
+    "matched_functions_percent": 51.0949,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -2932,7 +2932,7 @@
     {
      "name": ".text",
      "size": "8429",
-     "fuzzy_match_percent": 73.2175
+     "fuzzy_match_percent": 74.0657
     }
    ],
    "functions": [
@@ -3265,9 +3265,9 @@
      }
     },
     {
-     "name": "sub_81A065",
+     "name": "AimRatio",
      "size": "143",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8495205"
      }

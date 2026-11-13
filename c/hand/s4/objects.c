@@ -5045,3 +5045,167 @@ void RaceStartLights_m1x1(void)
     start_flags();
     ret();
 }
+
+void RiderShadowY_m1x1(void);
+
+/* $80:C1F3 CrashRecovery (RTS): every 4 frames (phase $0998, counting
+ * down) each crashed rider ($01CE) picks a lane: the player in a race lane
+ * 4 (sound $25 when not the CPU's turn $7F, and clears $092D), others a
+ * random one ($2F & 3) into $0948. A stopped rider (speed high 0) that is
+ * not tumbling ($01EE, $0176; the player not on tile $14) gets back up:
+ * speed 0, upright lean 6, run-out $090C = column + 8, its shadow, wave
+ * pose 2, $01D6 = 1 (the player with sound $3E); a tumbling one slides at
+ * $88. Otherwise the lean keeps turning ($01E6 + $01CE) unless held ($3D). */
+void CrashRecovery_m1x1(void)
+{
+    lda8(rd8(DP(0x63)));
+    and8(0x03);
+    cmp8((u8)A, rd8(ABS(0x0998)));
+    if (!fz) { ret(); return; }
+    wr8(ABS(0x0998), dec8(rd8(ABS(0x0998))));
+    lda8(rd8(ABS(0x0998)));
+    and8(0x03);
+    wr8(ABS(0x0998), (u8)A);
+    ldx8(0x07);
+    for (;;) {
+        lda8(rd8(ABSX(0x01CE)));
+        if (!fz) {
+            ldy8(0x04);
+            lda8((u8)X);
+            ora8(rd8(ABS(0x0CD7)));
+            if (fz) {
+                wr8(ABS(0x092D), (u8)A);
+                lda8(rd8(DP(0x7F)));
+                if (fz) {
+                    lda8(0x25);
+                    push8(0x80); push16(0xC222); QueueSoundB_m1x1();
+                }
+                lda8(rd8(DP(0x2F)));
+                and8(0x03);
+                Y = (u8)A; nz8((u8)Y);
+            }
+            lda8((u8)Y);
+            wr8(ABSX(0x0948), (u8)A);
+            lda8(rd8(ABSX(0x01C6)));
+            if (!fz) goto turn;
+            lda8(rd8(ABSX(0x01EE)));
+            ora8(rd8(ABSX(0x0176)));
+            if (!fz) goto slide;
+            cmp8((u8)X, 0x00);
+            if (fz) {
+                lda8(rd8(ABSX(0x021E)));
+                cmp8((u8)A, 0x14);
+                if (fz) goto slide;
+                lda8((u8)X);
+            }
+            wr8(ABSX(0x01BE), (u8)A);
+            wr8(ABSX(0x0186), (u8)A);
+            wr8(ABSX(0x01CE), (u8)A);
+            lda8(0x06); wr8(ABSX(0x01E6), 0x06);
+            lda8(rd8(ABSX(0x0196)));
+            fc = 0; adc8(0x08);
+            wr8(ABSX(0x090C), (u8)A);
+            push16(0xC25E); RiderShadowY_m1x1();
+            lda8(0x02); wr8(ABSX(0x091C), 0x02);
+            lda8(lsr8((u8)A));
+            wr8(ABSX(0x01D6), (u8)A);
+            cmp8((u8)X, 0x00);
+            if (fz) {
+                lda8(0x3E);
+                push8(0x80); push16(0xC271); QueueSoundB_m1x1();
+            }
+            goto next;
+        slide:
+            lda8(0x88); wr8(ABSX(0x01BE), 0x88);
+        turn:
+            lda8(rd8(DPX(0x3D)));
+            if (fz) {
+                lda8(rd8(ABSX(0x01E6)));
+                fc = 0; adc8(rd8(ABSX(0x01CE)));
+                and8(0x0F);
+                wr8(ABSX(0x01E6), (u8)A);
+            }
+        }
+    next:
+        X = dec8((u8)X);
+        if (fn) break;
+    }
+    ret();
+}
+
+/* $81:A065 AimRatio (RTL, A = steps): for object X, the direction to the
+ * target ($039F/$03A1 vs $027F/$028F) as a step pair: the larger axis gets
+ * A, the smaller its share (Bresenham over A steps), signed by direction,
+ * into $00 (vertical) and $0A (horizontal). A = 0: $00 = 0. */
+void AimRatio_m1x1(void)
+{
+    wr8(DP(0x0A), (u8)A);
+    cmp8((u8)A, 0x00);
+    if (fz) { wr8(DP(0x00), 0); retl(); return; }
+    push8((u8)X);
+    push8((u8)Y);
+    rep(0x20);
+    ldy8(0x00);
+    lda16(rd16(ABS(0x03A1)));
+    fc = 1; sbc16(rd16(ABSX(0x028F)));
+    wr16(DP(0x12), A);
+    if (fn) Y = inc8((u8)Y);
+    wr8(DP(0x02), (u8)Y);
+    lda16(rd16(DP(0x12)));
+    if (fn) { eor16(0xFFFF); lda16(inc16(A)); }
+    wr16(DP(0x10), A);
+    ldy8(0x00);
+    lda16(rd16(ABS(0x039F)));
+    fc = 1; sbc16(rd16(ABSX(0x027F)));
+    wr16(DP(0x16), A);
+    if (fn) Y = inc8((u8)Y);
+    rep(0x20);
+    wr8(DP(0x03), (u8)Y);
+    lda16(rd16(DP(0x16)));
+    if (fn) { eor16(0xFFFF); lda16(inc16(A)); }
+    wr16(DP(0x14), A);
+    ldy8(0x00);
+    cmp16(A, rd16(DP(0x10)));
+    if (!fc) {
+        Y = inc8((u8)Y);
+        push16(A);
+        lda16(rd16(DP(0x10)));
+        wr16(DP(0x14), A);
+        lda16(pull16());
+        wr16(DP(0x10), A);
+    }
+    wr16(DP(0x1E), 0);
+    wr16(DP(0x00), 0);
+    X = rd8(DP(0x0A)); nz8((u8)X);
+    do {
+        lda16(rd16(DP(0x1E)));
+        fc = 0; adc16(rd16(DP(0x10)));
+        cmp16(A, rd16(DP(0x14)));
+        if (fc) {
+            sbc16(rd16(DP(0x14)));
+            wr16(DP(0x00), inc16(rd16(DP(0x00))));
+        }
+        wr16(DP(0x1E), A);
+        X = dec8((u8)X);
+        WAIT_TICK();
+    } while (!fz);
+    sep(0x20);
+    lda8((u8)Y);
+    if (!fz) {
+        lda8(rd8(DP(0x00)));
+        push8((u8)A);
+        lda8(rd8(DP(0x0A)));
+        wr8(DP(0x00), (u8)A);
+        lda8(pull8());
+        wr8(DP(0x0A), (u8)A);
+    }
+    lda8(rd8(DP(0x00)));
+    Y = rd8(DP(0x02)); nz8((u8)Y);
+    if (!fz) { eor8(0xFF); lda8(inc8((u8)A)); wr8(DP(0x00), (u8)A); }
+    lda8(rd8(DP(0x0A)));
+    Y = rd8(DP(0x03)); nz8((u8)Y);
+    if (!fz) { eor8(0xFF); lda8(inc8((u8)A)); wr8(DP(0x0A), (u8)A); }
+    Y = pull8(); nz8((u8)Y);
+    X = pull8(); nz8((u8)X);
+    retl();
+}

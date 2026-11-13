@@ -249,3 +249,5 @@
 80A457  1 1  mem+X,Y,C,V     ShowCourseRecord
 80C2BB  1 1  mem+C,V         DrawStartFlags
 80C290  1 1  mem+X,Y,C,V     RaceStartLights
+80C1F3  1 1  mem+X,Y,C,V     CrashRecovery
+81A065  1 1  mem+X,V         AimRatio
