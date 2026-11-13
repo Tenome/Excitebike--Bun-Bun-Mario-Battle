@@ -792,6 +792,11 @@ static uint32 ball_or_gauge_cost(void)
     return 160 + ((g_ram[0x092D] && !(g_ram[0x7F] & 1)) ? 260 : 15);
 }
 BRIDGE_AFTER(HleHand_BallOrGauge, BallOrGauge_m1x1, ball_or_gauge_cost())
+BRIDGE_DYN(HleHand_ResetCoinCounts, ResetCoinCounts_m1x1,
+           60 + ((!(g_ram[0x63] & 1) && g_ram[0x76] == 3) ? 1300 : 15))
+BRIDGE_DYN(HleHand_JumpResultTotal, JumpResultTotal_m1x1,
+           15 + draw_all_riders_cost() + (g_ram[0x8C] == 1 ? 1900 : 10))
+BRIDGE(HleHand_ConfettiAll, ConfettiAll_m1x1, 120)
 /* VramQueueTilesLong / QueueTileRowsLong ($80:B2D6 / $80:B431) are
  * verified but unhooked: trampolines whose cost is the callee's. */
 /* c/hand/s4/objects.c, part 26 */

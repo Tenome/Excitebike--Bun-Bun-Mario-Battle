@@ -9063,3 +9063,67 @@ void BallOrGauge_m1x1(void)
     push16(0xAB54); FlagRidersAtLine_m1x1();
     SpeedGauge_m1x1();
 }
+
+void ClearWords1530_m1x1(void);
+void DrawAllRidersLong_m1x1(void);
+void ScaleJumpCount_m1x1(void);
+void BuildScoreDigitsLong_m0x1(void);
+void QueueResultsTiles_m1x1(void);
+
+/* $80:D21C (RTS): clear the coin counts $1540-$1542, show the coin rank,
+ * then clear the marker objects (ClearWords1530, into which it falls). */
+void ResetCoinCounts_m1x1(void)
+{
+    wr8(ABS(0x1540), 0); wr8(ABS(0x1541), 0); wr8(ABS(0x1542), 0);
+    push16(0xD227); ShowCoinRank_m1x1();
+    ClearWords1530_m1x1();
+}
+
+/* $81:C84F (RTL): the jump result's total: the waving player, and when
+ * $8C runs out sound $42, the next step ($CD), $8C = $20, and the total
+ * (ScaleJumpCount's $0C + the rank points $80:F155) built and queued
+ * (QueueResultsTiles, into which it falls). */
+void JumpResultTotal_m1x1(void)
+{
+    ldx8(0x00);
+    push8(0x81); push16(0xC854); DrawAllRidersLong_m1x1();
+    lda8(0x19); wr8(ABS(0x1961), 0x19);
+    u8 t = dec8(rd8(DP(0x8C)));
+    wr8(DP(0x8C), t);
+    if (!fz) { retl(); return; }
+    lda8(0x42);
+    push8(0x81); push16(0xC863); QueueSoundB_m1x1();
+    wr8(DP(0xCD), inc8(rd8(DP(0xCD))));
+    lda8(0x20); wr8(DP(0x8C), 0x20);
+    push8(0x81); push16(0xC86D); ScaleJumpCount_m1x1();
+    rep(0x20);
+    X = rd8(ABS(0x156B)); nz8((u8)X);
+    lda16(rd16(LONGX(0x80F155)));
+    and16(0x00FF);
+    fc = 0; adc16(rd16(DP(0x0C)));
+    wr16(DP(0x0C), A);
+    push8(0x81); push16(0xC882); BuildScoreDigitsLong_m0x1();
+    QueueResultsTiles_m1x1();
+}
+
+/* $81:9538 (RTL): each confetti piece (even slots 6-0) runs its state
+ * $0116 through the table $81:954C (Y = slot). X is kept. */
+void ConfettiAll_m1x1(void)
+{
+    push8((u8)X);
+    ldx8(0x06);
+    do {
+        lda8(rd8(ABSX(0x0116)));
+        lda8(asl8((u8)A));
+        push8((u8)X);
+        Y = X; nz8((u8)Y);
+        X = (u8)A; nz8((u8)X);
+        push16(0x9544);
+        r816_call_pc(0x810000u | rd16(LONGX(0x81954C)));
+        X = pull8(); nz8((u8)X);
+        X = dec8((u8)X);
+        X = dec8((u8)X);
+    } while (!fn);
+    X = pull8(); nz8((u8)X);
+    retl();
+}

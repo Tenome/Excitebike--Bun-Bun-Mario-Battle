@@ -387,3 +387,6 @@
 80F15B BuildScoreDigitsLong
 80C38B FlagRidersAtLine
 80AB46 BallOrGauge
+80D21C ResetCoinCounts
+81C84F JumpResultTotal
+819538 ConfettiAll

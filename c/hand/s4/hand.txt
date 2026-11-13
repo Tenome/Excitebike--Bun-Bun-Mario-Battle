@@ -375,3 +375,6 @@
 80F15B  0 1  mem+A,X,Y,C,V   BuildScoreDigitsLong
 80C38B  1 1  mem+A,X,Y,C,V   FlagRidersAtLine
 80AB46  1 1  mem+A,X,Y,C,V   BallOrGauge
+80D21C  1 1  mem+A,X,Y,C,V   ResetCoinCounts
+81C84F  1 1  mem+A,X,Y,C,V   JumpResultTotal
+819538  1 1  mem+A,X,Y,C,V   ConfettiAll
