@@ -414,3 +414,7 @@
 80F3DD DemoPadDisplay
 80F107 JumpHudNumbers
 80E5B0 SetupJumpContest
+80F07E ShowLastDistance
+81C7EF JumpResultDistance
+80EA68 JumpResultBoard
+80EA01 JumpResultBoardStep

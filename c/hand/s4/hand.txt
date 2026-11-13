@@ -402,3 +402,7 @@
 80F3DD  1 1  mem+A,X,Y,C,V   DemoPadDisplay
 80F107  1 1  mem+A,X,Y,C,V   JumpHudNumbers
 80E5B0  1 1  mem+A,X,Y,C,V   SetupJumpContest
+80F07E  1 1  mem+A,X,Y,C,V   ShowLastDistance
+81C7EF  1 1  mem+A,X,Y,C,V   JumpResultDistance
+80EA68  1 1  mem+A,X,Y,C,V   JumpResultBoard
+80EA01  1 1  mem+A,X,Y,C,V   JumpResultBoardStep

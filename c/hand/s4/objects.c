@@ -10555,3 +10555,182 @@ void SetupJumpContest_m1x1(void)
     lda8(0x01); wr8(ABS(0x210C), 0x01);
     ret();
 }
+
+void BuildJumpScore_m1x1(void);
+void ScaleJumpCount_m0x1(void);
+
+/* $80:F07E (RTS): the last jump distance $1567 (half-units) at VRAM
+ * $1A75. */
+void ShowLastDistance_m1x1(void)
+{
+    rep(0x20);
+    lda16(0x1A75); wr16(DP(0x00), 0x1A75);
+    lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+    lda16(0x0020); wr16(DP(0x0F), 0x0020);
+    lda16(rd16(ABS(0x1567)));
+    push8(0x80); push16(0xF095); CALL(sub_81C8E1_m0x1, 0x81C8E1, 3);
+    ret();
+}
+
+/* $81:C7EF (RTL): the jump result's distance step: sound $42, next step
+ * ($CD), $8C = $20, this run's distance $1569 at VRAM $1932 and its
+ * label rows ($81:C82F, $0208) at $1927. */
+void JumpResultDistance_m1x1(void)
+{
+    lda8(0x42);
+    push8(0x81); push16(0xC7F4); QueueSoundB_m1x1();
+    wr8(DP(0xCD), inc8(rd8(DP(0xCD))));
+    lda8(0x20); wr8(DP(0x8C), 0x20);
+    rep(0x20);
+    lda16(0x1932); wr16(DP(0x00), 0x1932);
+    lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+    lda16(0x0020); wr16(DP(0x0F), 0x0020);
+    lda16(rd16(ABS(0x1569)));
+    push8(0x81); push16(0xC812); CALL(sub_81C8E1_m0x1, 0x81C8E1, 3);
+    rep(0x20);
+    lda16(0x1927); wr16(DP(0x00), 0x1927);
+    lda16(0xC82F); wr16(DP(0x02), 0xC82F);
+    ldx8(0x81); wr8(DP(0x04), 0x81);
+    lda16(0x0208); wr16(DP(0x10), 0x0208);
+    sep(0x20);
+    push8(0x81); push16(0xC82D); QueueTileRowsLong_m1x1();
+    retl();
+}
+
+/* $80:EA68 (RTS): the jump result board: best distance ($1567) at $1856,
+ * the best score at $1897 (this run's when the board is still counting,
+ * $88 = 0), this run's distance at $1932 and score parts at $1970 /
+ * $19B3 / $19F3; a new best ($1569 > $1567 or score > $156D) blinks with
+ * $8A and, at $88 = $3B ($7F without $1999), plays sound $43. */
+void JumpResultBoard_m1x1(void)
+{
+    wr8(DP(0xD6), 0);
+    rep(0x20);
+    lda16(0x1856); wr16(DP(0x00), 0x1856);
+    lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+    lda16(0x0020); wr16(DP(0x0F), 0x0020);
+    lda16(rd16(ABS(0x1567)));
+    push8(0x80); push16(0xEA81); CALL(sub_81C8E1_m0x1, 0x81C8E1, 3);
+    rep(0x20);
+    lda16(rd16(DP(0x88)));
+    int best = !fz;
+    if (!best) {
+        push8(0x80); push16(0xEA8B); ScaleJumpCount_m0x1();
+        Y = rd8(ABS(0x156B)); nz8((u8)Y);
+        lda16(rd16(ABSY(0xF155)));
+        and16(0x00FF);
+        fc = 0; adc16(rd16(DP(0x0C)));
+        cmp16(A, rd16(ABS(0x156D)));
+        best = !fc;
+    }
+    if (best) lda16(rd16(ABS(0x156D)));
+    push16(0xEAA2); BuildScoreDigits_m0x1();
+    rep(0x20);
+    lda16(0x1897); wr16(DP(0x00), 0x1897);
+    lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+    sep(0x20);
+    lda8(0x20); wr8(DP(0x0F), 0x20);
+    push16(0xEAB7); VramQueueTiles_m1x1();
+    rep(0x20);
+    lda16(0x1932); wr16(DP(0x00), 0x1932);
+    lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+    lda16(rd16(ABS(0x1567)));
+    cmp16(A, rd16(ABS(0x1569)));
+    if (fc) lda16(0x0020);
+    else {
+        wr16(DP(0xD6), inc16(rd16(DP(0xD6))));
+        lda16(rd16(DP(0x8A)));
+    }
+    wr16(DP(0x0F), A);
+    lda16(rd16(ABS(0x1569)));
+    push8(0x80); push16(0xEADD); CALL(sub_81C8E1_m0x1, 0x81C8E1, 3);
+    rep(0x20);
+    lda16(rd16(ABS(0x1569)));
+    push16(0xEAE5); BuildScoreDigits_m0x1();
+    push8(0x80); push16(0xEAE9); BuildJumpScore_m1x1();
+    rep(0x20);
+    lda16(0x1970); wr16(DP(0x00), 0x1970);
+    lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+    sep(0x20);
+    lda8(0x20); wr8(DP(0x0F), 0x20);
+    push16(0xEAFE); VramQueueTiles_m1x1();
+    rep(0x20);
+    Y = rd8(ABS(0x156B)); nz8((u8)Y);
+    lda16(rd16(ABSY(0xF155)));
+    and16(0x00FF);
+    push16(0xEB0C); BuildScoreDigits_m0x1();
+    rep(0x20);
+    lda16(0x19B3); wr16(DP(0x00), 0x19B3);
+    lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+    sep(0x20);
+    lda8(0x20); wr8(DP(0x0F), 0x20);
+    push16(0xEB21); VramQueueTiles_m1x1();
+    push8(0x80); push16(0xEB25); ScaleJumpCount_m1x1();
+    rep(0x20);
+    Y = rd8(ABS(0x156B)); nz8((u8)Y);
+    lda16(rd16(ABSY(0xF155)));
+    and16(0x00FF);
+    fc = 0; adc16(rd16(DP(0x0C)));
+    wr16(DP(0x0C), A);
+    push16(0xEB38); BuildScoreDigits_m0x1();
+    rep(0x20);
+    lda16(0x19F3); wr16(DP(0x00), 0x19F3);
+    lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+    lda16(rd16(ABS(0x156D)));
+    cmp16(A, rd16(DP(0x0C)));
+    sep(0x20);
+    if (fc) lda8(0x20);
+    else {
+        wr8(DP(0xD6), inc8(rd8(DP(0xD6))));
+        lda8(rd8(DP(0x8A)));
+    }
+    wr8(DP(0x0F), (u8)A);
+    push16(0xEB5A); VramQueueTiles_m1x1();
+    lda8(rd8(ABS(0x1999)));
+    u16 mark = fz ? 0x007F : 0x003B;
+    rep(0x20);
+    lda16(rd16(DP(0x88)));
+    cmp16(A, mark);
+    sep(0x20);
+    if (!fz) { ret(); return; }
+    lda8(rd8(DP(0xD6)));
+    if (fz) { ret(); return; }
+    lda8(0x43);
+    push8(0x80); push16(0xEB81); QueueSoundB_m1x1();
+    ret();
+}
+
+/* $80:EA01 (RTS): the jump result board step: while $88 counts down, the
+ * new-best blink $8A ($24 steady with $1999, else $20 / $24 every 16
+ * frames); at 0 the best distance is kept ($1567 = max with $1569),
+ * $8A = $20 and the step $CD advances. Then the waving player and the
+ * board. */
+void JumpResultBoardStep_m1x1(void)
+{
+    lda8(rd8(DP(0x88)));
+    if (!fz) {
+        lda8(dec8((u8)A));
+        wr8(DP(0x88), (u8)A);
+        X = rd8(ABS(0x1999)); nz8((u8)X);
+        if (!fz) lda8(0x24);
+        else {
+            and8(0x10);
+            lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
+            ora8(0x20);
+        }
+        wr8(DP(0x8A), (u8)A);
+    } else {
+        rep(0x20);
+        lda16(rd16(ABS(0x1569)));
+        cmp16(A, rd16(ABS(0x1567)));
+        if (fc) wr16(ABS(0x1567), A);
+        sep(0x20);
+        lda8(0x20); wr8(DP(0x8A), 0x20);
+        wr8(DP(0xCD), inc8(rd8(DP(0xCD))));
+    }
+    ldx8(0x00);
+    push16(0xEA34); DrawAllRiders_m1x1();
+    lda8(0x19); wr8(ABS(0x1961), 0x19);
+    push16(0xEA3C); JumpResultBoard_m1x1();
+    ret();
+}

@@ -866,6 +866,11 @@ BRIDGE_DYN(HleHand_DemoPadDisplay, DemoPadDisplay_m1x1,
            200 + (g_ram[0x1FFFF] >= 6 ? 1450 : 15))
 BRIDGE(HleHand_JumpHudNumbers, JumpHudNumbers_m1x1, 1300)
 BRIDGE(HleHand_SetupJumpContest, SetupJumpContest_m1x1, 9000)
+BRIDGE(HleHand_ShowLastDistance, ShowLastDistance_m1x1, 40)
+BRIDGE(HleHand_JumpResultDistance, JumpResultDistance_m1x1, 750)
+/* four score builds and queues, two distance displays (recompiled) */
+BRIDGE(HleHand_JumpResultBoard, JumpResultBoard_m1x1, 4500)
+BRIDGE_DYN(HleHand_JumpResultBoardStep, JumpResultBoardStep_m1x1, 4560 + draw_all_riders_cost())
 /* VramQueueTilesLong / QueueTileRowsLong ($80:B2D6 / $80:B431) are
  * verified but unhooked: trampolines whose cost is the callee's. */
 /* c/hand/s4/objects.c, part 26 */
