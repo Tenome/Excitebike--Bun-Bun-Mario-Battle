@@ -250,3 +250,7 @@
 81BD6E FrameSequenceA
 81BDDB FrameSequenceB
 81B731 ReleaseBalloons
+80C7DC RaceClockStep
+80C654 RaceTimer
+80D20F CoinCollected
+809B4C EndScreenChoice

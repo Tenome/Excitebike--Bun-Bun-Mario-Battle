@@ -229,3 +229,7 @@
 81BD6E  1 1  mem+A,X,Y,C,V   FrameSequenceA
 81BDDB  1 1  mem+A,X,Y,C,V   FrameSequenceB
 81B731  1 1  mem+A,X,Y,C,V   ReleaseBalloons
+80C7DC  1 1  mem+X,Y,C,V     RaceClockStep
+80C654  1 1  mem+X,Y,C,V     RaceTimer
+80D20F  1 1  mem+A,X,Y,C,V   CoinCollected
+809B4C  1 1  mem+A,X,Y,C,V   EndScreenChoice

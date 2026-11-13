@@ -1876,3 +1876,173 @@ void ReleaseBalloons_m1x1(void)
     X = rd8(ABS(0x039D)); nz8((u8)X);
     ret();
 }
+
+/* $80:C7DC RaceClockStep (RTS): the race clock at VRAM $1897, its frames
+ * $03B3 counting up unless the race is over ($84); then TickRaceClock. */
+void RaceClockStep_m1x1(void)
+{
+    lda8(0x97); wr8(DP(0x00), 0x97);
+    lda8(0x18); wr8(DP(0x01), 0x18);
+    lda8(rd8(DP(0x84)));
+    if (fz) wr8(ABS(0x03B3), inc8(rd8(ABS(0x03B3))));
+    TickRaceClock_m1x1();
+}
+
+/* $80:C654 RaceTimer (RTS): Stadium 4's $80:C3E1 for Stadium 1 (racing
+ * flag $8E, end minutes $80:C6C6, no frame check): the race time runs
+ * and is shown; at this race's end minute or after 4 minutes the race
+ * ends ($085E cleared, $84 = 2, sound $2D). */
+void RaceTimer_m1x1(void)
+{
+    lda8(rd8(DP(0x8E)));
+    if (fz) { ret(); return; }
+    lda8(rd8(DP(0x82)));
+    lda8(inc8((u8)A));
+    cmp8((u8)A, 0x3C);
+    if (fc) {
+        lda8(rd8(DP(0x81)));
+        lda8(inc8((u8)A));
+        cmp8((u8)A, 0x3C);
+        if (fc) { wr8(DP(0x80), inc8(rd8(DP(0x80)))); lda8(0x00); }
+        wr8(DP(0x81), (u8)A);
+        lda8(0x00);
+    }
+    wr8(DP(0x82), (u8)A);
+    X = (u8)A; nz8((u8)X);
+    rep(0x20);
+    lda16(rd16(ABSX(0xC6CE)));
+    lda16(asl16(A));
+    X = (u8)A; nz8((u8)X);
+    lda16(rd16(ABSX(0xC70A))); wr16(ABS(0x09B8), A);
+    lda16(rd16(DP(0x81)));
+    lda16(asl16(A));
+    X = (u8)A; nz8((u8)X);
+    lda16(rd16(ABSX(0xC70A))); wr16(ABS(0x09B5), A);
+    sep(0x20);
+    lda8(rd8(DP(0x80))); wr8(ABS(0x09B3), (u8)A);
+    ldx8(0x06);
+    do {
+        lda8(rd8(ABSX(0x09B3)));
+        wr8(ABSX(0x09BB), (u8)A);
+        X = dec8((u8)X);
+    } while (!fn);
+    push16(0xC69C); RaceClockStep_m1x1();
+    push8((u8)X);
+    lda8(rd8(DP(0x7C)));
+    lda8(asl8((u8)A));
+    fc = 0; adc8(rd8(DP(0x7D)));
+    X = (u8)A; nz8((u8)X);
+    lda8(rd8(ABSX(0xC6C6)));
+    X = pull8(); nz8((u8)X);
+    cmp8((u8)A, rd8(LONG(0x7FFFFF)));
+    if (fc) {
+        lda8(rd8(DP(0x80)));
+        cmp8((u8)A, 0x04);
+        if (!fc) { ret(); return; }
+    }
+    wr8(ABS(0x085E), 0); wr8(ABS(0x085F), 0);
+    lda8(0x02); wr8(DP(0x84), 0x02);
+    lda8(0x2D);
+    push8(0x80); push16(0xC6C4); QueueSound_m1x1();
+    ret();
+}
+
+/* $80:D20F (RTL): a coin collected: sound $31, a marker object in a free
+ * slot (or the oldest, $1541 + 1) rising from the player ($1500 = $38,
+ * $1508 = height $01B0 + $10, velocity $F8 / $E0), and the coin count
+ * $1540 (to 5) adds its points ($80:D291 / $80:D298) into $09AF / $09B0. */
+void CoinCollected_m1x1(void)
+{
+    lda8(0x31);
+    push8(0x80); push16(0xD214); QueueSound_m1x1();
+    wr8(DP(0x00), 0); wr8(DP(0x01), 0);
+    ldx8(0x00);
+    for (;;) {
+        rep(0x20);
+        lda16(rd16(ABSX(0x1538)));
+        cmp16(A, rd16(DP(0x00)));
+        if (fc) { wr16(DP(0x00), A); wr8(DP(0x02), (u8)X); }
+        sep(0x20);
+        lda8(rd8(ABSX(0x1530)));
+        if (fz) break;
+        X = inc8((u8)X); X = inc8((u8)X);
+        cmp8((u8)X, 0x08);
+        if (fc) {
+            X = rd8(DP(0x02)); nz8((u8)X);
+            wr8(ABS(0x1541), inc8(rd8(ABS(0x1541))));
+            break;
+        }
+    }
+    wr8(ABSX(0x1538), 0); wr8(ABSX(0x1539), 0);
+    lda8(0x01); wr8(ABSX(0x1530), 0x01);
+    rep(0x20);
+    lda16(0x0038); wr16(ABSX(0x1500), 0x0038);
+    lda16(rd16(ABS(0x01B0)));
+    fc = 0; adc16(0x0010);
+    wr16(ABSX(0x1508), A);
+    lda16(0x00F8); wr16(ABSX(0x1510), 0x00F8);
+    lda16(0x00E0); wr16(ABSX(0x1518), 0x00E0);
+    wr16(ABSX(0x1520), 0); wr16(ABSX(0x1528), 0);
+    sep(0x20);
+    lda8(rd8(ABS(0x1540)));
+    cmp8((u8)A, 0x05);
+    if (fc) ldy8(0x05);
+    else {
+        wr8(ABS(0x1540), inc8(rd8(ABS(0x1540))));
+        Y = rd8(ABS(0x1540)); nz8((u8)Y);
+    }
+    lda8(rd8(ABSY(0xD291)));
+    fc = 0; adc8(rd8(ABS(0x09AF)));
+    wr8(ABS(0x09AF), (u8)A);
+    lda8(rd8(ABSY(0xD298)));
+    fc = 0; adc8(rd8(ABS(0x09B0)));
+    wr8(ABS(0x09B0), (u8)A);
+    retl();
+}
+
+/* The end screen's choice box rows ($89:D900 + lo) to VRAM $0300. */
+static void choice_box(u8 lo, u16 back)
+{
+    lda8(lo); wr8(DP(0x02), lo);
+    lda8(0xD9); wr8(DP(0x03), 0xD9);
+    lda8(0x89); wr8(DP(0x04), 0x89);
+    lda8(0x20); wr8(DP(0x10), 0x20);
+    lda8(0x02); wr8(DP(0x11), 0x02);
+    lda8(0x00); wr8(DP(0x00), 0x00);
+    lda8(0x03); wr8(DP(0x01), 0x03);
+    push16(back); VramQueueCopy_m1x1();
+}
+
+/* $80:9B4C (RTS): the end screen's choice: after the $88 delay the box
+ * ($89:D900); then A: from step 5 ($0454) to the code step $0A with
+ * sound $43; otherwise to step $0454, $88 = $20 and the next box
+ * ($89:D980). */
+void EndScreenChoice_m1x1(void)
+{
+    lda8(rd8(DP(0x88)));
+    if (!fz) {
+        u8 t = dec8(rd8(DP(0x88)));
+        wr8(DP(0x88), t);
+        if (!fz) { ret(); return; }
+        choice_box(0x00, 0x9B72);
+    }
+    lda8(rd8(DP(0x26)));
+    and8(0x80);
+    if (fz) { ret(); return; }
+    lda8(rd8(ABS(0x0454)));
+    cmp8((u8)A, 0x05);
+    if (fz) {
+        lda8(0x20); wr8(DP(0x88), 0x20);
+        lda8(0x43);
+        push8(0x80); push16(0x9B89); QueueSound_m1x1();
+        lda8(0x0A); wr8(ABS(0x0453), 0x0A);
+        ret();
+        return;
+    }
+    lda8(0x43);
+    push8(0x80); push16(0x9B9D); QueueSound_m1x1();
+    lda8(rd8(ABS(0x0454))); wr8(ABS(0x0453), (u8)A);
+    lda8(0x20); wr8(DP(0x88), 0x20);
+    choice_box(0x80, 0x9BC6);
+    ret();
+}
