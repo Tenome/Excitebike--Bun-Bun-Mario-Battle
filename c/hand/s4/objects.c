@@ -14310,3 +14310,27 @@ void CourseSelectStep_m1x1(void)
     push8(0x80); push16(0xB7EF); CALL(CourseSelectPreview_m1x1, 0x81C1AE, 3);
     ret();
 }
+
+/* $80:FB58 (RTS, X = rider): on the ground a bump crash: unless already
+ * crashed ($01CE), the player gets sound $3B, and the speed $01C6 grows
+ * (to 4, then $01BE = $C0); the crash starts at speed 0. */
+void RiderBumpCrash_m1x1(void)
+{
+    lda8(rd8(ABSX(0x01EE)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABSX(0x01CE)));
+    if (fz) {
+        cmp8((u8)X, 0x00);
+        if (fz) {
+            lda8(0x3B);
+            push8(0x80); push16(0xC0CF); QueueSoundB_m1x1();
+        }
+        lda8(rd8(ABSX(0x01C6)));
+        cmp8((u8)A, 0x04);
+        if (!fc) wr8(ABSX(0x01C6), inc8(rd8(ABSX(0x01C6))));
+        else { lda8(0xC0); wr8(ABSX(0x01BE), 0xC0); }
+    }
+    lda8(0x00);
+    crash_from();
+    ret();
+}

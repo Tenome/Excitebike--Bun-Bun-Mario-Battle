@@ -8873,3 +8873,27 @@ void SetJumpState1_m1x1(void)
     wr8(ABSX(0x0200), 0x01);
     ret();
 }
+
+/* $80:EB04 (RTS, X = rider): on the ground a bump crash: unless already
+ * crashed ($01C8), the player gets sound $3B, and the speed $01C0 grows
+ * (to 4, then $01B8 = $C0); the crash starts at speed 0. */
+void RiderBumpCrash_m1x1(void)
+{
+    lda8(rd8(ABSX(0x01E8)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABSX(0x01C8)));
+    if (fz) {
+        cmp8((u8)X, 0x00);
+        if (fz) {
+            lda8(0x3B);
+            push8(0x80); push16(0xC367); QueueSound_m1x1();
+        }
+        lda8(rd8(ABSX(0x01C0)));
+        cmp8((u8)A, 0x04);
+        if (!fc) wr8(ABSX(0x01C0), inc8(rd8(ABSX(0x01C0))));
+        else { lda8(0xC0); wr8(ABSX(0x01B8), 0xC0); }
+    }
+    lda8(0x00);
+    crash_from1();
+    ret();
+}

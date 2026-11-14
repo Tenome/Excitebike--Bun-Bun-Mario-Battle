@@ -529,3 +529,4 @@
 81C7E0  1 1  mem+A,X,Y,C,V   JumpDistanceStep
 80E933  1 1  mem+A,X,Y,C,V   JumpDistanceStepNear
 80B7EC  1 1  mem+X,Y,C,V     CourseSelectStep
+80FB58  1 1  mem+A,X,Y,C,V   RiderBumpCrash

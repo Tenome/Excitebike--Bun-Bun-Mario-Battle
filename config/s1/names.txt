@@ -413,3 +413,4 @@
 80E3EE DemoExitSkip40
 80E3F2 DemoExitSkip35
 80EAFF SetJumpState1
+80EB04 RiderBumpCrash
