@@ -455,3 +455,4 @@
 8088BF  1 1  mem+C,V         StartRandomCourse
 80B2CD  1 1  mem+X,Y,C,V     ScreenOff
 8085A9  1 1  mem+A,X,Y,C,V   RunGameModeScript
+8083D2  1 1  mem+X,Y,C,V     NmiVramUpload

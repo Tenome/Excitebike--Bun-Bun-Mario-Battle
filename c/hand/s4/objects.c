@@ -12707,3 +12707,95 @@ void RunGameModeScript_m1x1(void)
     sep(0x10);
     ret();
 }
+
+/* $80:83D2 NmiVramUpload (RTS), in vblank with D = $4300: the four
+ * animated tile pairs ($1E12-$1E18 from banks $1550-$1553, each $0100
+ * bytes to VRAM $2000/$2100, $2080/$2180, $2200/$2300, $2280/$2380, the
+ * second half from +$200) when $1E12 is set; $0200 bytes from $9B:($86)
+ * to $5A00; the palette ($1C00, $0200 bytes) when $1915 is set; $0200
+ * bytes from $9B:($1E0A) to ($1E10) when $1E0C and $1E10 are set; then
+ * OAM ($1600, $0220 bytes). */
+void NmiVramUpload_m1x1(void)
+{
+    push16(D);
+    A = 0x4300; nz8(0);
+    D = A; nz16(D);
+    rep(0x10);
+    lda8(0x80); wr8(ABS(0x2115), 0x80);
+    Y = 0x1801; nz16(Y); wr16(DP(0x00), 0x1801);
+    rep(0x20);
+    sep(0x10);
+    lda16(rd16(ABS(0x1E12)));
+    if (!fz) {
+        static const u16 src[4] = { 0x1E12, 0x1E14, 0x1E16, 0x1E18 };
+        static const u16 vram[4] = { 0x2000, 0x2080, 0x2200, 0x2280 };
+        static const u16 back[4][2] = {
+            { 0x8406, 0x841B }, { 0x8431, 0x8446 }, { 0x845C, 0x8471 }, { 0x8487, 0x849C },
+        };
+        for (int k = 0; k < 4; k++) {
+            lda16(vram[k]); wr16(ABS(0x2116), vram[k]);
+            lda16(0x0100); wr16(DP(0x05), 0x0100);
+            lda16(rd16(ABS(src[k])));
+            X = rd8(ABS(0x1550 + k)); nz8((u8)X);
+            ldy8(0x01);
+            push16(back[k][0]); DmaKick_m0x1();
+            u16 v2 = (u16)(vram[k] + 0x0100);
+            lda16(v2); wr16(ABS(0x2116), v2);
+            lda16(0x0100); wr16(DP(0x05), 0x0100);
+            lda16(rd16(ABS(src[k])));
+            fc = 0; adc16(0x0200);
+            push16(back[k][1]); DmaKick_m0x1();
+        }
+    }
+    rep(0x20);
+    sep(0x10);
+    lda16(rd16(ABS(0x0086)));
+    if (!fz) {
+        lda16(0x5A00); wr16(ABS(0x2116), 0x5A00);
+        lda16(0x0200); wr16(DP(0x05), 0x0200);
+        lda16(rd16(ABS(0x0086)));
+        ldx8(0x9B);
+        ldy8(0x01);
+        push16(0x84BA); DmaKick_m0x1();
+    }
+    rep(0x10);
+    sep(0x20);
+    lda8(rd8(ABS(0x1915)));
+    if (!fz) {
+        wr8(ABS(0x2121), 0);
+        Y = 0x2200; nz16(Y); wr16(DP(0x00), 0x2200);
+        Y = 0x1C00; nz16(Y); wr16(DP(0x02), 0x1C00);
+        lda8(0x00); wr8(DP(0x04), 0);
+        Y = 0x0200; nz16(Y); wr16(DP(0x05), 0x0200);
+        lda8(0x01); wr8(ABS(0x420B), 0x01);
+        wr8(ABS(0x1915), 0);
+    }
+    lda8(rd8(ABS(0x1E0C)));
+    if (!fz) {
+        rep(0x20);
+        sep(0x10);
+        lda16(rd16(ABS(0x1E10)));
+        if (!fz) {
+            ldy8(0x80); wr8(ABS(0x2115), 0x80);
+            lda16(0x1801); wr16(DP(0x00), 0x1801);
+            lda16(rd16(ABS(0x1E10))); wr16(ABS(0x2116), A);
+            lda16(0x0200); wr16(DP(0x05), 0x0200);
+            lda16(rd16(ABS(0x1E0A)));
+            ldx8(0x9B);
+            ldy8(0x01);
+            push16(0x850E); DmaKick_m0x1();
+        }
+    }
+    rep(0x20);
+    sep(0x10);
+    wr16(ABS(0x2102), 0);
+    lda16(0x0400); wr16(DP(0x00), 0x0400);
+    lda16(0x1600); wr16(DP(0x02), 0x1600);
+    wr16(DP(0x04), 0);
+    lda16(0x0220); wr16(DP(0x05), 0x0220);
+    ldy8(0x01); wr8(ABS(0x420B), 0x01);
+    lda16(0x1801); wr16(DP(0x00), 0x1801);
+    sep(0x30);
+    D = pull16(); nz16(D);
+    ret();
+}

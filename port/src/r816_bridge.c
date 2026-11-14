@@ -1293,6 +1293,9 @@ BRIDGE(HleHand_ScreenOff, ScreenOff_m1x1, 15)
 /* Not bridged: RunGameModeScript ($80:85A9, passes difftest on s4). Its
  * reset path calls the recompiled BS-X boot check $82:9182 (not a tail
  * call), which hand C cannot resume if it yields; same rule as Stadium 1. */
+/* NMI VRAM upload */
+BRIDGE_DYN(HleHand_NmiVramUpload, NmiVramUpload_m1x1,
+           (g_ram[0x1E12] | g_ram[0x1E13]) ? 300 : 100)
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)
