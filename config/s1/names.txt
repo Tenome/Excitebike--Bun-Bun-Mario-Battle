@@ -326,3 +326,5 @@
 80E9F3 UseArrowPiece
 80EA6A CollectPickupPiece
 80916B PlayerSelectStart
+80B158 RaceBookkeeping
+80A0BC ShowEntryPassword

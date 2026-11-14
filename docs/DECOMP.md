@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 304 hand-written (74.7%), 301 of them in the port.
+407 functions in the static map; 306 hand-written (75.2%), 303 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -68,12 +68,13 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:A03F` | GrowBar087E | `mem+X,Y,V` | `misc.c` | yes |
 | `$80:A07F` | StepColourCycle | `mem+X,Y,V` | `misc.c` | yes |
 | `$80:A0AA` | BsxCheckSerial | `mem+X,Y,C,V` | `objects.c` | yes |
+| `$80:A0BC` | ShowEntryPassword | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:A10E` | PackEntryCode | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:A1A6` | Add32 | `mem+Y,V` | `physics.c` | yes |
 | `$80:A1BC` | PackRecordTime | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:A231` | PackEntryNumber | `mem+A,X,Y,C,V` | `objects.c` | yes |
-| `$80:A41C` | MergeBsxFlags | `mem+Y` | `misc.c` | yes |
-| `$80:A458` | SumBytes0850 | `mem+Y` | `misc.c` | yes |
+| `$80:A41C` | MergeBsxFlags | `mem+Y` | `objects.c` | yes |
+| `$80:A458` | SumBytes0850 | `mem+Y` | `objects.c` | yes |
 | `$80:A5B7` | DrawRacerName | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:A66D` | DrawHudLabelA | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:A68F` | DrawHudLabelB | `mem+X,Y,C,V` | `race.c` | yes |
@@ -101,6 +102,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:B02F` | CpuAvoidHurdle | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:B0C5` | LaneFromY | `mem+X,Y,C,V` | `physics.c` | yes |
 | `$80:B0E1` | ReadRiderPieces | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:B158` | RaceBookkeeping | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:B17B` | DrawBigSprite | `mem+X,Y,V` | `objects.c` | yes |
 | `$80:B226` | ClearOamBuffer | `mem+X,Y,C,V` | `frame.c` | yes |
 | `$80:B2A1` | VramQueueTilesLong | `mem+X,Y,C,V` | `objects.c` |  |

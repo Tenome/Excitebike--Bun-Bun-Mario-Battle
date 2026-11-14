@@ -5635,3 +5635,66 @@ void PlayerSelectStart_m1x1(void)
     sep(0x20);
     ret();
 }
+
+void sub_80EE5C_m1x1(void);
+void sub_80A2B0_m1x1(void);
+void MergeBsxFlags_m1x1(void);
+void SumBytes0850_m1x1(void);
+
+/* $80:B158 (RTS): the race's per-frame bookkeeping: $7F = frame & 7, the
+ * rider pieces, and while racing for real (no $0CD7, $1923 clear, mode
+ * below 9) the pace bonus, the score and $80:EE5C. */
+void RaceBookkeeping_m1x1(void)
+{
+    lda8(rd8(DP(0x63)));
+    and8(0x07);
+    wr8(DP(0x7F), (u8)A);
+    push16(0xB160); ReadRiderPieces_m1x1();
+    lda8(rd8(ABS(0x0CD7)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABS(0x1923)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(DP(0x76)));
+    cmp8((u8)A, 0x09);
+    if (fc) { ret(); return; }
+    push16(0xB173); PaceBonus_m1x1();
+    push16(0xB176); AddScore_m1x1();
+    push16(0xB179); CALL(sub_80EE5C_m1x1, 0x80EE5C, 2);
+    ret();
+}
+
+/* $80:A0BC (RTL): pack the entry (code, record time, entry number,
+ * $80:A2B0, BS-X flags, checksum) and show the twelve packed nibbles
+ * $0850 as digit tiles (high and low rows, $2C in front) at VRAM $08B1. */
+void ShowEntryPassword_m1x1(void)
+{
+    push8(0x80); push16(0xA0BF); PackEntryCode_m1x1();
+    push8(0x80); push16(0xA0C3); PackRecordTime_m1x1();
+    push8(0x80); push16(0xA0C7); PackEntryNumber_m1x1();
+    push8(0x80); push16(0xA0CB); CALL(sub_80A2B0_m1x1, 0x80A2B0, 3);
+    push8(0x80); push16(0xA0CF); MergeBsxFlags_m1x1();
+    push8(0x80); push16(0xA0D3); SumBytes0850_m1x1();
+    ldx8(0x0B);
+    do {
+        lda8(rd8(ABSX(0x0850)));
+        and8(0x30);
+        lda8(asl8((u8)A));
+        fc = 0; adc8(0x20);
+        wr8(DP(0x00), (u8)A);
+        lda8(rd8(ABSX(0x0850)));
+        and8(0x0F);
+        ora8(rd8(DP(0x00)));
+        wr8(ABSX(0x03D3), (u8)A);
+        ora8(0x10);
+        wr8(ABSX(0x03DF), (u8)A);
+        X = dec8((u8)X);
+    } while (!fn);
+    lda8(0x2C); wr8(ABS(0x03D2), 0x2C);
+    rep(0x20);
+    lda16(0x08B1); wr16(DP(0x00), 0x08B1);
+    lda16(0x03D2); wr16(DP(0x02), 0x03D2);
+    sep(0x20);
+    lda8(0x01); wr8(DP(0x0F), 0x01);
+    push16(0xA10C); VramQueueTiles_m1x1();
+    retl();
+}

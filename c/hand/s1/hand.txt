@@ -308,3 +308,5 @@
 80E9F3  1 1  mem+A,X,Y,C,V   UseArrowPiece
 80EA6A  1 1  mem+A,X,Y,C,V   CollectPickupPiece
 80916B  1 1  mem+A,X,Y,C,V   PlayerSelectStart
+80B158  1 1  mem+X,Y,C,V   RaceBookkeeping
+80A0BC  1 1  mem+X,Y,C,V   ShowEntryPassword
