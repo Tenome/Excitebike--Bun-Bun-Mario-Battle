@@ -276,6 +276,7 @@ meet:
     lda8(0xFF);
     wr8(ABS(0x01CE + Y), 0xFF);
     push8((u8)Y);
+    u8 rider = (u8)Y;
     wr8(ABS(0x000F), (u8)Y);
     lda8(rd8(ABS(0x154F)));
     lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A));
@@ -294,7 +295,9 @@ meet:
     fc = 0;
     adc8(rd8(DP(0x0F)));
     Y = (u8)A; nz8((u8)Y);
-    lda8(rd8(ABS(0xC8E9 + Y)));                       /* crash voice */
+    /* crash voice $80:C8E9,Y (the roster's for an added character's race) */
+    lda8(roster_crash_voice(rd8(LONG(0x81800C)) != 0, rd8(ABS(0x1E91)) != 0,
+                            rd8(ABS(0x154F)), rider));
     if (!fz) {
         push8(0x80); push16(0xC8BF); QueueSoundB_m1x1();
     }

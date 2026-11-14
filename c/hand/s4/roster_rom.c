@@ -29,6 +29,12 @@ u32 roster_name(int st, int ch, u16 orig)
     return 0x800000 | orig;
 }
 
+u8 roster_crash_voice(int st, int var, int ch, int rider)
+{
+    /* DB-relative, as the original reads it */
+    return rd8(ABS(0xC8E9 + (((st ? 0x50 : 0) + (var ? 0x28 : 0) + ch * 8 + rider) & 0xFF)));
+}
+
 u8 roster_winner_pose(int ch, int rider)
 {
     return rd8(LONG(0x810000 | (0xC158 + ((ch * 8 + rider) & 0xFF))));

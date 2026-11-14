@@ -33,6 +33,7 @@ typedef struct {
     u32 pal[2][2][5];               /* [Stadium][variant][palette] */
     u32 name;                       /* 15-byte tile list */
     u8  pose[8];                    /* winner figure per rider */
+    u8  voice[2][2][8];             /* crash voice per rider [Stadium][variant] */
 } Character;
 
 static Character g_ch[MAX_CH];
@@ -66,6 +67,10 @@ static void from_rom(int c)
     h->name = 0x800000 | (u16)(0xA598 + c * 15 + 0x4B);   /* Stadium 4 names */
     for (int r = 0; r < 8; r++)
         h->pose[r] = rom8(0x810000 | (0xC158 + ((c * 8 + r) & 0xFF)));
+    for (int st = 0; st < 2; st++)
+        for (int v = 0; v < 2; v++)
+            for (int r = 0; r < 8; r++)
+                h->voice[st][v][r] = rom8(0x800000 | (0xC8E9 + ((st * 0x50 + v * 0x28 + c * 8 + r) & 0xFF)));
 }
 
 /* Grow the cartridge image to 4 MB (mirrors of the original) once. */
@@ -109,18 +114,26 @@ static void add_luigi(void)
     put(EXT_LUIGI_VOICE, s3 + (((0x9D8000 >> 16) & 0x7F) << 15), 0x3000);  /* $9D:8000 */
     SDL_free(s3);
 
-    /* Luigi takes Yoshi's place in Yoshi's own races: same lineup, his set,
-     * his Stadium 3 palette ($82:8AF0) and name (the Stadium 3 name table). */
+    /* Luigi takes Yoshi's place in Yoshi's own races (lineup Luigi, Wario,
+     * Mario, Peach), with his set, his Stadium 3 palette ($82:8AF0) and name
+     * (the Stadium 3 name table). Rider 3 is then Yoshi instead of Peach, so
+     * the two meet: Yoshi's own rider set, palette and crash voice, as
+     * Stadium 4's Mario race has him in that slot. */
     Character *l = &g_ch[5];
     *l = g_ch[1];
     l->label = "Luigi";
     for (int v = 0; v < 2; v++) {
         l->bank[v][0] = (u8)(EXT_LUIGI_SET >> 16);
         l->off[v][0] = (u16)EXT_LUIGI_SET;
+        l->bank[v][3] = g_ch[1].bank[v][0];
+        l->off[v][3] = g_ch[1].off[v][0];
     }
     for (int st = 0; st < 2; st++)
-        for (int v = 0; v < 2; v++)
+        for (int v = 0; v < 2; v++) {
             l->pal[st][v][0] = 0x828AF0;
+            l->pal[st][v][3] = g_ch[1].pal[1][v][0];      /* Yoshi, $82:8B10 */
+            l->voice[st][v][3] = g_ch[1].voice[1][v][0];  /* Yoshi's voice $35 */
+        }
     l->name = 0x800000 | (u16)(0xA598 + 1 * 15);
     g_count = 6;
     SDL_Log("[roster] Luigi added (character 5)");
@@ -197,6 +210,14 @@ u32 roster_name(int st, int ch, u16 orig)
     if (ch >= 5 && ch < g_count)
         return g_ch[ch].name;
     return 0x800000 | orig;
+}
+
+u8 roster_crash_voice(int st, int var, int ch, int rider)
+{
+    ch = real_char(ch);
+    if (ch >= 5 && ch < g_count)
+        return g_ch[ch].voice[st ? 1 : 0][var ? 1 : 0][rider & 7];
+    return rd8(ABS(0xC8E9 + (((st ? 0x50 : 0) + (var ? 0x28 : 0) + ch * 8 + rider) & 0xFF)));
 }
 
 u8 roster_winner_pose(int ch, int rider)

@@ -4,6 +4,7 @@
  * count $032F, a frame $034F, a delay $036F and a counter $037F.
  */
 #include "hand/hand.h"
+#include "roster.h"
 
 void RandomB_m1x1(void);
 
@@ -12346,6 +12347,8 @@ void RaceResultsSetup_m1x1(void)
         fc = 0; adc16(0x004B);
         wr16(DP(0x02), A);
     }
+    /* the original's name, or the roster's for an added character (bank $80) */
+    wr16(DP(0x02), (u16)roster_name(rd8(LONG(0x81800C)) != 0, rd8(ABS(0x154F)), rd16(DP(0x02))));
     lda16(0x1844); wr16(DP(0x00), 0x1844);
     sep(0x20);
     push16(0x9325); VramQueueTiles20_m1x1();

@@ -43,6 +43,9 @@ u32 roster_rider_palette(int st, int var, int ch, int i);
  * orig is the bank $80 pointer the original computed (it uses the hardware
  * multiplier); the original characters keep it. */
 u32 roster_name(int st, int ch, u16 orig);
+/* Crash voice (sound number, 0 = none) of rider 0-7 in a race of
+ * character ch ($80:C8E9 + st * $50 + var * $28 + ch * 8 + rider). */
+u8 roster_crash_voice(int st, int var, int ch, int rider);
 /* Pose of the winning rider at the end of a race of character ch
  * ($81:C158 + ch * 8 + rider). */
 u8 roster_winner_pose(int ch, int rider);

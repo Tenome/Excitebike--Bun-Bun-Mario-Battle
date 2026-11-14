@@ -1197,6 +1197,7 @@ BRIDGE(HleHand_QueueBonusDigitsLong, QueueBonusDigitsLong_m1x1, 1310)
 BRIDGE(HleHand_QueueBestTimeLong, QueueBestTimeLong_m1x1, 1325)
 BRIDGE_DYN(HleHand_BestTimeBlink, BestTimeBlink_m1x1,
            !g_ram[0xCB] ? 8 : ((g_ram[0xCB] - 1) & 0x0F) ? (g_ram[0xCB] == 1 ? 1350 : 20) : 900)
+BRIDGE_DYN(HleHand_ResultsBonusCount, ResultsBonusCount_m1x1,
            g_ram[0x88] ? 15 : (g_ram[0xBA] ? 2400 : 200))
 BRIDGE_DYN(HleHand_DemoPadDisplay, DemoPadDisplay_m1x1,
            200 + (g_ram[0x1FFFF] >= 6 ? 1450 : 15))
@@ -1332,15 +1333,18 @@ static uint32 object_pieces_cost4(void)
     return 60 + 55 * (n ? n : 256);
 }
 BRIDGE_DYN(HleHand_DrawObjectPieces, DrawObjectPieces_m1x1, object_pieces_cost4())
-/* Stadium 4 parallax line buffers (objects.c) */
-BRIDGE(HleHand_ScaleByScroll, ScaleByScroll_m0x0, 130)
-BRIDGE(HleHand_ParallaxLines, ParallaxLines_m1x1, 14000)
+/* Not bridged (Stadium 4), though they pass difftest: ScaleByScroll
+ * ($80:B912), ParallaxLines ($80:B91E), InitPpuRegisters ($82:805F) and
+ * NmiVramUpload ($80:83D2). Each one hooked alone shifts the Gen B jump run
+ * (944-1441 of 1551 frames match instead of 1515): they run inside the IRQ
+ * and NMI handlers or at scene setup, where a flat bridge cost does not
+ * follow the original's timing. Found by bisecting the hooks added while the
+ * Gen B build was broken (2026-11-13 19:55 to 2026-11-14). */
 /* Stadium 4 race results setup (objects.c) */
 BRIDGE_DYN(HleHand_RaceResultsSetup, RaceResultsSetup_m1x1, g_ram[0x7D] ? 9000 : 2500)
 /* video init */
 BRIDGE(HleHand_ForceBlank, ForceBlank_m1x1, 20)
 BRIDGE(HleHand_ClearTilemaps, ClearTilemaps_m1x1, 200)
-BRIDGE(HleHand_InitPpuRegisters, InitPpuRegisters_m1x1, 400)
 /* DMA kick, random course */
 BRIDGE(HleHand_DmaKick, DmaKick_m0x1, 12)
 BRIDGE(HleHand_StartRandomCourse, StartRandomCourse_m1x1, 800)
@@ -1349,9 +1353,6 @@ BRIDGE(HleHand_ScreenOff, ScreenOff_m1x1, 15)
 /* Not bridged: RunGameModeScript ($80:85A9, passes difftest on s4). Its
  * reset path calls the recompiled BS-X boot check $82:9182 (not a tail
  * call), which hand C cannot resume if it yields; same rule as Stadium 1. */
-/* NMI VRAM upload */
-BRIDGE_DYN(HleHand_NmiVramUpload, NmiVramUpload_m1x1,
-           (g_ram[0x1E12] | g_ram[0x1E13]) ? 300 : 100)
 /* SaveChecksum ($82:8F27), SaveHeaderCheck ($82:8E8E), SaveBestRecords
  * ($82:8F6F), BroadcastTotals ($80:97B9) and StartSession ($80:8F69) pass
  * difftest on s4 but are not hooked: the checksum runs longer than a frame
