@@ -353,3 +353,7 @@
 80DD03 CourseRowList
 80DB89 BuildCourseColumn
 809698 Mode04_FreeRunSchedule
+819852 ResultsBonusCount
+80C8E9 ShowCourseBest
+80CC38 SortAndDrawRiders
+80A89C RacePlaceRiders

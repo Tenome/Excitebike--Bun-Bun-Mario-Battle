@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 331 hand-written (81.3%), 328 of them in the port.
+407 functions in the static map; 335 hand-written (82.3%), 331 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -82,6 +82,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:A68F` | DrawHudLabelB | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:A6B2` | EraseCollectedCoin | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:A7AF` | RedrawUsedItem | `mem+X,Y,C,V` | `objects.c` | yes |
+| `$80:A89C` | RacePlaceRiders | `mem+A,X,Y,C,V` | `objects.c` |  |
 | `$80:AA78` | RaceBannerSprites | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:AB18` | SendSpeedToApu | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:AB2A` | BallOrGauge | `mem+A,X,Y,C,V` | `objects.c` | yes |
@@ -155,19 +156,21 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:C7EB` | TickRaceClock | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:C805` | ShowRaceClock | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:C877` | ShowBestTime | `mem+X,Y,C,V` | `objects.c` | yes |
+| `$80:C8E9` | ShowCourseBest | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:C8EE` | RecordCourseTime | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:C98F` | DivideAX | `mem+X,V` | `objects.c` | yes |
 | `$80:C99D` | RiderLaneBand | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:CB39` | Reach20 | `mem+A,X,Y,V` | `from_s4.c` | yes |
 | `$80:CB40` | Reach2 | `mem+A,X,Y,V` | `from_s4.c` | yes |
 | `$80:CB47` | BallHit | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:CC38` | SortAndDrawRiders | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:CC3D` | DrawAllRiders | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:CCE1` | DrawRider | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:CD54` | RiderPose | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:CDF6` | WheelSpark | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:CEE7` | DrawRiderShadowPair | `mem+X,Y,V` | `race.c` | yes |
 | `$80:CF0D` | TemperatureGauge | `mem+A,X,Y,C,V` | `objects.c` | yes |
-| `$80:CFFA` | SortRidersByPosition | `mem` | `from_s4.c` | yes |
+| `$80:CFFA` | SortRidersByPosition | `mem` | `objects.c` | yes |
 | `$80:D038` | ClearMidScreenRiders | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:D069` | ClipRiderSprite | `mem+X,C,V` | `race.c` | yes |
 | `$80:D0BA` | UpdatePlayerPlace | `mem+X,Y,C,V` | `race.c` | yes |
@@ -278,6 +281,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$81:97CC` | RivalCountdown_97CC | `mem+V` | `misc.c` | yes |
 | `$81:97E2` | SkyFadeObject | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$81:982B` | FadeInObject | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$81:9852` | ResultsBonusCount | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$81:9957` | FadeSkyColours | `mem+V` | `objects.c` | yes |
 | `$81:99CB` | FadePaletteStep | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$81:9A8D` | QueueMapTile | `mem+X,Y,C,V` | `objects.c` | yes |

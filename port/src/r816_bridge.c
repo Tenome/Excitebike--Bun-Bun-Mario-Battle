@@ -602,6 +602,18 @@ BRIDGE(HleHand_QueueScoreDigitsLong, QueueScoreDigitsLong_m1x1, 300)
 BRIDGE(HleHand_CourseRowList, CourseRowList_m1x1, 24)
 BRIDGE_DYN(HleHand_BuildCourseColumn, BuildCourseColumn_m1x1, build_column_cost1())
 BRIDGE(HleHand_Mode04_FreeRunSchedule, Mode04_FreeRunSchedule_m1x1, 120)
+/* ResultsBonusCount ($81:9852): ~25 cycles between counts ($88 set),
+ * ~450 on a count. */
+static uint32 bonus_count_cost1(void)
+{
+    return g_ram[0x88] ? 25 : 450;
+}
+BRIDGE(HleHand_ShowCourseBest, ShowCourseBest_m1x1, 1360)
+/* RacePlaceRiders ($80:A89C) passes difftest on s1 but is not hooked here:
+ * it calls LoadCourse, and only HleHand_LoadCourse applies custom courses,
+ * so the recompiled routine keeps calling it through the hook. */
+BRIDGE_DYN(HleHand_ResultsBonusCount, ResultsBonusCount_m1x1, bonus_count_cost1())
+BRIDGE(HleHand_SortAndDrawRiders, SortAndDrawRiders_m1x1, 3800)
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */
@@ -1073,7 +1085,6 @@ BRIDGE(HleHand_QueueBonusDigitsLong, QueueBonusDigitsLong_m1x1, 1310)
 BRIDGE(HleHand_QueueBestTimeLong, QueueBestTimeLong_m1x1, 1325)
 BRIDGE_DYN(HleHand_BestTimeBlink, BestTimeBlink_m1x1,
            !g_ram[0xCB] ? 8 : ((g_ram[0xCB] - 1) & 0x0F) ? (g_ram[0xCB] == 1 ? 1350 : 20) : 900)
-BRIDGE_DYN(HleHand_ResultsBonusCount, ResultsBonusCount_m1x1,
            g_ram[0x88] ? 15 : (g_ram[0xBA] ? 2400 : 200))
 BRIDGE_DYN(HleHand_DemoPadDisplay, DemoPadDisplay_m1x1,
            200 + (g_ram[0x1FFFF] >= 6 ? 1450 : 15))

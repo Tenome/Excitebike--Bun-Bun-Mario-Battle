@@ -335,3 +335,7 @@
 80DD03  1 1  mem+A,X,Y,C,V   CourseRowList
 80DB89  1 1  mem+A,X,Y,C,V   BuildCourseColumn
 809698  1 1  mem+A,X,Y,C,V   Mode04_FreeRunSchedule
+819852  1 1  mem+A,X,Y,C,V   ResultsBonusCount
+80C8E9  1 1  mem+X,Y,C,V   ShowCourseBest
+80CC38  1 1  mem+A,X,Y,C,V   SortAndDrawRiders
+80A89C  1 1  mem+A,X,Y,C,V   RacePlaceRiders
