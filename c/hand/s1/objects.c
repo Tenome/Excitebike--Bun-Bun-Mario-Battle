@@ -3749,3 +3749,151 @@ void BonusRunOut_m1x1(void)
     lda8(0x00); wr8(ABS(0x0180), 0x00);
     ret();
 }
+
+void SegmentNext_m1x1(void);
+void SpawnDustPuff_m1x1(void);
+
+/* $80:915C: SegmentNext's tail: APU port 3 silenced, $75 / $77 cleared,
+ * fade out ($1923 = $FF). */
+static void segment_finish(void)
+{
+    wr8(ABS(0x2143), 0);
+    lda8(0x00);
+    wr8(DP(0x75), 0);
+    wr8(DP(0x77), 0);
+    lda8(0xFF);
+    wr8(ABS(0x1923), 0xFF);
+    ret();
+}
+
+/* $80:AB7F: a dust puff every 16 frames; with $60 odd, $00 = $58,
+ * X = 7, Y = $1C. */
+static void dust_tail(void)
+{
+    lda8(rd8(DP(0x63)));
+    and8(0x0F);
+    if (fz) { push8(0x80); push16(0xAB88); SpawnDustPuff_m1x1(); }
+    lda8(rd8(DP(0x60)));
+    lda8(lsr8((u8)A));
+    if (fc) {
+        lda8(0x58); wr8(DP(0x00), 0x58);
+        ldx8(0x07);
+        lda8((u8)X);
+        lda8(asl8((u8)A)); lda8(asl8((u8)A));
+        Y = (u8)A; nz8((u8)Y);
+    }
+    ret();
+}
+
+/* $80:AB3D (RTS): the segment timer $52 (reloaded with $10): at 1 the
+ * next segment, and on the special course ($0CD7) the race state $38-$63
+ * is cleared, mode 0 with $79 + 1. Otherwise $092D / $0940 / $60 clear,
+ * and right after the race ($84 = 1) on even ticks X = $19 (from $12). */
+void SegmentTimer_m1x1(void)
+{
+    lda8(rd8(DP(0x52)));
+    if (fz) { lda8(0x10); wr8(DP(0x52), 0x10); }
+    cmp8((u8)A, 0x01);
+    if (fz) {
+        push16(0xAB4B); SegmentNext_m1x1();
+        lda8(rd8(ABS(0x0CD7)));
+        if (fz) { ret(); return; }
+        ldx8(0x2B);
+        do {
+            wr8(DPX(0x38), 0);
+            X = dec8((u8)X);
+        } while (!fn);
+        wr8(DP(0x76), 0);
+        wr8(DP(0x79), inc8(rd8(DP(0x79))));
+        segment_finish();
+        return;
+    }
+    lda8(0x00);
+    wr8(ABS(0x092D), 0); wr8(ABS(0x0940), 0); wr8(DP(0x60), 0);
+    X = rd8(DP(0x84)); nz8((u8)X);
+    X = dec8((u8)X);
+    if (!fz) { ret(); return; }
+    ldx8(0x12);
+    lda8(rd8(DP(0x52)));
+    lda8(lsr8((u8)A));
+    if (fc) { ret(); return; }
+    ldy8(0x06);
+    lda8(0xFE);
+    do {
+        X = inc8((u8)X);
+        Y = dec8((u8)Y);
+    } while (!fn);
+    ret();
+}
+
+/* $80:C41D (RTS): the finish ($60 / $0940): at $60 = 8 the race closes
+ * ($0940 cleared, sound $2D, $0990 = $08CC = 5, the player's start step
+ * $01D0 = 5 if unset); above 8 the stopped player is parked ($01B8 = $C0
+ * in a tumble, else 0 with steering $01A8 toward lane $80:BDA2) and the
+ * dust tail runs. */
+void FinishStep_m1x1(void)
+{
+    lda8(rd8(DP(0x60)));
+    ora8(rd8(ABS(0x0940)));
+    if (fz) { ret(); return; }
+    lda8(rd8(DP(0x60)));
+    cmp8((u8)A, 0x08);
+    if (fz) {
+        lda8(0x00); wr8(ABS(0x0940), 0x00);
+        lda8(0x2D);
+        push8(0x80); push16(0xC461); QueueSound_m1x1();
+        lda8(0x05); wr8(ABS(0x0990), 0x05); wr8(ABS(0x08CC), 0x05);
+        Y = rd8(ABS(0x01D0)); nz8((u8)Y);
+        if (fz) wr8(ABS(0x01D0), (u8)A);
+        ret();
+        return;
+    }
+    if (!fc) { ret(); return; }
+    lda8(rd8(ABS(0x01C0)));
+    ora8(rd8(ABS(0x01C8)));
+    ora8(rd8(ABS(0x01D0)));
+    if (fz) {
+        lda8(rd8(ABS(0x0170)));
+        if (!fz) { lda8(0xC0); wr8(ABS(0x01B8), 0xC0); }
+        else {
+            wr8(ABS(0x01B8), (u8)A);
+            ldx8(0x01);
+            lda8(rd8(ABS(0x01F0)));
+            cmp8((u8)A, rd8(ABS(0xBDA2)));
+            if (fz) X = dec8((u8)X);
+            wr8(ABS(0x01A8), (u8)X);
+        }
+    }
+    dust_tail();
+}
+
+/* $80:E004 CheckEndingMinute (RTS): when $88 runs out: the special course
+ * ends ($0CD7 = 0); with tries left ($1E87 - $0A) back to mode 9; else
+ * $88 = 1 and from minute $39 to mode $10 with the timers $86-$8D
+ * cleared. Each change finishes the segment. */
+void CheckEndingMinute_m1x1(void)
+{
+    u8 t = dec8(rd8(DP(0x88)));
+    wr8(DP(0x88), t);
+    if (!fz) { ret(); return; }
+    wr8(ABS(0x0CD7), 0);
+    lda8(rd8(ABS(0x1E87)));
+    if (!fn) {
+        fc = 1; sbc8(0x0A);
+        wr8(ABS(0x1E87), (u8)A);
+        if (!fn) {
+            lda8(0x09); wr8(DP(0x76), 0x09);
+            segment_finish();
+            return;
+        }
+    }
+    lda8(0x01); wr8(DP(0x88), 0x01);
+    lda8(rd8(LONG(0x7FFFFF)));
+    cmp8((u8)A, 0x39);
+    if (!fc) { ret(); return; }
+    lda8(0x10); wr8(DP(0x76), 0x10);
+    rep(0x20);
+    wr16(ABS(0x0086), 0); wr16(ABS(0x0088), 0); wr16(ABS(0x008A), 0); wr16(ABS(0x008C), 0);
+    sep(0x20);
+    segment_finish();
+}

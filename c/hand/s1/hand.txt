@@ -272,3 +272,6 @@
 80CC3D  1 1  mem+A,X,Y,C,V   DrawAllRiders
 81A0B5  1 1  mem+A,X,Y,C,V   EngineSound
 80DB44  1 1  mem+X,Y,C,V     BonusRunOut
+80AB3D  1 1  mem+A,X,Y,C,V   SegmentTimer
+80C41D  1 1  mem+A,X,Y,C,V   FinishStep
+80E004  1 1  mem+A,X,Y,C,V   CheckEndingMinute

@@ -293,3 +293,5 @@
 80CC3D DrawAllRiders
 81A0B5 EngineSound
 80DB44 BonusRunOut
+80AB3D SegmentTimer
+80C41D FinishStep
