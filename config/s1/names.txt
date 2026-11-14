@@ -300,3 +300,5 @@
 80A10E PackEntryCode
 8098B2 QueueTimeDigits
 819DC6 DrawObjectSprites
+80E377 DemoInputStep
+80E4FC DemoPushStart

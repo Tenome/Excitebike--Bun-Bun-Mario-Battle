@@ -4169,3 +4169,141 @@ void DrawObjectSprites_m1x1(void)
     sep(0x10);
     ret();
 }
+
+void StartMode01_m1x1(void);
+
+/* $80:E3C7: leave or act on a demo command Y through the table $80:E0D3 /
+ * $80:E0D8 (JMP ($0000)). Returns 1 when the demo should read on
+ * ($80:E3A9) after the command (lane/attribute tweaks and the $10 timer
+ * set), 0 when the command ended the step. */
+static int demo_command1(void)
+{
+    lda8(rd8(ABSY(0xE0D3))); wr8(DP(0x00), (u8)A);
+    lda8(rd8(ABSY(0xE0D8))); wr8(DP(0x01), (u8)A);
+    u16 target = rd16(LONG(0x000000));
+    switch (target) {
+    case 0xE3FB:                                       /* end: mode 1 */
+        StartMode01_m1x1();
+        return 0;
+    case 0xE3F2:
+        lda8(0x35);
+        fc = 0; adc8(rd8(ABSX(0xE1A5)));
+        return 1;
+    case 0xE3EE:
+        lda8(0x40);
+        return 1;
+    case 0xE3DF:                                       /* the ball rider */
+        ldx8(0x07);
+        wr8(ABS(0x092A), 0x07);
+        lda8(0x00); wr8(ABSX(0x0198), 0x00);
+        ldy8(0x03);
+        PlaceRival_m1x1();
+        return 0;
+    case 0xE3D4:
+        lda8(0x10); wr8(ABS(0x099D), 0x10); wr8(ABS(0x0990), 0x10);
+        return 1;
+    default:
+        r816_call_pc(0x800000u | target);
+        return 0;
+    }
+}
+
+/* $80:E3A9: the next demo entry ($0CE1): its duration ($80:E0DD) and pad
+ * input ($80:E1A5 -> $0178, $098E); entries $F8+ are commands. */
+static void demo_next1(void)
+{
+    for (;;) {
+        X = rd8(ABS(0x0CE1)); nz8((u8)X);
+        wr8(ABS(0x0CE1), inc8(rd8(ABS(0x0CE1))));
+        lda8(rd8(ABSX(0xE0DD)));
+        cmp8((u8)A, 0xF8);
+        if (!fc) {
+            wr8(ABS(0x0CE3), (u8)A);
+            lda8(rd8(ABSX(0xE1A5)));
+            wr8(ABS(0x0178), (u8)A);
+            wr8(ABS(0x098E), (u8)A);
+            fc = 0;
+            ret();
+            return;
+        }
+        eor8(0xFF);
+        Y = (u8)A; nz8((u8)Y);
+        if (!demo_command1()) return;
+    }
+}
+
+/* $80:E377 DemoInputStep (RTS): the attract demo's recorded input:
+ * Start with the debug flag ends it; before the run ($8E) the first entry
+ * ($0CE1 = 0, or $68 with $81:800C); each entry is held for its duration
+ * $0CE3. C clear while it plays. */
+void DemoInputStep_m1x1(void)
+{
+    lda8(rd8(LONG(0x81800E)));
+    if (!fz) {
+        lda8(rd8(DP(0x21)));
+        and8(0x10);
+        if (!fz) {
+            ldy8(0x00);
+            if (demo_command1()) demo_next1();
+            return;
+        }
+    }
+    lda8(rd8(DP(0x8E)));
+    if (fz) {
+        wr8(DP(0x63), 0);
+        wr8(ABS(0x0CE3), 0);
+        lda8(rd8(LONG(0x81800C)));
+        if (!fz) lda8(0x68);
+        wr8(ABS(0x0CE1), (u8)A);
+        fc = 0;
+        ret();
+        return;
+    }
+    lda8(rd8(ABS(0x0CE3)));
+    if (!fz) {
+        wr8(ABS(0x0CE3), dec8(rd8(ABS(0x0CE3))));
+        fc = 0;
+        ret();
+        return;
+    }
+    demo_next1();
+}
+
+/* $80:E4FC (RTS): from broadcast minute 5:07 on, the blinking "PUSH
+ * START" text ($80:E54B + 0/5/... by $BD bit 5) at VRAM $18F1, and Start
+ * leaves the demo (APU port 0 = $2D, demo command 0). */
+void DemoPushStart_m1x1(void)
+{
+    lda8(rd8(LONG(0x7FFFFF)));
+    cmp8((u8)A, 0x05);
+    if (!fc) { ret(); return; }
+    if (fz) {
+        lda8(rd8(LONG(0x7FFFFB)));
+        cmp8((u8)A, 0x07);
+        if (!fc) { ret(); return; }
+    }
+    wr8(DP(0xBD), inc8(rd8(DP(0xBD))));
+    lda8(rd8(DP(0xBD)));
+    and8(0x20);
+    lda8(lsr8((u8)A));
+    wr8(DP(0x00), (u8)A);
+    wr8(DP(0x00), lsr8(rd8(DP(0x00))));
+    wr8(DP(0x00), lsr8(rd8(DP(0x00))));
+    fc = 0; adc8(rd8(DP(0x00)));
+    wr8(DP(0x00), lsr8(rd8(DP(0x00))));
+    wr8(DP(0x00), lsr8(rd8(DP(0x00))));
+    fc = 0; adc8(rd8(DP(0x00)));
+    rep(0x20);
+    and16(0x00FF);
+    fc = 0; adc16(0xE54B);
+    wr16(DP(0x02), A);
+    lda16(0x18F1); wr16(DP(0x00), 0x18F1);
+    sep(0x20);
+    push16(0xE539); VramQueueTiles20_m1x1();
+    lda8(rd8(DP(0x21)));
+    and8(0x10);
+    if (fz) { ret(); return; }
+    lda8(0x2D); wr8(ABS(0x2140), 0x2D);
+    ldy8(0x00);
+    if (demo_command1()) demo_next1();
+}

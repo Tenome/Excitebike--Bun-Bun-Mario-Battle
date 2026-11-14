@@ -280,3 +280,5 @@
 80A10E  1 1  mem+A,X,Y,C,V   PackEntryCode
 8098B2  1 1  mem+X,Y,C,V     QueueTimeDigits
 819DC6  1 1  mem+A,X,Y,C,V   DrawObjectSprites
+80E377  1 1  mem+A,X,Y,C,V   DemoInputStep
+80E4FC  1 1  mem+X,Y,C,V     DemoPushStart
