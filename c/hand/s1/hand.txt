@@ -327,3 +327,4 @@
 80E9B1  1 1  mem+A,X,Y,C,V   StartJumpState
 80E90F  1 1  mem+A,X,Y,C,V   RiderGroundHeightsFrom
 80E90D  1 1  mem+A,X,Y,C,V   RiderGroundHeights
+80E7AC  1 1  mem+A,X,Y,C,V   RunRiderPieces

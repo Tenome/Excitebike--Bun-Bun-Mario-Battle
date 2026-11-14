@@ -588,6 +588,7 @@ BRIDGE(HleHand_ClearJumpState, ClearJumpState_m1x1, 20)
 BRIDGE(HleHand_StartJumpState, StartJumpState_m1x1, 28)
 BRIDGE_DYN(HleHand_RiderGroundHeightsFrom, RiderGroundHeightsFrom_m1x1, ground_heights_cost1((uint8)X))
 BRIDGE_DYN(HleHand_RiderGroundHeights, RiderGroundHeights_m1x1, 2 + ground_heights_cost1(7))
+BRIDGE(HleHand_RunRiderPieces, RunRiderPieces_m1x1, 90)
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */

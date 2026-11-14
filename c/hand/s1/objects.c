@@ -6108,3 +6108,154 @@ void RiderGroundHeights_m1x1(void)
     ldx8(0x07);
     RiderGroundHeightsFrom_m1x1();
 }
+
+/* $80:E834 (RTS, A = action): jump through the rider piece action table
+ * $80:E701. Not registered on its own: difftest feeds it out-of-range
+ * actions, which read past the table. */
+static void piece_action1(void)
+{
+    lda8(asl8((u8)A));
+    Y = (u8)A; nz8((u8)Y);
+    lda8(rd8(ABSY(0xE701))); wr8(DP(0x00), (u8)A);
+    lda8(rd8(ABSY(0xE702))); wr8(DP(0x01), (u8)A);
+    if (!r816_call_pc(0x800000u | rd16(LONG(0x000000))))
+        r816_unknown_target(0x80E840, rd16(LONG(0x000000)));
+}
+
+/* ($0A),Y in bank DB. */
+static u8 script_byte1(void)
+{
+    return rd8((((u32)DB << 16) + rd16(DP(0x0A)) + Y) & 0xFFFFFF);
+}
+
+/* $80:E7AC (RTS, X = rider): the rider's piece script. Its distance
+ * $0248 advances by the speed $0180. With no script running ($0170 = 0)
+ * a piece type $0218 below $18 starts script type + 1 (a $18+ piece in
+ * jump state 3 in lanes 0-2 starts $0C + 1; otherwise the player's $1979
+ * clears); $0250 = 0 and $0248 = $0188 - 1. Then the script ($80:E574 /
+ * $80:E58B by script) runs pairs (distance, action) up to $0248: an
+ * action with a $80:E700 bit sets the rider's angle ($01E0 = low nibble,
+ * $01A0 from $80:E6F5) when it is on the ground and not crashed; one with
+ * a $80:E6FF bit sets $0220 / $0238; others go through PieceAction. At
+ * the $FF end the script stops ($0170, $01A0 cleared, $01F8 cleared on
+ * the ground outside jump state 1, state 2 -> 3) and $08BC clears. */
+void RunRiderPieces_m1x1(void)
+{
+    lda8(rd8(ABSX(0x0180)));
+    fc = 0; adc8(rd8(ABSX(0x0248)));
+    wr8(ABSX(0x0248), (u8)A);
+    cmp8((u8)X, 0x00);
+    if (fz) lda8(rd8(ABSX(0x0170)));
+    lda8(rd8(ABSX(0x0170)));
+    if (fz) {
+        lda8(rd8(ABSX(0x0218)));
+        cmp8((u8)A, 0x18);
+        if (fc) {
+            int start = 0;
+            lda8(rd8(ABSX(0x0208)));
+            cmp8((u8)A, 0x03);
+            if (fz) {
+                lda8(rd8(ABSX(0x08A4)));
+                cmp8((u8)A, 0x03);
+                if (!fc) {
+                    lda8(0x0C);
+                    wr8(ABSX(0x0218), 0x0C);
+                    start = 1;
+                }
+            }
+            if (!start) {
+                cmp8((u8)X, 0x00);
+                if (fz) wr8(ABS(0x1979), 0);
+                ret();
+                return;
+            }
+        }
+        wr8(ABSX(0x0170), (u8)A);
+        wr8(ABSX(0x0170), inc8(rd8(ABSX(0x0170))));
+        lda8(0x00);
+        wr8(ABSX(0x0250), 0);
+        lda8(rd8(ABSX(0x0188)));
+        wr8(ABSX(0x0248), (u8)A);
+        wr8(ABSX(0x0248), dec8(rd8(ABSX(0x0248))));
+    }
+    for (;;) {
+        /* L80E7FA */
+        Y = rd8(ABSX(0x0170)); nz8((u8)Y);
+        lda8(rd8(ABSY(0xE574))); wr8(DP(0x0A), (u8)A);
+        lda8(rd8(ABSY(0xE58B))); wr8(DP(0x0B), (u8)A);
+        Y = rd8(ABSX(0x0250)); nz8((u8)Y);
+        lda8(script_byte1());
+        cmp8((u8)A, 0xFF);
+        if (fz) break;
+        wr8(DP(0x0F), (u8)A);
+        cmp8((u8)A, rd8(ABSX(0x0248)));
+        if (!fz && fc) { ret(); return; }
+        Y = inc8((u8)Y);
+        lda8(script_byte1());
+        bit8(rd8(ABS(0xE700)), 0);
+        if (!fz) {
+            /* L80E843 */
+            lda8(rd8(ABSX(0x01E8)));
+            ora8(rd8(ABSX(0x01C8)));
+            if (fz) {
+                lda8(script_byte1());
+                and8(0x0F);
+                wr8(DP(0x00), (u8)A);
+                lda8(rd8(ABSX(0x0208)));
+                cmp8((u8)A, 0x01);
+                if (!fz) {
+                    lda8(rd8(DP(0x00)));
+                    wr8(ABSX(0x01E0), (u8)A);
+                    lda8(rd8(ABSX(0x0170)));
+                    cmp8((u8)A, 0x03);
+                    if (!fz) {
+                        lda8(rd8(ABSX(0x01E0)));
+                        fc = 1; sbc8(0x02);
+                        Y = (u8)A; nz8((u8)Y);
+                        lda8(rd8(ABSY(0xE6F5)));
+                        wr8(ABSX(0x01A0), (u8)A);
+                    }
+                }
+            }
+        } else {
+            bit8(rd8(ABS(0xE6FF)), 0);
+            if (fz) {
+                push16(0xE82B); piece_action1();
+                wr8(ABSX(0x0250), inc8(rd8(ABSX(0x0250))));
+                wr8(ABSX(0x0250), inc8(rd8(ABSX(0x0250))));
+                if (!fz) continue;
+                piece_action1();
+                return;
+            }
+            /* L80E8A5 */
+            and8(0x0F);
+            wr8(ABSX(0x0220), (u8)A);
+            lda8(rd8(DP(0x0F)));
+            wr8(ABSX(0x0238), (u8)A);
+            if (fn) { RiderLanePieceAt_m1x1(); return; }
+        }
+        /* L80E871 */
+        wr8(ABSX(0x0250), inc8(rd8(ABSX(0x0250))));
+        wr8(ABSX(0x0250), inc8(rd8(ABSX(0x0250))));
+        if (fz) break;
+    }
+    /* L80E87C */
+    lda8(0x00);
+    wr8(ABSX(0x0170), 0);
+    wr8(ABSX(0x01A0), 0);
+    lda8(rd8(ABSX(0x0200)));
+    if (fz) {
+        lda8(rd8(ABSX(0x0208)));
+        cmp8((u8)A, 0x01);
+        if (!fz) {
+            lda8(0x00);
+            wr8(ABSX(0x01F8), 0);
+            lda8(rd8(ABSX(0x0208)));
+            cmp8((u8)A, 0x02);
+            if (fz) wr8(ABSX(0x0208), inc8(rd8(ABSX(0x0208))));
+        }
+    }
+    lda8(0x00);
+    wr8(ABSX(0x08BC), 0);
+    ret();
+}

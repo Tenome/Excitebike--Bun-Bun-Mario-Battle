@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 323 hand-written (79.4%), 320 of them in the port.
+407 functions in the static map; 324 hand-written (79.6%), 321 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -212,6 +212,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:E411` | DemoPadDisplay | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:E4FC` | DemoPushStart | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:E775` | AnimateWheels | `mem+V` | `race.c` | yes |
+| `$80:E7AC` | RunRiderPieces | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:E8B1` | RiderLanePieceAt | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:E8B4` | RiderPieceAt | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:E8B9` | LanePieceAt | `mem+A,X,Y,C,V` | `objects.c` | yes |

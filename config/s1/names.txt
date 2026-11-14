@@ -345,3 +345,4 @@
 80E9B1 StartJumpState
 80E90F RiderGroundHeightsFrom
 80E90D RiderGroundHeights
+80E7AC RunRiderPieces
