@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 354 hand-written (87.0%), 347 of them in the port.
+407 functions in the static map; 356 hand-written (87.5%), 347 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -63,12 +63,14 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:9BC8` | EndScreenScrollIn | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:9C0D` | EntryNumberEditor | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:9D07` | EndScreenPrompt | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:9DE0` | EndScreenStart | `mem+A,X,Y,C,V` | `objects.c` |  |
 | `$80:9E1D` | EndScreenTimeout | `mem+X,Y,C,V` | `misc.c` | yes |
 | `$80:9E46` | BeginFadeInBg3 | `mem+X,Y,C,V` | `misc.c` | yes |
 | `$80:9E77` | BeginFadeIn | `mem+X,Y,C,V` | `misc.c` | yes |
 | `$80:9E8E` | Mode11 | `mem+X,Y,C,V` | `from_s4.c` | yes |
-| `$80:A03F` | GrowBar087E | `mem+X,Y,V` | `misc.c` | yes |
-| `$80:A07F` | StepColourCycle | `mem+X,Y,V` | `misc.c` | yes |
+| `$80:9F68` | Mode12_AfterEnd | `mem+X,Y,C,V` | `objects.c` |  |
+| `$80:A03F` | GrowBar087E | `mem+X,Y,V` | `objects.c` | yes |
+| `$80:A07F` | StepColourCycle | `mem+X,Y,V` | `objects.c` | yes |
 | `$80:A0AA` | BsxCheckSerial | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:A0BC` | ShowEntryPassword | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:A10E` | PackEntryCode | `mem+A,X,Y,C,V` | `objects.c` | yes |

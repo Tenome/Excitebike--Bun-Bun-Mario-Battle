@@ -358,3 +358,5 @@
 8092A0  1 1  mem+A,X,Y,C,V   RaceResultsSetup
 80B873  1 1  mem+X,Y,C,V     LoadScene
 80A3AC  1 0  full     DigitsToNumber
+809DE0  1 1  mem+A,X,Y,C,V   EndScreenStart
+809F68  1 1  mem+X,Y,C,V     Mode12_AfterEnd
