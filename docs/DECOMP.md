@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 306 hand-written (75.2%), 303 of them in the port.
+407 functions in the static map; 307 hand-written (75.4%), 304 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -19,7 +19,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:8322` | FadeStep | `mem+X,Y,C,V` | `misc.c` | yes |
 | `$80:8369` | InitPpuRegisters | `mem+Y,C,V` | `init.c` | yes |
 | `$80:84A8` | ForceBlank | `mem+C,V` | `init.c` | yes |
-| `$80:84B7` | ClearTilemaps | `mem+C,V` | `init.c` | yes |
+| `$80:84B7` | ClearTilemaps | `mem+C,V` | `objects.c` | yes |
 | `$80:8539` | DmaKick | `mem+X,Y,C,V` | `vram.c` | yes |
 | `$80:8541` | DmaCopyToWram | `mem+V` | `kernel.c` | yes |
 | `$80:8562` | DmaFillZero | `mem+C,V` | `kernel.c` | yes |
@@ -75,6 +75,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:A231` | PackEntryNumber | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:A41C` | MergeBsxFlags | `mem+Y` | `objects.c` | yes |
 | `$80:A458` | SumBytes0850 | `mem+Y` | `objects.c` | yes |
+| `$80:A4FE` | FinalSchedule | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:A5B7` | DrawRacerName | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:A66D` | DrawHudLabelA | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:A68F` | DrawHudLabelB | `mem+X,Y,C,V` | `race.c` | yes |

@@ -5698,3 +5698,39 @@ void ShowEntryPassword_m1x1(void)
     push16(0xA10C); VramQueueTiles_m1x1();
     retl();
 }
+
+void DmaKick_m0x1(void);
+void ClearTilemaps_m1x1(void);
+
+/* $80:A4FE FinalSchedule (RTS): with a final ($084C) the record clock
+ * $083A-$083C goes to $03B1, the clock ticks against the final's target
+ * ($80:972B), and on even frames fourteen line-buffer entries before
+ * $7F:0000's end become $24; $88 = 1. */
+void FinalSchedule_m1x1(void)
+{
+    lda8(rd8(ABS(0x084C)));
+    if (!fz) {
+        lda8(rd8(ABS(0x083A))); wr8(ABS(0x03B1), (u8)A);
+        lda8(rd8(ABS(0x083B))); wr8(ABS(0x03B2), (u8)A);
+        lda8(rd8(ABS(0x083C))); wr8(ABS(0x03B3), (u8)A);
+        lda8(rd8(ABS(0x084C)));
+        lda8(dec8((u8)A));
+        lda8(asl8((u8)A));
+        X = (u8)A; nz8((u8)X);
+        lda8(rd8(ABSX(0x972B))); wr8(DP(0x00), (u8)A);
+        lda8(rd8(ABSX(0x972C))); wr8(DP(0x01), (u8)A);
+        push16(0xA527); TickRaceClock_m1x1();
+        lda8(rd8(DP(0x63)));
+        and8(0x01);
+        if (fz) {
+            lda8(rd8(LONG(0x7F0000)));
+            fc = 1; sbc8(0x27);
+            X = (u8)A; nz8((u8)X);
+            lda8(0x24);
+            static const u8 off[14] = { 0,2,4,6,8,0x0A,0x0C,0x1A,0x1C,0x1E,0x20,0x22,0x24,0x26 };
+            for (int i = 0; i < 14; i++) wr8(LONGX(0x7F0000 + off[i]), 0x24);
+        }
+    }
+    lda8(0x01); wr8(ABS(0x0088), 0x01);
+    ret();
+}

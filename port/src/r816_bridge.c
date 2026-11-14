@@ -545,6 +545,7 @@ BRIDGE(HleHand_CollectPickupPiece, CollectPickupPiece_m1x1, 120)
 BRIDGE(HleHand_PlayerSelectStart, PlayerSelectStart_m1x1, 200)
 BRIDGE(HleHand_RaceBookkeeping, RaceBookkeeping_m1x1, 2000)
 BRIDGE(HleHand_ShowEntryPassword, ShowEntryPassword_m1x1, 3000)
+BRIDGE(HleHand_FinalSchedule, FinalSchedule_m1x1, 250)
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */
