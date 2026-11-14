@@ -425,14 +425,14 @@ One row per hand-written variant (some routines have one per register width).
 
 ## s4
 
-532 functions in the static map; 532 hand-written (100.0%), 504 of them in the port.
+532 functions in the static map; 532 hand-written (100.0%), 501 of them in the port.
 One row per hand-written variant (some routines have one per register width).
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
 | `$80:81A9` | DrawClockB | `mem+X,Y,C,V` | `misc.c` | yes |
 | `$80:824E` | DmaKick | `mem+X,Y,C,V` | `objects.c` | yes |
-| `$80:83D2` | NmiVramUpload | `mem+X,Y,C,V` | `objects.c` | yes |
+| `$80:83D2` | NmiVramUpload | `mem+X,Y,C,V` | `objects.c` |  |
 | `$80:8535` | NmiFlushVramQueue | `mem` | `from_s1.c` | yes |
 | `$80:85A9` | RunGameModeScript | `mem+A,X,Y,C,V` | `objects.c` |  |
 | `$80:8603` | Mode00_IntroWait | `mem+X,Y,C,V` | `from_s1.c` | yes |
@@ -558,9 +558,9 @@ One row per hand-written variant (some routines have one per register width).
 | `$80:B7A0` | Mode17_BonusIntro | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:B7EC` | CourseSelectStep | `mem+X,Y,C,V` | `objects.c` |  |
 | `$80:B7F1` | JumpRunStepsMode | `mem+A,X,Y,C,V` | `objects.c` | yes |
-| `$80:B912` | ScaleByScroll | `mem+A,X,Y,C,V` | `objects.c` | yes |
-| `$80:B912` | ScaleByScroll | `mem+A,X,Y,C,V` | `objects.c` | yes |
-| `$80:B91E` | ParallaxLines | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:B912` | ScaleByScroll | `mem+A,X,Y,C,V` | `objects.c` |  |
+| `$80:B912` | ScaleByScroll | `mem+A,X,Y,C,V` | `objects.c` |  |
+| `$80:B91E` | ParallaxLines | `mem+A,X,Y,C,V` | `objects.c` |  |
 | `$80:B98E` | Mul16 | `mem+Y` | `objects.c` | yes |
 | `$80:B9FA` | Mul16b | `mem` | `objects.c` |  |
 | `$80:B9FA` | Mul16b | `mem` | `objects.c` |  |
