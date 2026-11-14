@@ -8450,3 +8450,81 @@ void DrawEntryScreen_m1x1(void)
     }
     ret();
 }
+
+void BsxFindFile_m0x0(void);
+
+/* $81:FA81 BsxProbeReceiver (RTL, M=1 X=0): is a satellite receiver
+ * there? $2194 = 1; $2188 must read back $AA and $55 as written; then
+ * $2188/$2189/$218E/$218F are cleared and Z is set if they all read 0
+ * (no receiver: Z clear). */
+void BsxProbeReceiver_m1x0(void)
+{
+    lda8(0x01); wr8(ABS(0x2194), 0x01);
+    lda8(0xAA); wr8(ABS(0x2188), 0xAA);
+    cmp8((u8)A, rd8(ABS(0x2188)));
+    if (!fz) { retl(); return; }
+    lda8(0x55); wr8(ABS(0x2188), 0x55);
+    cmp8((u8)A, rd8(ABS(0x2188)));
+    if (!fz) { retl(); return; }
+    wr8(ABS(0x2188), 0);
+    wr8(ABS(0x2189), 0);
+    wr8(ABS(0x218E), 0);
+    wr8(ABS(0x218F), 0);
+    lda8(rd8(ABS(0x2188)));
+    ora8(rd8(ABS(0x2189)));
+    ora8(rd8(ABS(0x218E)));
+    ora8(rd8(ABS(0x218F)));
+    retl();
+}
+
+/* $81:FA68 BsxDetect (RTL): $7F:FFE1 = 1 when a receiver answers the
+ * probe, else 0; P kept. */
+void BsxDetect_m1x1(void)
+{
+    push8(getP());
+    sep(0x20);
+    rep(0x10);
+    lda8(0x00);
+    wr8(LONG(0x7FFFE1), 0);
+    push8(0x81); push16(0xFA76); BsxProbeReceiver_m1x0();
+    if (!fz) {
+        lda8(0x01);
+        wr8(LONG(0x7FFFE1), 0x01);
+    }
+    setP(pull8());
+    retl();
+}
+
+/* $81:F80C BsxOpenTimeChannel (RTL): the frame counter $7F:FFFA cleared;
+ * look up the time file (type $0101, $13D3 / $13D5 = $0800); found: its
+ * channel $13FE to $7F:FFF7 and $218E, the stream armed ($2191 / $2192),
+ * carry clear; not found: $7F:FFF7 = $5533, $218E = $AAEE, carry set. P
+ * otherwise kept. */
+void BsxOpenTimeChannel_m1x1(void)
+{
+    push8(getP());
+    rep(0x30);
+    lda16(0x0000);
+    wr16(LONG(0x7FFFFA), 0);
+    lda16(0x0101); wr16(ABS(0x13D3), 0x0101);
+    lda16(0x0800); wr16(ABS(0x13D5), 0x0800);
+    push8(0x81); push16(0xF825); BsxFindFile_m0x0();
+    if (!fc) {
+        lda16(rd16(ABS(0x13FE)));
+        wr16(LONG(0x7FFFF7), A);
+        wr16(ABS(0x218E), A);
+        lda16(0x0001);
+        wr16(ABS(0x2191), 0x0001);
+        wr16(ABS(0x2192), 0x0001);
+        setP(pull8());
+        fc = 0;
+        retl();
+        return;
+    }
+    rep(0x20);
+    lda16(0x5533); wr16(LONG(0x7FFFF7), 0x5533);
+    lda16(0xAAEE); wr16(ABS(0x218E), 0xAAEE);
+    setP(pull8());
+    fc = 1;
+    retl();
+}

@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 363 hand-written (89.2%), 348 of them in the port.
+407 functions in the static map; 366 hand-written (89.9%), 351 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -373,13 +373,16 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$81:BDDB` | FrameSequenceB | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$81:BE4C` | PodiumWalkIn | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$81:BECE` | RivalWalkAway_BECE | `mem+V` | `ai.c` | yes |
+| `$81:F80C` | BsxOpenTimeChannel | `mem+Y,C,V` | `objects.c` | yes |
 | `$81:F8BB` | BsxPollStream | `mem+X,Y,C,V` | `kernel.c` | yes |
 | `$81:F999` | ResetMinuteFrame | `mem+A,X,Y` | `misc.c` | yes |
-| `$81:F9C8` | BsxFindFile | `mem+Y,C` | `from_s4.c` | yes |
+| `$81:F9C8` | BsxFindFile | `mem+Y,C` | `objects.c` | yes |
+| `$81:FA68` | BsxDetect | `mem+Y,C,V` | `objects.c` | yes |
+| `$81:FA81` | BsxProbeReceiver | `mem+Y,Z` | `objects.c` | yes |
 
 ## s4
 
-532 functions in the static map; 468 hand-written (88.0%), 449 of them in the port.
+532 functions in the static map; 472 hand-written (88.7%), 453 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -811,8 +814,12 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$81:CA20` | ScaleJumpCount | `mem+X,Y` | `objects.c` | yes |
 | `$81:CA20` | ScaleJumpCount | `mem+X,Y` | `objects.c` | yes |
 | `$81:CA37` | QueueStadiumBadge | `mem+X,Y,C,V` | `objects.c` | yes |
+| `$81:F80C` | BsxOpenTimeChannel | `mem+Y,C,V` | `objects.c` | yes |
+| `$81:F8BB` | BsxPollStream | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$81:F999` | ResetMinuteFrame | `mem+A,X,Y` | `from_s1.c` | yes |
 | `$81:F9C8` | BsxFindFile | `mem+Y,C` | `objects.c` | yes |
+| `$81:FA68` | BsxDetect | `mem+Y,C,V` | `objects.c` | yes |
+| `$81:FA81` | BsxProbeReceiver | `mem+Y,Z` | `objects.c` | yes |
 | `$82:8000` | ReadJoypads | `mem+X,Y,C,V` | `from_s1.c` | yes |
 | `$82:805F` | InitPpuRegisters | `mem+C,V` | `objects.c` | yes |
 | `$82:811D` | SetupHdmaChannels | `mem+X,Y,C,V` | `objects.c` | yes |

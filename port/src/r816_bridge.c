@@ -679,6 +679,10 @@ BRIDGE_DYN(HleHand_RaceResultsSetup, RaceResultsSetup_m1x1, g_ram[0x7D] ? 9000 :
  * Gen A race regression diverges at any cost. */
 BRIDGE(HleHand_DigitsToNumber, DigitsToNumber_m1x0, 1200)
 BRIDGE_DYN(HleHand_DrawEntryScreen, DrawEntryScreen_m1x1, r816_bus_read(0x81800C) ? 7450 : 6250)
+BRIDGE(HleHand_BsxProbeReceiver, BsxProbeReceiver_m1x0, 50)
+BRIDGE(HleHand_BsxDetect, BsxDetect_m1x1, 90)
+/* BsxOpenTimeChannel ($81:F80C) passes difftest on s1 but is not hooked
+ * here: it calls BsxFindFile directly (see below). */
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */
@@ -1318,6 +1322,11 @@ BRIDGE(HleHand_QueueStadiumBadge, QueueStadiumBadge_m1x1, 650)
 BRIDGE(HleHand_QueueEntryDigits, QueueEntryDigits_m1x1, 720)
 /* entry screen fill */
 BRIDGE_DYN(HleHand_EntryScreenFill, EntryScreenFill_m1x1, r816_bus_read(0x81800C) ? 10300 : 9700)
+/* BS-X stream and probes */
+BRIDGE(HleHand_BsxPollStream, BsxPollStream_m1x1, 120)
+BRIDGE(HleHand_BsxProbeReceiver, BsxProbeReceiver_m1x0, 50)
+BRIDGE(HleHand_BsxDetect, BsxDetect_m1x1, 90)
+BRIDGE(HleHand_BsxOpenTimeChannel, BsxOpenTimeChannel_m1x1, 660)
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)

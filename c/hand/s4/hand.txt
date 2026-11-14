@@ -467,3 +467,7 @@
 81CA37  1 1  mem+X,Y,C,V     QueueStadiumBadge
 81C8E1  0 1  mem+X,Y,C,V     QueueHalfUnits
 809C79  1 1  mem+X,Y,C,V     EntryScreenFill
+81F8BB  1 1  mem+X,Y,C,V     BsxPollStream
+81FA81  1 0  mem+Y,Z         BsxProbeReceiver
+81FA68  1 1  mem+Y,C,V       BsxDetect
+81F80C  1 1  mem+Y,C,V       BsxOpenTimeChannel
