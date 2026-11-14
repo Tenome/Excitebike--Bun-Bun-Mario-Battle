@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 299 hand-written (73.5%), 296 of them in the port.
+407 functions in the static map; 304 hand-written (74.7%), 301 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -42,6 +42,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:8F2D` | DrawSelectWheels | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:9053` | SpriteTextRow | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:915A` | SegmentNext | `mem+X,Y,C,V` | `objects.c` | yes |
+| `$80:916B` | PlayerSelectStart | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:9201` | EnableHudSplit | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:9206` | ClearRaceState | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:9236` | RaceHudInit | `mem+X,Y,C,V` | `race.c` | yes |
@@ -213,6 +214,8 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:E8DF` | LanePieceTables | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:E8EA` | MarkFastRider | `mem+A,X,Y,C,V` | `physics.c` | yes |
 | `$80:E9C1` | FlattenPlayerPiece | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:E9F3` | UseArrowPiece | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:EA6A` | CollectPickupPiece | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:EAD1` | PlayerOverheatWarn | `mem+A,X,Y,C,V` | `race.c` | yes |
 | `$80:EB0C` | SpeedBumpCrash | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:EB39` | SlowPieceBrake | `mem+A,X,Y,C,V` | `objects.c` | yes |
@@ -230,6 +233,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$81:932A` | SpawnPlayerSpark | `mem+X,C,V` | `objects.c` | yes |
 | `$81:9362` | SpawnDustPuff | `mem+X,Y,V` | `objects.c` | yes |
 | `$81:93E2` | SpawnExhaust | `mem+X,Y,C,V` | `from_s4.c` | yes |
+| `$81:9464` | StepSpriteSlots | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$81:9480` | EmptyStep9554 | `mem+A,X,Y,C,V` | `from_s4.c` | yes |
 | `$81:9481` | StepFallingSprite | `mem+Y,C,V` | `from_s4.c` | yes |
 | `$81:94BE` | DrawDustPair | `mem+Y,C,V` | `from_s4.c` | yes |
@@ -244,13 +248,14 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$81:9754` | EmptyStep9828 | `mem+A,X,Y,C,V` | `from_s4.c` | yes |
 | `$81:9755` | FindObjectSlot | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$81:9761` | RivalDispatch_9761 | `mem+X,Y,C,V` | `ai.c` | yes |
+| `$81:9778` | FollowObjectPath | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$81:97CC` | RivalCountdown_97CC | `mem+V` | `misc.c` | yes |
 | `$81:97E2` | SkyFadeObject | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$81:982B` | FadeInObject | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$81:9957` | FadeSkyColours | `mem+V` | `objects.c` | yes |
 | `$81:99CB` | FadePaletteStep | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$81:9A8D` | QueueMapTile | `mem+X,Y,C,V` | `objects.c` | yes |
-| `$81:9C98` | VelocityDirection | `mem+V` | `from_s4.c` | yes |
+| `$81:9C98` | VelocityDirection | `mem+V` | `objects.c` | yes |
 | `$81:9D0B` | DrawBigBall | `mem+Y,V` | `from_s4.c` | yes |
 | `$81:9DC6` | DrawObjectSprites | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$81:9E61` | SteerObjectStep | `mem+A,X,Y,C,V` | `objects.c` | yes |

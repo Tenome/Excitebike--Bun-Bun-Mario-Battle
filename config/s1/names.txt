@@ -321,3 +321,8 @@
 80B0E1 ReadRiderPieces
 819A8D QueueMapTile
 80BE6A WalkToStartLane
+819464 StepSpriteSlots
+819778 FollowObjectPath
+80E9F3 UseArrowPiece
+80EA6A CollectPickupPiece
+80916B PlayerSelectStart

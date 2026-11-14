@@ -303,3 +303,8 @@
 80B0E1  1 1  mem+A,X,Y,C,V   ReadRiderPieces
 819A8D  1 1  mem+X,Y,C,V     QueueMapTile
 80BE6A  1 1  mem+A,X,Y,C,V   WalkToStartLane
+819464  1 1  mem+A,X,Y,C,V   StepSpriteSlots
+819778  1 1  mem+A,X,Y,C,V   FollowObjectPath
+80E9F3  1 1  mem+A,X,Y,C,V   UseArrowPiece
+80EA6A  1 1  mem+A,X,Y,C,V   CollectPickupPiece
+80916B  1 1  mem+A,X,Y,C,V   PlayerSelectStart

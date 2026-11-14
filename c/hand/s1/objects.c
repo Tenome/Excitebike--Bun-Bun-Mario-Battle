@@ -5415,3 +5415,223 @@ void WalkToStartLane_m1x1(void)
     wr8(DPX(0x45), 0x08);
     ret();
 }
+
+void VelocityDirection_m1x1(void);
+
+/* $81:9464 (RTL): run the four falling-sprite slots (X = 6, 4, 2, 0) by
+ * their step $0110 through the table at $81:9478 (Y = slot). */
+void StepSpriteSlots_m1x1(void)
+{
+    push8((u8)X);
+    ldx8(0x06);
+    do {
+        lda8(rd8(ABSX(0x0110)));
+        lda8(asl8((u8)A));
+        push8((u8)X);
+        Y = X; nz8((u8)Y);
+        X = (u8)A; nz8((u8)X);
+        push16(0x9470);
+        r816_call_pc(0x810000u | rd16(LONGX(0x819478)));
+        X = pull8(); nz8((u8)X);
+        X = dec8((u8)X);
+        X = dec8((u8)X);
+    } while (!fn);
+    X = pull8(); nz8((u8)X);
+    retl();
+}
+
+/* $81:9778 (RTS): an object following its path ($81:9B66, 4 bytes per
+ * point by $0319): SteerObjectStep (Y = $0C, A = $20); at each point the
+ * next one, and at the $8000 end mark $0319 = $60 and the state steps.
+ * Otherwise its map tile (when $027A is 0) and its direction. */
+void FollowObjectPath_m1x1(void)
+{
+    rep(0x30);
+    X = rd16(ABS(0x039D)); nz16(X);
+    lda16(rd16(ABSX(0x0319)));
+    lda16(asl16(A)); lda16(asl16(A));
+    Y = A; nz16(Y);
+    lda16(rd16(ABSY(0x9B66)));
+    wr16(ABS(0x0399), A);
+    lda16(rd16(ABSY(0x9B68)));
+    wr16(ABS(0x039B), A);
+    sep(0x30);
+    ldy8(0x0C);
+    lda8(0x20);
+    push8(0x81); push16(0x9798); SteerObjectStep_m1x1();
+    if (fc) {
+        rep(0x30);
+        wr16(ABSX(0x0319), inc16(rd16(ABSX(0x0319))));
+        lda16(rd16(ABSX(0x0319)));
+        lda16(asl16(A)); lda16(asl16(A));
+        Y = A; nz16(Y);
+        lda16(rd16(ABSY(0x9B66)));
+        cmp16(A, 0x8000);
+        sep(0x30);
+        if (fz) {
+            rep(0x20);
+            lda16(0x0060);
+            wr16(ABSX(0x0319), 0x0060);
+            sep(0x20);
+            wr8(ABSX(0x0309), inc8(rd8(ABSX(0x0309))));
+            ret();
+            return;
+        }
+    }
+    lda8(rd8(ABSX(0x027A)));
+    if (fz) { push8(0x81); push16(0x97C6); QueueMapTile_m1x1(); }
+    push8(0x81); push16(0x97CA); VelocityDirection_m1x1();
+    ret();
+}
+
+void PlayerOverheatWarn_m1x1(void);
+
+/* The player's piece pointer ($03),Y + $0180 after RiderLanePieceAt. */
+static void player_piece1(u16 back)
+{
+    push16(back); RiderLanePieceAt_m1x1();
+    rep(0x30);
+    lda16(Y);
+    fc = 0; adc16(0x0180);
+    Y = A; nz16(Y);
+    sep(0x20);
+}
+
+static u32 piece_addr1(void)
+{
+    return (((u32)DB << 16) + rd16(DP(0x03)) + Y) & 0xFFFFFF;
+}
+
+/* Stadium 1's course map slot: the column $54 back from $A6 (wrapping by
+ * $A8) through $7F:6000; X = entry, Y = the player's lane, 8-bit A. */
+static void course_map_slot1(void)
+{
+    rep(0x30);
+    lda16(rd16(DP(0xA6)));
+    fc = 1; sbc16(0x0054);
+    if (fn) { fc = 0; adc16(rd16(DP(0xA8))); }
+    X = A; nz16(X);
+    lda16(rd16(LONGX(0x7F6000)));
+    cmp16(A, rd16(LONGX(0x7F5FFE)));
+    if (!fz) lda16(dec16(A));
+    X = A; nz16(X);
+    lda16(rd16(ABS(0x08A4)));
+    and16(0x00FF);
+    Y = A; nz16(Y);
+    sep(0x20);
+}
+
+/* $80:E9F3 UseArrowPiece (RTS, X = rider): for the player on the ground in
+ * a lane with an arrow ($80:EA63): sound $32, $1979 = 1, and an arrow
+ * piece ($15) becomes used ($12), its course map entry the lane's
+ * $80:EA5C and $AF from $80:E9EC. Then PlayerOverheatWarn. (PHX is 8-bit
+ * and PLX 16-bit, as in the original.) */
+void UseArrowPiece_m1x1(void)
+{
+    cmp8((u8)X, 0x00);
+    if (fz) {
+        lda8(rd8(ABSX(0x01E8)));
+        if (fz) {
+            Y = rd8(ABS(0x08A4)); nz8((u8)Y);
+            lda8(rd8(ABSY(0xEA63)));
+            if (!fz) {
+                lda8(0x32);
+                push8(0x80); push16(0xEA09); QueueSound_m1x1();
+                lda8(0x01); wr8(ABS(0x1979), 0x01);
+                player_piece1(0xEA11);
+                lda8(rd8(piece_addr1()));
+                cmp8((u8)A, 0x15);
+                if (fz) {
+                    lda8(0x12);
+                    wr8(piece_addr1(), 0x12);
+                    push8((u8)X);
+                    course_map_slot1();
+                    lda8(rd8(ABSY(0xEA5C)));
+                    wr8(LONGX(0x7F4000), (u8)A);
+                    lda8(rd8(ABSY(0xE9EC)));
+                    wr8(DP(0xAF), (u8)A);
+                    X = pull16(); nz16(X);
+                }
+            }
+        }
+    }
+    sep(0x30);
+    PlayerOverheatWarn_m1x1();
+}
+
+/* $80:EA6A CollectPickupPiece (RTS, X = rider): the player on the ground
+ * gets a spark, and in a lane with a pickup ($80:EACA) sound $47 and the
+ * pickup piece ($16) is cleared to flat ($1F), its course map entry $40.
+ * (PHX 8-bit, PLX 16-bit, as in the original.) */
+void CollectPickupPiece_m1x1(void)
+{
+    cmp8((u8)X, 0x00);
+    if (fz) {
+        lda8(rd8(ABSX(0x01E8)));
+        if (fz) {
+            push8(0x80); push16(0xEA76); SpawnPlayerSpark_m1x1();
+            Y = rd8(ABS(0x08A4)); nz8((u8)Y);
+            lda8(rd8(ABSY(0xEACA)));
+            if (!fz) {
+                lda8(0x47);
+                push8(0x80); push16(0xEA84); QueueSound_m1x1();
+                player_piece1(0xEA87);
+                lda8(rd8(piece_addr1()));
+                cmp8((u8)A, 0x16);
+                if (fz) {
+                    lda8(0x1F);
+                    wr8(piece_addr1(), 0x1F);
+                    push8((u8)X);
+                    course_map_slot1();
+                    lda8(0x40);
+                    wr8(LONGX(0x7F4000), 0x40);
+                    X = pull16(); nz16(X);
+                }
+            }
+        }
+    }
+    sep(0x30);
+    ret();
+}
+
+/* $80:916B (RTS): start the player select: two-player mode $1E8B = 2
+ * when the header flag $81:800C is set or two of the seven save names
+ * ($11:5719) are filled, else 0; the four menu bytes $1547 from $80:91C9
+ * (one player) or $80:91C5; next mode, $1923 = 1, BG1SC = 1, pads
+ * cleared, Mode01; $88 = $0708 and $7F:4000 = 0. */
+void PlayerSelectStart_m1x1(void)
+{
+    lda8(rd8(LONG(0x81800C)));
+    int two = !fz;
+    if (!two) {
+        ldx8(0x06);
+        ldy8(0x00);
+        wr8(ABS(0x1E8B), 0);
+        do {
+            lda8(rd8(LONGX(0x115719)));
+            if (!fz) Y = inc8((u8)Y);
+            X = dec8((u8)X);
+        } while (!fn);
+        cmp8((u8)Y, 0x02);
+        two = fc;
+    }
+    if (two) { lda8(0x02); wr8(ABS(0x1E8B), 0x02); }
+    ldx8(0x03);
+    do {
+        lda8(rd8(ABS(0x1E8B)));
+        if (fz) lda8(rd8(ABSX(0x91C9)));
+        else lda8(rd8(ABSX(0x91C5)));
+        wr8(ABSX(0x1547), (u8)A);
+        X = dec8((u8)X);
+    } while (!fn);
+    wr8(DP(0x75), inc8(rd8(DP(0x75))));
+    lda8(0x01); wr8(ABS(0x1923), 0x01);
+    lda8(0x01); wr8(ABS(0x2107), 0x01);
+    wr8(DP(0x20), 0); wr8(DP(0x24), 0);
+    push16(0x91B2); Mode01_m1x1();
+    rep(0x20);
+    lda16(0x0708); wr16(ABS(0x0088), 0x0708);
+    lda16(0x0000); wr16(LONG(0x7F4000), 0);
+    sep(0x20);
+    ret();
+}
