@@ -344,3 +344,4 @@
 80C9C4  1 1  mem+A,X,Y,C,V   RiderCollisions
 818A42  1 1  mem+A,X,Y,C,V   RaceRowList
 818A4D  1 1  mem+A,X,Y,C,V   LoadRaceColumn
+80A5AC  1 1  mem+X,Y,C,V   DrawRacerNameLow

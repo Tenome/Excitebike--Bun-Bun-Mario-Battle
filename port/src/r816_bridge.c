@@ -625,6 +625,7 @@ static uint32 race_column_cost1(void)
 }
 BRIDGE(HleHand_RaceRowList, RaceRowList_m1x1, 30)
 BRIDGE_DYN(HleHand_LoadRaceColumn, LoadRaceColumn_m1x1, race_column_cost1())
+BRIDGE(HleHand_DrawRacerNameLow, DrawRacerNameLow_m1x1, 1300)
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */

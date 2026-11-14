@@ -7343,3 +7343,24 @@ out:
     DB = pull8(); nz8(DB);
     retl();
 }
+
+void VramQueueBlock_m1x1(void);
+
+/* $80:A5AC (RTS): the character name block ($80:A5F9 + 29 * $1542) to
+ * VRAM $1C2D. */
+void DrawRacerNameLow_m1x1(void)
+{
+    rep(0x20);
+    lda16(0x1C2D); wr16(DP(0x00), 0x1C2D);
+    sep(0x20);
+    lda8(rd8(ABS(0x1542)));
+    wr8(ABS(0x4202), (u8)A);
+    lda8(0x1D);
+    wr8(ABS(0x4203), 0x1D);
+    rep(0x20);
+    A = rd16(ABS(0x4216));
+    fc = 0; adc16(0xA5F9);
+    wr16(DP(0x02), A);
+    sep(0x20);
+    VramQueueBlock_m1x1();
+}

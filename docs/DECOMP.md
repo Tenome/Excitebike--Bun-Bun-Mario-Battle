@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 340 hand-written (83.5%), 336 of them in the port.
+407 functions in the static map; 341 hand-written (83.8%), 337 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -77,6 +77,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:A41C` | MergeBsxFlags | `mem+Y` | `objects.c` | yes |
 | `$80:A458` | SumBytes0850 | `mem+Y` | `objects.c` | yes |
 | `$80:A4FE` | FinalSchedule | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:A5AC` | DrawRacerNameLow | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:A5B7` | DrawRacerName | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:A66D` | DrawHudLabelA | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:A68F` | DrawHudLabelB | `mem+X,Y,C,V` | `race.c` | yes |

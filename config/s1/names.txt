@@ -362,3 +362,4 @@
 80C9C4 RiderCollisions
 818A42 RaceRowList
 818A4D LoadRaceColumn
+80A5AC DrawRacerNameLow
