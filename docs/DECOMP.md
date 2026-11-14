@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 281 hand-written (69.0%), 280 of them in the port.
+407 functions in the static map; 283 hand-written (69.5%), 282 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -74,7 +74,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:A66D` | DrawHudLabelA | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:A68F` | DrawHudLabelB | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:AA78` | RaceBannerSprites | `mem+A,X,Y,C,V` | `objects.c` | yes |
-| `$80:AB18` | SendSpeedToApu | `mem+X,Y,C,V` | `misc.c` | yes |
+| `$80:AB18` | SendSpeedToApu | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:AB2A` | BallOrGauge | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:AB3D` | SegmentTimer | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:AC9C` | RiderOnRamp | `mem+A,X,Y,C,V` | `objects.c` | yes |
@@ -170,8 +170,9 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:D3FD` | ClearWords1530 | `mem+C,V` | `misc.c` | yes |
 | `$80:D7BA` | SetupSpriteRow15 | `mem+X,Y,C,V` | `title.c` | yes |
 | `$80:D906` | ShowBonusLabel | `mem+X,Y,C,V` | `objects.c` | yes |
+| `$80:D97E` | Mode09 | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:DA31` | BonusBannerSprites | `mem+A,X,Y,C,V` | `objects.c` | yes |
-| `$80:DA85` | DispatchBy85 | `mem+V` | `misc.c` | yes |
+| `$80:DA85` | DispatchBy85 | `mem+V` | `objects.c` | yes |
 | `$80:DA99` | PlayerTileState | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:DB28` | ScrollFarLayer | `mem+V` | `physics.c` | yes |
 | `$80:DB44` | BonusRunOut | `mem+X,Y,C,V` | `objects.c` | yes |
@@ -185,6 +186,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:DE07` | Mode0A | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:DE23` | BonusResultStart | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:DEB3` | BonusCountUp | `mem+X,Y,C,V` | `objects.c` | yes |
+| `$80:DF01` | BonusResultStep | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:E004` | CheckEndingMinute | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:E043` | AnimSourceFromFrame | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:E059` | ShowBonusBest | `mem+X,Y,C,V` | `objects.c` | yes |
