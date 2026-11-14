@@ -1313,6 +1313,9 @@ BRIDGE_DYN(HleHand_NmiVramUpload, NmiVramUpload_m1x1,
  * ($82:8F6F), BroadcastTotals ($80:97B9) and StartSession ($80:8F69) pass
  * difftest on s4 but are not hooked: the checksum runs longer than a frame
  * (see the Stadium 1 note). */
+/* LoadScene ($82:9182) passes difftest on s4 but is not hooked: like
+ * Stadium 1's $80:B873 the recompiled routine runs long and yields to the
+ * frame scheduler part way. */
 /* EndScreenStart ($80:9CD1) and Mode12_AfterEnd ($80:9E9F) pass difftest on
  * s4 but are not hooked: their BS-X BIOS exits are replaced by the port
  * (HleEndScreenStart, CreditsExit in src/gen_stubs.c). */

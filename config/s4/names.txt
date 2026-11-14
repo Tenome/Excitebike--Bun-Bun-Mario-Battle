@@ -472,3 +472,4 @@
 82846B QueueEntryDigits
 81C8E1 QueueHalfUnits
 809C79 EntryScreenFill
+829182 LoadScene

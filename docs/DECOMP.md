@@ -382,7 +382,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s4
 
-532 functions in the static map; 472 hand-written (88.7%), 453 of them in the port.
+532 functions in the static map; 473 hand-written (88.9%), 453 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -858,4 +858,5 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$82:8F6F` | SaveBestRecords | `mem+A,X,Y,C,V` | `objects.c` |  |
 | `$82:9028` | StadiumBonusBanner | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$82:9159` | AddStadiumBonus | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$82:9182` | LoadScene | `mem+X,Y,C,V` | `objects.c` |  |
 

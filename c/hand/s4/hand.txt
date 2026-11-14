@@ -471,3 +471,4 @@
 81FA81  1 0  mem+Y,Z         BsxProbeReceiver
 81FA68  1 1  mem+Y,C,V       BsxDetect
 81F80C  1 1  mem+Y,C,V       BsxOpenTimeChannel
+829182  1 1  mem+X,Y,C,V     LoadScene

@@ -12643,7 +12643,7 @@ void StartRandomCourse_m1x1(void)
     ret();
 }
 
-void sub_829182_m1x1(void);
+void LoadScene_m1x1(void);
 
 /* $80:B2CD (RTS): screen off ($1903 shadow). */
 void ScreenOff_m1x1(void)
@@ -12695,7 +12695,7 @@ void RunGameModeScript_m1x1(void)
         return;
     }
     push16(0x85EC); ScreenOff_m1x1();
-    push8(0x80); push16(0x85F0); CALL(sub_829182_m1x1, 0x829182, 3);
+    push8(0x80); push16(0x85F0); CALL(LoadScene_m1x1, 0x829182, 3);
     rep(0x10);
     lda8(0x00);
     X = 0x0815; nz16(X);
@@ -13505,5 +13505,112 @@ void BsxOpenTimeChannel_m1x1(void)
     lda16(0xAAEE); wr16(ABS(0x218E), 0xAAEE);
     setP(pull8());
     fc = 1;
+    retl();
+}
+
+/* $82:9182 LoadScene (RTL, DB = $82 inside): load scene $76 with NMI and
+ * HDMA off: $1566 from $82:92A7, the tilemaps cleared; then the scene's
+ * list ($82:9323 + $82:92F1[$76], 8-byte entries: VRAM address, length,
+ * source offset, packed data; $FFFF ends), each entry unpacked to $7E:4000
+ * and DMAed to VRAM. Scene 4 in a race, and scenes 9 / 10 before minute 40,
+ * use the alternative list (+$24 / +$2C / +$24). After the list, the
+ * palette data unpacked to low RAM, $1915 + 1, $190F and $1E0C from
+ * $82:92D9 / $92C0, $1B00-$1B0F and $1B20-$1B2F cleared, NMI back on; X
+ * and Y kept. */
+void LoadScene_m1x1(void)
+{
+    push8(DB);
+    lda8(0x82);
+    push8(0x82); DB = pull8(); nz8(DB);
+    push8((u8)X); push8((u8)Y);
+    X = rd8(DP(0x76)); nz8((u8)X);
+    lda8(rd8(ABSX(0x92A7))); wr8(ABS(0x1566), (u8)A);
+    wr8(ABS(0x4200), 0);
+    wr8(ABS(0x190F), 0);
+    wr8(ABS(0x420C), 0);
+    push8(0x82); push16(0x919D); ClearTilemaps_m1x1();
+    rep(0x30);
+    lda16(rd16(ABS(0x0076))); and16(0x00FF);
+    lda16(asl16(A));
+    X = A; nz16(X);
+    Y = rd16(ABSX(0x92F1)); nz16(Y);
+    lda16(rd16(ABS(0x0076))); and16(0x00FF);
+    u16 extra = 0;
+    cmp16(A, 0x0004);
+    if (fz) {
+        lda16(rd16(ABS(0x007D))); and16(0x00FF);
+        if (fz) extra = 0x0024;
+    } else {
+        cmp16(A, 0x0009);
+        int nine = fz;
+        if (!nine) cmp16(A, 0x000A);
+        if (nine || fz) {
+            sep(0x20);
+            lda8(rd8(LONG(0x7FFFFF)));
+            rep(0x20);
+            and16(0x00FF);
+            cmp16(A, 0x0028);
+            if (!fc) extra = nine ? 0x002C : 0x0024;
+        }
+    }
+    if (extra) {
+        lda16(Y);
+        fc = 0; adc16(extra);
+        Y = A; nz16(Y);
+    }
+    for (;;) {
+        WAIT_TICK();
+        lda16(rd16(ABSY(0x9323)));
+        cmp16(A, 0xFFFF);
+        if (fz) break;
+        wr16(ABS(0x0102), A);
+        lda16(rd16(ABSY(0x9325))); wr16(ABS(0x0100), A);
+        lda16(rd16(ABSY(0x9327))); wr16(ABS(0x0104), A);
+        lda16(rd16(ABSY(0x9329))); wr16(DP(0x00), A);
+        push16(Y);
+        sep(0x30);
+        push16(0x921F); UnpackToWram_m1x1();
+        rep(0x20);
+        push16(D);
+        lda16(0x4300);
+        D = A;
+        ldy8(0x80); wr8(ABS(0x2115), 0x80);
+        lda16(0x1801); wr16(DP(0x00), 0x1801);
+        lda16(rd16(ABS(0x0102))); wr16(ABS(0x2116), A);
+        lda16(rd16(ABS(0x0100))); wr16(DP(0x05), A);
+        lda16(0x4000);
+        fc = 0; adc16(rd16(ABS(0x0104)));
+        ldx8(0x7E);
+        sep(0x10);
+        ldy8(0x01);
+        wr16(DP(0x02), A);
+        wr8(DP(0x04), (u8)X);
+        wr8(ABS(0x420B), (u8)Y);
+        D = pull16(); nz16(D);
+        rep(0x10);
+        Y = pull16(); nz16(Y);
+        lda16(Y);
+        fc = 0; adc16(0x0008);
+        Y = A; nz16(Y);
+    }
+    Y = inc16(Y);
+    Y = inc16(Y);
+    lda16(rd16(ABSY(0x9323))); wr16(DP(0x00), A);
+    sep(0x30);
+    push16(0x9267); UnpackToLowRam_m1x1();
+    wr8(ABS(0x1915), inc8(rd8(ABS(0x1915))));
+    Y = rd8(DP(0x76)); nz8((u8)Y);
+    lda8(rd8(ABSY(0x92D9))); wr8(ABS(0x190F), (u8)A);
+    lda8(rd8(ABSY(0x92C0))); wr8(ABS(0x1E0C), (u8)A);
+    ldx8(0x0F);
+    do {
+        wr8(ABSX(0x1B00), 0);
+        wr8(ABSX(0x1B20), 0);
+        X = dec8((u8)X);
+    } while (!fn);
+    lda8(rd8(ABS(0x190E))); wr8(ABS(0x4200), (u8)A);
+    Y = pull8(); nz8((u8)Y);
+    X = pull8(); nz8((u8)X);
+    DB = pull8(); nz8(DB);
     retl();
 }
