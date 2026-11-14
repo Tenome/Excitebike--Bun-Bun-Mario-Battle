@@ -4815,3 +4815,203 @@ void EntryNumberEditor_m1x1(void)
     push16(0x9D01); VramQueueCopy_m1x1();
     ret();
 }
+
+/* $80:EBDF UpdateLanes (RTS): every rider's lane $01F0 moves by its
+ * steering $01A8 (not while landing, $0170 = $14/$15) and stops on a lane
+ * line ($80:E6CD); jump states $0208 settle (a landing crash-lands);
+ * rows 8-$39 bound it (the edge flips the steering unless starting or
+ * finishing). Then the player's d-pad steers (up $08 / down $04) with
+ * sound $22 on a press or every 4 frames. */
+void UpdateLanes_m1x1(void)
+{
+    ldx8(0x07);
+    for (;;) {
+        lda8(rd8(ABSX(0x0170)));
+        cmp8((u8)A, 0x15);
+        int move = !fz;
+        if (move) { cmp8((u8)A, 0x14); move = !fz; }
+        if (move) {
+            lda8(rd8(ABSX(0x01F0)));
+            fc = 0; adc8(rd8(ABSX(0x01A8)));
+            wr8(ABSX(0x01F0), (u8)A);
+        }
+        ldy8(0x07);
+        do {
+            lda8(rd8(ABSX(0x01F0)));
+            cmp8((u8)A, rd8(ABSY(0xE6CD)));
+            if (fz) { lda8(0x00); wr8(ABSX(0x01A8), 0x00); goto next; }
+            Y = dec8((u8)Y);
+        } while (!fn);
+        lda8(rd8(ABSX(0x0208)));
+        if (!fz) {
+            cmp8((u8)A, 0x01);
+            if (fz) {
+                lda8(rd8(ABSX(0x01F0)));
+                cmp8((u8)A, 0x20);
+                if (fc) goto rows;
+                lda8(0x04); wr8(ABSX(0x0208), 0x04);
+                lda8(rd8(ABSX(0x0170)));
+                int land = fz;
+                if (!land) { cmp8((u8)A, 0x12); land = fz; }
+                if (!land) { cmp8((u8)A, 0x10); land = fz; }
+                if (!land) { cmp8((u8)A, 0x0D); land = fz; }
+                if (!land) goto next;
+                lda8(0x00); wr8(ABSX(0x01F8), 0x00);
+                push16(0xEC33); CrashLand_m1x1();
+                wr8(ABSX(0x0208), dec8(rd8(ABSX(0x0208))));
+                if (!fz) goto next;
+            }
+            cmp8((u8)A, 0x03);
+            if (!fz) {
+                lda8(rd8(ABSX(0x01F0)));
+                cmp8((u8)A, 0x20);
+                if (fc) wr8(ABSX(0x01F0), dec8(rd8(ABSX(0x01F0))));
+            }
+        }
+    rows:
+        lda8(rd8(ABSX(0x01F0)));
+        cmp8((u8)A, 0x08);
+        if (!fc) {
+            lda8(rd8(ABSX(0x01D0)));
+            if (fz) lda8(0x07);
+            else {
+                lda8(rd8(ABSX(0x01F0)));
+                cmp8((u8)A, 0x02);
+                if (!fc) lda8(0x01);
+            }
+            wr8(ABSX(0x01F0), (u8)A);
+            cmp8((u8)X, 0x00);
+            if (fz) goto flip;
+            goto edge;
+        }
+        cmp8((u8)A, 0x3A);
+        if (!fc) goto next;
+        lda8(0x39); wr8(ABSX(0x01F0), 0x39);
+    edge:
+        lda8(rd8(ABSX(0x01D0)));
+        ora8(rd8(ABSX(0x0940)));
+        if (!fz) goto next;
+    flip:
+        lda8(rd8(ABSX(0x01A8)));
+        if (fz) lda8(0xFF);
+        eor8(0xFE);
+        wr8(ABSX(0x01A8), (u8)A);
+    next:
+        X = dec8((u8)X);
+        if (fn) break;
+    }
+    lda8(rd8(DP(0x8E)));
+    if (fz) { ret(); return; }
+    lda8(rd8(ABS(0x01C8)));
+    ora8(rd8(ABS(0x0940)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABS(0x01E8)));
+    if (!fz) {
+        lda8(rd8(ABS(0x08F4)));
+        cmp8((u8)A, 0x02);
+        if (!fz) { ret(); return; }
+        wr8(ABS(0x08F4), inc8(rd8(ABS(0x08F4))));
+    }
+    lda8(rd8(ABS(0x01D0)));
+    if (!fz) {
+        cmp8((u8)A, 0x05);
+        if (!fz) { ret(); return; }
+    }
+    Y = rd8(ABS(0x01A8)); nz8((u8)Y);
+    lda8(rd8(ABS(0x0178)));
+    and8(0x04);
+    if (!fz) lda8(0xFF);
+    else {
+        lda8(rd8(ABS(0x0178)));
+        and8(0x08);
+        if (fz) { ret(); return; }
+        lda8(0x01);
+    }
+    wr8(ABS(0x01A8), (u8)A);
+    lda8(rd8(DP(0x21)));
+    and8(0x0C);
+    if (fz) {
+        lda8(rd8(DP(0x63)));
+        and8(0x03);
+        if (!fz) { ret(); return; }
+    }
+    lda8(0x22);
+    push8(0x80); push16(0xECE2); QueueSound_m1x1();
+    ret();
+}
+
+/* $80:8F2D (RTL): the four select-screen wheels' sprites: a 3x3 block
+ * at ($154C, $1550 - $10) in OAM slot $80:903F (by angle quadrant), tiles
+ * from $80:9043 (wheel 1 uses set 4 while $1F is clear), attribute
+ * $80:9048 | $80:904D (or $28 | ... while turning or off the notch, else
+ * with the text row for the selection), all large. */
+void DrawSelectWheels_m1x1(void)
+{
+    ldx8(0x03);
+    do {
+        lda8(rd8(ABSX(0x154C))); wr8(DP(0x04), (u8)A);
+        lda8(rd8(ABSX(0x1550)));
+        fc = 1; sbc8(0x10);
+        wr8(DP(0x00), (u8)A);
+        lda8(rd8(ABSX(0x1547)));
+        fc = 0; adc8(0x20);
+        lda8(rol8((u8)A)); lda8(rol8((u8)A)); lda8(rol8((u8)A));
+        and8(0x03);
+        push8((u8)X);
+        X = (u8)A; nz8((u8)X);
+        lda8(rd8(LONGX(0x80903F)));
+        X = pull8(); nz8((u8)X);
+        Y = (u8)A; nz8((u8)Y);
+        push8((u8)X);
+        cmp8((u8)X, 0x01);
+        if (fz) {
+            lda8(rd8(DP(0x1F)));
+            if (fz) ldx8(0x04);
+        }
+        lda8(rd8(DP(0x04)));
+        for (int c = 0; c < 3; c++) {
+            if (c) { fc = 0; adc8(0x10); }
+            wr8(ABSY(0x1600 + 4 * c), (u8)A);
+            wr8(ABSY(0x160C + 4 * c), (u8)A);
+            wr8(ABSY(0x1618 + 4 * c), (u8)A);
+        }
+        lda8(rd8(DP(0x00)));
+        for (int r = 0; r < 3; r++) {
+            if (r) { fc = 0; adc8(0x10); }
+            wr8(ABSY(0x1601 + 12 * r), (u8)A);
+            wr8(ABSY(0x1605 + 12 * r), (u8)A);
+            wr8(ABSY(0x1609 + 12 * r), (u8)A);
+        }
+        lda8(rd8(LONGX(0x809043)));
+        for (int r = 0; r < 3; r++) {
+            if (r) { fc = 0; adc8(0x1C); }
+            for (int c = 0; c < 3; c++) {
+                if (c) { lda8(inc8((u8)A)); lda8(inc8((u8)A)); }
+                wr8(ABSY(0x1602 + 12 * r + 4 * c), (u8)A);
+            }
+        }
+        lda8(rd8(DP(0x20)));
+        and8(0x03);
+        int busy = !fz;
+        if (!busy) {
+            cmp8((u8)X, 0x04);
+            if (fz) { lda8(rd8(ABS(0x1548))); busy = !fz; }
+            else { lda8(rd8(ABSX(0x1547))); busy = !fz; }
+        }
+        if (busy) lda8(0x28);
+        else {
+            push8(0x80); push16(0x8FEE); SpriteTextRow_m1x1();
+            lda8(rd8(LONGX(0x809048)));
+        }
+        ora8(rd8(LONGX(0x80904D)));
+        for (int i = 0; i < 9; i++) wr8(ABSY(0x1603 + 4 * i), (u8)A);
+        lda8((u8)Y);
+        lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
+        Y = (u8)A; nz8((u8)Y);
+        lda8(0x02);
+        for (int i = 0; i < 9; i++) wr8(ABSY(0x1820 + i), 0x02);
+        X = pull8(); nz8((u8)X);
+        X = dec8((u8)X);
+    } while (!fn);
+    retl();
+}

@@ -308,3 +308,5 @@
 80DF01 BonusResultStep
 80CF0D TemperatureGauge
 809C0D EntryNumberEditor
+80EBDF UpdateLanes
+808F2D DrawSelectWheels

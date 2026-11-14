@@ -522,6 +522,8 @@ BRIDGE(HleHand_Mode09, Mode09_m1x1, 900)
 BRIDGE_DYN(HleHand_BonusResultStep, BonusResultStep_m1x1, g_ram[0x88] == 1 ? 3500 : 10)
 BRIDGE(HleHand_TemperatureGauge, TemperatureGauge_m1x1, 420)
 BRIDGE_DYN(HleHand_EntryNumberEditor, EntryNumberEditor_m1x1, (g_ram[0x21] & 0x10) ? 1500 : 800)
+BRIDGE(HleHand_UpdateLanes, UpdateLanes_m1x1, 520)
+BRIDGE(HleHand_DrawSelectWheels, DrawSelectWheels_m1x1, 1200)
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */
