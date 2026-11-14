@@ -1259,6 +1259,14 @@ BRIDGE(HleHand_TurboMeterJmp, TurboMeterJmp_m1x1, 242)
 BRIDGE(HleHand_ShowCourseBest, ShowCourseBest_m1x1, 1350)
 BRIDGE(HleHand_BonusRowList, BonusRowList_m1x1, 18)
 BRIDGE_DYN(HleHand_BuildBonusColumn, BuildBonusColumn_m1x1, g_ram[0x0279] != g_ram[0x0266] ? 40 : 900)
+/* Stadium 4 object sprite pieces (objects.c) */
+/* ~55 cycles per piece ($0390 of object $03A3; 0 means 256). */
+static uint32 object_pieces_cost4(void)
+{
+    uint32 n = g_ram[0x0390 + g_ram[0x03A3]];
+    return 60 + 55 * (n ? n : 256);
+}
+BRIDGE_DYN(HleHand_DrawObjectPieces, DrawObjectPieces_m1x1, object_pieces_cost4())
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)

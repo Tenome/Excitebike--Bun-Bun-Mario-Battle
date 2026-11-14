@@ -11948,3 +11948,76 @@ void BuildBonusColumn_m1x1(void)
     wr8(ABS(0x0279), (u8)A);
     ret();
 }
+
+/* $81:9E9F (RTS): draw object $03A3 as a sprite group: its type $02FF
+ * picks a frame list ($81:ADB7), its frame $034F + 1 times 4 * the piece
+ * count $0390 indexes it; for each piece (backwards, 4 bytes at
+ * $81:ADCB: X, Y, tile, attributes) not flagged hidden ($20) an OAM
+ * entry at $1600 + 32 * slot, offset by the object's X $027F / Y $028F,
+ * attributes merged with its palette $038F, and the size bit ($10) in
+ * $1820. */
+void DrawObjectPieces_m1x1(void)
+{
+    X = rd8(ABS(0x03A3)); nz8((u8)X);
+    lda8(rd8(ABSX(0x02FF)));
+    lda8(asl8((u8)A));
+    Y = (u8)A; nz8((u8)Y);
+    rep(0x20);
+    lda16(rd16(ABSY(0xADB7)));
+    wr16(DP(0x00), A);
+    sep(0x20);
+    lda8(rd8(ABSX(0x034F)));
+    lda8(inc8((u8)A));
+    wr8(ABS(0x4202), (u8)A);
+    lda8(rd8(ABSX(0x0390)));
+    lda8(asl8((u8)A)); lda8(asl8((u8)A));
+    wr8(ABS(0x4203), (u8)A);
+    rep(0x30);
+    lda16(rd16(ABS(0x4216)));
+    fc = 1; sbc16(0x0004);
+    fc = 0; adc16(rd16(DP(0x00)));
+    Y = A; nz16(Y);
+    lda16(rd16(ABSX(0x0390))); wr16(DP(0x00), A);
+    lda16(rd16(ABSX(0x027F))); wr16(DP(0x04), A);
+    lda16(rd16(ABSX(0x038F))); wr16(DP(0x0E), A);
+    lda16(rd16(ABSX(0x028F))); wr16(DP(0x06), A);
+    lda16(X);
+    lda16(asl16(A)); lda16(asl16(A)); lda16(asl16(A)); lda16(asl16(A)); lda16(asl16(A));
+    X = A; nz16(X);
+    sep(0x20);
+    do {
+        WAIT_TICK();
+        lda8(rd8(ABSY(0xADCE)));
+        and8(0x20);
+        if (fz) {
+            lda8(rd8(ABSY(0xADCB)));
+            fc = 0; adc8(rd8(DP(0x04)));
+            wr8(ABSX(0x1600), (u8)A);
+            lda8(rd8(ABSY(0xADCC)));
+            fc = 0; adc8(rd8(DP(0x06)));
+            wr8(ABSX(0x1601), (u8)A);
+            lda8(rd8(ABSY(0xADCD)));
+            wr8(ABSX(0x1602), (u8)A);
+            lda8(rd8(ABSY(0xADCE)));
+            and8(0xCF);
+            ora8(rd8(DP(0x0E)));
+            wr8(ABSX(0x1603), (u8)A);
+            rep(0x20);
+            push16(X);
+            lda16(X);
+            lda16(lsr16(A)); lda16(lsr16(A));
+            X = A; nz16(X);
+            sep(0x20);
+            lda8(rd8(ABSY(0xADCE)));
+            and8(0x10);
+            lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
+            wr8(ABSX(0x1820), (u8)A);
+            X = pull16(); nz16(X);
+        }
+        X = dec16(X); X = dec16(X); X = dec16(X); X = dec16(X);
+        Y = dec16(Y); Y = dec16(Y); Y = dec16(Y); Y = dec16(Y);
+        wr8(DP(0x00), dec8(rd8(DP(0x00))));
+    } while (!fz);
+    sep(0x10);
+    ret();
+}

@@ -367,7 +367,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s4
 
-532 functions in the static map; 443 hand-written (83.3%), 434 of them in the port.
+532 functions in the static map; 444 hand-written (83.5%), 435 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -704,6 +704,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$81:9B5D` | QueueMapTile | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$81:9D71` | VelocityDirection | `mem+V` | `objects.c` | yes |
 | `$81:9DE4` | DrawBigBall | `mem+Y,V` | `objects.c` | yes |
+| `$81:9E9F` | DrawObjectPieces | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$81:9F3A` | SteerObjectStep | `mem+X,C,V` | `objects.c` | yes |
 | `$81:9FCE` | ObjectFacing | `mem+X,V` | `objects.c` | yes |
 | `$81:9FF7` | ApplyVelocityX | `mem+X,V` | `objects.c` | yes |
