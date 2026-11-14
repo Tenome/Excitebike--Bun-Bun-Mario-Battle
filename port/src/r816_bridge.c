@@ -713,6 +713,10 @@ BRIDGE(HleHand_ResetAndLand, ResetAndLand_m1x1, 165)
 BRIDGE(HleHand_JumpBase30, JumpBase30_m1x1, 18)
 BRIDGE(HleHand_JumpBase10, JumpBase10_m1x1, 18)
 BRIDGE(HleHand_StartJumpBase30, StartJumpBase30_m1x1, 30)
+BRIDGE(HleHand_DemoExitBoost, DemoExitBoost_m1x1, 60)
+BRIDGE(HleHand_DemoExitSkip40, DemoExitSkip40_m1x1, 55)
+BRIDGE(HleHand_DemoExitSkip35, DemoExitSkip35_m1x1, 60)
+BRIDGE(HleHand_SetJumpState1, SetJumpState1_m1x1, 12)
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */

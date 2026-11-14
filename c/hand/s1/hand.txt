@@ -401,3 +401,7 @@
 80EB2F  1 1  mem+A,X,Y,C,V   JumpBase30
 80EB34  1 1  mem+A,X,Y,C,V   JumpBase10
 80EB25  1 1  mem+A,X,Y,C,V   StartJumpBase30
+80E3D4  1 1  mem+X,Y,C,V     DemoExitBoost
+80E3EE  1 1  mem+X,Y,C,V     DemoExitSkip40
+80E3F2  1 1  mem+X,Y,C,V     DemoExitSkip35
+80EAFF  1 1  mem+A,X,Y,C,V   SetJumpState1

@@ -8844,3 +8844,32 @@ void StartJumpBase30_m1x1(void)
     lda8(0x01); wr8(ABSX(0x0240), 0x01);
     JumpBase30_m1x1();
 }
+
+/* Demo exits that continue with the next entry: $80:E3D4 ($099D = $0990
+ * = $10), $80:E3EE and $80:E3F2 (A = $35 + $80:E1A5,X, unused). */
+void DemoExitBoost_m1x1(void)
+{
+    lda8(0x10);
+    wr8(ABS(0x099D), 0x10);
+    wr8(ABS(0x0990), 0x10);
+    demo_next1();
+}
+void DemoExitSkip40_m1x1(void)
+{
+    lda8(0x40);
+    demo_next1();
+}
+void DemoExitSkip35_m1x1(void)
+{
+    lda8(0x35);
+    fc = 0; adc8(rd8(ABSX(0xE1A5)));
+    demo_next1();
+}
+
+/* $80:EAFF (RTS, X = rider): $0200,X = 1. */
+void SetJumpState1_m1x1(void)
+{
+    lda8(0x01);
+    wr8(ABSX(0x0200), 0x01);
+    ret();
+}

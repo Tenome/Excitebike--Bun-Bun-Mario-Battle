@@ -409,3 +409,7 @@
 80EB2F JumpBase30
 80EB34 JumpBase10
 80EB25 StartJumpBase30
+80E3D4 DemoExitBoost
+80E3EE DemoExitSkip40
+80E3F2 DemoExitSkip35
+80EAFF SetJumpState1

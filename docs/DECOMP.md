@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 397 hand-written (97.5%), 376 of them in the port.
+407 functions in the static map; 401 hand-written (98.5%), 380 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -257,7 +257,10 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:E319` | Mode0C | `mem+X,Y,C,V` | `objects.c` |  |
 | `$80:E374` | TemperatureGaugeJmp | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:E377` | DemoInputStep | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:E3D4` | DemoExitBoost | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:E3DF` | PlaceLastRival | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:E3EE` | DemoExitSkip40 | `mem+X,Y,C,V` | `objects.c` | yes |
+| `$80:E3F2` | DemoExitSkip35 | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:E3FB` | StartMode01 | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:E411` | DemoPadDisplay | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:E4FC` | DemoPushStart | `mem+X,Y,C,V` | `objects.c` | yes |
@@ -288,6 +291,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:E9F3` | UseArrowPiece | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:EA6A` | CollectPickupPiece | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:EAD1` | PlayerOverheatWarn | `mem+A,X,Y,C,V` | `race.c` | yes |
+| `$80:EAFF` | SetJumpState1 | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:EB0C` | SpeedBumpCrash | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:EB25` | StartJumpBase30 | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:EB2F` | JumpBase30 | `mem+A,X,Y,C,V` | `objects.c` | yes |
