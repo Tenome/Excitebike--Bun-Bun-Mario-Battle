@@ -275,3 +275,5 @@
 80AB3D  1 1  mem+A,X,Y,C,V   SegmentTimer
 80C41D  1 1  mem+A,X,Y,C,V   FinishStep
 80E004  1 1  mem+A,X,Y,C,V   CheckEndingMinute
+80C52E  1 1  mem+A,X,Y,C,V   DrawStartFlags
+80C503  1 1  mem+A,X,Y,C,V   RaceStartLights

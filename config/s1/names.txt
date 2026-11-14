@@ -295,3 +295,5 @@
 80DB44 BonusRunOut
 80AB3D SegmentTimer
 80C41D FinishStep
+80C52E DrawStartFlags
+80C503 RaceStartLights
