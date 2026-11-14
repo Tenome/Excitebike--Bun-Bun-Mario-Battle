@@ -5950,3 +5950,161 @@ void SetupJumpContest_m1x1(void)
     lda8(0xDC); wr8(ABS(0x190F), 0xDC);
     ret();
 }
+
+/* Stadium 1's rider jump steps ($80:E90D-$80:E9B1), run by the piece
+ * interpreter's table $80:E701. */
+
+/* $80:E975 (RTS, X = rider): $01A0 = $0981 = A, then A = $0248 - $0238. */
+static void set_rider_pair1(void)
+{
+    wr8(ABSX(0x01A0), (u8)A);
+    wr8(ABSX(0x0981), (u8)A);
+    lda8(rd8(ABSX(0x0248)));
+    fc = 1; sbc8(rd8(ABSX(0x0238)));
+    ret();
+}
+
+void SetRiderPair_m1x1(void) { set_rider_pair1(); }
+
+/* $80:E929 (RTS): jump height $01F8 and its base $0268 = A. */
+static void set_jump_base1(void)
+{
+    wr8(ABSX(0x01F8), (u8)A);
+    wr8(ABSX(0x0268), (u8)A);
+    ret();
+}
+
+void SetJumpBase_m1x1(void) { set_jump_base1(); }
+
+/* $80:E94C (RTS): jump height $01F8 = $0268 - A. */
+static void height_below1(void)
+{
+    wr8(DP(0x00), (u8)A);
+    lda8(rd8(ABSX(0x0268)));
+    fc = 1; sbc8(rd8(DP(0x00)));
+    wr8(ABSX(0x01F8), (u8)A);
+    ret();
+}
+
+void HeightBelow_m1x1(void) { height_below1(); }
+
+static void pair1(u8 v, u16 back)
+{
+    lda8(v);
+    push16(back); set_rider_pair1();
+}
+
+/* $80:E91E (RTS): $0240 = $80, SetRiderPair(5), the jump base at half. */
+void RiderKickUp_m1x1(void)
+{
+    lda8(0x80); wr8(ABSX(0x0240), 0x80);
+    pair1(0x05, 0xE927);
+    lda8(lsr8((u8)A));
+    set_jump_base1();
+}
+
+/* $80:E930 (RTS): SetRiderPair(2), the height half the pair below. */
+void RiderHalfDrop_m1x1(void)
+{
+    pair1(0x02, 0xE934);
+    lda8(lsr8((u8)A));
+    height_below1();
+}
+
+/* $80:E939 (RTS): SetRiderPair(6), the jump base there, $0240 = $60. */
+void RiderHighJump_m1x1(void)
+{
+    pair1(0x06, 0xE93D);
+    push16(0xE940); set_jump_base1();
+    lda8(0x60); wr8(ABSX(0x0240), 0x60);
+    ret();
+}
+
+/* $80:E947 (RTS): SetRiderPair(1), then HeightBelow. */
+void RiderPairHeight_m1x1(void)
+{
+    pair1(0x01, 0xE94B);
+    height_below1();
+}
+
+/* $80:E958 (RTS): SetRiderPair(4), the jump base at twice the pair
+ * (+$10 more when $0200 is set), $0240 = $40. */
+void RiderJumpBase_m1x1(void)
+{
+    pair1(0x04, 0xE95C);
+    lda8(asl8((u8)A));
+    push16(0xE960); set_jump_base1();
+    lda8(rd8(ABSX(0x0200)));
+    if (!fz) {
+        lda8(rd8(ABSX(0x01F8)));
+        fc = 0; adc8(0x10);
+        push16(0xE96E); set_jump_base1();
+    }
+    lda8(0x40); wr8(ABSX(0x0240), 0x40);
+    ret();
+}
+
+/* $80:E983 (RTS): unless in jump state 1, SetRiderPair(3) and the height
+ * twice the pair below; in state 4 it crash-lands into state 2 ($08AC
+ * too). */
+void RiderDropStep_m1x1(void)
+{
+    lda8(rd8(ABSX(0x0208)));
+    if (!fz) {
+        cmp8((u8)A, 0x01);
+        if (fz) { ret(); return; }
+    }
+    pair1(0x03, 0xE990);
+    lda8(asl8((u8)A));
+    push16(0xE994); height_below1();
+    lda8(rd8(ABSX(0x0208)));
+    cmp8((u8)A, 0x04);
+    if (!fz) { ret(); return; }
+    push16(0xE99E); CrashLand_m1x1();
+    lda8(0x02);
+    wr8(ABSX(0x0208), 0x02);
+    wr8(ABSX(0x08AC), 0x02);
+    ret();
+}
+
+/* $80:E9A8 (RTS): jump state $0208 and $0200 cleared. */
+void ClearJumpState_m1x1(void)
+{
+    lda8(0x00);
+    wr8(ABSX(0x0208), 0);
+    wr8(ABSX(0x0200), 0);
+    ret();
+}
+
+/* $80:E9B1 (RTS): jump state 1, or 2 when the rider's lane $01F0 is
+ * below $20. */
+void StartJumpState_m1x1(void)
+{
+    lda8(0x01); wr8(ABSX(0x0208), 0x01);
+    lda8(rd8(ABSX(0x01F0)));
+    cmp8((u8)A, 0x20);
+    if (!fc) wr8(ABSX(0x0208), inc8(rd8(ABSX(0x0208))));
+    ret();
+}
+
+/* $80:E90F (RTS, X = last rider): riders X-0 on the ground get their
+ * height $01B0 from GroundHeightAbove. */
+void RiderGroundHeightsFrom_m1x1(void)
+{
+    do {
+        lda8(rd8(ABSX(0x01E8)));
+        if (fz) {
+            push16(0xE916); GroundHeightAbove_m1x1();
+            wr8(ABSX(0x01B0), (u8)A);
+        }
+        X = dec8((u8)X);
+    } while (!fn);
+    ret();
+}
+
+/* $80:E90D (RTS): the same for all eight riders. */
+void RiderGroundHeights_m1x1(void)
+{
+    ldx8(0x07);
+    RiderGroundHeightsFrom_m1x1();
+}

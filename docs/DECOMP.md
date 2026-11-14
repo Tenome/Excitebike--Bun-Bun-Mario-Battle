@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 310 hand-written (76.2%), 307 of them in the port.
+407 functions in the static map; 323 hand-written (79.4%), 320 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -218,6 +218,19 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:E8D5` | LanePieceTablesLong | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:E8DF` | LanePieceTables | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:E8EA` | MarkFastRider | `mem+A,X,Y,C,V` | `physics.c` | yes |
+| `$80:E90D` | RiderGroundHeights | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:E90F` | RiderGroundHeightsFrom | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:E91E` | RiderKickUp | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:E929` | SetJumpBase | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:E930` | RiderHalfDrop | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:E939` | RiderHighJump | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:E947` | RiderPairHeight | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:E94C` | HeightBelow | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:E958` | RiderJumpBase | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:E975` | SetRiderPair | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:E983` | RiderDropStep | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:E9A8` | ClearJumpState | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:E9B1` | StartJumpState | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:E9C1` | FlattenPlayerPiece | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:E9F3` | UseArrowPiece | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:EA6A` | CollectPickupPiece | `mem+A,X,Y,C,V` | `objects.c` | yes |

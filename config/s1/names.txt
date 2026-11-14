@@ -332,3 +332,16 @@
 81A620 SetHdmaPreset
 80B538 RiderPaletteWords
 80D813 SetupJumpContest
+80E975 SetRiderPair
+80E929 SetJumpBase
+80E94C HeightBelow
+80E91E RiderKickUp
+80E930 RiderHalfDrop
+80E939 RiderHighJump
+80E947 RiderPairHeight
+80E958 RiderJumpBase
+80E983 RiderDropStep
+80E9A8 ClearJumpState
+80E9B1 StartJumpState
+80E90F RiderGroundHeightsFrom
+80E90D RiderGroundHeights

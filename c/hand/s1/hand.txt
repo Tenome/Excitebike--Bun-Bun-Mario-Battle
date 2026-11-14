@@ -314,3 +314,16 @@
 81A620  1 1  mem+A,X,Y,C,V   SetHdmaPreset
 80B538  1 1  mem+A,X,Y,C,V   RiderPaletteWords
 80D813  1 1  mem+A,X,Y,C,V   SetupJumpContest
+80E975  1 1  mem+A,X,Y,C,V   SetRiderPair
+80E929  1 1  mem+A,X,Y,C,V   SetJumpBase
+80E94C  1 1  mem+A,X,Y,C,V   HeightBelow
+80E91E  1 1  mem+A,X,Y,C,V   RiderKickUp
+80E930  1 1  mem+A,X,Y,C,V   RiderHalfDrop
+80E939  1 1  mem+A,X,Y,C,V   RiderHighJump
+80E947  1 1  mem+A,X,Y,C,V   RiderPairHeight
+80E958  1 1  mem+A,X,Y,C,V   RiderJumpBase
+80E983  1 1  mem+A,X,Y,C,V   RiderDropStep
+80E9A8  1 1  mem+A,X,Y,C,V   ClearJumpState
+80E9B1  1 1  mem+A,X,Y,C,V   StartJumpState
+80E90F  1 1  mem+A,X,Y,C,V   RiderGroundHeightsFrom
+80E90D  1 1  mem+A,X,Y,C,V   RiderGroundHeights

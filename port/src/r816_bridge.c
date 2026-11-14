@@ -567,6 +567,27 @@ static uint32 hdma_preset_cost1(uint8 a)
 }
 BRIDGE_DYN(HleHand_SetHdmaPreset, SetHdmaPreset_m1x1, hdma_preset_cost1((uint8)A))
 BRIDGE(HleHand_SetupJumpContest, SetupJumpContest_m1x1, 7000)
+/* RiderGroundHeightsFrom ($80:E90F): riders X-0, ~43 cycles each on the
+ * ground ($01E8 clear) and ~12 in the air. */
+static uint32 ground_heights_cost1(uint8 last)
+{
+    uint32 c = 6;
+    for (int i = 0; i <= last && i < 8; i++) c += g_ram[0x01E8 + i] ? 12 : 43;
+    return c;
+}
+BRIDGE(HleHand_SetRiderPair, SetRiderPair_m1x1, 30)
+BRIDGE(HleHand_SetJumpBase, SetJumpBase_m1x1, 16)
+BRIDGE(HleHand_HeightBelow, HeightBelow_m1x1, 25)
+BRIDGE(HleHand_RiderKickUp, RiderKickUp_m1x1, 62)
+BRIDGE(HleHand_RiderHalfDrop, RiderHalfDrop_m1x1, 60)
+BRIDGE(HleHand_RiderHighJump, RiderHighJump_m1x1, 66)
+BRIDGE(HleHand_RiderPairHeight, RiderPairHeight_m1x1, 58)
+BRIDGE(HleHand_RiderJumpBase, RiderJumpBase_m1x1, 100)
+BRIDGE(HleHand_RiderDropStep, RiderDropStep_m1x1, 85)
+BRIDGE(HleHand_ClearJumpState, ClearJumpState_m1x1, 20)
+BRIDGE(HleHand_StartJumpState, StartJumpState_m1x1, 28)
+BRIDGE_DYN(HleHand_RiderGroundHeightsFrom, RiderGroundHeightsFrom_m1x1, ground_heights_cost1((uint8)X))
+BRIDGE_DYN(HleHand_RiderGroundHeights, RiderGroundHeights_m1x1, 2 + ground_heights_cost1(7))
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */
