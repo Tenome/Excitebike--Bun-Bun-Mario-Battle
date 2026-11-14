@@ -314,3 +314,6 @@
 80A6B2 EraseCollectedCoin
 80A7AF RedrawUsedItem
 80E2B6 StartDemo
+80E8B1 RiderLanePieceAt
+80B2A1 VramQueueTilesLong
+80D3F7 ResetCoinMarkers

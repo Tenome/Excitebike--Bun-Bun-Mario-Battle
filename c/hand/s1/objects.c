@@ -5253,3 +5253,35 @@ void StartDemo_m1x1(void)
     push16(0xE317); DemoPadDisplay_m1x1();
     ret();
 }
+
+void ClearWords1530_m1x1(void);
+
+/* $80:E8B1 RiderLanePieceAt (RTS): RiderPieceAt in rider X's lane $08A4. */
+void RiderLanePieceAt_m1x1(void)
+{
+    Y = rd8(ABSX(0x08A4)); nz8((u8)Y);
+    RiderPieceAt_m1x1();
+}
+
+/* $80:B2A1 VramQueueTilesLong (RTL): VramQueueTiles for other banks. */
+void VramQueueTilesLong_m1x1(void)
+{
+    push16(0xB2A3); VramQueueTiles_m1x1();
+    retl();
+}
+
+/* $80:D3F7 (RTL): clear the coin counts $1540 / $1541 and the marker
+ * objects (ClearWords1530, into which it falls). */
+void ResetCoinMarkers_m1x1(void)
+{
+    wr8(ABS(0x1540), 0); wr8(ABS(0x1541), 0);
+    ClearWords1530_m1x1();
+}
+
+/* $80:8D25 Mode01 (RTS): the player-select screen's step $1E8B through
+ * the table $80:8D2B. */
+void Mode01_m1x1(void)
+{
+    X = rd8(ABS(0x1E8B)); nz8((u8)X);
+    r816_call_pc(0x800000u | rd16(LONGX(0x808D2B)));
+}

@@ -295,3 +295,7 @@
 80A6B2  1 1  mem+X,Y,C,V     EraseCollectedCoin
 80A7AF  1 1  mem+X,Y,C,V     RedrawUsedItem
 80E2B6  1 1  mem+X,Y,C,V     StartDemo
+80E8B1  1 1  mem+A,X,Y,C,V   RiderLanePieceAt
+80B2A1  1 1  mem+X,Y,C,V     VramQueueTilesLong
+80D3F7  1 1  mem+A,X,C,V     ResetCoinMarkers
+808D25  1 1  mem+X,Y,C,V     Mode01

@@ -529,6 +529,11 @@ BRIDGE_DYN(HleHand_EraseCollectedCoin, EraseCollectedCoin_m1x1, g_ram[0xAA] ? 17
 BRIDGE_DYN(HleHand_RedrawUsedItem, RedrawUsedItem_m1x1, g_ram[0xAF] ? 1500 : 12)
 /* StartDemo ($80:E2B6) passes difftest on s1 but is not hooked: it loads
  * the course and runs past the frame, and with it the Gen A run shifts. */
+BRIDGE(HleHand_RiderLanePieceAt, RiderLanePieceAt_m1x1, 66)
+BRIDGE(HleHand_ResetCoinMarkers, ResetCoinMarkers_m1x1, 40)
+BRIDGE(HleHand_Mode01, Mode01_m1x1, 20)
+/* VramQueueTilesLong ($80:B2A1) is verified but unhooked: a trampoline
+ * whose cost is the callee's. */
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */
