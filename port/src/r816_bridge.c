@@ -526,6 +526,9 @@ BRIDGE(HleHand_UpdateLanes, UpdateLanes_m1x1, 520)
 BRIDGE(HleHand_DrawSelectWheels, DrawSelectWheels_m1x1, 1200)
 BRIDGE_DYN(HleHand_DemoPadDisplay, DemoPadDisplay_m1x1, 200 + (g_ram[0x1FFFF] >= 5 ? 1450 : 15))
 BRIDGE_DYN(HleHand_EraseCollectedCoin, EraseCollectedCoin_m1x1, g_ram[0xAA] ? 1700 : 12)
+BRIDGE_DYN(HleHand_RedrawUsedItem, RedrawUsedItem_m1x1, g_ram[0xAF] ? 1500 : 12)
+/* StartDemo ($80:E2B6) passes difftest on s1 but is not hooked: it loads
+ * the course and runs past the frame, and with it the Gen A run shifts. */
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */

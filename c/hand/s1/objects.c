@@ -5156,3 +5156,100 @@ void EraseCollectedCoin_m1x1(void)
     X = pull8(); nz8((u8)X);
     retl();
 }
+
+/* $80:A7AF (RTL): a used track item ($AF = type) is redrawn: two tile
+ * columns left of the wheel column $0260 (one more when the piece there
+ * is $3B / $3C instead of $80:A86F,Y) from the tiles at $0018 ($80:A87E /
+ * $80:A883, then $80:A888 / $80:A88D; header $21) at the row's VRAM
+ * address ($80:A892 + column). X is kept. */
+void RedrawUsedItem_m1x1(void)
+{
+    push8((u8)X);
+    lda8(rd8(DP(0xAF)));
+    if (fz) { X = pull8(); nz8((u8)X); retl(); return; }
+    wr8(DP(0x10), 0); wr8(DP(0x11), 0);
+    lda8(rd8(DP(0xAF)));
+    lda8(asl8((u8)A));
+    X = (u8)A; nz8((u8)X);
+    rep(0x20);
+    lda16(rd16(ABSX(0xA874))); wr16(DP(0x00), A);
+    sep(0x20);
+    Y = rd8(ABS(0x0260)); nz8((u8)Y);
+    lda8(rd8((((u32)DB << 16) + rd16(DP(0x00)) + Y) & 0xFFFFFF));
+    Y = rd8(ABS(0x00AF)); nz8((u8)Y);
+    cmp8((u8)A, rd8(ABSY(0xA86F)));
+    if (!fz) {
+        int two;
+        cmp8((u8)A, 0x3C); two = fz;
+        if (!two) { cmp8((u8)A, 0x3B); two = fz; }
+        if (two) wr8(DP(0x10), inc8(rd8(DP(0x10))));
+    }
+    wr8(DP(0x10), inc8(rd8(DP(0x10))));
+    static const u16 t19[2] = { 0xA87E, 0xA888 };
+    static const u16 t1a[2] = { 0xA883, 0xA88D };
+    for (int pass = 0; pass < 2; pass++) {
+        if (pass) {
+            wr8(DP(0x10), dec8(rd8(DP(0x10))));
+            lda8(rd8(DP(0xAF)));
+            lda8(asl8((u8)A));
+            X = (u8)A; nz8((u8)X);
+        }
+        rep(0x20);
+        lda16(rd16(ABS(0x0260)));
+        fc = 1; sbc16(rd16(DP(0x10)));
+        and16(0x0020);
+        for (int i = 0; i < 5; i++) lda16(asl16(A));
+        wr16(DP(0x00), A);
+        lda16(rd16(ABS(0x0260)));
+        fc = 1; sbc16(rd16(DP(0x10)));
+        and16(0x001F);
+        fc = 0; adc16(rd16(DP(0x00)));
+        fc = 0; adc16(rd16(ABSX(0xA892)));
+        wr16(DP(0x00), A);
+        lda16(0x0018); wr16(DP(0x02), 0x0018);
+        sep(0x20);
+        X = rd8(DP(0xAF)); nz8((u8)X);
+        lda8(0x21); wr8(DP(0x18), 0x21);
+        lda8(rd8(ABSX(t19[pass]))); wr8(DP(0x19), (u8)A);
+        lda8(rd8(ABSX(t1a[pass]))); wr8(DP(0x1A), (u8)A);
+        lda8(0x08); wr8(DP(0x0F), 0x08);
+        push16(pass ? 0xA86A : 0xA822); VramQueueTiles_m1x1();
+    }
+    wr8(DP(0xAF), 0);
+    X = pull8(); nz8((u8)X);
+    retl();
+}
+
+void LoadCourse_m1x1(void);
+
+/* $80:E2B6 StartDemo (RTS): the attract demo: entry 7, paused flag $54 =
+ * 5, ground $A0, the crowd flags at X $C0 down by $10, the player at lane
+ * $0E, column 9, X $38, upright on page 1; $08C4 = $90 = $75 = 1, no
+ * fade, BG3 at $19, $1905 = $17; the course and the pad display. */
+void StartDemo_m1x1(void)
+{
+    lda8(0x07); wr8(DP(0x7C), 0x07);
+    lda8(0x05); wr8(DP(0x54), 0x05);
+    lda8(0xA0); wr8(ABS(0x0CD5), 0xA0);
+    ldx8(0x07);
+    lda8(0xC0);
+    do {
+        wr8(ABSX(0x0936), (u8)A);
+        fc = 1; sbc8(0x10);
+        X = dec8((u8)X);
+    } while (!fn);
+    lda8(0x0E); wr8(ABS(0x01F0), 0x0E);
+    lda8(0x08); wr8(ABS(0x0188), 0x08);
+    lda8(0x09); wr8(ABS(0x0260), 0x09);
+    lda8(0x38); wr8(ABS(0x0190), 0x38);
+    lda8(0x06); wr8(ABS(0x01E0), 0x06); wr8(ABS(0x0230), 0x06);
+    lda8(0x01); wr8(ABS(0x0198), 0x01); wr8(ABS(0x01D8), 0x01);
+    lda8(0x01); wr8(ABS(0x08C4), 0x01); wr8(DP(0x90), 0x01); wr8(DP(0x75), 0x01);
+    lda8(0x01); wr8(ABS(0x1923), 0x01);
+    lda8(0x19); wr8(ABS(0x2109), 0x19);
+    lda8(0x01); wr8(ABS(0x210C), 0x01);
+    lda8(0x17); wr8(ABS(0x1905), 0x17);
+    push8(0x80); push16(0xE314); LoadCourse_m1x1();
+    push16(0xE317); DemoPadDisplay_m1x1();
+    ret();
+}

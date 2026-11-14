@@ -293,3 +293,5 @@
 808F2D  1 1  mem+A,X,Y,C,V   DrawSelectWheels
 80E411  1 1  mem+X,Y,C,V     DemoPadDisplay
 80A6B2  1 1  mem+X,Y,C,V     EraseCollectedCoin
+80A7AF  1 1  mem+X,Y,C,V     RedrawUsedItem
+80E2B6  1 1  mem+X,Y,C,V     StartDemo

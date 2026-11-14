@@ -312,3 +312,5 @@
 808F2D DrawSelectWheels
 80E411 DemoPadDisplay
 80A6B2 EraseCollectedCoin
+80A7AF RedrawUsedItem
+80E2B6 StartDemo
