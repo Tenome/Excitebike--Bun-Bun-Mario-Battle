@@ -370,7 +370,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s4
 
-532 functions in the static map; 449 hand-written (84.4%), 438 of them in the port.
+532 functions in the static map; 452 hand-written (85.0%), 441 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -793,8 +793,11 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$81:F999` | ResetMinuteFrame | `mem+A,X,Y` | `from_s1.c` | yes |
 | `$81:F9C8` | BsxFindFile | `mem+Y,C` | `objects.c` | yes |
 | `$82:8000` | ReadJoypads | `mem+X,Y,C,V` | `from_s1.c` | yes |
+| `$82:805F` | InitPpuRegisters | `mem+C,V` | `objects.c` | yes |
 | `$82:811D` | SetupHdmaChannels | `mem+X,Y,C,V` | `objects.c` | yes |
-| `$82:8232` | DmaFillZero | `mem+C,V` | `from_s1.c` | yes |
+| `$82:8180` | ForceBlank | `mem+X,Y,C,V` | `objects.c` | yes |
+| `$82:818F` | ClearTilemaps | `mem+C,V` | `objects.c` | yes |
+| `$82:8232` | DmaFillZero | `mem+C,V` | `objects.c` | yes |
 | `$82:8259` | QueueTimeDigits | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$82:82EA` | QueueFontTime | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$82:83A1` | QueueFiveDigits | `mem+A,X,Y,C,V` | `objects.c` | yes |

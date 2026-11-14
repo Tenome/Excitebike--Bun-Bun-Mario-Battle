@@ -12441,3 +12441,112 @@ void RaceResultsSetup_m1x1(void)
     push16(0x9448); VramQueueTiles_m1x1();
     ret();
 }
+
+void DmaFillZero_m0x1(void);
+
+/* $82:8180 ForceBlank (RTL): screen off ($0816 shadow), HDMA off. */
+void ForceBlank_m1x1(void)
+{
+    lda8(0x80);
+    wr8(ABS(0x2100), 0x80);
+    wr8(ABS(0x0816), 0x80);
+    wr8(ABS(0x420C), 0);
+    wr8(ABS(0x190F), 0);
+    retl();
+}
+
+/* Fill `bytes` VRAM bytes of one half from the byte at $00:0000 through
+ * channel 0 (D = $4300), as Stadium 1's ClearTilemaps. */
+static void vram_fill_half4(u16 vram, int wide_stz, u16 bytes)
+{
+    if (wide_stz) wr16(ABS(0x2115), 0);
+    else wr8(ABS(0x2115), 0);
+    wr16(ABS(0x2116), vram);
+    wr16(DP(0x00), 0x1808);
+    wr16(DP(0x02), 0);
+    wr16(DP(0x04), 0);
+    wr16(DP(0x05), bytes);
+    wr8(ABS(0x420B), 0x01);
+}
+
+/* $82:818F ClearTilemaps (RTL): VRAM $0000-$0FFF gets tile $FC with
+ * attribute 0, $1800-$1BFF tile $FF; a fixed-source DMA of the byte at
+ * $0000 into the low bytes, then $00 into the high bytes. */
+void ClearTilemaps_m1x1(void)
+{
+    push16(D);
+    lda8(0xFC);
+    wr8(DP(0x00), 0xFC);
+    rep(0x20);
+    A = 0x4300; D = 0x4300;
+    Y = 1;
+    vram_fill_half4(0x0000, 0, 0x1000);
+    wr16(DP(0x05), 0x1000);
+    wr16(ABS(0x2116), 0x0000);
+    wr16(ABS(0x0000), 0);
+    X = 0x80; wr8(ABS(0x2115), 0x80);
+    X = 0x19; wr8(DP(0x01), 0x19);
+    wr16(DP(0x05), 0x1000);
+    wr8(ABS(0x420B), 0x01);
+    X = 0xFF; wr8(ABS(0x0000), 0xFF);
+    vram_fill_half4(0x1800, 1, 0x0800);
+    wr16(DP(0x05), 0x0800);
+    wr16(ABS(0x2116), 0x1800);
+    wr16(ABS(0x0000), 0);
+    X = 0x80; wr8(ABS(0x2115), 0x80);
+    X = 0x19; wr8(DP(0x01), 0x19);
+    wr16(DP(0x05), 0x0800);
+    wr8(ABS(0x420B), 0x01);
+    A = 0x0800;
+    sep(0x20);
+    D = pull16(); nz16(D);
+    retl();
+}
+
+/* $82:805F InitPpuRegisters (RTL), once from Reset: screen off; clear
+ * $7E:2000-$7F:FFDF and $00:0000-$1E7F; the VRAM queue reset; the PPU
+ * registers (D = $2100) and their shadows; the HDMA channels. */
+void InitPpuRegisters_m1x1(void)
+{
+    push8(0x82); push16(0x8062); ForceBlank_m1x1();
+    rep(0x20);
+    wr16(DP(0x00), 0xE000); A = 0x2000; Y = 0x7E;
+    push8(0x82); push16(0x8072); DmaFillZero_m0x1();
+    wr16(DP(0x00), 0xFFE0); A = 0x0000; Y = 0x7F;
+    push8(0x82); push16(0x8080); DmaFillZero_m0x1();
+    wr16(DP(0x00), 0x1E80); A = 0x0000; Y = 0x00;
+    push8(0x82); push16(0x808E); DmaFillZero_m0x1();
+    rep(0x20);
+    A = 0x0002;
+    wr16(LONG(0x7F0000), 0x0002);
+    push16(D);
+    A = 0x2100; D = 0x2100;
+    sep(0x20);
+    static const struct { u8 reg; u8 val; u16 shadow; } ppu[] = {
+        {0x01, 0x01, 0},      {0x05, 0x09, 0x1904}, {0x06, 0x00, 0},
+        {0x07, 0x01, 0x1900}, {0x08, 0x09, 0},      {0x0A, 0x00, 0},
+        {0x09, 0x19, 0},      {0x0B, 0x44, 0},      {0x0C, 0x01, 0},
+        {0x2C, 0x16, 0x1905}, {0x2D, 0x00, 0},      {0x2E, 0x00, 0},
+        {0x2F, 0x00, 0},      {0x23, 0x00, 0},      {0x24, 0x00, 0},
+        {0x25, 0x00, 0},      {0x30, 0x00, 0},      {0x31, 0x00, 0},
+        {0x32, 0xE0, 0},      {0x33, 0x00, 0},
+    };
+    for (unsigned i = 0; i < sizeof ppu / sizeof ppu[0]; i++) {
+        if (ppu[i].val) SET_A8(ppu[i].val);
+        wr8(DP(ppu[i].reg), ppu[i].val);
+        if (ppu[i].shadow) wr8(ABS(ppu[i].shadow), ppu[i].val);
+    }
+    static const u16 zero_shadows[] = {0x1907, 0x1908, 0x1909, 0x190A, 0x190B, 0x190C, 0x190D,
+                                       0x190F, 0x1910, 0x1911};
+    for (unsigned i = 0; i < sizeof zero_shadows / sizeof zero_shadows[0]; i++)
+        wr8(ABS(zero_shadows[i]), 0);
+    lda8(0x20); wr8(ABS(0x1912), 0x20);
+    lda8(0x40); wr8(ABS(0x1913), 0x40);
+    lda8(0x80); wr8(ABS(0x1914), 0x80);
+    wr8(ABS(0x420C), 0);
+    wr8(ABS(0x190F), 0);
+    push8(0x82); push16(0x8118); SetupHdmaChannels_m1x1();
+    D = pull16(); nz16(D);
+    sep(0x20);
+    retl();
+}
