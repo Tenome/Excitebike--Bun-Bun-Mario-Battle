@@ -356,3 +356,4 @@
 80A9BA  1 1  mem+A,X,Y,C,V   Mode03_Race
 80E319  1 1  mem+X,Y,C,V   Mode0C
 8092A0  1 1  mem+A,X,Y,C,V   RaceResultsSetup
+80B873  1 1  mem+X,Y,C,V     LoadScene

@@ -374,3 +374,4 @@
 80A9BA Mode03_Race
 80E319 Mode0C
 8092A0 RaceResultsSetup
+80B873 LoadScene

@@ -7871,3 +7871,92 @@ void RaceResultsSetup_m1x1(void)
     lda8(rd8(ABS(0x190E))); wr8(ABS(0x4200), (u8)A);
     ret();
 }
+
+void DmaCopyToWram_m0x1(void);
+
+/* $80:B8D8 / $80:B8F5: one table copy (length already in $00) from
+ * $88:(base + 2 * $100 * table[$76]) to WRAM $00:dst through
+ * DmaCopyToWram. */
+static void scene_table_copy1(u16 table, u16 base, u16 dst, u16 back)
+{
+    Y = rd8(DP(0x76)); nz8((u8)Y);
+    lda16(rd16(ABSY(table)));
+    and16(0x00FF);
+    A = (u16)((A << 8) | (A >> 8)); nz8((u8)A);       /* XBA */
+    lda16(asl16(A));
+    fc = 0; adc16(base);
+    wr16(DP(0x02), A);
+    ldy8(0x88); wr8(DP(0x04), 0x88);
+    lda16(dst);
+    ldy8(0x00);
+    push8(0x80); push16(back); DmaCopyToWram_m0x1();
+}
+
+/* $80:B873 (RTS): load scene $76 with NMI and HDMA off: $1556 from
+ * $80:B940, the tilemaps cleared, then the VRAM DMA list $80:B9D8 (7-byte
+ * entries: VRAM address, length, source, bank; $FFFF ends) chosen by
+ * $80:B9B2, two $0100-byte tables from bank $88 ($80:B98C / $B99F) to
+ * $1C00 / $1D00, $1915 + 1, $190F and $1E0C from $80:B979 / $B966, $1B00-
+ * $1B0F and $1B20-$1B2F cleared, NMI back on; X and Y kept. */
+void LoadScene_m1x1(void)
+{
+    push8((u8)X); push8((u8)Y);
+    X = rd8(DP(0x76)); nz8((u8)X);
+    lda8(rd8(ABSX(0xB940))); wr8(ABS(0x1556), (u8)A);
+    wr8(ABS(0x4200), 0);
+    wr8(ABS(0x190F), 0);
+    wr8(ABS(0x420C), 0);
+    push8(0x80); push16(0xB889); ClearTilemaps_m1x1();
+    rep(0x30);
+    push16(D);
+    lda16(0x4300);
+    D = A;
+    Y = 0x0080; nz16(Y);
+    wr16(ABS(0x2115), 0x0080);
+    lda16(0x1801); wr16(DP(0x00), 0x1801);
+    lda16(rd16(ABS(0x0076)));
+    and16(0x00FF);
+    lda16(asl16(A));
+    X = A; nz16(X);
+    Y = rd16(ABSX(0xB9B2)); nz16(Y);
+    for (;;) {
+        WAIT_TICK();
+        lda16(rd16(ABSY(0xB9D8)));
+        cmp16(A, 0xFFFF);
+        if (fz) break;
+        wr16(ABS(0x2116), A);
+        lda16(rd16(ABSY(0xB9DA))); wr16(DP(0x05), A);
+        lda16(rd16(ABSY(0xB9DC)));
+        X = rd16(ABSY(0xB9DE)); nz16(X);
+        push16(Y);
+        sep(0x10);
+        ldy8(0x01);
+        push16(0xB8C4); DmaKick_m0x1();
+        rep(0x10);
+        Y = pull16(); nz16(Y);
+        lda16(Y);
+        fc = 0; adc16(0x0007);
+        Y = A; nz16(Y);
+    }
+    sep(0x10);
+    D = pull16(); nz16(D);
+    lda16(0x0100); wr16(DP(0x00), 0x0100);
+    scene_table_copy1(0xB98C, 0xA000, 0x1C00, 0xB8F4);
+    scene_table_copy1(0xB99F, 0xA100, 0x1D00, 0xB911);
+    wr16(ABS(0x1915), inc16(rd16(ABS(0x1915))));
+    sep(0x20);
+    Y = rd8(DP(0x76)); nz8((u8)Y);
+    lda8(rd8(ABSY(0xB953)));
+    lda8(rd8(ABSY(0xB979))); wr8(ABS(0x190F), (u8)A);
+    lda8(rd8(ABSY(0xB966))); wr8(ABS(0x1E0C), (u8)A);
+    ldx8(0x0F);
+    do {
+        wr8(ABSX(0x1B00), 0);
+        wr8(ABSX(0x1B20), 0);
+        X = dec8((u8)X);
+    } while (!fn);
+    lda8(rd8(ABS(0x190E))); wr8(ABS(0x4200), (u8)A);
+    Y = pull8(); nz8((u8)Y);
+    X = pull8(); nz8((u8)X);
+    ret();
+}

@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 352 hand-written (86.5%), 346 of them in the port.
+407 functions in the static map; 353 hand-written (86.7%), 346 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -21,7 +21,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:84A8` | ForceBlank | `mem+C,V` | `init.c` | yes |
 | `$80:84B7` | ClearTilemaps | `mem+C,V` | `objects.c` | yes |
 | `$80:8539` | DmaKick | `mem+X,Y,C,V` | `vram.c` | yes |
-| `$80:8541` | DmaCopyToWram | `mem+V` | `kernel.c` | yes |
+| `$80:8541` | DmaCopyToWram | `mem+V` | `objects.c` | yes |
 | `$80:8562` | DmaFillZero | `mem+C,V` | `kernel.c` | yes |
 | `$80:8589` | InitFadeState | `mem+X,Y,C,V` | `misc.c` | yes |
 | `$80:85A6` | PackOamHighTable | `mem+X,Y,C,V` | `frame.c` | yes |
@@ -123,6 +123,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:B4AE` | StepLfsr | `mem+X,Y,C,V` | `frame.c` | yes |
 | `$80:B4D9` | ReadJoypads | `mem+X,Y,C,V` | `kernel.c` | yes |
 | `$80:B538` | RiderPaletteWords | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:B873` | LoadScene | `mem+X,Y,C,V` | `objects.c` |  |
 | `$80:BC61` | Mul16 | `mem+Y,V` | `objects.c` | yes |
 | `$80:BC61` | Mul16 | `mem+Y,V` | `objects.c` | yes |
 | `$80:BCCD` | Mul16c | `mem+V` | `objects.c` | yes |
