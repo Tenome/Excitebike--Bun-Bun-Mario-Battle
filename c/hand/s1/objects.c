@@ -4012,3 +4012,160 @@ void RaceStartLights_m1x1(void)
     start_flags1();
     ret();
 }
+
+/* $80:A10E (RTL): the five entry-code digits $11:5730-$11:5734 as a
+ * number (x10000, x1000, x100, x10, +1 into $10-$13), packed as BCD
+ * nibbles into $0850-$0853. */
+void PackEntryCode_m1x1(void)
+{
+    rep(0x20);
+    wr16(DP(0x10), 0); wr16(DP(0x12), 0);
+    static const u16 mul[4] = { 0x2710, 0x03E8, 0x0064, 0x000A };
+    static const u16 back[4][2] = { { 0xA127, 0xA12A }, { 0xA140, 0xA143 },
+                                    { 0xA159, 0xA15C }, { 0xA172, 0xA175 } };
+    for (int i = 0; i < 4; i++) {
+        if (i) rep(0x20);
+        lda16(rd16(LONG(0x115730 + i)));
+        and16(0x00FF);
+        wr16(DP(0x00), A);
+        lda16(mul[i]); wr16(DP(0x02), mul[i]);
+        sep(0x20);
+        push8(0x80); push16(back[i][0]); Mul16_m1x1();
+        push16(back[i][1]); Add32_m1x1();
+    }
+    lda8(rd8(LONG(0x115734))); wr8(DP(0x04), (u8)A);
+    wr8(DP(0x05), 0); wr8(DP(0x06), 0); wr8(DP(0x07), 0);
+    push16(0xA184); Add32_m1x1();
+    lda8(rd8(DP(0x11)));
+    lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
+    wr8(ABS(0x0850), (u8)A);
+    lda8(rd8(DP(0x11))); and8(0x0F); wr8(ABS(0x0851), (u8)A);
+    lda8(rd8(DP(0x10)));
+    lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
+    wr8(ABS(0x0852), (u8)A);
+    lda8(rd8(DP(0x10))); and8(0x0F); wr8(ABS(0x0853), (u8)A);
+    retl();
+}
+
+/* $80:98B2 QueueTimeDigits (RTL): the three bytes at [$18] (minutes,
+ * seconds, hundredths) as "M'SS"HH" in two rows from $03D3 (blank $0C
+ * minute tens, marks $0A / $0B), size $28 from $03D2, at VRAM $00.
+ * X and Y are kept. */
+void QueueTimeDigits_m1x1(void)
+{
+    push8((u8)X); push8((u8)Y);
+    ldx8(0x00); ldy8(0x00);
+    lda8(rd8((ILDP(0x18) + Y) & 0xFFFFFF));
+    for (;;) {
+        cmp8((u8)A, 0x0A);
+        if (!fc) break;
+        sbc8(0x0A);
+        X = inc8((u8)X);
+    }
+    wr8(ABS(0x03D4), (u8)A);
+    ora8(0x10); wr8(ABS(0x03DC), (u8)A);
+    lda8((u8)X);
+    cmp8((u8)A, 0x00);
+    if (fz) lda8(0x0C);
+    wr8(ABS(0x03D3), (u8)A);
+    ora8(0x10); wr8(ABS(0x03DB), (u8)A);
+    static const u16 lo[2] = { 0x03D7, 0x03DA };
+    for (int i = 0; i < 2; i++) {
+        Y = inc8((u8)Y);
+        ldx8(0x00);
+        lda8(rd8((ILDP(0x18) + Y) & 0xFFFFFF));
+        for (;;) {
+            cmp8((u8)A, 0x0A);
+            if (!fc) break;
+            sbc8(0x0A);
+            X = inc8((u8)X);
+        }
+        wr8(ABS(lo[i]), (u8)A);
+        ora8(0x10); wr8(ABS(lo[i] + 8), (u8)A);
+        lda8((u8)X);
+        wr8(ABS(lo[i] - 1), (u8)A);
+        ora8(0x10); wr8(ABS(lo[i] + 7), (u8)A);
+    }
+    lda8(0x0A); wr8(ABS(0x03D5), 0x0A);
+    lda8(inc8((u8)A)); wr8(ABS(0x03D8), (u8)A);
+    lda8(0x1A); wr8(ABS(0x03DD), 0x1A);
+    lda8(inc8((u8)A)); wr8(ABS(0x03E0), (u8)A);
+    lda8(0x28); wr8(ABS(0x03D2), 0x28);
+    rep(0x20);
+    lda16(0x03D2); wr16(DP(0x02), 0x03D2);
+    sep(0x20);
+    lda8(0x01); wr8(DP(0x0F), 0x01);
+    push16(0x993E); VramQueueTiles_m1x1();
+    Y = pull8(); nz8((u8)Y);
+    X = pull8(); nz8((u8)X);
+    retl();
+}
+
+/* $81:9DC6 (RTS): object $039D's metasprite: frame $0349 of its type's
+ * sprite list ($81:AB0D by $02F9; $038A pieces of 4 bytes at $81:AB21:
+ * dx, dy, tile, attribute, bit 5 = skip, bit 4 = large), placed at its
+ * position $0279 / $0289 with palette bits $0389 into OAM from
+ * $1600 + 32 * slot downward. */
+void DrawObjectSprites_m1x1(void)
+{
+    X = rd8(ABS(0x039D)); nz8((u8)X);
+    lda8(rd8(ABSX(0x02F9)));
+    lda8(asl8((u8)A));
+    Y = (u8)A; nz8((u8)Y);
+    rep(0x20);
+    lda16(rd16(ABSY(0xAB0D))); wr16(DP(0x00), A);
+    sep(0x20);
+    lda8(rd8(ABSX(0x0349)));
+    lda8(inc8((u8)A));
+    wr8(ABS(0x4202), (u8)A);
+    lda8(rd8(ABSX(0x038A)));
+    lda8(asl8((u8)A)); lda8(asl8((u8)A));
+    wr8(ABS(0x4203), (u8)A);
+    rep(0x30);
+    lda16(rd16(ABS(0x4216)));
+    fc = 1; sbc16(0x0004);
+    fc = 0; adc16(rd16(DP(0x00)));
+    Y = A; nz16(Y);
+    lda16(rd16(ABSX(0x038A))); wr16(DP(0x00), A);
+    lda16(rd16(ABSX(0x0279))); wr16(DP(0x04), A);
+    lda16(rd16(ABSX(0x0389))); wr16(DP(0x0E), A);
+    lda16(rd16(ABSX(0x0289))); wr16(DP(0x06), A);
+    lda16(X);
+    for (int i = 0; i < 5; i++) lda16(asl16(A));
+    X = A; nz16(X);
+    sep(0x20);
+    do {
+        lda8(rd8(ABSY(0xAB24)));
+        and8(0x20);
+        if (fz) {
+            lda8(rd8(ABSY(0xAB21)));
+            fc = 0; adc8(rd8(DP(0x04)));
+            wr8(ABSX(0x1600), (u8)A);
+            lda8(rd8(ABSY(0xAB22)));
+            fc = 0; adc8(rd8(DP(0x06)));
+            wr8(ABSX(0x1601), (u8)A);
+            lda8(rd8(ABSY(0xAB23)));
+            wr8(ABSX(0x1602), (u8)A);
+            lda8(rd8(ABSY(0xAB24)));
+            and8(0xCF);
+            ora8(rd8(DP(0x0E)));
+            wr8(ABSX(0x1603), (u8)A);
+            rep(0x20);
+            push16(X);
+            lda16(X);
+            lda16(lsr16(A)); lda16(lsr16(A));
+            X = A; nz16(X);
+            sep(0x20);
+            lda8(rd8(ABSY(0xAB24)));
+            and8(0x10);
+            lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
+            wr8(ABSX(0x1820), (u8)A);
+            X = pull16(); nz16(X);
+        }
+        for (int i = 0; i < 4; i++) X = dec16(X);
+        for (int i = 0; i < 4; i++) Y = dec16(Y);
+        wr8(DP(0x00), dec8(rd8(DP(0x00))));
+    } while (!fz);
+    sep(0x10);
+    ret();
+}

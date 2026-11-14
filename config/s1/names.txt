@@ -297,3 +297,6 @@
 80C41D FinishStep
 80C52E DrawStartFlags
 80C503 RaceStartLights
+80A10E PackEntryCode
+8098B2 QueueTimeDigits
+819DC6 DrawObjectSprites

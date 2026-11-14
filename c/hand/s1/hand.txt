@@ -277,3 +277,6 @@
 80E004  1 1  mem+A,X,Y,C,V   CheckEndingMinute
 80C52E  1 1  mem+A,X,Y,C,V   DrawStartFlags
 80C503  1 1  mem+A,X,Y,C,V   RaceStartLights
+80A10E  1 1  mem+A,X,Y,C,V   PackEntryCode
+8098B2  1 1  mem+X,Y,C,V     QueueTimeDigits
+819DC6  1 1  mem+A,X,Y,C,V   DrawObjectSprites
