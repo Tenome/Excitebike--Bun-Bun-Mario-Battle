@@ -287,3 +287,5 @@
 809A87  1 1  mem+A,X,Y,C,V   EndScreenRecord
 80D97E  1 1  mem+A,X,Y,C,V   Mode09
 80DF01  1 1  mem+A,X,Y,C,V   BonusResultStep
+80CF0D  1 1  mem+A,X,Y,C,V   TemperatureGauge
+809C0D  1 1  mem+X,Y,C,V     EntryNumberEditor
