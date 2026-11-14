@@ -13294,3 +13294,41 @@ void QueueHalfUnits_m0x1(void)
     lda8(0x27); wr8(ABS(0x03CF), 0x27);
     VramQueueTilesLong_m1x1();
 }
+
+void ShowEntryCode_m1x1(void);
+void QueueFontTime_m1x1(void);
+void QueueFontDigits_m1x1(void);
+
+/* $80:9C79 (RTS): the entry screen: the entry code, $1923 and $0450 + 1;
+ * the saved best total ($11:572C) at $0895 and best score ($11:5730) at
+ * $08D6 in the font; the entry digits; with $81:800C set the row $80:9CCF
+ * (palette $18) at $092B. */
+void EntryScreenFill_m1x1(void)
+{
+    push8(0x80); push16(0x9C7C); ShowEntryCode_m1x1();
+    wr8(ABS(0x1923), inc8(rd8(ABS(0x1923))));
+    wr8(ABS(0x0450), inc8(rd8(ABS(0x0450))));
+    rep(0x20);
+    lda16(0x0895); wr16(DP(0x00), 0x0895);
+    lda16(0x572C); wr16(DP(0x18), 0x572C);
+    sep(0x20);
+    lda8(0x11); wr8(DP(0x1A), 0x11);
+    push8(0x80); push16(0x9C98); QueueFontTime_m1x1();
+    rep(0x20);
+    lda16(0x08D6); wr16(DP(0x00), 0x08D6);
+    lda16(0x5730); wr16(DP(0x18), 0x5730);
+    sep(0x20);
+    lda8(0x11); wr8(DP(0x1A), 0x11);
+    push8(0x80); push16(0x9CAE); QueueFontDigits_m1x1();
+    push8(0x80); push16(0x9CB2); QueueEntryDigits_m1x1();
+    lda8(rd8(LONG(0x81800C)));
+    if (!fz) {
+        rep(0x20);
+        lda16(0x092B); wr16(DP(0x00), 0x092B);
+        lda16(0x9CCF); wr16(DP(0x02), 0x9CCF);
+        sep(0x20);
+        lda8(0x18); wr8(DP(0x0F), 0x18);
+        push16(0x9CCD); VramQueueTiles_m1x1();
+    }
+    ret();
+}

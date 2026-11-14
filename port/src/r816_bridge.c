@@ -1315,6 +1315,8 @@ BRIDGE_DYN(HleHand_NmiVramUpload, NmiVramUpload_m1x1,
 BRIDGE(HleHand_QueueHalfUnits, QueueHalfUnits_m0x1, 750)
 BRIDGE(HleHand_QueueStadiumBadge, QueueStadiumBadge_m1x1, 650)
 BRIDGE(HleHand_QueueEntryDigits, QueueEntryDigits_m1x1, 720)
+/* entry screen fill */
+BRIDGE_DYN(HleHand_EntryScreenFill, EntryScreenFill_m1x1, r816_bus_read(0x81800C) ? 10300 : 9700)
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)

@@ -377,7 +377,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s4
 
-532 functions in the static map; 467 hand-written (87.8%), 448 of them in the port.
+532 functions in the static map; 468 hand-written (88.0%), 449 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -431,6 +431,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:9B0D` | EnterNumberStep | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:9C14` | EntryConfirmStep | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:9C58` | SetupJumpScreen | `mem+X,Y,C,V` | `leaves.c` | yes |
+| `$80:9C79` | EntryScreenFill | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:9CD1` | EndScreenStart | `mem+A,X,Y,C,V` | `objects.c` |  |
 | `$80:9D0E` | LoadEntryScreenStep | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:9D37` | StartPracticeMode | `mem+X,Y,C,V` | `objects.c` | yes |
