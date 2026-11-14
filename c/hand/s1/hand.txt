@@ -408,3 +408,7 @@
 80EB04  1 1  mem+A,X,Y,C,V   RiderBumpCrash
 80EBB5  1 1  mem+A,X,Y,C,V   LandingStep
 80E834  1 1  mem+A,X,Y,C,V   PieceAction
+80FFA0  1 1  full            EmptyVector
+80FFA9  1 1  full            IrqVector
+80FFA1  1 1  full            NmiVector
+80FFA5  1 1  full            ResetVector    # never returns: checked in fragments.txt

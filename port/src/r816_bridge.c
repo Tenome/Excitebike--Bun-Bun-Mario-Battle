@@ -719,6 +719,13 @@ BRIDGE(HleHand_DemoExitSkip35, DemoExitSkip35_m1x1, 60)
 BRIDGE(HleHand_SetJumpState1, SetJumpState1_m1x1, 12)
 BRIDGE(HleHand_RiderBumpCrash, RiderBumpCrash_m1x1, 190)
 BRIDGE(HleHand_LandingStep, LandingStep_m1x1, 170)
+/* Irq ($80:BBDA, entered from the vector stub $80:FFA9) */
+BRIDGE_DYN(HleHand_IrqVector, IrqVector_m1x1, g_ram[0x91] ? 2400 : 60)
+/* The other interrupt handlers have verified hand C but are not hooked:
+ * Nmi (vector stub $80:FFA1) waits on APU port 3 until the sound CPU echoes
+ * the pending command, a spin a bridged call cannot leave; Reset ($80:FFA5,
+ * c/hand/<ver>/reset.c, outside this build) never returns and parks in its
+ * NMI wait, so it is checked in fragments (c/hand/<ver>/fragments.txt). */
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */
@@ -1435,6 +1442,13 @@ BRIDGE_DYN(HleHand_JumpDistanceStepNear, JumpDistanceStepNear_m1x1,
 BRIDGE(HleHand_RiderBumpCrash, RiderBumpCrash_m1x1, 190)
 /* landing step */
 BRIDGE(HleHand_LandingStep, LandingStep_m1x1, 170)
+/* Irq ($80:B88F, entered from the vector stub $80:FFA9) */
+BRIDGE_DYN(HleHand_IrqVector, IrqVector_m1x1, 60 + (g_ram[0x96] ? 14000 : 0) + (g_ram[0x95] ? 1300 : 0))
+/* The other interrupt handlers have verified hand C but are not hooked:
+ * Nmi (vector stub $80:FFA1) waits on APU port 3 until the sound CPU echoes
+ * the pending command, a spin a bridged call cannot leave; Reset ($80:FFA5,
+ * c/hand/<ver>/reset.c, outside this build) never returns and parks in its
+ * NMI wait, so it is checked in fragments (c/hand/<ver>/fragments.txt). */
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)

@@ -1,48 +1,48 @@
 {
  "measures": {
-  "fuzzy_match_percent": 99.9768,
+  "fuzzy_match_percent": 100.0,
   "total_code": "27972",
-  "matched_code": "27959",
-  "matched_code_percent": 99.9535,
+  "matched_code": "27972",
+  "matched_code_percent": 100.0,
   "total_data": "0",
   "matched_data": "0",
   "matched_data_percent": 0.0,
   "total_functions": 407,
-  "matched_functions": 403,
-  "matched_functions_percent": 99.0172,
-  "complete_code": "0",
-  "complete_code_percent": 0.0,
+  "matched_functions": 407,
+  "matched_functions_percent": 100.0,
+  "complete_code": "27972",
+  "complete_code_percent": 100.0,
   "complete_data": "0",
   "complete_data_percent": 0.0,
   "total_units": 2,
-  "complete_units": 1
+  "complete_units": 2
  },
  "units": [
   {
    "name": "main/bank80",
    "measures": {
-    "fuzzy_match_percent": 99.9699,
+    "fuzzy_match_percent": 100.0,
     "total_code": "21606",
-    "matched_code": "21593",
-    "matched_code_percent": 99.9398,
+    "matched_code": "21606",
+    "matched_code_percent": 100.0,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 306,
-    "matched_functions": 302,
-    "matched_functions_percent": 98.6928,
-    "complete_code": "0",
-    "complete_code_percent": 0.0,
+    "matched_functions": 306,
+    "matched_functions_percent": 100.0,
+    "complete_code": "21606",
+    "complete_code_percent": 100.0,
     "complete_data": "0",
     "complete_data_percent": 0.0,
     "total_units": 1,
-    "complete_units": 0
+    "complete_units": 1
    },
    "sections": [
     {
      "name": ".text",
      "size": "21606",
-     "fuzzy_match_percent": 99.9699
+     "fuzzy_match_percent": 100.0
     }
    ],
    "functions": [
@@ -2463,40 +2463,40 @@
      }
     },
     {
-     "name": "sub_80FFA0",
+     "name": "EmptyVector",
      "size": "1",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8454048"
      }
     },
     {
-     "name": "sub_80FFA1",
+     "name": "NmiVector",
      "size": "4",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8454049"
      }
     },
     {
-     "name": "sub_80FFA5",
+     "name": "ResetVector",
      "size": "4",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8454053"
      }
     },
     {
-     "name": "sub_80FFA9",
+     "name": "IrqVector",
      "size": "4",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8454057"
      }
     }
    ],
    "metadata": {
-    "complete": false,
+    "complete": true,
     "source_path": "c/hand/s1"
    }
   },

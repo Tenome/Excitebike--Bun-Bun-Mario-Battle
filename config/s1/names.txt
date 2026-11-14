@@ -416,3 +416,7 @@
 80EB04 RiderBumpCrash
 80EBB5 LandingStep
 80E834 PieceAction
+80FFA0 EmptyVector
+80FFA9 IrqVector
+80FFA1 NmiVector
+80FFA5 ResetVector

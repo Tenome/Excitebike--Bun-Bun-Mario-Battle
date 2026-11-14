@@ -14353,3 +14353,182 @@ void LandingStep_m1x1(void)
     if (!fz) { ret(); return; }
     ClearJumpFlags_m1x1();
 }
+
+/* $80:B912 with X = 8-bit (from Irq): as ScaleByScroll_m0x0. */
+void ScaleByScroll_m0x1(void)
+{
+    wr16(DP(0x62), A);
+    sep(0x20);
+    push16(0xB918); Mul16b_m1x0();
+    rep(0x20);
+    lda16(rd16(DP(0x65)));
+    ret();
+}
+
+/* Interrupt return: P, then PC and PB from the interrupt frame. */
+static void rti4(void) { setP(pull8()); pull16(); pull8(); }
+
+/* $80:FFA0 (RTI): the empty handler for COP, BRK and ABORT. */
+void EmptyVector_m1x1(void) { rti4(); }
+
+/* $80:FFA9 -> $80:B88F Irq (RTI): on the H/V timer IRQ, the parallax
+ * lines when $96 is set; with $95 set, the scroll $9C as multiplier and
+ * the HDMA line table at $1B00 from fixed factors, $1B20 / $1B22 =
+ * factor $A0 and $9C. */
+void IrqVector_m1x1(void)
+{
+    static const struct { u16 f; u8 dp; u16 ret; } k[8] = {
+        { 0x0120, 0x0E, 0xB8BC }, { 0x00E0, 0x0C, 0xB8C4 }, { 0x00D0, 0x0A, 0xB8CC },
+        { 0x00C0, 0x08, 0xB8D4 }, { 0x00B0, 0x06, 0xB8DC }, { 0x00A0, 0x04, 0xB8E4 },
+        { 0x00A0, 0x02, 0xB8EC }, { 0x0040, 0x00, 0xB8F4 },
+    };
+    rep(0x30);
+    push16(A); push16(X); push16(Y); push16(D);
+    lda16(0x1B00); D = A; nz16(D);
+    push8(DB); push8(0x80); DB = pull8(); nz8(DB);
+    sep(0x30);
+    lda8(rd8(ABS(0x4211)));
+    if (fn) {
+        lda8(rd8(ABS(0x0096)));
+        if (!fz) { push16(0xB8AA); ParallaxLines_m1x1(); }
+        lda8(rd8(ABS(0x0095)));
+        if (!fz) {
+            rep(0x20);
+            lda16(rd16(ABS(0x009C)));
+            wr16(DP(0x60), A);
+            for (int i = 0; i < 8; i++) {
+                lda16(k[i].f);
+                push16(k[i].ret); ScaleByScroll_m0x1();
+                wr16(DP(k[i].dp), A);
+            }
+            wr16(DP(0x10), 0);
+            lda16(0x00A0);
+            push16(0xB8FE); ScaleByScroll_m0x1();
+            wr16(DP(0x20), A);
+            lda16(rd16(ABS(0x009C)));
+            wr16(DP(0x22), A);
+            wr16(DP(0x24), 0);
+            sep(0x20);
+        }
+    }
+    rep(0x30);
+    DB = pull8(); nz8(DB);
+    D = pull16(); nz16(D);
+    Y = pull16(); nz16(Y);
+    X = pull16(); nz16(X);
+    A = pull16(); nz16(A);
+    rti4();
+}
+
+void NmiVramUpload_m1x1(void);
+void NmiFlushVramQueue_m1x1(void);
+
+/* One sound command channel in NMI (as Stadium 1's): wait for APU port n
+ * to echo the pending command $6D+n, then step the ring index $69+n; with
+ * none pending, send the next one from the ring $1400 + $40n. */
+static void nmi_sound_channel4(u8 n)
+{
+    lda8(rd8(DP(0x6D + n)));
+    if (!fz) {
+        cmp8((u8)A, rd8(ABS(0x2140 + n)));
+        if (!fz) return;
+        lda8(rd8(DP(0x69 + n)));
+        lda8(inc8((u8)A));
+        and8(0x3F);
+        wr8(DP(0x69 + n), (u8)A);
+        lda8(0x00);
+    } else {
+        X = rd8(DP(0x69 + n)); nz8((u8)X);
+        lda8(rd8(ABSX(0x1400 + 0x40 * n)));
+        if (fz) return;
+        wr8(ABSX(0x1400 + 0x40 * n), 0);
+    }
+    wr8(DP(0x6D + n), (u8)A);
+    wr8(ABS(0x2140 + n), (u8)A);
+}
+
+/* $80:FFA1 -> $80:8256 Nmi (RTI): V timer line $AC with the parallax ($96)
+ * else 6; forced blank and HDMA off; unless the frame was already serviced
+ * ($0817), the VRAM uploads, the VRAM queue and the BG1-BG3 scroll (BG1 V
+ * scroll $9E/$9F with $94, else $9B and a wobble from $90 bit 1); NMI/IRQ
+ * enable (V timer with $95 or $96), screen, layer, HDMA and colour math
+ * registers from $1903-$190F; the four sound command channels (channel 3
+ * spins until its port echoes); $0817 + 1. */
+void NmiVector_m1x1(void)
+{
+    rep(0x30);
+    push16(A); push16(X); push16(Y); push16(D);
+    lda16(0x0000); D = A; nz16(D);
+    push8(DB); push8(0x80); DB = pull8(); nz8(DB);
+    lda16(rd16(ABS(0x0096)));
+    lda16(fz ? 0x0006 : 0x00AC);
+    wr16(ABS(0x4209), A);
+    sep(0x30);
+    lda8(rd8(ABS(0x4210)));
+    lda8(0x80); wr8(ABS(0x2100), 0x80);
+    wr8(ABS(0x420C), 0);
+    lda8(rd8(ABS(0x0817)));
+    if (fz) {
+        push16(0x828B); NmiVramUpload_m1x1();
+        push8(0x80); push16(0x828F); NmiFlushVramQueue_m1x1();
+        lda8(rd8(DP(0x9A))); wr8(ABS(0x210D), (u8)A);
+        lda8(rd8(DP(0x90))); wr8(ABS(0x210D), (u8)A);
+        if (rd8(DP(0x94))) {
+            lda8(rd8(DP(0x9E))); wr8(ABS(0x210E), (u8)A);
+            lda8(rd8(DP(0x9F))); wr8(ABS(0x210E), (u8)A);
+        } else {
+            lda8(rd8(DP(0x9B))); wr8(ABS(0x210E), (u8)A);
+            lda8(rd8(DP(0x90)));
+            and8(0x02);
+            lda8(lsr8((u8)A));
+            wr8(ABS(0x210E), (u8)A);
+        }
+        for (int r = 0; r < 4; r++) {
+            lda8(rd8(DP(0xA0 + 2 * r))); wr8(ABS(0x210F + r), (u8)A);
+            lda8(rd8(DP(0xA1 + 2 * r))); wr8(ABS(0x210F + r), (u8)A);
+        }
+    }
+    lda8((rd8(DP(0x95)) || rd8(DP(0x96))) ? 0xB1 : 0x81);
+    wr8(ABS(0x4200), (u8)A);
+    wr8(ABS(0x190E), (u8)A);
+    lda8(rd8(ABS(0x1903))); wr8(ABS(0x2100), (u8)A);
+    lda8(rd8(ABS(0x1905))); wr8(ABS(0x212C), (u8)A);
+    lda8(rd8(ABS(0x1906))); wr8(ABS(0x212D), (u8)A);
+    lda8(rd8(ABS(0x190F))); wr8(ABS(0x420C), (u8)A);
+    lda8(rd8(ABS(0x190A))); wr8(ABS(0x212E), (u8)A);
+    lda8(rd8(ABS(0x190B))); wr8(ABS(0x212F), (u8)A);
+    lda8(rd8(ABS(0x190C))); wr8(ABS(0x2130), (u8)A);
+    lda8(rd8(ABS(0x190D))); wr8(ABS(0x2131), (u8)A);
+    sep(0x30);
+    nmi_sound_channel4(0);
+    nmi_sound_channel4(1);
+    nmi_sound_channel4(2);
+    for (;;) {                              /* channel 3: BNE back to LDA $70 */
+        lda8(rd8(DP(0x70)));
+        if (fz) {
+            X = rd8(DP(0x6C)); nz8((u8)X);
+            lda8(rd8(ABSX(0x14C0)));
+            if (fz) break;
+            wr8(ABSX(0x14C0), 0);
+        } else {
+            cmp8((u8)A, rd8(ABS(0x2143)));
+            if (!fz) continue;
+            lda8(rd8(DP(0x6C)));
+            lda8(inc8((u8)A));
+            and8(0x3F);
+            wr8(DP(0x6C), (u8)A);
+            lda8(0x00);
+        }
+        wr8(DP(0x70), (u8)A);
+        wr8(ABS(0x2143), (u8)A);
+        break;
+    }
+    wr8(ABS(0x0817), inc8(rd8(ABS(0x0817))));
+    rep(0x30);
+    DB = pull8(); nz8(DB);
+    D = pull16(); nz16(D);
+    Y = pull16(); nz16(Y);
+    X = pull16(); nz16(X);
+    A = pull16(); nz16(A);
+    rti4();
+}

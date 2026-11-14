@@ -273,14 +273,37 @@ class CPU:
             self.X &= 0xFF; self.Y &= 0xFF
         base_s = self.S
         self.PB = pc24 >> 16
-        if long:
-            self.push8(0xFF)
-        self.push16(0xFFFF - 1 + 1 - 1)  # return address $xx:FFFF-1 (sentinel)
+        if long == 2:                     # interrupt frame: PB, PC, P (RTI)
+            self.push8(self.PB)
+            self.push16(0xFFFF)
+            self.push8(self.P)
+        else:
+            if long:
+                self.push8(0xFF)
+            self.push16(0xFFFF - 1 + 1 - 1)  # return address $xx:FFFF-1 (sentinel)
         self.PC = pc24 & 0xFFFF
         limit = max_steps or self.max_steps
         while True:
             if self.S == base_s and self.PC == 0xFFFF:
                 return
+            self.step()
+            if self.steps > limit:
+                raise Stop('step limit at $%02X:%04X' % (self.PB, self.PC))
+
+    def run_to(self, start24, end24, m=True, x=True, max_steps=None):
+        """Run a code fragment from start24 until PC reaches end24 at the
+        top level (no call frame; the fragment may move the stack itself)."""
+        self.P = (self.P & ~(M_ | X_)) | (M_ if m else 0) | (X_ if x else 0)
+        if self.x:
+            self.X &= 0xFF; self.Y &= 0xFF
+        base_s = self.S
+        self.PB, self.PC = start24 >> 16, start24 & 0xFFFF
+        limit = max_steps or self.max_steps
+        first = True
+        while True:
+            if not first and ((self.PB << 16) | self.PC) == end24:
+                return
+            first = False
             self.step()
             if self.steps > limit:
                 raise Stop('step limit at $%02X:%04X' % (self.PB, self.PC))

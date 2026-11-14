@@ -9,6 +9,11 @@ hardware read values, run the original routine in tools/cpu816.py and the
 lifted C in a DLL, and compare all of WRAM, A/X/Y/S/D/DB/P and the ordered
 hardware writes. Cases where the original does not return within the step
 limit (it waits on hardware) are skipped on both sides.
+
+Routines ending in RTI (the interrupt handlers) are entered with an interrupt
+frame. Pieces of routines that never return (Reset's boot and main loop) are
+listed in c/hand/<ver>/fragments.txt and run from a start address to an end
+address, against exported hand C functions.
 """
 import argparse
 import ctypes
@@ -41,8 +46,44 @@ def build_dll(ver):
     return out
 
 
+def apu_port_write(ports, st, o, v):
+    """--apu-echo: a model of the sound CPU's side of $2140-$2143, st =
+    [mode, expected counter, last port 1 write]. Mode 1, the IPL loader
+    ready: ports 0/1 read $AA/$BB until the CPU writes $CC to port 0. Mode
+    0, a transfer: port 0 echoes each write (data when it equals the
+    expected counter, which then steps; any other value is a command: a new
+    block when port 1 was non-zero, else the jump to the uploaded driver).
+    Mode 2, the driver: ports read back what was written, and $FF to port 0
+    sends it back to the loader. Mirrored in c/difftest_harness.c."""
+    if o == 0x2141:
+        st[2] = v
+    if st[0] == 1:
+        if o == 0x2140 and v == 0xCC:
+            st[0], st[1] = 0, 0
+            ports[o] = v
+        elif o >= 0x2142:
+            ports[o] = v
+        return
+    if st[0] == 0:
+        if o == 0x2140:
+            if v == st[1]:
+                st[1] = (st[1] + 1) & 0xFF
+            elif st[2]:
+                st[1] = 0
+            else:
+                st[0] = 2
+        ports[o] = v
+        return
+    if o == 0x2140 and v == 0xFF:
+        st[0] = 1
+        ports[0x2140], ports[0x2141] = 0xAA, 0xBB
+        return
+    ports[o] = v
+
+
 def returns_long(code, entry):
-    """Does the routine end in RTL? (decides JSR vs JSL call frame)"""
+    """Does the routine end in RTL? (decides JSR vs JSL call frame; 2 = RTI,
+    an interrupt frame)"""
     insn = code['insn']
     seen, work = set(), [entry]
     while work:
@@ -56,6 +97,8 @@ def returns_long(code, entry):
         mn, mode, size, op = insn[k]
         if mn == 'RTL':
             return True
+        if mn == 'RTI':
+            return 2
         if mn == 'RTS':
             return False
         nxt = (pc & 0xFF0000) | ((pc + size) & 0xFFFF)
@@ -85,8 +128,10 @@ def main():
     ap.add_argument('--hand-only', action='store_true', help='test only the hand-written variants')
     ap.add_argument('--set-a', type=lambda v: int(v, 16), default=None,
                     help='HEX: force the low byte of A for every case (e.g. a table index)')
+    ap.add_argument('--db', type=lambda v: int(v, 16), default=None,
+                    help='HEX: force the data bank for every case (default: random $80/$00/$7E)')
     ap.add_argument('--apu-echo', action='store_true',
-                    help='APU ports $2140-$2143 read back the last value written (IPL ready = $AA/$BB)')
+                    help='model the sound CPU loader on $2140-$2143 (ready $AA/$BB, then echo)')
     a = ap.parse_args()
     os.chdir(ROOT)
     code = json.load(open('build/%s/code.json' % a.ver))
@@ -121,16 +166,36 @@ def main():
     n = dll.h_count()
     totals = {'pass': 0, 'fail': 0, 'skip': 0}
     failing = []
-    for i in range(n):
+    targets = [i for i in range(n)]
+    # Code fragments (c/hand/<ver>/fragments.txt: START END m x compare symbol):
+    # pieces of routines that never return (Reset's boot and main loop), run
+    # from START until the original reaches END at the same stack depth; the
+    # hand side is an exported C function for that piece.
+    fp = os.path.join('c', 'hand', a.ver, 'fragments.txt')
+    if os.path.exists(fp):
+        for line in open(fp):
+            t = line.split('#')[0].split()
+            if len(t) >= 6:
+                targets.append((int(t[0], 16), int(t[1], 16), int(t[2]), int(t[3]), t[4], t[5]))
+    for i in targets:
+        frag = None
         m, x = ctypes.c_uint8(), ctypes.c_uint8()
-        pc = dll.h_entry(i, ctypes.byref(m), ctypes.byref(x))
-        name = dll.h_name(i).decode()
+        if isinstance(i, tuple):
+            frag = i
+            pc, m.value, x.value, name = frag[0], frag[2], frag[3], frag[5]
+        else:
+            pc = dll.h_entry(i, ctypes.byref(m), ctypes.byref(x))
+            name = dll.h_name(i).decode()
         if a.only and a.only.upper() not in (name.upper(), '%06X' % pc) and not name.upper().startswith(a.only.upper()):
             continue
-        long_call = returns_long(code, pc)
-        mode_cmp = hand_mode.get((pc, m.value, x.value), 'full')
-        if a.only is None and a.hand_only and (pc, m.value, x.value) not in hand_mode:
-            continue
+        if frag:
+            long_call, mode_cmp = 0, frag[4]
+            frag_fn = ctypes.cast(getattr(dll, name), ctypes.c_void_p)
+        else:
+            long_call = returns_long(code, pc)
+            mode_cmp = hand_mode.get((pc, m.value, x.value), 'full')
+            if a.only is None and a.hand_only and (pc, m.value, x.value) not in hand_mode:
+                continue
         res = {'pass': 0, 'fail': 0, 'skip': 0}
         first = None
         for case in range(a.cases):
@@ -142,6 +207,8 @@ def main():
                     rnd.choice([0x80, 0x80, 0x00, 0x7E]), 0]
             if rnd.random() < 0.15:
                 regs[4] = rnd.choice([0x4300, 0x1B00, 0x0100])
+            if a.db is not None:
+                regs[5] = a.db
             p = rnd.getrandbits(8) & ~0x30 | (0x20 if m.value else 0) | (0x10 if x.value else 0)
             p &= ~0x08  # decimal mode off unless the routine sets it
             if x.value:
@@ -161,16 +228,20 @@ def main():
             cpu.hw_values = {0x2000 + k: hw[k] for k in range(0x4000)}
             if a.apu_echo:
                 w8 = cpu.write8
-                def echo_write8(ad, v, cpu=cpu, w8=w8):
+                ipl = [1, 0, 0]
+                def echo_write8(ad, v, cpu=cpu, w8=w8, ipl=ipl):
                     w8(ad, v)
                     o = ad & 0xFFFF
                     if ((ad >> 16) & 0x7F) < 0x40 and 0x2140 <= o <= 0x2143:
-                        cpu.hw_values[o] = v & 0xFF
+                        apu_port_write(cpu.hw_values, ipl, o, v & 0xFF)
                 cpu.write8 = echo_write8
             cpu.A, cpu.X, cpu.Y, cpu.S, cpu.D, cpu.DB = regs[:6]
             cpu.P = p
             try:
-                cpu.call(pc, m=bool(m.value), x=bool(x.value), long=long_call, max_steps=a.steps)
+                if frag:
+                    cpu.run_to(pc, frag[1], m=bool(m.value), x=bool(x.value), max_steps=a.steps)
+                else:
+                    cpu.call(pc, m=bool(m.value), x=bool(x.value), long=long_call, max_steps=a.steps)
             except Stop:
                 res['skip'] += 1
                 continue
@@ -181,7 +252,10 @@ def main():
             ctypes.memmove(wram_p, bytes(base), 0x20000)
             ctypes.memmove(hwt_p, bytes(hw), 0x4000)
             dll.h_set_regs(regs[0], regs[1], regs[2], regs[3], regs[4], regs[5], p)
-            rc = dll.h_run(i, 1 if long_call else 0, a.steps * 4)
+            if frag:
+                rc = dll.h_run_fn(frag_fn, pc >> 16, a.steps * 4)
+            else:
+                rc = dll.h_run(i, int(long_call), a.steps * 4)
             if rc:
                 res['skip' if rc == 1 else 'fail'] += 1
                 if rc == 2 and first is None:
