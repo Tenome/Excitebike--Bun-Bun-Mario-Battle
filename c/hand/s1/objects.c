@@ -5015,3 +5015,144 @@ void DrawSelectWheels_m1x1(void)
     } while (!fn);
     retl();
 }
+
+/* $80:E411 DemoPadDisplay (RTS): Stadium 4's $80:F3DD with Stadium 1's
+ * tables ($80:E4E3 / $80:E4F3 / $80:E4F8), then DemoPushStart. */
+void DemoPadDisplay_m1x1(void)
+{
+    lda8(rd8(ABS(0x098E)));
+    and8(0x0F);
+    Y = (u8)A; nz8((u8)Y);
+    lda8(rd8(ABSY(0xE4E3)));
+    Y = (u8)A; nz8((u8)Y);
+    lda8(rd8(ABSY(0xE4F3)));
+    wr8(DP(0x00), (u8)A);
+    ldy8(0x80);
+    lda8(0x80);
+    wr8(ABSY(0x1600), (u8)A); wr8(ABSY(0x1608), (u8)A);
+    fc = 0; adc8(0x10);
+    wr8(ABSY(0x1604), (u8)A); wr8(ABSY(0x160C), (u8)A);
+    lda8(0x18);
+    wr8(ABSY(0x1601), (u8)A); wr8(ABSY(0x1605), (u8)A);
+    fc = 0; adc8(0x10);
+    wr8(ABSY(0x1609), (u8)A); wr8(ABSY(0x160D), (u8)A);
+    lda8(rd8(DP(0x00)));
+    wr8(ABSY(0x1602), (u8)A);
+    lda8(inc8((u8)A)); lda8(inc8((u8)A));
+    wr8(ABSY(0x1606), (u8)A);
+    fc = 0; adc8(0x1E);
+    wr8(ABSY(0x160A), (u8)A);
+    lda8(inc8((u8)A)); lda8(inc8((u8)A));
+    wr8(ABSY(0x160E), (u8)A);
+    lda8(0x26);
+    wr8(ABSY(0x1603), 0x26); wr8(ABSY(0x1607), 0x26);
+    wr8(ABSY(0x160B), 0x26); wr8(ABSY(0x160F), 0x26);
+    lda8((u8)Y);
+    lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
+    Y = (u8)A; nz8((u8)Y);
+    lda8(0x02);
+    wr8(ABSY(0x1820), 0x02); wr8(ABSY(0x1821), 0x02);
+    wr8(ABSY(0x1822), 0x02); wr8(ABSY(0x1823), 0x02);
+    lda8(rd8(ABS(0x098E)));
+    lda8(rol8((u8)A)); lda8(rol8((u8)A)); lda8(rol8((u8)A));
+    and8(0x03);
+    Y = (u8)A; nz8((u8)Y);
+    lda8(rd8(ABSY(0xE4F8)));
+    wr8(DP(0x00), (u8)A);
+    ldy8(0x70);
+    lda8(0xB0);
+    wr8(ABSY(0x1600), (u8)A); wr8(ABSY(0x1608), (u8)A);
+    fc = 0; adc8(0x18);
+    wr8(ABSY(0x1604), (u8)A); wr8(ABSY(0x160C), (u8)A);
+    lda8(0x18);
+    wr8(ABSY(0x1601), (u8)A); wr8(ABSY(0x1605), (u8)A);
+    fc = 0; adc8(0x10);
+    wr8(ABSY(0x1609), (u8)A); wr8(ABSY(0x160D), (u8)A);
+    lda8(rd8(DP(0x00)));
+    wr8(ABSY(0x1602), (u8)A);
+    lda8(inc8((u8)A)); lda8(inc8((u8)A)); wr8(ABSY(0x1606), (u8)A);
+    lda8(inc8((u8)A)); lda8(inc8((u8)A)); wr8(ABSY(0x160A), (u8)A);
+    lda8(inc8((u8)A)); lda8(inc8((u8)A)); wr8(ABSY(0x160E), (u8)A);
+    lda8(0x28);
+    wr8(ABSY(0x1603), 0x28); wr8(ABSY(0x1607), 0x28);
+    wr8(ABSY(0x160B), 0x28); wr8(ABSY(0x160F), 0x28);
+    lda8((u8)Y);
+    lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
+    Y = (u8)A; nz8((u8)Y);
+    lda8(0x02);
+    wr8(ABSY(0x1820), 0x02); wr8(ABSY(0x1821), 0x02);
+    wr8(ABSY(0x1822), 0x02); wr8(ABSY(0x1823), 0x02);
+    push16(0xE4E1); DemoPushStart_m1x1();
+    ret();
+}
+
+void CoinCollected_m1x1(void);
+
+/* $80:A6B2 (RTL): a collected coin ($AA = type) is erased from the
+ * track: its two tile columns (left of the wheel column $0260; one more
+ * when the piece there is not $80:A78C,Y) are queued from the blank
+ * tiles at $0018 ($80:A79B / $80:A7A0, header $21) at the row's VRAM
+ * address ($80:A7A5 + column, wrapping by 32); then CoinCollected, and
+ * the fifth coin ($0CDF) starts the turbo ($0CE0 = 1, heat $20, sounds
+ * $2D / 1). X is kept. */
+void EraseCollectedCoin_m1x1(void)
+{
+    push8((u8)X);
+    lda8(rd8(DP(0xAA)));
+    if (fz) { X = pull8(); nz8((u8)X); retl(); return; }
+    lda8(0x01); wr8(DP(0x10), 0x01);
+    wr8(DP(0x11), 0);
+    lda8(rd8(DP(0xAA)));
+    lda8(asl8((u8)A));
+    X = (u8)A; nz8((u8)X);
+    rep(0x20);
+    lda16(rd16(ABSX(0xA791))); wr16(DP(0x00), A);
+    sep(0x20);
+    Y = rd8(ABS(0x0260)); nz8((u8)Y);
+    lda8(rd8((((u32)DB << 16) + rd16(DP(0x00)) + Y) & 0xFFFFFF));
+    Y = rd8(ABS(0x00AA)); nz8((u8)Y);
+    cmp8((u8)A, rd8(ABSY(0xA78C)));
+    if (!fz) wr8(DP(0x10), inc8(rd8(DP(0x10))));
+    for (int pass = 0; pass < 2; pass++) {
+        if (pass) {
+            wr8(DP(0x10), dec8(rd8(DP(0x10))));
+            lda8(rd8(DP(0xAA)));
+            lda8(asl8((u8)A));
+            X = (u8)A; nz8((u8)X);
+        }
+        rep(0x20);
+        lda16(rd16(ABS(0x0260)));
+        fc = 1; sbc16(rd16(DP(0x10)));
+        and16(0x0020);
+        for (int i = 0; i < 5; i++) lda16(asl16(A));
+        wr16(DP(0x00), A);
+        lda16(rd16(ABS(0x0260)));
+        fc = 1; sbc16(rd16(DP(0x10)));
+        and16(0x001F);
+        fc = 0; adc16(rd16(DP(0x00)));
+        fc = 0; adc16(rd16(ABSX(0xA7A5)));
+        wr16(DP(0x00), A);
+        lda16(0x0018); wr16(DP(0x02), 0x0018);
+        sep(0x20);
+        X = rd8(DP(0xAA)); nz8((u8)X);
+        lda8(0x21); wr8(DP(0x18), 0x21);
+        lda8(rd8(ABSX(0xA79B))); wr8(DP(0x19), (u8)A);
+        lda8(rd8(ABSX(0xA7A0))); wr8(DP(0x1A), (u8)A);
+        lda8(0x08); wr8(DP(0x0F), 0x08);
+        push16(pass ? 0xA765 : 0xA71D); VramQueueTiles_m1x1();
+    }
+    wr8(DP(0xAA), 0);
+    wr8(ABS(0x0CDF), inc8(rd8(ABS(0x0CDF))));
+    push8(0x80); push16(0xA76E); CoinCollected_m1x1();
+    lda8(rd8(ABS(0x0CDF)));
+    cmp8((u8)A, 0x05);
+    if (fz) {
+        lda8(0x2D);
+        push8(0x80); push16(0xA77B); QueueSound_m1x1();
+        lda8(0x01); wr8(ABS(0x0CE0), 0x01);
+        push8(0x80); push16(0xA784); QueueSound_m1x1();
+        lda8(0x20); wr8(ABS(0x0990), 0x20);
+    }
+    X = pull8(); nz8((u8)X);
+    retl();
+}

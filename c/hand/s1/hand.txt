@@ -291,3 +291,5 @@
 809C0D  1 1  mem+X,Y,C,V     EntryNumberEditor
 80EBDF  1 1  mem+A,X,Y,C,V   UpdateLanes
 808F2D  1 1  mem+A,X,Y,C,V   DrawSelectWheels
+80E411  1 1  mem+X,Y,C,V     DemoPadDisplay
+80A6B2  1 1  mem+X,Y,C,V     EraseCollectedCoin

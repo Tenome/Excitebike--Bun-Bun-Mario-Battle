@@ -310,3 +310,5 @@
 809C0D EntryNumberEditor
 80EBDF UpdateLanes
 808F2D DrawSelectWheels
+80E411 DemoPadDisplay
+80A6B2 EraseCollectedCoin
