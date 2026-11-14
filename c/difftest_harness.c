@@ -10,14 +10,20 @@ extern const unsigned lifted_count;
 jmp_buf r816_bail;
 long r816_ticks, r816_limit = 2000000;
 
-#define HWLOG_MAX 65536
+#define HWLOG_MAX (1 << 21)
 static u32 hwlog_addr[HWLOG_MAX];
 static u8 hwlog_val[HWLOG_MAX];
 static int hwlog_n;
 static u8 hw_table[0x4000];          /* read values for $2000-$5FFF */
 
 u8 hw_read(u16 reg) { return (reg >= 0x2000 && reg < 0x6000) ? hw_table[reg - 0x2000] : 0; }
-void hw_write(u16 reg, u8 v) { if (hwlog_n < HWLOG_MAX) { hwlog_addr[hwlog_n] = reg; hwlog_val[hwlog_n++] = v; } }
+static int apu_echo;                 /* --apu-echo: $2140-$2143 read back what was written */
+void hw_write(u16 reg, u8 v)
+{
+    if (hwlog_n < HWLOG_MAX) { hwlog_addr[hwlog_n] = reg; hwlog_val[hwlog_n++] = v; }
+    if (apu_echo && reg >= 0x2140 && reg <= 0x2143) hw_table[reg - 0x2000] = v;
+}
+R816_EXPORT void h_set_apu_echo(int on) { apu_echo = on; }
 void open_write(u32 a, u8 v) { if (hwlog_n < HWLOG_MAX) { hwlog_addr[hwlog_n] = 0x80000000u | a; hwlog_val[hwlog_n++] = v; } }
 
 extern u32 r816_unknown_site, r816_unknown_value;

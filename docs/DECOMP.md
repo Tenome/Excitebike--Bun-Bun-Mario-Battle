@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 366 hand-written (89.9%), 351 of them in the port.
+407 functions in the static map; 373 hand-written (91.6%), 352 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -26,6 +26,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:8589` | InitFadeState | `mem+X,Y,C,V` | `misc.c` | yes |
 | `$80:85A6` | PackOamHighTable | `mem+X,Y,C,V` | `frame.c` | yes |
 | `$80:876B` | NmiFixedUploads | `mem` | `vram.c` | yes |
+| `$80:88E0` | SpcUpload | `mem+X,Y,C,V` | `spc.c` |  |
 | `$80:8979` | NmiFlushVramQueue | `mem` | `vram.c` | yes |
 | `$80:89ED` | RunGameModeScript | `mem+X,Y,C,V` | `modes.c` |  |
 | `$80:8A46` | Mode00_IntroWait | `mem+X,Y,C,V` | `misc.c` | yes |
@@ -37,11 +38,13 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:8C53` | Mode02_Setup | `mem+X,Y,C,V` | `card.c` | yes |
 | `$80:8D16` | FinishModeSetup | `mem+X,Y,C,V` | `title.c` | yes |
 | `$80:8D25` | Mode01 | `mem+X,Y,C,V` | `objects.c` | yes |
-| `$80:8EA0` | SelectTimerDigits | `mem+X,Y,C,V` | `objects.c` | yes |
-| `$80:8EF7` | TurnSelectWheels | `mem+A,X,Y,C,V` | `objects.c` | yes |
-| `$80:8F2D` | DrawSelectWheels | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:8D2F` | RiderSelectFirst | `mem+X,Y,C,V` | `spc.c` |  |
+| `$80:8DE6` | RiderSelectSecond | `mem+X,Y,C,V` | `spc.c` |  |
+| `$80:8EA0` | SelectTimerDigits | `mem+X,Y,C,V` | `spc.c` | yes |
+| `$80:8EF7` | TurnSelectWheels | `mem+A,X,Y,C,V` | `spc.c` | yes |
+| `$80:8F2D` | DrawSelectWheels | `mem+A,X,Y,C,V` | `spc.c` | yes |
 | `$80:9053` | SpriteTextRow | `mem+A,X,Y,C,V` | `objects.c` | yes |
-| `$80:915A` | SegmentNext | `mem+X,Y,C,V` | `objects.c` | yes |
+| `$80:915A` | SegmentNext | `mem+X,Y,C,V` | `spc.c` | yes |
 | `$80:916B` | PlayerSelectStart | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:91CD` | StartSession | `mem+X,C,V` | `objects.c` |  |
 | `$80:9201` | EnableHudSplit | `mem+X,Y,C,V` | `race.c` | yes |
@@ -72,6 +75,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:9E46` | BeginFadeInBg3 | `mem+X,Y,C,V` | `misc.c` | yes |
 | `$80:9E77` | BeginFadeIn | `mem+X,Y,C,V` | `misc.c` | yes |
 | `$80:9E8E` | Mode11 | `mem+X,Y,C,V` | `from_s4.c` | yes |
+| `$80:9EAB` | StartCredits | `mem+X,Y,C,V` | `spc.c` |  |
 | `$80:9F68` | Mode12_AfterEnd | `mem+X,Y,C,V` | `objects.c` |  |
 | `$80:A03F` | GrowBar087E | `mem+X,Y,V` | `objects.c` | yes |
 | `$80:A07F` | StepColourCycle | `mem+X,Y,V` | `objects.c` | yes |
@@ -81,6 +85,9 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:A1A6` | Add32 | `mem+Y,V` | `physics.c` | yes |
 | `$80:A1BC` | PackRecordTime | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:A231` | PackEntryNumber | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:A2B0` | LoadSavedEntry | `mem+X,Y,C,V` | `objects.c` | yes |
+| `$80:A34B` | EepromReadWords | `mem+Y,C,V` | `objects.c` |  |
+| `$80:A387` | EepromSendCommand | `mem+X,Y,C,V` | `objects.c` |  |
 | `$80:A3AC` | DigitsToNumber | `full` | `objects.c` | yes |
 | `$80:A41C` | MergeBsxFlags | `mem+Y` | `objects.c` | yes |
 | `$80:A458` | SumBytes0850 | `mem+Y` | `objects.c` | yes |
@@ -382,7 +389,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s4
 
-532 functions in the static map; 478 hand-written (89.8%), 455 of them in the port.
+532 functions in the static map; 479 hand-written (90.0%), 455 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -442,6 +449,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:9D37` | StartPracticeMode | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:9DA6` | BeginFadeIn | `mem+X,Y,C,V` | `from_s1.c` | yes |
 | `$80:9DBD` | Mode11 | `mem+X,Y,C,V` | `flow.c` | yes |
+| `$80:9DDA` | StartCredits | `mem+X,Y,C,V` | `spc.c` |  |
 | `$80:9E9F` | Mode12_AfterEnd | `mem+X,Y,C,V` | `objects.c` |  |
 | `$80:9F76` | GrowBar087E | `mem+X,Y,V` | `objects.c` | yes |
 | `$80:9FB6` | StepColourCycle | `mem+X,Y,V` | `objects.c` | yes |

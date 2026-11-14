@@ -478,3 +478,4 @@
 80F266 StartDemoRace
 81C1AE CourseSelectPreview
 80A859 RacePlaceRiders
+809DDA StartCredits

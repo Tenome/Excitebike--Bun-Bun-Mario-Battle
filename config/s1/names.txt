@@ -383,3 +383,7 @@
 8091CD StartSession
 809D43 DrawEntryScreen
 80DCEA CourseRowTiles
+809EAB StartCredits
+80A2B0 LoadSavedEntry
+808D2F RiderSelectFirst
+808DE6 RiderSelectSecond

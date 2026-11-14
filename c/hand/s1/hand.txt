@@ -370,3 +370,10 @@
 81FA81  1 0  mem+Y,Z         BsxProbeReceiver
 81FA68  1 1  mem+Y,C,V       BsxDetect
 81F80C  1 1  mem+Y,C,V       BsxOpenTimeChannel
+8088E0  1 1  mem+X,Y,C,V     SpcUpload
+809EAB  1 1  mem+X,Y,C,V     StartCredits
+80A387  1 0  mem+X,Y,C,V     EepromSendCommand
+80A34B  1 0  mem+Y,C,V       EepromReadWords
+80A2B0  1 1  mem+X,Y,C,V     LoadSavedEntry
+808D2F  1 1  mem+X,Y,C,V     RiderSelectFirst
+808DE6  1 1  mem+X,Y,C,V     RiderSelectSecond

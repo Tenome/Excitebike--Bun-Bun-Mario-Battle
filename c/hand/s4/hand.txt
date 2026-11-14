@@ -477,3 +477,4 @@
 80F266  1 1  mem+X,Y,C,V     StartDemoRace
 81C1AE  1 1  mem+X,Y,C,V     CourseSelectPreview
 80A859  1 1  mem+X,Y,C,V     RacePlaceRiders
+809DDA  1 1  mem+X,Y,C,V     StartCredits

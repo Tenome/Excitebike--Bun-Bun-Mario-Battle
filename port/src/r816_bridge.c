@@ -681,8 +681,14 @@ BRIDGE(HleHand_DigitsToNumber, DigitsToNumber_m1x0, 1200)
 BRIDGE_DYN(HleHand_DrawEntryScreen, DrawEntryScreen_m1x1, r816_bus_read(0x81800C) ? 7450 : 6250)
 BRIDGE(HleHand_BsxProbeReceiver, BsxProbeReceiver_m1x0, 50)
 BRIDGE(HleHand_BsxDetect, BsxDetect_m1x1, 90)
+/* SpcUpload ($80:88E0), StartCredits ($80:9EAB) and the rider select
+ * steps ($80:8D2F / $80:8DE6) pass difftest on s1 (--apu-echo) but live in
+ * c/hand/s1/spc.c, outside the port: the boot ROM handshake is a busy loop on
+ * the sound CPU. EepromReadWords / EepromSendCommand ($80:A34B / $80:A387) run
+ * inside the hooked LoadSavedEntry. */
 /* BsxOpenTimeChannel ($81:F80C) passes difftest on s1 but is not hooked
  * here: it calls BsxFindFile directly (see below). */
+BRIDGE(HleHand_LoadSavedEntry, LoadSavedEntry_m1x1, 10000)
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */

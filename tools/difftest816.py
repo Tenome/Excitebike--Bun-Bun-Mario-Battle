@@ -83,6 +83,8 @@ def main():
     ap.add_argument('--poke', action='append', default=[], help='ADDR=HEX: set WRAM byte(s) before each case (DP addresses get D added)')
     ap.add_argument('--dump-fail', action='store_true', help='save the first failing case per function')
     ap.add_argument('--hand-only', action='store_true', help='test only the hand-written variants')
+    ap.add_argument('--apu-echo', action='store_true',
+                    help='APU ports $2140-$2143 read back the last value written (IPL ready = $AA/$BB)')
     a = ap.parse_args()
     os.chdir(ROOT)
     code = json.load(open('build/%s/code.json' % a.ver))
@@ -95,6 +97,7 @@ def main():
     dll.h_set_rom(rombuf, len(rom))
     wram_p = dll.h_wram()
     hwt_p = dll.h_hw_table()
+    dll.h_set_apu_echo(1 if a.apu_echo else 0)
     snaps = []
     if not a.snapshots and os.path.isdir(os.path.join('build', 'snapshots', a.ver)):
         a.snapshots = os.path.join('build', 'snapshots', a.ver, '*.bin')
@@ -131,6 +134,8 @@ def main():
         for case in range(a.cases):
             base = bytearray(snaps[rnd.randrange(len(snaps))]) if snaps else bytearray(rnd.getrandbits(8) for _ in range(0x20000))
             hw = bytearray(rnd.getrandbits(8) for _ in range(0x4000))
+            if a.apu_echo:
+                hw[0x140], hw[0x141] = 0xAA, 0xBB
             regs = [rnd.getrandbits(16), rnd.getrandbits(16), rnd.getrandbits(16), 0x1FF0, 0x0000,
                     rnd.choice([0x80, 0x80, 0x00, 0x7E]), 0]
             if rnd.random() < 0.15:
@@ -150,6 +155,14 @@ def main():
             cpu = CPU(rom)
             cpu.wram[:] = base
             cpu.hw_values = {0x2000 + k: hw[k] for k in range(0x4000)}
+            if a.apu_echo:
+                w8 = cpu.write8
+                def echo_write8(ad, v, cpu=cpu, w8=w8):
+                    w8(ad, v)
+                    o = ad & 0xFFFF
+                    if ((ad >> 16) & 0x7F) < 0x40 and 0x2140 <= o <= 0x2143:
+                        cpu.hw_values[o] = v & 0xFF
+                cpu.write8 = echo_write8
             cpu.A, cpu.X, cpu.Y, cpu.S, cpu.D, cpu.DB = regs[:6]
             cpu.P = p
             try:

@@ -5658,7 +5658,7 @@ void PlayerSelectStart_m1x1(void)
 }
 
 void sub_80EE5C_m1x1(void);
-void sub_80A2B0_m1x1(void);
+void LoadSavedEntry_m1x1(void);
 void MergeBsxFlags_m1x1(void);
 void SumBytes0850_m1x1(void);
 
@@ -5692,7 +5692,7 @@ void ShowEntryPassword_m1x1(void)
     push8(0x80); push16(0xA0BF); PackEntryCode_m1x1();
     push8(0x80); push16(0xA0C3); PackRecordTime_m1x1();
     push8(0x80); push16(0xA0C7); PackEntryNumber_m1x1();
-    push8(0x80); push16(0xA0CB); CALL(sub_80A2B0_m1x1, 0x80A2B0, 3);
+    push8(0x80); push16(0xA0CB); CALL(LoadSavedEntry_m1x1, 0x80A2B0, 3);
     push8(0x80); push16(0xA0CF); MergeBsxFlags_m1x1();
     push8(0x80); push16(0xA0D3); SumBytes0850_m1x1();
     ldx8(0x0B);
@@ -8526,5 +8526,127 @@ void BsxOpenTimeChannel_m1x1(void)
     lda16(0xAAEE); wr16(ABS(0x218E), 0xAAEE);
     setP(pull8());
     fc = 1;
+    retl();
+}
+
+void Mul16_m1x0(void);
+
+/* $80:A387 EepromSendCommand (RTS, M=1 X=0): select the serial EEPROM
+ * ($2198: chip select $C0, clock bit 0) and clock out the command byte A,
+ * high bit first (data bit 7). */
+void EepromSendCommand_m1x0(void)
+{
+    push8((u8)A);
+    wr8(ABS(0x2198), 0);
+    lda8(0xC0); wr8(ABS(0x2198), 0xC0);
+    ora8(0x01); wr8(ABS(0x2198), (u8)A);
+    A = (A & 0xFF00) | pull8(); nz8((u8)A);
+    Y = 0x0008; nz16(Y);
+    do {
+        push8((u8)A);
+        and8(0x80);
+        ora8(0x40);
+        wr8(ABS(0x2198), (u8)A);
+        ora8(0x01);
+        wr8(ABS(0x2198), (u8)A);
+        A = (A & 0xFF00) | pull8(); nz8((u8)A);
+        lda8(asl8((u8)A));
+        Y = dec16(Y);
+    } while (!fz);
+    ret();
+}
+
+/* $80:A34B EepromReadWords (RTS, M=1 X=0): read X 16-bit words from EEPROM
+ * address A into Y ($00:Y onwards, DB): the read command A | $80, then 16
+ * clocked bits per word (bit 7 of $2198), high bit first. */
+void EepromReadWords_m1x0(void)
+{
+    push16(Y);
+    ora8(0x80);
+    push16(0xA350); EepromSendCommand_m1x0();
+    lda8(0x40); wr8(ABS(0x2198), 0x40);
+    Y = pull16(); nz16(Y);
+    rep(0x20);
+    do {
+        push16(Y);
+        Y = 0x0010; nz16(Y);
+        lda16(0x0000);
+        do {
+            push16(A);
+            sep(0x20);
+            lda8(0x41); wr8(ABS(0x2198), 0x41);
+            lda8(0x40); wr8(ABS(0x2198), 0x40);
+            lda8(rd8(ABS(0x2198)));
+            lda8(asl8((u8)A));
+            rep(0x20);
+            A = pull16(); nz16(A);
+            lda16(rol16(A));
+            Y = dec16(Y);
+        } while (!fz);
+        Y = pull16(); nz16(Y);
+        wr16(ABSY(0x0000), A);
+        Y = inc16(Y); Y = inc16(Y);
+        X = dec16(X);
+    } while (!fz);
+    sep(0x20);
+    wr8(ABS(0x2198), 0);
+    ret();
+}
+
+/* $80:A2B0 (RTL): read the saved entry record from EEPROM (13 words to
+ * $1E89); its 11 digits as a number ($0000-$0005), the three BCD digits
+ * $1E9B / $1E9D / $1E9F as a value in $10 (hundreds, tens, ones), and that
+ * value's bit pairs merged into the course flags $0850-$0854. */
+void LoadSavedEntry_m1x1(void)
+{
+    sep(0x20);
+    rep(0x10);
+    lda8(0x00);
+    Y = 0x1E89; nz16(Y);
+    X = 0x000D; nz16(X);
+    push16(0xA2BE); EepromReadWords_m1x0();
+    X = 0x1E89; nz16(X);
+    wr16(DP(0x1C), 0x1E89);
+    lda8(0x00); wr8(DP(0x1E), 0);
+    push16(0xA2CA); DigitsToNumber_m1x0();
+    wr8(DP(0x10), 0);
+    wr8(DP(0x11), 0);
+    rep(0x20);
+    lda16(rd16(ABS(0x1E9B))); and16(0x000F); wr16(DP(0x00), A);
+    lda16(0x0064); wr16(DP(0x02), 0x0064);
+    sep(0x20);
+    push8(0x80); push16(0xA2E3); Mul16_m1x0();
+    rep(0x20);
+    lda16(rd16(DP(0x04))); wr16(DP(0x10), A);
+    sep(0x20);
+    rep(0x20);
+    lda16(rd16(ABS(0x1E9D))); and16(0x000F); wr16(DP(0x00), A);
+    lda16(0x000A); wr16(DP(0x02), 0x000A);
+    sep(0x20);
+    push8(0x80); push16(0xA300); Mul16_m1x0();
+    rep(0x20);
+    lda16(rd16(DP(0x04)));
+    fc = 0; adc16(rd16(DP(0x10)));
+    wr16(DP(0x10), A);
+    sep(0x20);
+    rep(0x20);
+    lda16(rd16(ABS(0x1E9F))); and16(0x000F);
+    fc = 0; adc16(rd16(DP(0x10)));
+    wr16(DP(0x10), A);
+    sep(0x30);
+    lda8(rd8(DP(0x10))); and8(0x03);
+    lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A));
+    wr8(ABS(0x0854), tsb8(rd8(ABS(0x0854))));
+    lda8(rd8(DP(0x10))); and8(0x0C);
+    lda8(asl8((u8)A)); lda8(asl8((u8)A));
+    wr8(ABS(0x0853), tsb8(rd8(ABS(0x0853))));
+    lda8(rd8(DP(0x10))); and8(0x30);
+    wr8(ABS(0x0852), tsb8(rd8(ABS(0x0852))));
+    lda8(rd8(DP(0x10))); and8(0xC0);
+    lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
+    wr8(ABS(0x0851), tsb8(rd8(ABS(0x0851))));
+    lda8(rd8(DP(0x11))); and8(0x03);
+    lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A));
+    wr8(ABS(0x0850), tsb8(rd8(ABS(0x0850))));
     retl();
 }

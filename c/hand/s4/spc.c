@@ -18,8 +18,10 @@ static void upload_from_dp(void)
     rep(0x30);
     Y = 0;
     lda16(0xBBAA);
-    while (rd16(ABS(0x2140)) != 0xBBAA)
+    do {
         WAIT_TICK();
+        cmp16(A, rd16(ABS(0x2140)));
+    } while (!fz);
     sep(0x20);
     lda8(0xCC);
     for (;;) {
@@ -60,8 +62,10 @@ static void upload_from_dp(void)
                 WAIT_TICK();
             lda8(inc8((u8)A));
         }
-        while (rd8(ABS(0x2140)) != (u8)A)
+        do {                                    /* CMP: carry set on the match */
             WAIT_TICK();
+            cmp8((u8)A, rd8(ABS(0x2140)));
+        } while (!fz);
         do { adc8(0x03); } while (fz);
     }
     wr8(ABS(0x2140), 0);
@@ -93,4 +97,52 @@ void SpcUploadFrom(u32 stream)
     wr8(DP(0x01), (u8)(stream >> 8));
     wr8(DP(0x02), (u8)(stream >> 16));
     upload_from_dp();
+}
+
+void SpcUploadB_m1x1(void);
+
+/* $80:9DDA (RTS): start the closing credits: with NMI off the credits
+ * music (stream 0x06) uploaded, NMI back, $75 + 1; BG3 / tile
+ * bases; scroll $A6 = $FFFF, colour math $1C00 = $90 / $1C01 =
+ * $20, $1915 + 1; sound command $10; HDMA channel 7 (direct, to $2100,
+ * table $00:0452) with the table copied from $80:9E5E;
+ * $190F = $80, $1905 = 4, $1906 cleared, BG mode 9, $087E / $0880 / $0882 / $88
+ * cleared. */
+void StartCredits_m1x1(void)
+{
+    wr8(ABS(0x4200), 0);
+    ldx8(0x06);
+    push8(0x80); push16(0x9DE2); SpcUploadB_m1x1();
+    lda8(rd8(ABS(0x190E))); wr8(ABS(0x4200), (u8)A);
+    wr8(DP(0x75), inc8(rd8(DP(0x75))));
+    lda8(0x32); wr8(ABS(0x2109), 0x32);
+    lda8(0x44); wr8(ABS(0x210B), 0x44);
+    lda8(0x01); wr8(ABS(0x210C), 0x01);
+    rep(0x20);
+    lda16(0xFFFF); wr16(DP(0xA6), 0xFFFF);
+    lda16(0x0090); wr16(ABS(0x1C00), 0x0090);
+    lda16(0x0020); wr16(ABS(0x1C01), 0x0020);
+    sep(0x20);
+    wr8(ABS(0x1915), inc8(rd8(ABS(0x1915))));
+    lda8(0x10); wr8(ABS(0x2140), 0x10);
+    lda8(0x00); wr8(ABS(0x4370), 0);
+    lda8(0x00); wr8(ABS(0x4371), 0);
+    lda8(0x52); wr8(ABS(0x4372), 0x52);
+    lda8(0x04); wr8(ABS(0x4373), 0x04);
+    lda8(0x00); wr8(ABS(0x4374), 0);
+    lda8(0x00); wr8(ABS(0x4377), 0);
+    ldx8(0x40);
+    do {
+        lda8(rd8(ABSX(0x9E5E))); wr8(ABSX(0x0452), (u8)A);
+        X = dec8((u8)X);
+    } while (!fn);
+    lda8(0x80); wr8(ABS(0x190F), 0x80);
+    lda8(0x04); wr8(ABS(0x1905), 0x04);
+        wr8(ABS(0x1906), 0);
+    lda8(0x09); wr8(ABS(0x2105), 0x09);
+    wr8(ABS(0x087E), 0);
+    wr8(ABS(0x0880), 0);
+    wr8(ABS(0x0882), 0);
+    wr8(DP(0x88), 0);
+    ret();
 }
