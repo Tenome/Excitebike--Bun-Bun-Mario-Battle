@@ -311,3 +311,5 @@
 80B158  1 1  mem+X,Y,C,V   RaceBookkeeping
 80A0BC  1 1  mem+X,Y,C,V   ShowEntryPassword
 80A4FE  1 1  mem+A,X,Y,C,V   FinalSchedule
+81A620  1 1  mem+A,X,Y,C,V   SetHdmaPreset
+80B538  1 1  mem+A,X,Y,C,V   RiderPaletteWords

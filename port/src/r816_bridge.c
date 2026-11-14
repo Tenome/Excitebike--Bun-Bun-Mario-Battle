@@ -546,6 +546,26 @@ BRIDGE(HleHand_PlayerSelectStart, PlayerSelectStart_m1x1, 200)
 BRIDGE(HleHand_RaceBookkeeping, RaceBookkeeping_m1x1, 2000)
 BRIDGE(HleHand_ShowEntryPassword, ShowEntryPassword_m1x1, 3000)
 BRIDGE(HleHand_FinalSchedule, FinalSchedule_m1x1, 250)
+/* RiderPaletteWords ($80:B538): ~40 cycles when it only clears the words
+ * ($1923 set or no palettes in mode $76 per $80:B5F5), ~520 otherwise. */
+uint8 r816_bus_read(uint32 a);
+static uint32 rider_palette_cost1(void)
+{
+    if (g_ram[0x1923] || !r816_bus_read(0x80B5F5 + g_ram[0x76])) return 40;
+    return 520;
+}
+BRIDGE_DYN(HleHand_RiderPaletteWords, RiderPaletteWords_m1x1, rider_palette_cost1())
+/* SetHdmaPreset ($81:A620, A = preset): ~45 cycles for $FF, else ~38 per
+ * byte of its two table sets ($81:A614 / $81:A61A lengths) plus ~170. */
+static uint32 hdma_preset_cost1(uint8 a)
+{
+    if (a == 0xFF) return 45;
+    uint32 y = (uint32)a * 2;
+    uint32 n1 = r816_bus_read(0x81A614 + y) | r816_bus_read(0x81A615 + y) << 8;
+    uint32 n2 = r816_bus_read(0x81A61A + y) | r816_bus_read(0x81A61B + y) << 8;
+    return 170 + 38 * ((n1 + n2) & 0xFFFF);
+}
+BRIDGE_DYN(HleHand_SetHdmaPreset, SetHdmaPreset_m1x1, hdma_preset_cost1((uint8)A))
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */

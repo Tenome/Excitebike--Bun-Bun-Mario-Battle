@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 307 hand-written (75.4%), 304 of them in the port.
+407 functions in the static map; 309 hand-written (75.9%), 306 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -113,6 +113,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:B498` | TickTimers | `mem+X,Y,C,V` | `misc.c` | yes |
 | `$80:B4AE` | StepLfsr | `mem+X,Y,C,V` | `frame.c` | yes |
 | `$80:B4D9` | ReadJoypads | `mem+X,Y,C,V` | `kernel.c` | yes |
+| `$80:B538` | RiderPaletteWords | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:BC61` | Mul16 | `mem+Y,V` | `objects.c` | yes |
 | `$80:BC61` | Mul16 | `mem+Y,V` | `objects.c` | yes |
 | `$80:BCCD` | Mul16c | `mem+V` | `objects.c` | yes |
@@ -272,6 +273,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$81:A126` | SelectWheelPosition | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$81:A17D` | SinCos | `mem+Y` | `objects.c` | yes |
 | `$81:A1E5` | Random | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$81:A620` | SetHdmaPreset | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$81:A961` | EmptyHook | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$81:B639` | RivalDispatch_B639 | `mem+X,Y,C,V` | `ai.c` | yes |
 | `$81:B64A` | RivalTumble_B64A | `mem+X,Y,C,V` | `ai.c` | yes |

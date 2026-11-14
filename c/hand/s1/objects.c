@@ -5734,3 +5734,166 @@ void FinalSchedule_m1x1(void)
     lda8(0x01); wr8(ABS(0x0088), 0x01);
     ret();
 }
+
+/* $81:A620 SetHdmaPreset (RTL, A = preset): HDMA off and its state
+ * ($190F, $1907-$190C) cleared, $190D = $20. Preset $FF stops there.
+ * Otherwise the preset's three line tables ($81:A6EB/$A77D/$A80F from
+ * $81:A608, length $81:A614) go to $0695/$0715/$0795 and its three value
+ * tables ($81:A8A1/$A8E1/$A921 from $81:A60E, length $81:A61A) to
+ * $0455/$0515/$05D5; channels 2-4 point at the line tables (mode $40 to
+ * $2132), $0815 = 1, $190F = $1C, $1C00 cleared and $1915 + 1. */
+void SetHdmaPreset_m1x1(void)
+{
+    wr8(ABS(0x420C), 0);
+    wr8(ABS(0x190F), 0);
+    wr8(ABS(0x190A), 0); wr8(ABS(0x190B), 0);
+    wr8(ABS(0x1907), 0); wr8(ABS(0x1908), 0);
+    wr8(ABS(0x1909), 0); wr8(ABS(0x190C), 0);
+    ldx8(0x20); wr8(ABS(0x190D), 0x20);
+    cmp8((u8)A, 0xFF);
+    if (fz) { retl(); return; }
+    push8(DB);
+    push8(0x81);
+    DB = pull8(); nz8(DB);
+    rep(0x30);
+    wr16(DP(0x00), A);
+    and16(0x00FF);
+    lda16(asl16(A));
+    Y = A; nz16(Y);
+    push16(Y);
+    lda16(rd16(ABSY(0xA614))); wr16(DP(0x02), A);
+    X = rd16(ABSY(0xA608)); nz16(X);
+    Y = 0; nz16(Y);
+    sep(0x20);
+    do {
+        lda8(rd8(ABSX(0xA6EB))); wr8(ABSY(0x0695), (u8)A);
+        lda8(rd8(ABSX(0xA77D))); wr8(ABSY(0x0715), (u8)A);
+        lda8(rd8(ABSX(0xA80F))); wr8(ABSY(0x0795), (u8)A);
+        X = inc16(X);
+        Y = inc16(Y);
+        cmp16(Y, rd16(DP(0x02)));
+    } while (!fz);
+    rep(0x20);
+    Y = pull16(); nz16(Y);
+    lda16(rd16(ABSY(0xA61A))); wr16(DP(0x02), A);
+    X = rd16(ABSY(0xA60E)); nz16(X);
+    Y = 0; nz16(Y);
+    sep(0x20);
+    do {
+        lda8(rd8(ABSX(0xA8A1))); wr8(ABSY(0x0455), (u8)A);
+        lda8(rd8(ABSX(0xA8E1))); wr8(ABSY(0x0515), (u8)A);
+        lda8(rd8(ABSX(0xA921))); wr8(ABSY(0x05D5), (u8)A);
+        X = inc16(X);
+        Y = inc16(Y);
+        cmp16(Y, rd16(DP(0x02)));
+    } while (!fz);
+    X = 0x3240; nz16(X);
+    wr16(ABS(0x4320), 0x3240); wr16(ABS(0x4330), 0x3240); wr16(ABS(0x4340), 0x3240);
+    X = 0x0695; nz16(X); wr16(ABS(0x4322), 0x0695);
+    X = 0x0715; nz16(X); wr16(ABS(0x4332), 0x0715);
+    X = 0x0795; nz16(X); wr16(ABS(0x4342), 0x0795);
+    lda8(0x00);
+    wr8(ABS(0x4324), 0); wr8(ABS(0x4334), 0); wr8(ABS(0x4344), 0);
+    wr8(ABS(0x4327), 0); wr8(ABS(0x4337), 0); wr8(ABS(0x4347), 0);
+    lda8(0x01); wr8(ABS(0x0815), 0x01);
+    lda8(0x1C); wr8(ABS(0x190F), 0x1C);
+    sep(0x10);
+    wr8(ABS(0x1C00), 0); wr8(ABS(0x1C01), 0);
+    wr8(ABS(0x1915), inc8(rd8(ABS(0x1915))));
+    DB = pull8(); nz8(DB);
+    retl();
+}
+
+/* $80:B538 (RTS): the four riders' palette words $1E12-$1E18 (cleared in
+ * modes without them, $80:B5F5, or with $1923): per rider Y = 3-0 its
+ * colour byte $1961 (the player's $15 swapped for $80:B658 by its
+ * $091C), bit 0 to the high byte, bits 7-1 doubled into the high byte,
+ * plus the stadium row $80:B618; a cycling flash ($1E0E: every other
+ * frame $1E0A = $80:B638 + $8000, $1E10 = $4F00 + phase); and the
+ * stadium's four bytes $80:B608 to $1543-$1546. */
+void RiderPaletteWords_m1x1(void)
+{
+    lda8(rd8(ABS(0x1923)));
+    int clear = !fz;
+    if (!clear) {
+        X = rd8(DP(0x76)); nz8((u8)X);
+        lda8(rd8(ABSX(0xB5F5)));
+        clear = fz;
+    }
+    if (clear) {
+        rep(0x20);
+        wr16(ABS(0x1E12), 0); wr16(ABS(0x1E14), 0);
+        wr16(ABS(0x1E16), 0); wr16(ABS(0x1E18), 0);
+        sep(0x20);
+        ret();
+        return;
+    }
+    rep(0x20);
+    ldx8(0x06);
+    ldy8(0x03);
+    do {
+        lda16(rd16(ABSY(0x1961)));
+        wr16(DP(0x0E), A);
+        cmp8((u8)Y, 0x00);
+        if (fz) {
+            and16(0x00FF);
+            cmp16(A, 0x0015);
+            if (fz) {
+                lda16(rd16(ABSY(0x091C)));
+                push8((u8)X);
+                X = (u8)A; nz8((u8)X);
+                lda16(rd16(LONGX(0x80B658)));
+                X = pull8(); nz8((u8)X);
+                wr16(DP(0x0E), A);
+            }
+        }
+        and16(0x0001);
+        A = (u16)((A >> 8) | (A << 8)); nz8((u8)A);
+        wr16(DP(0x00), A);
+        wr16(ABS(0x000C), 0);
+        wr8(DP(0x0C), (u8)X);
+        lda16(rd16(ABS(0x1542)));
+        and16(0x00FF);
+        lda16(asl16(A)); lda16(asl16(A)); lda16(asl16(A));
+        fc = 0; adc16(rd16(DP(0x0C)));
+        X = (u8)A; nz8((u8)X);
+        lda16(rd16(DP(0x0E)));
+        and16(0x00FE);
+        lda16(asl16(A));
+        A = (u16)((A >> 8) | (A << 8)); nz8((u8)A);
+        fc = 0; adc16(rd16(DP(0x00)));
+        fc = 0; adc16(rd16(ABSX(0xB618)));
+        X = rd8(DP(0x0C)); nz8((u8)X);
+        wr16(ABSX(0x1E12), A);
+        X = dec8((u8)X);
+        X = dec8((u8)X);
+        Y = dec8((u8)Y);
+    } while (!fn);
+    wr16(ABS(0x1E10), 0);
+    wr16(ABS(0x1E0E), inc16(rd16(ABS(0x1E0E))));
+    lda16(rd16(ABS(0x1E0E)));
+    and16(0x0001);
+    if (fz) {
+        lda16(rd16(ABS(0x1E0E)));
+        and16(0x001E);
+        X = (u8)A; nz8((u8)X);
+        lda16(rd16(ABSX(0xB638)));
+        fc = 0; adc16(0x8000);
+        wr16(ABS(0x1E0A), A);
+        lda16(X);
+        and16(0x0006);
+        lda16(lsr16(A));
+        A = (u16)((A >> 8) | (A << 8)); nz8((u8)A);
+        fc = 0; adc16(0x4F00);
+        wr16(ABS(0x1E10), A);
+    }
+    sep(0x20);
+    lda8(rd8(ABS(0x1542)));
+    lda8(asl8((u8)A)); lda8(asl8((u8)A));
+    X = (u8)A; nz8((u8)X);
+    lda8(rd8(ABSX(0xB608))); wr8(ABS(0x1543), (u8)A);
+    lda8(rd8(ABSX(0xB609))); wr8(ABS(0x1544), (u8)A);
+    lda8(rd8(ABSX(0xB60A))); wr8(ABS(0x1545), (u8)A);
+    lda8(rd8(ABSX(0xB60B))); wr8(ABS(0x1546), (u8)A);
+    ret();
+}
