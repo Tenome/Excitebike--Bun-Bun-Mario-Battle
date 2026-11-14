@@ -377,7 +377,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s4
 
-532 functions in the static map; 464 hand-written (87.2%), 445 of them in the port.
+532 functions in the static map; 467 hand-written (87.8%), 448 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -800,12 +800,14 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$81:C7EF` | JumpResultDistance | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$81:C84F` | JumpResultTotal | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$81:C883` | QueueResultsTiles | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$81:C8E1` | QueueHalfUnits | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$81:C956` | JumpResultSkip | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$81:C9A7` | BuildJumpScore | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$81:CA05` | Hundreds | `mem+X,Y` | `objects.c` | yes |
 | `$81:CA05` | Hundreds | `mem+X,Y` | `objects.c` | yes |
 | `$81:CA20` | ScaleJumpCount | `mem+X,Y` | `objects.c` | yes |
 | `$81:CA20` | ScaleJumpCount | `mem+X,Y` | `objects.c` | yes |
+| `$81:CA37` | QueueStadiumBadge | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$81:F999` | ResetMinuteFrame | `mem+A,X,Y` | `from_s1.c` | yes |
 | `$81:F9C8` | BsxFindFile | `mem+Y,C` | `objects.c` | yes |
 | `$82:8000` | ReadJoypads | `mem+X,Y,C,V` | `from_s1.c` | yes |
@@ -819,6 +821,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$82:83A1` | QueueFiveDigits | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$82:83E2` | QueueDigitsAt | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$82:8424` | QueueFontDigits | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$82:846B` | QueueEntryDigits | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$82:84B2` | ByteTable84BA | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$82:84C5` | ResetSoundState | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$82:84EE` | QueuePlayerMarkers | `mem+A,X,Y,C,V` | `objects.c` | yes |

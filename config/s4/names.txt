@@ -469,3 +469,5 @@
 828F6F SaveBestRecords
 8097B9 BroadcastTotals
 808F69 StartSession
+82846B QueueEntryDigits
+81C8E1 QueueHalfUnits

@@ -64,6 +64,8 @@ def returns_long(code, entry):
         if mn in ('BRA', 'BRL', 'JMP', 'JML'):
             if mn == 'JMP' and mode == 'abs':
                 work.append((pc & 0xFF0000) | op)
+            if mn == 'JML' and mode == 'long':
+                work.append(op)          # tail jump: the target's return decides
             continue
         work.append(nxt)
     return False

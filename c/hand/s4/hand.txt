@@ -463,3 +463,6 @@
 828F6F  1 1  mem+A,X,Y,C,V   SaveBestRecords
 8097B9  1 1  mem+A,X,Y,C,V   BroadcastTotals
 808F69  1 1  mem+X,C,V       StartSession
+82846B  1 1  mem+X,Y,C,V     QueueEntryDigits
+81CA37  1 1  mem+X,Y,C,V     QueueStadiumBadge
+81C8E1  0 1  mem+X,Y,C,V     QueueHalfUnits

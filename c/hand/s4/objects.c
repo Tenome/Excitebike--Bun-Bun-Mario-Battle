@@ -10459,7 +10459,7 @@ void DemoPadDisplay_m1x1(void)
     ret();
 }
 
-void sub_81C8E1_m0x1(void);
+void QueueHalfUnits_m0x1(void);
 void LoadRiderPalettes_m1x1(void);
 void FillBonusColumns_m1x1(void);
 
@@ -10473,7 +10473,7 @@ void JumpHudNumbers_m1x1(void)
     lda16(0x03CF); wr16(DP(0x02), 0x03CF);
     lda16(0x0020); wr16(DP(0x0F), 0x0020);
     lda16(rd16(ABS(0x1567)));
-    push8(0x80); push16(0xF11E); CALL(sub_81C8E1_m0x1, 0x81C8E1, 3);
+    push8(0x80); push16(0xF11E); QueueHalfUnits_m0x1();
     push8(0x80); push16(0xF122); ScaleJumpCount_m1x1();
     rep(0x20);
     Y = rd8(ABS(0x156B)); nz8((u8)Y);
@@ -10570,7 +10570,7 @@ void ShowLastDistance_m1x1(void)
     lda16(0x03CF); wr16(DP(0x02), 0x03CF);
     lda16(0x0020); wr16(DP(0x0F), 0x0020);
     lda16(rd16(ABS(0x1567)));
-    push8(0x80); push16(0xF095); CALL(sub_81C8E1_m0x1, 0x81C8E1, 3);
+    push8(0x80); push16(0xF095); QueueHalfUnits_m0x1();
     ret();
 }
 
@@ -10588,7 +10588,7 @@ void JumpResultDistance_m1x1(void)
     lda16(0x03CF); wr16(DP(0x02), 0x03CF);
     lda16(0x0020); wr16(DP(0x0F), 0x0020);
     lda16(rd16(ABS(0x1569)));
-    push8(0x81); push16(0xC812); CALL(sub_81C8E1_m0x1, 0x81C8E1, 3);
+    push8(0x81); push16(0xC812); QueueHalfUnits_m0x1();
     rep(0x20);
     lda16(0x1927); wr16(DP(0x00), 0x1927);
     lda16(0xC82F); wr16(DP(0x02), 0xC82F);
@@ -10612,7 +10612,7 @@ void JumpResultBoard_m1x1(void)
     lda16(0x03CF); wr16(DP(0x02), 0x03CF);
     lda16(0x0020); wr16(DP(0x0F), 0x0020);
     lda16(rd16(ABS(0x1567)));
-    push8(0x80); push16(0xEA81); CALL(sub_81C8E1_m0x1, 0x81C8E1, 3);
+    push8(0x80); push16(0xEA81); QueueHalfUnits_m0x1();
     rep(0x20);
     lda16(rd16(DP(0x88)));
     int best = !fz;
@@ -10645,7 +10645,7 @@ void JumpResultBoard_m1x1(void)
     }
     wr16(DP(0x0F), A);
     lda16(rd16(ABS(0x1569)));
-    push8(0x80); push16(0xEADD); CALL(sub_81C8E1_m0x1, 0x81C8E1, 3);
+    push8(0x80); push16(0xEADD); QueueHalfUnits_m0x1();
     rep(0x20);
     lda16(rd16(ABS(0x1569)));
     push16(0xEAE5); BuildScoreDigits_m0x1();
@@ -13182,4 +13182,115 @@ void StartSession_m1x1(void)
     lda8(0x80);
     lda8(0x0F);
     ret();
+}
+
+void ByteTable84BA_m1x1(void);
+void VramQueueTilesLong_m1x1(void);
+void QueueTileRowsLong_m1x1(void);
+
+/* $82:846B (RTL): the three entry-code digits $1570-$1572 mapped through
+ * $82:84BA, their lower tiles + $20 in $1573-$1575, and the row ($156F,
+ * palette $10) queued at VRAM $08F9. */
+void QueueEntryDigits_m1x1(void)
+{
+    rep(0x20);
+    lda16(0x08F9); wr16(DP(0x00), 0x08F9);
+    lda16(0x156F); wr16(DP(0x02), 0x156F);
+    sep(0x20);
+    static const u16 back[3] = { 0x847F, 0x848F, 0x849F };
+    for (int k = 0; k < 3; k++) {
+        lda8(rd8(ABS(0x1570 + k)));
+        push8(0x82); push16(back[k]); ByteTable84BA_m1x1();
+        wr8(ABS(0x1570 + k), (u8)A);
+        fc = 0; adc8(0x20);
+        wr8(ABS(0x1573 + k), (u8)A);
+    }
+    lda8(0x10); wr8(DP(0x0F), 0x10);
+    push8(0x82); push16(0x84B0); VramQueueTilesLong_m1x1();
+    retl();
+}
+
+/* $81:CA37 QueueStadiumBadge (RTL): the badge for stadium $0928 (tiles
+ * from $81:CA75, palette $22 in $0CF8-$0CFC) at VRAM $1894; for stadium 5
+ * in a free run ($7D) the $0204 rows at $81:CA81 to $1892 instead. */
+void QueueStadiumBadge_m1x1(void)
+{
+    X = rd8(ABS(0x0928)); nz8((u8)X);
+    cmp8((u8)X, 0x05);
+    if (fz) {
+        lda8(rd8(DP(0x7D)));
+        if (!fz) {
+            rep(0x20);
+            lda16(0x1892); wr16(DP(0x00), 0x1892);
+            lda16(0xCA81); wr16(DP(0x02), 0xCA81);
+            lda16(0x0204); wr16(DP(0x10), 0x0204);
+            sep(0x20);
+            lda8(0x81); wr8(DP(0x04), 0x81);
+            QueueTileRowsLong_m1x1();
+            return;
+        }
+    }
+    X = dec8((u8)X);
+    lda8(0x94); wr8(DP(0x00), 0x94);
+    lda8(0x18); wr8(DP(0x01), 0x18);
+    lda8(rd8(LONGX(0x81CA75))); wr8(ABS(0x0CF9), (u8)A);
+    lda8(inc8((u8)A)); wr8(ABS(0x0CFA), (u8)A);
+    fc = 0; adc8(0x0F); wr8(ABS(0x0CFB), (u8)A);
+    lda8(inc8((u8)A)); wr8(ABS(0x0CFC), (u8)A);
+    lda8(0x22); wr8(ABS(0x0CF8), 0x22);
+    lda8(0xF8); wr8(DP(0x02), 0xF8);
+    lda8(0x0C); wr8(DP(0x03), 0x0C);
+    lda8(0x24); wr8(DP(0x0F), 0x24);
+    VramQueueTilesLong_m1x1();
+}
+
+/* $81:C8E1 QueueHalfUnits (RTL by tail jump, M=0 X=1, A = count of half
+ * units): A / 2 as hundreds, tens and ones (tiles $03D0 / $03D1 / $03D3,
+ * lower halves + $10), the half as ".0" / ".5" ($03D4), spacer and unit
+ * tiles ($FF, $A6, $A4), header $27 at $03CF; queued through
+ * VramQueueTilesLong (the caller set $00 / $02 / $0F). */
+void QueueHalfUnits_m0x1(void)
+{
+    wr16(DP(0x04), A);
+    lda16(lsr16(A));
+    ldy8(0x00);
+    for (;;) {
+        cmp16(A, 0x0064);
+        if (!fc) break;
+        sbc16(0x0064);
+        Y = inc8((u8)Y);
+    }
+    sep(0x20);
+    push8((u8)A);
+    wr8(ABS(0x03D0), (u8)Y);
+    lda8((u8)Y); ora8(0x10); wr8(ABS(0x03D7), (u8)A);
+    A = (A & 0xFF00) | pull8(); nz8((u8)A);
+    ldy8(0x00);
+    for (;;) {
+        cmp8((u8)A, 0x0A);
+        if (!fc) break;
+        sbc8(0x0A);
+        Y = inc8((u8)Y);
+    }
+    push8((u8)A);
+    wr8(ABS(0x03D1), (u8)Y);
+    lda8((u8)Y); ora8(0x10); wr8(ABS(0x03D8), (u8)A);
+    A = (A & 0xFF00) | pull8(); nz8((u8)A);
+    wr8(ABS(0x03D3), (u8)A);
+    ora8(0x10); wr8(ABS(0x03DA), (u8)A);
+    lda8(rd8(DP(0x04)));
+    and8(0x01);
+    wr8(DP(0x04), (u8)A);
+    lda8(asl8((u8)A)); lda8(asl8((u8)A));
+    fc = 0; adc8(rd8(DP(0x04)));
+    wr8(ABS(0x03D4), (u8)A);
+    ora8(0x10); wr8(ABS(0x03DB), (u8)A);
+    lda8(0xFF); wr8(ABS(0x03D2), 0xFF);
+    lda8(0xA6); wr8(ABS(0x03D9), 0xA6);
+    lda8(0xFF); wr8(ABS(0x03D5), 0xFF);
+    lda8(0xA4); wr8(ABS(0x03DC), 0xA4);
+    lda8(0xFF); wr8(ABS(0x03D6), 0xFF);
+    lda8(0xA6); wr8(ABS(0x03DD), 0xA6);
+    lda8(0x27); wr8(ABS(0x03CF), 0x27);
+    VramQueueTilesLong_m1x1();
 }
