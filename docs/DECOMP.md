@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 351 hand-written (86.2%), 345 of them in the port.
+407 functions in the static map; 352 hand-written (86.5%), 346 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -47,7 +47,8 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:9206` | ClearRaceState | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:9236` | RaceHudInit | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:9248` | RaceSetup | `mem+X,Y,C,V` | `race.c` | yes |
-| `$80:95AE` | DrawText95C4 | `mem+Y,V` | `misc.c` | yes |
+| `$80:92A0` | RaceResultsSetup | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:95AE` | DrawText95C4 | `mem+Y,V` | `objects.c` | yes |
 | `$80:9698` | Mode04_FreeRunSchedule | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:98B2` | QueueTimeDigits | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:9942` | QueueFiveDigits | `mem+X,Y,C,V` | `objects.c` | yes |

@@ -7641,3 +7641,233 @@ void Mode0C_m1x1(void)
     push8(0x80); push16(0xE372); StepSpriteSlots_m1x1();
     ret();
 }
+
+void SetHdmaPreset_m1x1(void);
+void ComputePlaces_m1x1(void);
+void SpawnObject_m1x1(void);
+void TickRaceClock_m1x1(void);
+void DrawText95C4_m1x1(void);
+void QueueScoreDigitsLong_m1x1(void);
+void DrawRacerNameLow_m1x1(void);
+
+/* One VRAM DMA through DmaKick (DP = $4300): $0800 bytes from bank X
+ * offset A to the word address vaddr. */
+static void results_dma1(u16 vaddr, u16 src, u8 bank, u16 back)
+{
+    lda16(vaddr); wr16(ABS(0x2116), vaddr);
+    lda16(0x0800); wr16(DP(0x05), 0x0800);
+    lda16(src);
+    ldx8(bank);
+    ldy8(0x01);
+    push16(back); DmaKick_m0x1();
+}
+
+/* Spawn object type Y at ($00, $02). */
+static void results_spawn1(u16 x, u16 y, u8 type, u16 back)
+{
+    rep(0x20);
+    lda16(x); wr16(DP(0x00), x);
+    lda16(y); wr16(DP(0x02), y);
+    sep(0x20);
+    ldy8(type);
+    push8(0x80); push16(back); SpawnObject_m1x1();
+}
+
+/* Find the rider slot (X, even, from 14 down) whose place $086E is p. */
+static void find_place1(u8 p)
+{
+    ldx8(0x0E);
+    do {
+        lda8(rd8(ABSX(0x086E)));
+        cmp8((u8)A, p);
+        if (fz) return;
+        X = dec8((u8)X);
+        X = dec8((u8)X);
+    } while (!fn);
+}
+
+/* The podium rider for slot X: object $80:9638 + 16 * $1542 + X. */
+static void podium_rider1(u16 x, u16 y, u16 back)
+{
+    rep(0x20);
+    lda16(x); wr16(DP(0x00), x);
+    lda16(y); wr16(DP(0x02), y);
+    sep(0x20);
+    lda8(rd8(ABS(0x1542)));
+    lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A));
+    wr8(DP(0x04), (u8)A);
+    lda8((u8)X);
+    fc = 0; adc8(rd8(DP(0x04)));
+    X = (u8)A; nz8((u8)X);
+    Y = rd8(ABSX(0x9638)); nz8((u8)Y);
+    push8(0x80); push16(back); SpawnObject_m1x1();
+}
+
+/* $80:92A0 (RTS): after a race the record $083A-$083C is kept for the
+ * course ($083D + 3 * $7C). In a race ($7D clear), with NMI off, the
+ * tilemaps cleared and three $0800-byte VRAM loads ($89:B000 to $0000,
+ * $88:D000 to $0800, $89:B800 to $1800), the course label ($80:938C +
+ * 5 * $7C) at $1893, NMI back, $88 = $40, $0452 cleared, $9E = $FC, $9C
+ * = 4 and HDMA preset 0. In a free run, HDMA preset 0, sound $03 and the
+ * results screen with NMI off: places, the podium objects (the flag, the
+ * first three riders from $80:9638 by $1542, the trophy or the plain
+ * stand for places below 4 with palette $80:95D9, the cup), the objects
+ * updated, the time $083A copied to $03B1 and shown at $1C74, the place
+ * badge at $1CAC (else the text at $1CA4), for places 1-7 the place
+ * points ($80:95DD / $95E5, bonus $B2 from $95ED) at $1CB6, the score
+ * digits at $1CF5, the racer name; then NMI back on. */
+void RaceResultsSetup_m1x1(void)
+{
+    lda8(rd8(DP(0x7C)));
+    lda8(asl8((u8)A));
+    fc = 0; adc8(rd8(DP(0x7C)));
+    X = (u8)A; nz8((u8)X);
+    lda8(rd8(ABS(0x083A))); wr8(ABSX(0x083D), (u8)A);
+    lda8(rd8(ABS(0x083B))); wr8(ABSX(0x083E), (u8)A);
+    lda8(rd8(ABS(0x083C))); wr8(ABSX(0x083F), (u8)A);
+    lda8(rd8(DP(0x7D)));
+    if (fz) {
+        wr8(ABS(0x4200), 0);
+        push8(0x80); push16(0x92FF); ClearTilemaps_m1x1();
+        rep(0x20);
+        push16(D);
+        lda16(0x4300);
+        D = A;
+        ldy8(0x80); wr8(ABS(0x2115), 0x80);
+        lda16(0x1801); wr16(DP(0x00), 0x1801);
+        results_dma1(0x0000, 0xB000, 0x89, 0x9325);
+        results_dma1(0x0800, 0xD000, 0x88, 0x933A);
+        results_dma1(0x1800, 0xB800, 0x89, 0x934F);
+        D = pull16(); nz16(D);
+        sep(0x20);
+        lda8(rd8(DP(0x7C)));
+        lda8(asl8((u8)A)); lda8(asl8((u8)A));
+        fc = 0; adc8(rd8(DP(0x7C)));
+        rep(0x20);
+        and16(0x00FF);
+        fc = 0; adc16(0x938C);
+        wr16(DP(0x02), A);
+        lda16(0x1893); wr16(DP(0x00), 0x1893);
+        sep(0x20);
+        push16(0x936E); VramQueueTiles20_m1x1();
+        lda8(rd8(ABS(0x190E))); wr8(ABS(0x4200), (u8)A);
+        lda8(0x40); wr8(ABS(0x0088), 0x40);
+        wr8(ABS(0x0452), 0);
+        lda8(0xFC); wr8(DP(0x9E), 0xFC);
+        lda8(0x04); wr8(DP(0x9C), 0x04);
+        lda8(0x00);
+        push8(0x80); push16(0x938A); SetHdmaPreset_m1x1();
+        ret();
+        return;
+    }
+    lda8(0x00);
+    push8(0x80); push16(0x92EF); SetHdmaPreset_m1x1();
+    lda8(0x03);
+    push8(0x80); push16(0x92F5); QueueSound_m1x1();
+    wr8(ABS(0x4200), 0);
+    push16(0x93A5); ComputePlaces_m1x1();
+    results_spawn1(0xFFC0, 0x0018, 0x00, 0x93B9);
+    results_spawn1(0x0078, 0x00C0, 0x09, 0x93CD);
+    X = rd8(DP(0x0E)); nz8((u8)X);
+    lda8(0x02); wr8(ABSX(0x0309), 0x02);
+    find_place1(0x01);
+    podium_rider1(0x0080, 0x008B, 0x9404);
+    find_place1(0x02);
+    podium_rider1(0x0054, 0x00B0, 0x9434);
+    lda8(rd8(ABS(0x086E)));
+    cmp8((u8)A, 0x04);
+    if (fc) {
+        rep(0x20);
+        lda16(0x00E8); wr16(DP(0x00), 0x00E8);
+        lda16(0x00D8); wr16(DP(0x02), 0x00D8);
+        sep(0x20);
+        Y = rd8(ABS(0x1542)); nz8((u8)Y);
+        Y = inc8((u8)Y);
+        push8(0x80); push16(0x9451); SpawnObject_m1x1();
+        X = rd8(DP(0x0E)); nz8((u8)X);
+        lda8(0x02); wr8(ABSX(0x0309), 0x02);
+        Y = rd8(ABS(0x1542)); nz8((u8)Y);
+        lda8(rd8(ABSY(0x95D9))); wr8(ABSX(0x0349), (u8)A);
+    } else {
+        results_spawn1(0x0078, 0x00C0, 0x09, 0x9477);
+        X = rd8(DP(0x0E)); nz8((u8)X);
+        lda8(0x02); wr8(ABSX(0x0309), 0x02);
+    }
+    find_place1(0x03);
+    podium_rider1(0x00B8, 0x00B8, 0x94AE);
+    results_spawn1(0x00A0, 0x008B, 0x07, 0x94C2);
+    push8(0x80); push16(0x94C6); UpdateObjects_m1x1();
+    wr8(ABS(0x1958), inc8(rd8(ABS(0x1958))));
+    lda8(rd8(ABS(0x083A))); wr8(ABS(0x03B1), (u8)A);
+    lda8(rd8(ABS(0x083B))); wr8(ABS(0x03B2), (u8)A);
+    lda8(rd8(ABS(0x083C))); wr8(ABS(0x03B3), (u8)A);
+    rep(0x20);
+    lda16(0x1C74); wr16(DP(0x00), 0x1C74);
+    sep(0x20);
+    push16(0x94E7); TickRaceClock_m1x1();
+    lda8(rd8(ABS(0x085E)));
+    ora8(rd8(ABS(0x085F)));
+    if (fz) {
+        push16(0x94F2); DrawText95C4_m1x1();
+    } else {
+        lda8(0x22); wr8(ABS(0x03D2), 0x22);
+        lda8(rd8(ABS(0x086E)));
+        lda8(dec8((u8)A));
+        lda8(asl8((u8)A));
+        ora8(0x30);
+        wr8(ABS(0x03D3), (u8)A);
+        lda8(inc8((u8)A));
+        wr8(ABS(0x03D4), (u8)A);
+        fc = 0; adc8(0x0F);
+        wr8(ABS(0x03D5), (u8)A);
+        lda8(inc8((u8)A));
+        wr8(ABS(0x03D6), (u8)A);
+        rep(0x20);
+        lda16(0x1CAC); wr16(DP(0x00), 0x1CAC);
+        lda16(0x03D2); wr16(DP(0x02), 0x03D2);
+        sep(0x20);
+        lda8(0x24); wr8(DP(0x0F), 0x24);
+        push16(0x9526); VramQueueTiles_m1x1();
+    }
+    X = rd8(ABS(0x086E)); nz8((u8)X);
+    X = dec8((u8)X);
+    cmp8((u8)X, 0x07);
+    if (!fc) {
+        lda8(rd8(ABSX(0x95DD)));
+        ora8(0x50);
+        wr8(ABS(0x03D3), (u8)A);
+        fc = 0; adc8(0x10);
+        wr8(ABS(0x03D8), (u8)A);
+        lda8(rd8(ABSX(0x95E5)));
+        ora8(0x50);
+        wr8(ABS(0x03D4), (u8)A);
+        fc = 0; adc8(0x10);
+        wr8(ABS(0x03D9), (u8)A);
+        lda8(rd8(ABSX(0x95ED))); wr8(DP(0xB2), (u8)A);
+        lda8(0x25); wr8(ABS(0x03D2), 0x25);
+        lda8(0x50);
+        wr8(ABS(0x03D5), 0x50); wr8(ABS(0x03D6), 0x50); wr8(ABS(0x03D7), 0x50);
+        fc = 0; adc8(0x10);
+        wr8(ABS(0x03DA), (u8)A); wr8(ABS(0x03DB), (u8)A); wr8(ABS(0x03DC), (u8)A);
+        lda8(rd8(ABSX(0x95DD)));
+        if (fz) {
+            lda8(0xFC);
+            wr8(ABS(0x03D3), 0xFC); wr8(ABS(0x03D8), 0xFC);
+        }
+        rep(0x20);
+        lda16(0x1CB6); wr16(DP(0x00), 0x1CB6);
+        lda16(0x03D2); wr16(DP(0x02), 0x03D2);
+        sep(0x20);
+        lda8(0x28); wr8(DP(0x0F), 0x28);
+        push16(0x958D); VramQueueTiles_m1x1();
+    }
+    rep(0x20);
+    lda16(0x1CF5); wr16(DP(0x00), 0x1CF5);
+    lda16(0x03D2); wr16(DP(0x02), 0x03D2);
+    sep(0x20);
+    lda8(0x28); wr8(DP(0x0F), 0x28);
+    push8(0x80); push16(0x95A3); QueueScoreDigitsLong_m1x1();
+    push16(0x95A6); DrawRacerNameLow_m1x1();
+    lda8(rd8(ABS(0x190E))); wr8(ABS(0x4200), (u8)A);
+    ret();
+}

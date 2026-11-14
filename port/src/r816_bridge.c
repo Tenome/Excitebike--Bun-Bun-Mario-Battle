@@ -664,6 +664,7 @@ BRIDGE(HleHand_TemperatureGaugeJmp, TemperatureGaugeJmp_m1x1, 423)
 /* Mode03_Race ($80:A9BA) and Mode0C ($80:E319) pass difftest on s1 but are
  * not hooked: they only call some forty routines that are hooked one by one,
  * and one bridge cost could not follow their per-frame cycle total. */
+BRIDGE_DYN(HleHand_RaceResultsSetup, RaceResultsSetup_m1x1, g_ram[0x7D] ? 9000 : 2500)
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */

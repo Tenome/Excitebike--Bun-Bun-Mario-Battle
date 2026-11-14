@@ -100,6 +100,7 @@ static void end_record(void)
     u16 next = (u16)(head + 0x0C + rd16(DP(0x08)));
     wr16(QUEUE_HEAD, next);
     wr16(q(head, 0x0A), next);
+    A = next;                                          /* B keeps the head's high byte */
     SET_A8(0x20); fc = 0;
     adc8(rd8(DP(0x00))); wr8(DP(0x00), (u8)A);
     SET_A8(0x00);
