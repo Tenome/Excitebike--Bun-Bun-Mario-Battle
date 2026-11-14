@@ -464,3 +464,8 @@
 80824E DmaKick
 8088BF StartRandomCourse
 80B2CD ScreenOff
+828F27 SaveChecksum
+828E8E SaveHeaderCheck
+828F6F SaveBestRecords
+8097B9 BroadcastTotals
+808F69 StartSession

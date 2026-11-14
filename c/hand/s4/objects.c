@@ -12925,3 +12925,261 @@ void Mode12_AfterEnd_m1x1(void)
     sep(0x20);
     ret();
 }
+
+void QueueTimeDigits_m1x1(void);
+void QueueFiveDigits_m1x1(void);
+
+/* $82:8F27 (RTL): the save checksum: $10:5004 = the 16-bit sum of the
+ * bytes $10:5000-$5FFF, $11:5000-$5FFF and $12:5000-$5FFF, $10:5002 its
+ * complement (both cleared to 0 / $FFFF first). */
+void SaveChecksum_m1x1(void)
+{
+    rep(0x30);
+    lda16(0x0000);
+    wr16(LONG(0x105004), 0);
+    A = dec16(A);
+    wr16(LONG(0x105002), A);
+    wr16(DP(0x00), 0);
+    X = 0x0FFF; nz16(X);
+    do {
+        WAIT_TICK();
+        lda16(rd16(LONGX(0x105000))); and16(0x00FF); wr16(DP(0x02), A);
+        lda16(rd16(LONGX(0x115000))); and16(0x00FF); wr16(DP(0x04), A);
+        lda16(rd16(LONGX(0x125000))); and16(0x00FF);
+        fc = 0; adc16(rd16(DP(0x00)));
+        fc = 0; adc16(rd16(DP(0x02)));
+        fc = 0; adc16(rd16(DP(0x04)));
+        wr16(DP(0x00), A);
+        X = dec16(X);
+    } while (!fn);
+    wr16(LONG(0x105004), A);
+    eor16(0xFFFF);
+    wr16(LONG(0x105002), A);
+    sep(0x30);
+    retl();
+}
+
+/* $82:8E8E (RTL): check the save header at $11:5700 against the ROM
+ * title ($00:FFC0-$FFCF), the stadium flag $81:800C and the broadcast id
+ * $7F:FFF0; on a mismatch clear $11:5700-$57FF, copy the title, and set
+ * the starting values ($11:5720/23/26/29 = 4, $11:572C = $10). Then record
+ * the broadcast id, date ($7F:FFF2, $7F:FFF9), the stadium flag and this
+ * weekday's entry ($80:9020 (bank DB) by $7F:FFF3 & 7) and redo the checksum. */
+void SaveHeaderCheck_m1x1(void)
+{
+    int same = 1;
+    ldx8(0x0F);
+    do {
+        lda8(rd8(LONGX(0x00FFC0)));
+        cmp8((u8)A, rd8(LONGX(0x115700)));
+        if (!fz) { same = 0; break; }
+        X = dec8((u8)X);
+    } while (!fn);
+    if (same) {
+        lda8(rd8(LONG(0x115716)));
+        cmp8((u8)A, rd8(LONG(0x81800C)));
+        if (!fz) same = 0;
+    }
+    if (same) {
+        rep(0x20);
+        lda16(rd16(LONG(0x7FFFF0)));
+        cmp16(A, rd16(LONG(0x115710)));
+        if (!fz) same = 0;
+    }
+    if (!same) {
+        rep(0x30);
+        X = 0x00FE; nz16(X);
+        lda16(0x0000);
+        do {
+            wr16(LONGX(0x115700), 0);
+            X = dec16(X); X = dec16(X);
+        } while (!fn);
+        sep(0x10);
+        ldx8(0x0E);
+        do {
+            lda16(rd16(LONGX(0x00FFC0)));
+            wr16(LONGX(0x115700), A);
+            X = dec8((u8)X); X = dec8((u8)X);
+        } while (!fn);
+        lda16(0x0004);
+        wr16(LONG(0x115720), 4); wr16(LONG(0x115723), 4);
+        wr16(LONG(0x115726), 4); wr16(LONG(0x115729), 4);
+        lda16(0x0010); wr16(LONG(0x11572C), 0x0010);
+    }
+    lda16(rd16(LONG(0x7FFFF0))); wr16(LONG(0x115710), A);
+    lda16(rd16(LONG(0x7FFFF2))); wr16(LONG(0x115712), A);
+    lda16(rd16(LONG(0x7FFFF9))); and16(0x00FF); wr16(LONG(0x115714), A);
+    lda16(rd16(LONG(0x81800C))); wr16(LONG(0x115716), A);
+    sep(0x20);
+    lda8(rd8(LONG(0x7FFFF3)));
+    and8(0x07);
+    X = (u8)A; nz8((u8)X);
+    lda8(rd8(ABSX(0x9020))); wr8(LONGX(0x115718), (u8)A);
+    push8(0x82); push16(0x8F23); SaveChecksum_m1x1();
+    sep(0x30);
+    retl();
+}
+
+/* $82:8F6F (RTL, DB = $82): keep the broadcast's records in the save: a total time
+ * $084D-$084F below the saved best ($11:572C) replaces it with the course
+ * times $083D-$0848 ($11:5720) and sets $085C; a score $0CE5-$0CE9 above
+ * the saved one ($11:5730) replaces it and sets $085D. Then the broadcast
+ * id, date, stadium flag and weekday entry, and the checksum. */
+void SaveBestRecords_m1x1(void)
+{
+    push8(DB);
+    lda8(0x82);
+    push8(0x82); DB = pull8(); nz8(DB);
+    wr8(ABS(0x085C), 0);
+    wr8(ABS(0x085D), 0);
+    int better = 0;
+    lda8(rd8(ABS(0x084D)));
+    cmp8((u8)A, rd8(LONG(0x11572C)));
+    if (!fz) better = !fc;
+    else {
+        lda8(rd8(ABS(0x084E)));
+        cmp8((u8)A, rd8(LONG(0x11572D)));
+        if (!fz) better = !fc;
+        else {
+            lda8(rd8(ABS(0x084F)));
+            cmp8((u8)A, rd8(LONG(0x11572E)));
+            better = !fc;
+        }
+    }
+    if (better) {
+        lda8(rd8(ABS(0x084D))); wr8(LONG(0x11572C), (u8)A);
+        lda8(rd8(ABS(0x084E))); wr8(LONG(0x11572D), (u8)A);
+        lda8(rd8(ABS(0x084F))); wr8(LONG(0x11572E), (u8)A);
+        wr8(ABS(0x085C), inc8(rd8(ABS(0x085C))));
+        ldx8(0x0B);
+        do {
+            lda8(rd8(ABSX(0x083D))); wr8(LONGX(0x115720), (u8)A);
+            X = dec8((u8)X);
+        } while (!fn);
+    }
+    ldx8(0x00);
+    for (;;) {
+        lda8(rd8(LONGX(0x115730)));
+        cmp8((u8)A, rd8(ABSX(0x0CE5)));
+        if (!fc) {
+            ldx8(0x04);
+            do {
+                lda8(rd8(ABSX(0x0CE5))); wr8(LONGX(0x115730), (u8)A);
+                X = dec8((u8)X);
+            } while (!fn);
+            wr8(ABS(0x085D), inc8(rd8(ABS(0x085D))));
+            break;
+        }
+        if (!fz) break;
+        X = inc8((u8)X);
+        cmp8((u8)X, 0x05);
+        if (fc) break;
+    }
+    lda8(rd8(LONG(0x7FFFF0))); wr8(LONG(0x115710), (u8)A);
+    lda8(rd8(LONG(0x7FFFF1))); wr8(LONG(0x115711), (u8)A);
+    lda8(rd8(LONG(0x7FFFF2))); wr8(LONG(0x115712), (u8)A);
+    lda8(rd8(LONG(0x7FFFF9))); wr8(LONG(0x115716), (u8)A);
+    lda8(rd8(LONG(0x81800C))); wr8(LONG(0x115716), (u8)A);
+    lda8(rd8(LONG(0x7FFFF3)));
+    and8(0x07);
+    X = (u8)A; nz8((u8)X);
+    lda8(rd8(ABSX(0x9020))); wr8(LONGX(0x115718), (u8)A);
+    push8(0x82); push16(0x901D); SaveChecksum_m1x1();
+    DB = pull8(); nz8(DB);
+    retl();
+}
+
+/* $80:97B9 (RTS): the broadcast totals screen: BG3 / tile bases, the
+ * saved best total ($11:572C) at $09D3 and best score ($11:5730) at $0A15;
+ * the four course times $083D-$0848 rounded through $80:C470 and summed
+ * (minutes, seconds, hundredths) into $084D-$084F and $0849-$084B; the
+ * records saved; $1905 = $17, $1923 + 1, $75 + 1, $044F/$0450 cleared, $88
+ * = $20, $A2 = $D8, $190D cleared. */
+void BroadcastTotals_m1x1(void)
+{
+    lda8(0x19); wr8(ABS(0x2109), 0x19);
+    lda8(0x44); wr8(ABS(0x210B), 0x44);
+    lda8(0x01); wr8(ABS(0x210C), 0x01);
+    rep(0x20);
+    lda16(0x09D3); wr16(DP(0x00), 0x09D3);
+    lda16(0x572C); wr16(DP(0x18), 0x572C);
+    sep(0x20);
+    lda8(0x11); wr8(DP(0x1A), 0x11);
+    push8(0x80); push16(0x97DD); QueueTimeDigits_m1x1();
+    rep(0x20);
+    lda16(0x0A15); wr16(DP(0x00), 0x0A15);
+    lda16(0x5730); wr16(DP(0x18), 0x5730);
+    sep(0x20);
+    lda8(0x11); wr8(DP(0x1A), 0x11);
+    push8(0x80); push16(0x97F3); QueueFiveDigits_m1x1();
+    wr8(ABS(0x084D), 0);
+    wr8(ABS(0x084E), 0);
+    wr8(ABS(0x084F), 0);
+    ldx8(0x00);
+    do {
+        Y = rd8(ABSX(0x083F)); nz8((u8)Y);
+        lda8(rd8(ABSY(0xC470))); wr8(ABSX(0x083F), (u8)A);
+        fc = 0; adc8(rd8(ABS(0x084F)));
+        wr8(ABS(0x084F), (u8)A);
+        cmp8((u8)A, 0x64);
+        if (fc) {
+            sbc8(0x64);
+            wr8(ABS(0x084F), (u8)A);
+            u8 v = inc8(rd8(ABS(0x084E))); wr8(ABS(0x084E), v);
+            if (fz) wr8(ABS(0x084D), inc8(rd8(ABS(0x084D))));
+        }
+        lda8(rd8(ABSX(0x083E)));
+        fc = 0; adc8(rd8(ABS(0x084E)));
+        wr8(ABS(0x084E), (u8)A);
+        cmp8((u8)A, 0x3C);
+        if (fc) {
+            sbc8(0x3C);
+            wr8(ABS(0x084E), (u8)A);
+            wr8(ABS(0x084D), inc8(rd8(ABS(0x084D))));
+        }
+        lda8(rd8(ABSX(0x083D)));
+        fc = 0; adc8(rd8(ABS(0x084D)));
+        wr8(ABS(0x084D), (u8)A);
+        lda8(rd8(ABS(0x084D))); wr8(ABS(0x0849), (u8)A);
+        lda8(rd8(ABS(0x084E))); wr8(ABS(0x084A), (u8)A);
+        lda8(rd8(ABS(0x084F))); wr8(ABS(0x084B), (u8)A);
+        X = inc8((u8)X); X = inc8((u8)X); X = inc8((u8)X);
+        cmp8((u8)X, 0x0C);
+    } while (!fc);
+    push8(0x80); push16(0x985C); SaveBestRecords_m1x1();
+    lda8(0x17); wr8(ABS(0x1905), 0x17);
+    wr8(ABS(0x1923), inc8(rd8(ABS(0x1923))));
+    wr8(DP(0x75), inc8(rd8(DP(0x75))));
+    wr8(ABS(0x0450), 0);
+    wr8(ABS(0x044F), 0);
+    lda8(0x20); wr8(DP(0x88), 0x20);
+    lda8(0xD8); wr8(DP(0xA2), 0xD8);
+    wr8(ABS(0x190D), 0);
+    ret();
+}
+
+/* $80:8F69 (RTS): new session: the save header check, the attract state
+ * $0CD3-$0CF2 and $7A-$85 cleared, $79 = $7E = 1. */
+void StartSession_m1x1(void)
+{
+    push8(0x80); push16(0x8F6C); SaveHeaderCheck_m1x1();
+    ldy8(0x1F);
+    lda8(0x00);
+    do {
+        wr8(ABSY(0x0CD3), 0);
+        Y = dec8((u8)Y);
+    } while (!fn);
+    ldy8(0x0B);
+    do {
+        wr8(ABSY(0x007A), 0);
+        Y = dec8((u8)Y);
+    } while (!fn);
+    wr8(DP(0x7C), 0);
+    wr8(ABS(0x007B), 0);
+    lda8(0x01);
+    wr8(DP(0x79), 0x01);
+    wr8(DP(0x7E), 0x01);
+    lda8(0x80);
+    lda8(0x0F);
+    ret();
+}

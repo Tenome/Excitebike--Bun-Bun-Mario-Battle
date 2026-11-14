@@ -1304,6 +1304,10 @@ BRIDGE(HleHand_ScreenOff, ScreenOff_m1x1, 15)
 /* NMI VRAM upload */
 BRIDGE_DYN(HleHand_NmiVramUpload, NmiVramUpload_m1x1,
            (g_ram[0x1E12] | g_ram[0x1E13]) ? 300 : 100)
+/* SaveChecksum ($82:8F27), SaveHeaderCheck ($82:8E8E), SaveBestRecords
+ * ($82:8F6F), BroadcastTotals ($80:97B9) and StartSession ($80:8F69) pass
+ * difftest on s4 but are not hooked: the checksum runs longer than a frame
+ * (see the Stadium 1 note). */
 /* EndScreenStart ($80:9CD1) and Mode12_AfterEnd ($80:9E9F) pass difftest on
  * s4 but are not hooked: their BS-X BIOS exits are replaced by the port
  * (HleEndScreenStart, CreditsExit in src/gen_stubs.c). */

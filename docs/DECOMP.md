@@ -377,7 +377,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s4
 
-532 functions in the static map; 459 hand-written (86.3%), 445 of them in the port.
+532 functions in the static map; 464 hand-written (87.2%), 445 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -407,6 +407,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:8F15` | NextMode | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:8F17` | ChangeMode | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:8F26` | StartPlayerSelect | `mem+X,Y,C,V` | `objects.c` | yes |
+| `$80:8F69` | StartSession | `mem+X,C,V` | `objects.c` |  |
 | `$80:8FA6` | ClearRaceState | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:9004` | ShowCoinRank | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:91FC` | ResetRaceBoard | `mem+X,Y,C,V` | `objects.c` | yes |
@@ -417,6 +418,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:95A2` | BroadcastEndScreens | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:9608` | ResultsPlacePoints | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:96E0` | ResultsJumpPoints | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:97B9` | BroadcastTotals | `mem+A,X,Y,C,V` | `objects.c` |  |
 | `$80:9879` | BsxReadHeader3 | `mem+X,Y,V` | `objects.c` | yes |
 | `$80:9898` | BsxReadSerialByte | `mem+A,X,Y,V` | `leaves.c` | yes |
 | `$80:98B2` | Mode0F_EndScreen | `mem+X,Y,C,V` | `flow.c` | yes |
@@ -838,6 +840,9 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$82:8CD4` | ReadStreamWord | `mem+A,Y` | `objects.c` | yes |
 | `$82:8CF0` | SpeedReadout | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$82:8DC7` | BestTimeBlink | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$82:8E8E` | SaveHeaderCheck | `mem+X,Y,C,V` | `objects.c` |  |
+| `$82:8F27` | SaveChecksum | `mem+A,X,Y,C,V` | `objects.c` |  |
+| `$82:8F6F` | SaveBestRecords | `mem+A,X,Y,C,V` | `objects.c` |  |
 | `$82:9028` | StadiumBonusBanner | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$82:9159` | AddStadiumBonus | `mem+A,X,Y,C,V` | `objects.c` | yes |
 
