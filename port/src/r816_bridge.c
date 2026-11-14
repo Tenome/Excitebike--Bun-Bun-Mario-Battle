@@ -1270,6 +1270,9 @@ static uint32 object_pieces_cost4(void)
     return 60 + 55 * (n ? n : 256);
 }
 BRIDGE_DYN(HleHand_DrawObjectPieces, DrawObjectPieces_m1x1, object_pieces_cost4())
+/* Stadium 4 parallax line buffers (objects.c) */
+BRIDGE(HleHand_ScaleByScroll, ScaleByScroll_m0x0, 130)
+BRIDGE(HleHand_ParallaxLines, ParallaxLines_m1x1, 14000)
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)

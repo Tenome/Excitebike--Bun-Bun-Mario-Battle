@@ -367,7 +367,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s4
 
-532 functions in the static map; 446 hand-written (83.8%), 435 of them in the port.
+532 functions in the static map; 448 hand-written (84.2%), 437 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -477,6 +477,8 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:B76A` | StartJumpMode | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:B7A0` | Mode17_BonusIntro | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:B7F1` | JumpRunStepsMode | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:B912` | ScaleByScroll | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:B91E` | ParallaxLines | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:B98E` | Mul16 | `mem+Y` | `objects.c` | yes |
 | `$80:B9FA` | Mul16b | `mem` | `objects.c` |  |
 | `$80:B9FA` | Mul16b | `mem` | `objects.c` |  |

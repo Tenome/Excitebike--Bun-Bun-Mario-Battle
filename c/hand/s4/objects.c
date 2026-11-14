@@ -12192,3 +12192,72 @@ void Mode0C_m1x1(void)
     push8(0x80); push16(0xF32B); ConfettiAll_m1x1();
     ret();
 }
+
+void Mul16b_m1x0(void);
+
+/* $80:B912 (RTS, M=0 X=0): A * $60 through Mul16b ($62 = A), the middle
+ * word $65 back in A. */
+void ScaleByScroll_m0x0(void)
+{
+    wr16(DP(0x62), A);
+    sep(0x20);
+    push16(0xB918); Mul16b_m1x0();
+    rep(0x20);
+    lda16(rd16(DP(0x65)));
+    ret();
+}
+
+/* $80:B91E (RTS): the parallax line buffers: with the scroll $9C as the
+ * multiplier, 256 words at $1000 from the scale table $1B68 indexed by
+ * $82:9DB3 + $9E (factor $C0), then factors $60 / $80 / $B0 / $E0 into
+ * $68-$6E and 256 words at $1200 from $82:9FB3 + $A2. */
+void ParallaxLines_m1x1(void)
+{
+    rep(0x30);
+    lda16(rd16(ABS(0x009C)));
+    wr16(DP(0x60), A);
+    wr16(DP(0x6A), A);
+    lda16(0x00C0);
+    push16(0xB92C); ScaleByScroll_m0x0();
+    wr16(DP(0x68), A);
+    X = rd16(ABS(0x009E)); nz16(X);
+    Y = 0; nz16(Y);
+    do {
+        lda16(rd16(LONGX(0x829DB3)));
+        push16(Y);
+        and16(0x00FF);
+        Y = A; nz16(Y);
+        lda16(rd16(ABSY(0x1B68)));
+        Y = pull16(); nz16(Y);
+        wr16(ABSY(0x1000), A);
+        X = inc16(X);
+        Y = inc16(Y);
+        Y = inc16(Y);
+        cmp16(Y, 0x0200);
+    } while (!fc);
+    static const u8 dst[4] = { 0x68, 0x6A, 0x6C, 0x6E };
+    static const u16 fac[4] = { 0x0060, 0x0080, 0x00B0, 0x00E0 };
+    static const u16 back[4] = { 0xB952, 0xB95A, 0xB962, 0xB96A };
+    for (int i = 0; i < 4; i++) {
+        lda16(fac[i]);
+        push16(back[i]); ScaleByScroll_m0x0();
+        wr16(DP(dst[i]), A);
+    }
+    X = rd16(ABS(0x00A2)); nz16(X);
+    Y = 0; nz16(Y);
+    do {
+        lda16(rd16(LONGX(0x829FB3)));
+        push16(Y);
+        and16(0x00FF);
+        Y = A; nz16(Y);
+        lda16(rd16(ABSY(0x1B68)));
+        Y = pull16(); nz16(Y);
+        wr16(ABSY(0x1200), A);
+        X = inc16(X);
+        Y = inc16(Y);
+        Y = inc16(Y);
+        cmp16(Y, 0x0200);
+    } while (!fc);
+    sep(0x30);
+    ret();
+}

@@ -455,3 +455,5 @@
 80EEB0 BonusRowList
 80ED1D BuildBonusColumn
 819E9F DrawObjectPieces
+80B912 ScaleByScroll
+80B91E ParallaxLines

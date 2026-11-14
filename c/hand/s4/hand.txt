@@ -445,3 +445,5 @@
 819E9F  1 1  mem+A,X,Y,C,V   DrawObjectPieces
 80A9C1  1 1  mem+X,Y,C,V     Mode03_Race
 80F2D2  1 1  mem+X,Y,C,V     Mode0C
+80B912  0 0  mem+A,X,Y,C,V   ScaleByScroll
+80B91E  1 1  mem+A,X,Y,C,V   ParallaxLines
