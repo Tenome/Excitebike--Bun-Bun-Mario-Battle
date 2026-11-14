@@ -6974,3 +6974,179 @@ after:
     ldy8(0x05);
     lean_toward1();
 }
+
+void Reach20_m1x1(void);
+void Reach2_m1x1(void);
+void CoinCollected_m1x1(void);
+
+/* JSL QueueSound from bank $80 with the return address `back`. */
+static void sound80_1(u8 cmd, u16 back)
+{
+    lda8(cmd);
+    push8(0x80); push16(back); QueueSound_m1x1();
+}
+
+/* Crash sound for rider r: $24, or $29 ($24 + 5) for a rival. */
+static void crash_sound1(u8 r, u16 back)
+{
+    lda8(r);
+    if (!fz) lda8(0x05);
+    fc = 0; adc8(0x24);
+    push8(0x80); push16(back); QueueSound_m1x1();
+}
+
+/* $80:C9C4 RiderCollisions (RTS): Stadium 1's version of the Stadium 4
+ * routine: every pair of riders X < Y that are both racing ($01D8), on
+ * the ground ($0198 bit 0), in the same lane band ($0958, non-zero), not
+ * already bumped ($01C8; X also not in $0940) and close enough (height
+ * $01B0 within $14 when either is in the air; X position $0190 within 2
+ * for a bump of both or $14 for one): rider X alone falls back (crash
+ * sound, $01C8,X = $FF, sound $3D for the player), or both bump: for the
+ * player's bump with speed a coin is won (CoinCollected, $0CDF counts to
+ * 5: sounds $2D and $01, $0CE0 = 1, $0990 = $20); rider Y gets $01C8 =
+ * $FF, its voice ($80:CB19 by coins $1542 and rider) and the crash
+ * sound. $5F = $10 when the player and rider 7 meet. */
+void RiderCollisions_m1x1(void)
+{
+    ldx8(0x00);
+    ldy8(0x01);
+    for (;;) {
+        /* L80C9C8 */
+        lda8(rd8(ABSX(0x01D8)));
+        if (fz) goto next_x;
+        for (;;) {
+            /* L80C9D0 */
+            lda8(rd8(ABSY(0x01D8)));
+            if (fz) goto next_y;
+            lda8(rd8(ABSX(0x0198)));
+            lda8(lsr8((u8)A));
+            if (!fc) goto next_x;
+            lda8(rd8(ABSY(0x0198)));
+            lda8(lsr8((u8)A));
+            if (!fc) goto next_y;
+            lda8(rd8(ABSX(0x0958)));
+            if (fz) goto next_x;
+            cmp8((u8)A, rd8(ABSY(0x0958)));
+            if (!fz) goto next_y;
+            lda8(rd8(ABSX(0x01C8)));
+            ora8(rd8(ABSX(0x0940)));
+            if (!fz) goto next_x;
+            lda8(rd8(ABSY(0x01C8)));
+            if (!fz) goto next_y;
+            lda8(rd8(ABSX(0x01E8)));
+            if (fz) {
+                lda8(rd8(ABSY(0x01E8)));
+                if (fz) goto side;
+            }
+            lda8(rd8(ABSX(0x01B0)));
+            cmp8((u8)A, rd8(ABSY(0x01B0)));
+            if (!fc) {
+                push16(0xCA0C); Reach20_m1x1();
+                cmp8((u8)A, rd8(ABSY(0x01B0)));
+                if (fc) goto side;
+                goto next_y;
+            }
+            lda8(rd8(ABSY(0x01B0)));
+            push16(0xCA1A); Reach20_m1x1();
+            cmp8((u8)A, rd8(ABSX(0x01B0)));
+            if (!fc) goto next_y;
+side:
+            lda8(rd8(ABSX(0x0190)));
+            cmp8((u8)A, rd8(ABSY(0x0190)));
+            if (!fc) {
+                push16(0xCA2A); Reach2_m1x1();
+                cmp8((u8)A, rd8(ABSY(0x0190)));
+                if (fc) goto bump_both;
+                lda8(rd8(ABSX(0x0190)));
+                push16(0xCA35); Reach20_m1x1();
+                cmp8((u8)A, rd8(ABSY(0x0190)));
+                if (fc) goto rear_bump;
+                goto next_y;
+            }
+            lda8(rd8(ABSY(0x0190)));
+            push16(0xCA42); Reach2_m1x1();
+            cmp8((u8)A, rd8(ABSX(0x0190)));
+            if (fc) goto bump_both;
+            lda8(rd8(ABSY(0x0190)));
+            push16(0xCA4D); Reach20_m1x1();
+            cmp8((u8)A, rd8(ABSX(0x0190)));
+            if (fc) goto meet;
+            goto next_y;
+
+rear_bump:
+            crash_sound1((u8)X, 0xCA61);
+            cmp8((u8)X, 0x00);
+            if (fz) sound80_1(0x3D, 0xCA6B);
+            lda8(0xFF);
+            wr8(ABSX(0x01C8), 0xFF);
+            goto after_bump;
+
+bump_both:
+            crash_sound1((u8)X, 0xCA7F);
+            lda8(0xFF);
+            wr8(ABSX(0x01C8), 0xFF);
+meet:
+            cmp8((u8)X, 0x00);
+            if (fz) {
+                cmp8((u8)Y, 0x07);
+                if (fz) { lda8(0x10); wr8(DP(0x5F), 0x10); }
+            }
+            lda8(rd8(ABS(0x01C8)));
+            if (fz) {
+                cmp8((u8)X, 0x00);
+                if (fz) {
+                    lda8(rd8(ABS(0x01B8)));
+                    ora8(rd8(ABS(0x01C0)));
+                    if (!fz) {
+                        wr8(ABS(0x0CDF), inc8(rd8(ABS(0x0CDF))));
+                        sound80_1(0x29, 0xCAAA);
+                        push8((u8)Y);
+                        push8((u8)X);
+                        push8(0x80); push16(0xCAB0); CoinCollected_m1x1();
+                        X = pull8(); nz8((u8)X);
+                        Y = pull8(); nz8((u8)Y);
+                        lda8(rd8(ABS(0x0CDF)));
+                        cmp8((u8)A, 0x05);
+                        if (fz) {
+                            sound80_1(0x2D, 0xCAC8);
+                            lda8(0x01);
+                            wr8(ABS(0x0CE0), 0x01);
+                            push8(0x80); push16(0xCAD1); QueueSound_m1x1();
+                            lda8(0x20);
+                            wr8(ABS(0x0990), 0x20);
+                        } else if (fc) {
+                            lda8(0x06);
+                            wr8(ABS(0x0CDF), 0x06);
+                        }
+                    }
+                }
+            }
+            lda8(0xFF);
+            wr8(ABSY(0x01C8), 0xFF);
+            push8((u8)Y);
+            wr8(ABS(0x000F), (u8)Y);
+            lda8(rd8(ABS(0x1542)));
+            lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A));
+            fc = 0; adc8(rd8(DP(0x0F)));
+            Y = (u8)A; nz8((u8)Y);
+            lda8(rd8(ABSY(0xCB19)));
+            if (!fz) { push8(0x80); push16(0xCAF2); QueueSound_m1x1(); }
+            Y = pull8(); nz8((u8)Y);
+            crash_sound1((u8)Y, 0xCAFF);
+after_bump:
+            cmp8((u8)X, 0x00);
+            if (fz) lda8(0x01);
+next_y:
+            Y = inc8((u8)Y);
+            cmp8((u8)Y, 0x08);
+            if (fz) break;
+        }
+next_x:
+        X = inc8((u8)X);
+        lda8((u8)X);
+        Y = (u8)A; nz8((u8)Y);
+        Y = inc8((u8)Y);
+        cmp8((u8)X, 0x07);
+        if (fz) { ret(); return; }
+    }
+}

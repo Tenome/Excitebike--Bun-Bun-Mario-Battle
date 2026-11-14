@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 337 hand-written (82.8%), 333 of them in the port.
+407 functions in the static map; 338 hand-written (83.0%), 334 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -162,8 +162,9 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:C8EE` | RecordCourseTime | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:C98F` | DivideAX | `mem+X,V` | `objects.c` | yes |
 | `$80:C99D` | RiderLaneBand | `mem+X,Y,C,V` | `race.c` | yes |
-| `$80:CB39` | Reach20 | `mem+A,X,Y,V` | `from_s4.c` | yes |
-| `$80:CB40` | Reach2 | `mem+A,X,Y,V` | `from_s4.c` | yes |
+| `$80:C9C4` | RiderCollisions | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:CB39` | Reach20 | `mem+A,X,Y,V` | `objects.c` | yes |
+| `$80:CB40` | Reach2 | `mem+A,X,Y,V` | `objects.c` | yes |
 | `$80:CB47` | BallHit | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:CC38` | SortAndDrawRiders | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:CC3D` | DrawAllRiders | `mem+A,X,Y,C,V` | `objects.c` | yes |
