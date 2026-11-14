@@ -4307,3 +4307,125 @@ void DemoPushStart_m1x1(void)
     ldy8(0x00);
     if (demo_command1()) demo_next1();
 }
+
+/* $81:9714 UpdateObjects (RTL): Stadium 4's $81:97E8 with Stadium 1's
+ * object arrays (slot $039D; steps $81:AAE5, draws $81:AAF9). */
+void UpdateObjects_m1x1(void)
+{
+    wr8(ABS(0x1958), 0);
+    push8(DB);
+    lda8(0x81); push8(0x81);
+    DB = pull8(); nz8(DB);
+    ldx8(0x0E);
+    do {
+        wr8(ABS(0x039D), (u8)X);
+        lda8(rd8(ABSX(0x02E9)));
+        if (!fz) {
+            lda8(rd8(ABSX(0x0369)));
+            if (!fz) wr8(ABSX(0x0369), dec8(rd8(ABSX(0x0369))));
+            lda8(rd8(ABSX(0x0379)));
+            if (!fz) wr8(ABSX(0x0379), dec8(rd8(ABSX(0x0379))));
+            lda8(rd8(ABSX(0x02F9)));
+            lda8(asl8((u8)A));
+            X = (u8)A; nz8((u8)X);
+            push8((u8)X);
+            push16(0x973E);
+            r816_call_pc(0x810000u | rd16(LONGX(0x81AAE5)));
+            X = pull8(); nz8((u8)X);
+            Y = rd8(ABS(0x039D)); nz8((u8)Y);
+            lda8(rd8(ABSY(0x02E9)));
+            if (!fz) {
+                push16(0x974A);
+                r816_call_pc(0x810000u | rd16(LONGX(0x81AAF9)));
+            }
+        }
+        X = rd8(ABS(0x039D)); nz8((u8)X);
+        X = dec8((u8)X);
+        X = dec8((u8)X);
+    } while (!fn);
+    DB = pull8(); nz8(DB);
+    retl();
+}
+
+/* $80:99E7 (RTS): the results list, a line every $20 frames ($88): the
+ * time of entry $0452 (3 bytes at $083D) at its VRAM row ($80:9A48),
+ * sound $42; after five, the next steps ($0453 = 4 and $0454 = 1, or 2
+ * with $085C). */
+void EndScreenTimes_m1x1(void)
+{
+    u8 t = dec8(rd8(DP(0x88)));
+    wr8(DP(0x88), t);
+    if (!fz) { ret(); return; }
+    lda8(0x20); wr8(DP(0x88), 0x20);
+    lda8(rd8(ABS(0x0452)));
+    lda8(asl8((u8)A));
+    X = (u8)A; nz8((u8)X);
+    fc = 0; adc8(rd8(ABS(0x0452)));
+    Y = (u8)A; nz8((u8)Y);
+    lda8(rd8(ABSY(0x083D))); wr8(ABS(0x03B1), (u8)A);
+    lda8(rd8(ABSY(0x083E))); wr8(ABS(0x03B2), (u8)A);
+    lda8(rd8(ABSY(0x083F))); wr8(ABS(0x03B3), (u8)A);
+    rep(0x20);
+    lda16(rd16(ABSX(0x9A48))); wr16(DP(0x00), A);
+    lda16(0x03B1); wr16(DP(0x18), 0x03B1);
+    sep(0x20);
+    lda8(0x00); wr8(DP(0x1A), 0x00);
+    push8(0x80); push16(0x9A20); QueueTimeDigits_m1x1();
+    lda8(0x42);
+    push8(0x80); push16(0x9A26); QueueSound_m1x1();
+    wr8(ABS(0x0452), inc8(rd8(ABS(0x0452))));
+    lda8(rd8(ABS(0x0452)));
+    cmp8((u8)A, 0x05);
+    if (!fc) { ret(); return; }
+    lda8(rd8(ABS(0x085C)));
+    if (fz) {
+        lda8(0x04); wr8(ABS(0x0453), 0x04);
+        lda8(0x01); wr8(ABS(0x0454), 0x01);
+    } else {
+        lda8(0x02); wr8(ABS(0x0453), 0x02);
+    }
+    ret();
+}
+
+/* $80:9A87 (RTS): the record entry: after the $88 delay the box
+ * ($89:D800); then A: step $0453 = 1, $88 = $20, the next box
+ * ($89:D980) and the record time ($11:572C) at VRAM $09D3, sound $43. */
+void EndScreenRecord_m1x1(void)
+{
+    lda8(rd8(DP(0x88)));
+    if (!fz) {
+        u8 t = dec8(rd8(DP(0x88)));
+        wr8(DP(0x88), t);
+        if (!fz) { ret(); return; }
+        lda8(0x00); wr8(DP(0x02), 0x00);
+        lda8(0xD8); wr8(DP(0x03), 0xD8);
+        lda8(0x89); wr8(DP(0x04), 0x89);
+        lda8(0x20); wr8(DP(0x10), 0x20);
+        lda8(0x02); wr8(DP(0x11), 0x02);
+        lda8(0x00); wr8(DP(0x00), 0x00);
+        lda8(0x03); wr8(DP(0x01), 0x03);
+        push16(0x9AAD); VramQueueCopy_m1x1();
+    }
+    lda8(rd8(DP(0x26)));
+    and8(0x80);
+    if (fz) { ret(); return; }
+    lda8(0x01); wr8(ABS(0x0453), 0x01);
+    lda8(0x20); wr8(DP(0x88), 0x20);
+    lda8(0x80); wr8(DP(0x02), 0x80);
+    lda8(0xD9); wr8(DP(0x03), 0xD9);
+    lda8(0x89); wr8(DP(0x04), 0x89);
+    lda8(0x20); wr8(DP(0x10), 0x20);
+    lda8(0x02); wr8(DP(0x11), 0x02);
+    lda8(0x00); wr8(DP(0x00), 0x00);
+    lda8(0x03); wr8(DP(0x01), 0x03);
+    push16(0x9ADB); VramQueueCopy_m1x1();
+    rep(0x20);
+    lda16(0x09D3); wr16(DP(0x00), 0x09D3);
+    lda16(0x572C); wr16(DP(0x18), 0x572C);
+    sep(0x20);
+    lda8(0x11); wr8(DP(0x1A), 0x11);
+    push8(0x80); push16(0x9AF1); QueueTimeDigits_m1x1();
+    lda8(0x43);
+    push8(0x80); push16(0x9AF7); QueueSound_m1x1();
+    ret();
+}

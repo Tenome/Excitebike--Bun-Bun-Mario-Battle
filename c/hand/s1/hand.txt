@@ -282,3 +282,6 @@
 819DC6  1 1  mem+A,X,Y,C,V   DrawObjectSprites
 80E377  1 1  mem+A,X,Y,C,V   DemoInputStep
 80E4FC  1 1  mem+X,Y,C,V     DemoPushStart
+819714  1 1  mem+A,X,Y,C,V   UpdateObjects
+8099E7  1 1  mem+A,X,Y,C,V   EndScreenTimes
+809A87  1 1  mem+A,X,Y,C,V   EndScreenRecord

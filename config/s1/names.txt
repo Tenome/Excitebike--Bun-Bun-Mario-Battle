@@ -302,3 +302,6 @@
 819DC6 DrawObjectSprites
 80E377 DemoInputStep
 80E4FC DemoPushStart
+819714 UpdateObjects
+8099E7 EndScreenTimes
+809A87 EndScreenRecord
