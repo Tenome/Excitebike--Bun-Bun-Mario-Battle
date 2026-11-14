@@ -447,3 +447,4 @@
 80F2D2  1 1  mem+X,Y,C,V     Mode0C
 80B912  0 0  mem+A,X,Y,C,V   ScaleByScroll
 80B91E  1 1  mem+A,X,Y,C,V   ParallaxLines
+80924C  1 1  mem+A,X,Y,C,V   RaceResultsSetup

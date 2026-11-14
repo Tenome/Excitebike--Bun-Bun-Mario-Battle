@@ -367,7 +367,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s4
 
-532 functions in the static map; 448 hand-written (84.2%), 437 of them in the port.
+532 functions in the static map; 449 hand-written (84.4%), 438 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -396,6 +396,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:8FA6` | ClearRaceState | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:9004` | ShowCoinRank | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:91FC` | ResetRaceBoard | `mem+X,Y,C,V` | `objects.c` | yes |
+| `$80:924C` | RaceResultsSetup | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:9471` | ShowItemPoints | `mem+X,Y,V` | `objects.c` | yes |
 | `$80:954E` | AddBcdDigits | `mem+Y,V` | `objects.c` | yes |
 | `$80:9567` | ShowDigitDifference | `mem+A,X,Y,C,V` | `objects.c` | yes |
@@ -545,7 +546,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:CE8C` | PlaceRiderShadowLong | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:CE96` | PlaceRiderShadow | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:CF32` | RankPlayer | `mem+X,Y,C,V` | `objects.c` | yes |
-| `$80:CF5D` | ComputePlaces | `mem+X` | `from_s1.c` | yes |
+| `$80:CF5D` | ComputePlaces | `mem+X` | `objects.c` | yes |
 | `$80:CF8B` | QueuePlaceBadgeHud | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:CF9D` | QueuePlaceBadge | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:D013` | MirrorJumpRider | `mem+Y,C,V` | `objects.c` | yes |

@@ -457,3 +457,4 @@
 819E9F DrawObjectPieces
 80B912 ScaleByScroll
 80B91E ParallaxLines
+80924C RaceResultsSetup

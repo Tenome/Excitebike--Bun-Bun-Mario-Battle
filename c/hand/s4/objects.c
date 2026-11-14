@@ -12261,3 +12261,183 @@ void ParallaxLines_m1x1(void)
     sep(0x30);
     ret();
 }
+
+void SetupHdmaChannels_m1x1(void);
+void QueueSoundB_m1x1(void);
+void VramQueueTiles20_m1x1(void);
+void LoadHdmaScene_m1x1(void);
+void QueuePlayerMarkers_m1x1(void);
+void ComputePlaces_m1x1(void);
+void QueuePlaceBadge_m1x1(void);
+void ShowItemPoints_m1x1(void);
+void ShowDigitDifference_m1x1(void);
+void ShowLastDistance_m1x1(void);
+void BuildScoreDigits_m0x1(void);
+void QueueDigitsAt_m1x1(void);
+
+/* $80:924C (RTS): after a race the record $083A-$083C is kept for the
+ * course ($083D + 3 * $7C) and $8A = $0708. In a race ($7D clear) the
+ * HDMA channels come back, the course label ($80:92B8 + 5 * $7C) goes to
+ * VRAM $1893, $88 = $40, $044F cleared, $A6 = $FC, $A4 = 4 and HDMA scene
+ * 0. In a free run, sound $03 and the results screen: BG layout, $1E0C =
+ * 1; the character name ($80:A598 + 15 * $154F, +$4B with $81:800C) at
+ * $1844, player markers, the course number at $1854, places (badges at
+ * $1858 / $1A08 when ranked, else the row $80:9462 at $1A04), best time
+ * at $1915, item points, the time difference, the last distance, the
+ * jump score ($156D) at $1AB6, the score digits $0CE5 at $1B16, and for
+ * places 1-7 the place points ($80:944A / $9452, bonus $BA from $80:945A)
+ * at $1A17. */
+void RaceResultsSetup_m1x1(void)
+{
+    lda8(rd8(DP(0x7C)));
+    lda8(asl8((u8)A));
+    fc = 0; adc8(rd8(DP(0x7C)));
+    X = (u8)A; nz8((u8)X);
+    lda8(rd8(ABS(0x083A))); wr8(ABSX(0x083D), (u8)A);
+    lda8(rd8(ABS(0x083B))); wr8(ABSX(0x083E), (u8)A);
+    lda8(rd8(ABS(0x083C))); wr8(ABSX(0x083F), (u8)A);
+    rep(0x20);
+    lda16(0x0708); wr16(DP(0x8A), 0x0708);
+    sep(0x20);
+    lda8(rd8(DP(0x7D)));
+    if (fz) {
+        wr8(ABS(0x1E0C), 0);
+        push8(0x80); push16(0x9278); SetupHdmaChannels_m1x1();
+        lda8(rd8(DP(0x7C)));
+        lda8(asl8((u8)A)); lda8(asl8((u8)A));
+        fc = 0; adc8(rd8(DP(0x7C)));
+        rep(0x20);
+        and16(0x00FF);
+        fc = 0; adc16(0x92B8);
+        wr16(DP(0x02), A);
+        lda16(0x1893); wr16(DP(0x00), 0x1893);
+        sep(0x20);
+        push16(0x92A0); VramQueueTiles20_m1x1();
+        lda8(0x40); wr8(ABS(0x0088), 0x40);
+        wr8(ABS(0x044F), 0);
+        lda8(0xFC); wr8(DP(0xA6), 0xFC);
+        lda8(0x04); wr8(DP(0xA4), 0x04);
+        lda8(0x00);
+        push8(0x80); push16(0x92B6); LoadHdmaScene_m1x1();
+        ret();
+        return;
+    }
+    lda8(0x03);
+    push8(0x80); push16(0x9281); QueueSoundB_m1x1();
+    lda8(0x01);
+    wr8(ABS(0x2107), 0x01); wr8(ABS(0x1900), 0x01);
+    lda8(0x09); wr8(ABS(0x2108), 0x09);
+    lda8(0x44); wr8(ABS(0x210B), 0x44);
+    lda8(0x06); wr8(ABS(0x1905), 0x06);
+    wr8(ABS(0x190D), 0);
+    wr8(ABS(0x1C00), 0); wr8(ABS(0x1C01), 0);
+    wr8(ABS(0x1915), inc8(rd8(ABS(0x1915))));
+    lda8(0x01); wr8(ABS(0x1E0C), 0x01);
+    lda8(rd8(ABS(0x154F)));
+    wr8(ABS(0x4202), (u8)A);
+    lda8(0x0F); wr8(ABS(0x4203), 0x0F);
+    rep(0x20);
+    A = rd16(ABS(0x4216));
+    fc = 0; adc16(0xA598);
+    wr16(DP(0x02), A);
+    lda16(rd16(LONG(0x81800C)));
+    if (!fz) {
+        lda16(rd16(DP(0x02)));
+        fc = 0; adc16(0x004B);
+        wr16(DP(0x02), A);
+    }
+    lda16(0x1844); wr16(DP(0x00), 0x1844);
+    sep(0x20);
+    push16(0x9325); VramQueueTiles20_m1x1();
+    push8(0x80); push16(0x9329); QueuePlayerMarkers_m1x1();
+    lda8(rd8(DP(0x7C)));
+    lda8(asl8((u8)A));
+    fc = 0; adc8(0x60);
+    wr8(ABS(0x03D0), (u8)A);
+    lda8(inc8((u8)A));
+    wr8(ABS(0x03D1), (u8)A);
+    fc = 0; adc8(0x0F);
+    wr8(ABS(0x03D2), (u8)A);
+    lda8(inc8((u8)A));
+    wr8(ABS(0x03D3), (u8)A);
+    lda8(0x22); wr8(ABS(0x03CF), 0x22);
+    rep(0x20);
+    lda16(0x1854); wr16(DP(0x00), 0x1854);
+    lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+    sep(0x20);
+    push16(0x9356); VramQueueTiles20_m1x1();
+    push16(0x9359); ComputePlaces_m1x1();
+    lda8(rd8(ABS(0x085E)));
+    ora8(rd8(ABS(0x085F)));
+    if (!fz) {
+        rep(0x20);
+        lda16(0x1858); wr16(DP(0x00), 0x1858);
+        sep(0x20);
+        lda8(0x20); wr8(DP(0x0F), 0x20);
+        push16(0x9371); QueuePlaceBadge_m1x1();
+    }
+    rep(0x20);
+    lda16(0x1915); wr16(DP(0x00), 0x1915);
+    sep(0x20);
+    push16(0x937D); QueueBestTime_m1x1();
+    lda8(rd8(ABS(0x085E)));
+    ora8(rd8(ABS(0x085F)));
+    if (!fz) {
+        rep(0x20);
+        lda16(0x1A08); wr16(DP(0x00), 0x1A08);
+        sep(0x20);
+        lda8(0x24); wr8(DP(0x0F), 0x24);
+        push16(0x9395); QueuePlaceBadge_m1x1();
+    } else {
+        rep(0x20);
+        lda16(0x1A04); wr16(DP(0x00), 0x1A04);
+        lda16(0x9462); wr16(DP(0x02), 0x9462);
+        sep(0x20);
+        lda8(0x24); wr8(DP(0x0F), 0x24);
+        push16(0x93AC); VramQueueTiles_m1x1();
+    }
+    push16(0x93AF); ShowItemPoints_m1x1();
+    push16(0x93B2); ShowDigitDifference_m1x1();
+    push16(0x93B5); ShowLastDistance_m1x1();
+    rep(0x20);
+    lda16(rd16(ABS(0x156D)));
+    push16(0x93BD); BuildScoreDigits_m0x1();
+    rep(0x20);
+    lda16(0x1AB6); wr16(DP(0x00), 0x1AB6);
+    lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+    sep(0x20);
+    lda8(0x24); wr8(DP(0x0F), 0x24);
+    push16(0x93D2); VramQueueTiles_m1x1();
+    rep(0x20);
+    lda16(0x0CE5); wr16(DP(0x02), 0x0CE5);
+    lda16(0x1B16); wr16(DP(0x00), 0x1B16);
+    sep(0x20);
+    lda8(0x20); wr8(DP(0x0F), 0x20);
+    ldy8(0x05);
+    push8(0x80); push16(0x93EA); QueueDigitsAt_m1x1();
+    X = rd8(ABS(0x086E)); nz8((u8)X);
+    X = dec8((u8)X);
+    cmp8((u8)X, 0x07);
+    if (fc) { ret(); return; }
+    lda8(rd8(ABSX(0x944A))); wr8(ABS(0x03D0), (u8)A);
+    ora8(0x10); wr8(ABS(0x03D5), (u8)A);
+    lda8(rd8(ABSX(0x9452))); wr8(ABS(0x03D1), (u8)A);
+    ora8(0x10); wr8(ABS(0x03D6), (u8)A);
+    lda8(rd8(ABSX(0x945A))); wr8(DP(0xBA), (u8)A);
+    lda8(0x25); wr8(ABS(0x03CF), 0x25);
+    wr8(ABS(0x03D2), 0); wr8(ABS(0x03D3), 0); wr8(ABS(0x03D4), 0);
+    lda8(0x10);
+    wr8(ABS(0x03D7), 0x10); wr8(ABS(0x03D8), 0x10); wr8(ABS(0x03D9), 0x10);
+    lda8(rd8(ABSX(0x944A)));
+    if (fz) {
+        lda8(0xFF);
+        wr8(ABS(0x03D0), 0xFF); wr8(ABS(0x03D5), 0xFF);
+    }
+    rep(0x20);
+    lda16(0x1A17); wr16(DP(0x00), 0x1A17);
+    lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+    sep(0x20);
+    lda8(0x24); wr8(DP(0x0F), 0x24);
+    push16(0x9448); VramQueueTiles_m1x1();
+    ret();
+}
