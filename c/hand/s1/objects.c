@@ -7150,3 +7150,196 @@ next_x:
         if (fz) { ret(); return; }
     }
 }
+
+void BlankQueueRowPal2_m1x1(void);
+void CopyTrackColumn_m1x1(void);
+void FillLaneColumn_m1x1(void);
+
+/* $81:8A42 (RTL, X = row type): the row's piece list ($05) from
+ * $81:8010 / $81:8040 (DB = $81). */
+void RaceRowList_m1x1(void)
+{
+    lda8(rd8(ABSX(0x8010))); wr8(DP(0x05), (u8)A);
+    lda8(rd8(ABSX(0x8040))); wr8(DP(0x06), (u8)A);
+    retl();
+}
+
+/* $81:8A4D (RTL): load the race course one column ahead (DB = $81). The
+ * expanded course $7F:4000 ([$07]) holds the lap count at entry 0 (doubled
+ * in a race, $7D clear; $0928 + 1, $A6 cleared) and then row entries: with
+ * a $81:8070 bit a row type from $81:8A30 by the low nibble, else the low
+ * six bits; types $30 and up set the finish/variant flag $092C. Each time
+ * the builder column $0273 reaches the player column $0260 the row list
+ * ($81:8A42) gives the next column: blanked, its entry recorded at
+ * $7F:6000 + $A6, filled (CopyTrackColumn), on the finish row ($09) the
+ * lap number ($81:8A3D by $0929, then $0928) at $7F:0026, and queued for
+ * VRAM at $0271 - $20 (FillLaneColumn; $0271 wraps at $20 with $0272 ^ 4).
+ * At the end of a finish row the next lap starts ($03AF cleared, $0928 +
+ * 1, $093F - 1, $098A = 1 on the last; the course restarts, $A8 = $A6). */
+void LoadRaceColumn_m1x1(void)
+{
+    push8(DB);
+    lda8(0x81); push8(0x81);
+    DB = pull8(); nz8(DB);
+    lda8(rd8(DP(0x7C)));
+    lda8(asl8((u8)A));
+    X = (u8)A; nz8((u8)X);
+    lda8(0x00); wr8(DP(0x07), 0x00);
+    lda8(0x40); wr8(DP(0x08), 0x40);
+    lda8(0x7F); wr8(DP(0x09), 0x7F);
+    lda8(rd8(ABS(0x0273)));
+    cmp8((u8)A, rd8(ABS(0x0260)));
+    if (!fz) goto out;
+    lda8(rd8(ABS(0x0278)));
+    if (!fz) goto column;
+next_entry:
+    rep(0x10);
+    Y = rd16(ABS(0x0275)); nz16(Y);
+    if (fz) {
+        lda8(rd8(ILDPY(0x07)));
+        wr8(ABS(0x093F), (u8)A);
+        wr8(ABS(0x0928), inc8(rd8(ABS(0x0928))));
+        wr8(DP(0xA6), 0);
+        wr8(DP(0xA7), 0);
+        lda8(rd8(DP(0x7D)));
+        if (fz) wr8(ABS(0x093F), asl8(rd8(ABS(0x093F))));
+    }
+read_entry:
+    rep(0x20);
+    wr16(ABS(0x0275), inc16(rd16(ABS(0x0275))));
+    sep(0x20);
+    if (fx) { Y = rd8(ABS(0x0275)); nz8((u8)Y); }
+    else { Y = rd16(ABS(0x0275)); nz16(Y); }
+    lda8(rd8(ILDPY(0x07)));
+    if (fz) goto out;
+    sep(0x10);
+    bit8(rd8(ABS(0x8070)), 0);
+    if (!fz) {
+        and8(0x0F);
+        X = (u8)A; nz8((u8)X);
+        lda8(rd8(ABSX(0x8A30)));
+        wr8(ABS(0x0277), (u8)A);
+    } else {
+        sep(0x10);
+        ldx8(0x01);
+        and8(0x3F);
+        wr8(ABS(0x0277), (u8)A);
+    }
+    cmp8((u8)A, 0x30);
+    if (fc) {
+        int dex = 1;
+        if (fz) {
+            lda8(rd8(ABS(0x098A)));
+            dex = !fz;
+        }
+        if (dex) X = dec8((u8)X);
+        wr8(ABS(0x092C), (u8)X);
+        if (!fn) goto next_entry;
+    }
+column:
+    X = rd8(ABS(0x0277)); nz8((u8)X);
+    push8(0x81); push16(0x8AD0); RaceRowList_m1x1();
+    Y = rd8(ABS(0x0278)); nz8((u8)Y);
+    lda8(rd8((((u32)DB << 16) + rd16(DP(0x05)) + Y) & 0xFFFFFF));
+    if (fz) {
+        wr8(ABS(0x0278), (u8)A);
+        lda8(rd8(ABS(0x0277)));
+        cmp8((u8)A, 0x09);
+        if (!fz) goto next_entry;
+        wr8(ABS(0x03AF), 0);
+        wr8(ABS(0x0928), inc8(rd8(ABS(0x0928))));
+        wr8(ABS(0x093F), dec8(rd8(ABS(0x093F))));
+        if (fz) { lda8(0x01); wr8(ABS(0x098A), 0x01); }
+        lda8(0x00);
+        wr8(ABS(0x0275), 0);
+        wr8(ABS(0x0276), 0);
+        wr8(ABS(0x0929), 0);
+        rep(0x20);
+        lda16(rd16(DP(0xA6)));
+        wr16(DP(0xA8), A);
+        wr16(DP(0xA6), 0);
+        sep(0x20);
+        goto read_entry;
+    }
+    push8(0x81); push16(0x8ADE); BlankQueueRowPal2_m1x1();
+    lda8(rd8((((u32)DB << 16) + rd16(DP(0x05)) + Y) & 0xFFFFFF));
+    push8((u8)A);
+    rep(0x30);
+    X = rd16(DP(0xA6)); nz16(X);
+    lda16(rd16(ABS(0x0275)));
+    wr16(LONGX(0x7F6000), A);
+    wr16(DP(0xA6), inc16(rd16(DP(0xA6))));
+    wr16(DP(0xA6), inc16(rd16(DP(0xA6))));
+    sep(0x30);
+    X = pull8(); nz8((u8)X);
+    push8(0x81); push16(0x8AF7); CopyTrackColumn_m1x1();
+    Y = inc8((u8)Y);
+    Y = inc8((u8)Y);
+    wr8(ABS(0x0278), (u8)Y);
+    lda8(rd8(ABS(0x0277)));
+    cmp8((u8)A, 0x09);
+    if (fz) {
+        lda8(rd8(ABS(0x093F)));
+        cmp8((u8)A, 0x01);
+        if (!fz) {
+            cmp8((u8)Y, 0x4A);
+            if (fc) {
+                cmp8((u8)Y, 0xB0);
+                if (!fc) {
+                    X = rd8(ABS(0x0929)); nz8((u8)X);
+                    lda8(rd8(ABSX(0x8A3D)));
+                    wr8(LONG(0x7F0026), (u8)A);
+                    wr8(ABS(0x0929), inc8(rd8(ABS(0x0929))));
+                    cmp8((u8)X, 0x05);
+                    if (fz) {
+                        lda8(rd8(ABS(0x0928)));
+                        wr8(LONG(0x7F0026), (u8)A);
+                    }
+                }
+            }
+        }
+    }
+    lda8(0x81); wr8(LONG(0x7F0004), 0x81);
+    lda8(0x01); wr8(LONG(0x7F0005), 0x01);
+    lda8(0x18); wr8(LONG(0x7F0006), 0x18);
+    lda8(0x02);
+    fc = 0; adc8(0x0C);
+    wr8(LONG(0x7F0007), (u8)A);
+    lda8(0x00); wr8(LONG(0x7F0008), 0);
+    lda8(0x7F); wr8(LONG(0x7F0009), 0x7F);
+    rep(0x20);
+    lda16(0x0002);
+    fc = 0; adc16(0x0028);
+    wr16(LONG(0x7F0000), A);
+    wr16(LONG(0x7F000C), A);
+    lda16(rd16(ABS(0x0271)));
+    fc = 1; sbc16(0x0020);
+    wr16(LONG(0x7F0002), A);
+    lda16(0x001C); wr16(LONG(0x7F000A), 0x001C);
+    sep(0x20);
+    lda8(rd8(ABS(0x0270)));
+    wr8(DP(0x0F), (u8)A);
+    push8(0x81); push16(0x8B7F); FillLaneColumn_m1x1();
+    lda8(rd8(ABS(0x0270)));
+    push8(0x81); push16(0x8B86); NextColumnLong_m1x1();
+    wr8(ABS(0x0270), (u8)A);
+    wr8(ABS(0x0271), inc8(rd8(ABS(0x0271))));
+    lda8(rd8(ABS(0x0271)));
+    cmp8((u8)A, 0x20);
+    if (fz) {
+        lda8(0x00); wr8(ABS(0x0271), 0);
+        lda8(rd8(ABS(0x0272)));
+        eor8(0x04);
+        wr8(ABS(0x0272), (u8)A);
+    }
+    lda8(rd8(ABS(0x0260)));
+    push8(0x81); push16(0x8BA7); NextColumnLong_m1x1();
+    wr8(ABS(0x0273), (u8)A);
+    DB = pull8(); nz8(DB);
+    retl();
+    return;
+out:
+    sep(0x10);
+    DB = pull8(); nz8(DB);
+    retl();
+}

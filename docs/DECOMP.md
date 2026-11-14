@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 338 hand-written (83.0%), 334 of them in the port.
+407 functions in the static map; 340 hand-written (83.5%), 336 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -259,9 +259,11 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:EDEF` | PaceBonus | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:EE58` | QueueScoreDigitsLong | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:EE68` | QueueScoreDigits | `mem+X,Y,C,V` | `objects.c` | yes |
+| `$81:8A42` | RaceRowList | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$81:8A4D` | LoadRaceColumn | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$81:8BE2` | FillLaneColumn | `mem+A,X,Y,C,V` | `objects.c` | yes |
-| `$81:8C21` | BlankQueueRowPal2 | `mem+Y` | `misc.c` | yes |
-| `$81:8C33` | CopyTrackColumn | `mem+X,Y` | `from_s4.c` | yes |
+| `$81:8C21` | BlankQueueRowPal2 | `mem+Y` | `objects.c` | yes |
+| `$81:8C33` | CopyTrackColumn | `mem+X,Y` | `objects.c` | yes |
 | `$81:932A` | SpawnPlayerSpark | `mem+X,C,V` | `objects.c` | yes |
 | `$81:9362` | SpawnDustPuff | `mem+X,Y,V` | `objects.c` | yes |
 | `$81:93E2` | SpawnExhaust | `mem+X,Y,C,V` | `from_s4.c` | yes |

@@ -360,3 +360,5 @@
 80AE2F BrakeOnTurn
 80ABD7 RiderThrottle
 80C9C4 RiderCollisions
+818A42 RaceRowList
+818A4D LoadRaceColumn

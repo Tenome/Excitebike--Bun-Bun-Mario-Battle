@@ -617,6 +617,14 @@ BRIDGE(HleHand_SortAndDrawRiders, SortAndDrawRiders_m1x1, 3800)
 BRIDGE_DYN(HleHand_BrakeOnTurn, BrakeOnTurn_m1x1, (X & 0xFF) == g_ram[0x7F] ? 50 : 10)
 BRIDGE(HleHand_RiderThrottle, RiderThrottle_m1x1, 180)
 BRIDGE(HleHand_RiderCollisions, RiderCollisions_m1x1, 800)
+/* LoadRaceColumn ($81:8A4D): ~50 cycles while the builder column $0273 is
+ * not at the player column $0260, ~1400 when it loads one. */
+static uint32 race_column_cost1(void)
+{
+    return g_ram[0x0273] != g_ram[0x0260] ? 50 : 1400;
+}
+BRIDGE(HleHand_RaceRowList, RaceRowList_m1x1, 30)
+BRIDGE_DYN(HleHand_LoadRaceColumn, LoadRaceColumn_m1x1, race_column_cost1())
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */
