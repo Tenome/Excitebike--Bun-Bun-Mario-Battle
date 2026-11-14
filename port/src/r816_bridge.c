@@ -661,6 +661,9 @@ BRIDGE(HleHand_AnimateAllWheels, AnimateAllWheels_m1x1, 202)
 BRIDGE(HleHand_RunAllRiderPieces, RunAllRiderPieces_m1x1, 800)
 BRIDGE_DYN(HleHand_RunPieceActions, RunPieceActions_m1x1, piece_actions_cost1())
 BRIDGE(HleHand_TemperatureGaugeJmp, TemperatureGaugeJmp_m1x1, 423)
+/* Mode03_Race ($80:A9BA) and Mode0C ($80:E319) pass difftest on s1 but are
+ * not hooked: they only call some forty routines that are hooked one by one,
+ * and one bridge cost could not follow their per-frame cycle total. */
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */

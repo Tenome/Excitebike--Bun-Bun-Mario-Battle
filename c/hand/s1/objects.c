@@ -7482,3 +7482,159 @@ void TemperatureGaugeJmp_m1x1(void)
 {
     TemperatureGauge_m1x1();
 }
+
+void SendSpeedToApu_m1x1(void);
+void SetRiderLean_m1x1(void);
+void RiderLaneBand_m1x1(void);
+void SegmentTimer_m1x1(void);
+void RaceClockStep_m1x1(void);
+void FinishStep_m1x1(void);
+void SpawnRivals_m1x1(void);
+void UpdatePlayerPlace_m1x1(void);
+void LaunchBall_m1x1(void);
+void RaceTimer_m1x1(void);
+void ItemFlashState_m1x1(void);
+void CrashRecovery_m1x1(void);
+void UpdateLanes_m1x1(void);
+void DrawSparksAndMarkers_m1x1(void);
+void BallOrGauge_m1x1(void);
+void ClearMidScreenRiders_m1x1(void);
+void RaceMoveStep_m1x1(void);
+void RaceStartLights_m1x1(void);
+void RaceBannerSprites_m1x1(void);
+void CpuRidersStep_m1x1(void);
+void DrawPlace_m1x1(void);
+void DrawLap_m1x1(void);
+void EraseCollectedCoin_m1x1(void);
+void RedrawUsedItem_m1x1(void);
+void SpawnExhaust_m1x1(void);
+void EngineSound_m1x1(void);
+void DemoInputStep_m1x1(void);
+void DemoPadDisplay_m1x1(void);
+
+/* $80:A9BF / $80:E32C: lean and lane band for riders 7-0. */
+static void lean_and_bands1(u16 back1, u16 back2)
+{
+    ldx8(0x07);
+    do {
+        push16(back1); SetRiderLean_m1x1();
+        push16(back2); RiderLaneBand_m1x1();
+        X = dec8((u8)X);
+    } while (!fn);
+}
+
+/* $80:A9BA Mode03_Race (RTS): one race frame. Engine pitch; leans and
+ * lane bands; the player's pad (unless the attract demo, $0CD7); rider
+ * state steps, piece scripts and actions. After the finish ($84) the
+ * segment timer and clock; else the finish check, a free run's rivals,
+ * place and ball, the race timer, item flash and rider collisions. Then
+ * crash recovery, throttles, lanes, ground heights, sparks, the course
+ * column, ball or gauge, the riders sorted and drawn, the move step,
+ * start lights, banners, gauge, wheels, CPU riders, place; at a lap
+ * ($A4) the course time and lap (and after the finish the label
+ * $80:AA6D at $1891); coin and item redraws, markers, exhaust, the
+ * sprite slots and engine sound. */
+void Mode03_Race_m1x1(void)
+{
+    push16(0xA9BC); SendSpeedToApu_m1x1();
+    lean_and_bands1(0xA9C1, 0xA9C4);
+    lda8(rd8(ABS(0x0CD7)));
+    if (fz) { lda8(rd8(DP(0x20))); wr8(ABS(0x0178), (u8)A); }
+    push16(0xA9D4); RiderStepAll_m1x1();
+    push16(0xA9D7); RunAllRiderPieces_m1x1();
+    push16(0xA9DA); RunPieceActions_m1x1();
+    lda8(rd8(DP(0x84)));
+    if (!fz) {
+        push16(0xA9E1); SegmentTimer_m1x1();
+        push16(0xA9E4); RaceClockStep_m1x1();
+    } else {
+        push16(0xA9EA); FinishStep_m1x1();
+        lda8(rd8(DP(0x7D)));
+        if (!fz) {
+            push16(0xA9F1); SpawnRivals_m1x1();
+            push16(0xA9F4); UpdatePlayerPlace_m1x1();
+            push16(0xA9F7); LaunchBall_m1x1();
+        }
+        push16(0xA9FA); RaceTimer_m1x1();
+        push16(0xA9FD); ItemFlashState_m1x1();
+        push16(0xAA00); RiderCollisions_m1x1();
+    }
+    push16(0xAA03); CrashRecovery_m1x1();
+    push16(0xAA06); ThrottleAll_m1x1();
+    push16(0xAA09); UpdateLanes_m1x1();
+    push16(0xAA0C); RiderGroundHeights_m1x1();
+    push16(0xAA0F); DrawSparksAndMarkers_m1x1();
+    push8(0x80); push16(0xAA13); LoadRaceColumn_m1x1();
+    push16(0xAA16); BallOrGauge_m1x1();
+    push16(0xAA19); SortAndDrawRiders_m1x1();
+    push16(0xAA1C); ClearMidScreenRiders_m1x1();
+    push16(0xAA1F); RaceMoveStep_m1x1();
+    push16(0xAA22); RaceStartLights_m1x1();
+    push16(0xAA25); RaceBannerSprites_m1x1();
+    push16(0xAA28); TemperatureGauge_m1x1();
+    push16(0xAA2B); AnimateAllWheels_m1x1();
+    push16(0xAA2E); CpuRidersStep_m1x1();
+    push16(0xAA31); DrawPlace_m1x1();
+    lda8(rd8(DP(0xA4)));
+    if (!fz) {
+        wr8(DP(0xA4), 0);
+        push8(0x80); push16(0xAA3B); RecordCourseTime_m1x1();
+        push16(0xAA3E); DrawLap_m1x1();
+        lda8(rd8(DP(0x84)));
+        if (!fz) {
+            rep(0x20);
+            lda16(0x1891); wr16(DP(0x00), 0x1891);
+            lda16(0xAA6D); wr16(DP(0x02), 0xAA6D);
+            sep(0x20);
+            push16(0xAA53); VramQueueTiles20_m1x1();
+        }
+    }
+    push8(0x80); push16(0xAA57); EraseCollectedCoin_m1x1();
+    push8(0x80); push16(0xAA5B); RedrawUsedItem_m1x1();
+    push8(0x80); push16(0xAA5F); MarkerObjects_m1x1();
+    push8(0x80); push16(0xAA63); SpawnExhaust_m1x1();
+    push8(0x80); push16(0xAA67); StepSpriteSlots_m1x1();
+    push8(0x80); push16(0xAA6B); EngineSound_m1x1();
+    ret();
+}
+
+/* $80:E319 Mode0C (RTS): one attract-demo frame: engine pitch, the CPU
+ * pads $2C-$33 released, the demo input (carry set: skip to the end
+ * steps); else the race frame's rider steps without the player's pad,
+ * timers or rewards. Then start lights, gauge, wheels, CPU riders, the
+ * pad display and the sprite slots. */
+void Mode0C_m1x1(void)
+{
+    push16(0xE31B); SendSpeedToApu_m1x1();
+    ldx8(0x07);
+    lda8(0xFF);
+    do {
+        wr8(DPX(0x2C), 0xFF);
+        X = dec8((u8)X);
+    } while (!fn);
+    push16(0xE327); DemoInputStep_m1x1();
+    if (!fc) {
+        lean_and_bands1(0xE32E, 0xE331);
+        push16(0xE337); RiderStepAll_m1x1();
+        push16(0xE33A); RunAllRiderPieces_m1x1();
+        push16(0xE33D); RunPieceActions_m1x1();
+        push16(0xE340); FinishStep_m1x1();
+        push16(0xE343); RiderCollisions_m1x1();
+        push16(0xE346); CrashRecovery_m1x1();
+        push16(0xE349); ThrottleAll_m1x1();
+        push16(0xE34C); UpdateLanes_m1x1();
+        push16(0xE34F); RiderGroundHeights_m1x1();
+        push16(0xE352); DrawSparksAndMarkers_m1x1();
+        push8(0x80); push16(0xE356); LoadRaceColumn_m1x1();
+        push16(0xE359); SortAndDrawRiders_m1x1();
+        push16(0xE35C); ClearMidScreenRiders_m1x1();
+        push16(0xE35F); RaceMoveStep_m1x1();
+    }
+    push16(0xE362); RaceStartLights_m1x1();
+    push16(0xE365); TemperatureGaugeJmp_m1x1();
+    push16(0xE368); AnimateAllWheels_m1x1();
+    push16(0xE36B); CpuRidersStep_m1x1();
+    push16(0xE36E); DemoPadDisplay_m1x1();
+    push8(0x80); push16(0xE372); StepSpriteSlots_m1x1();
+    ret();
+}

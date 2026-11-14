@@ -371,3 +371,5 @@
 80E7A4 RunAllRiderPieces
 80EB80 RunPieceActions
 80E374 TemperatureGaugeJmp
+80A9BA Mode03_Race
+80E319 Mode0C

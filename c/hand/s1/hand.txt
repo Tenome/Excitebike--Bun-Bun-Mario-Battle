@@ -353,3 +353,5 @@
 80E7A4  1 1  mem+A,X,Y,C,V   RunAllRiderPieces
 80EB80  1 1  mem+A,X,Y,C,V   RunPieceActions
 80E374  1 1  mem+A,X,Y,C,V   TemperatureGaugeJmp
+80A9BA  1 1  mem+A,X,Y,C,V   Mode03_Race
+80E319  1 1  mem+X,Y,C,V   Mode0C
