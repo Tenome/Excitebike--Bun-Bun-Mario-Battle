@@ -1296,6 +1296,9 @@ BRIDGE(HleHand_ScreenOff, ScreenOff_m1x1, 15)
 /* NMI VRAM upload */
 BRIDGE_DYN(HleHand_NmiVramUpload, NmiVramUpload_m1x1,
            (g_ram[0x1E12] | g_ram[0x1E13]) ? 300 : 100)
+/* EndScreenStart ($80:9CD1) and Mode12_AfterEnd ($80:9E9F) pass difftest on
+ * s4 but are not hooked: their BS-X BIOS exits are replaced by the port
+ * (HleEndScreenStart, CreditsExit in src/gen_stubs.c). */
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)

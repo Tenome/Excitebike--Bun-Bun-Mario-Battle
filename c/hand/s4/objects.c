@@ -12799,3 +12799,129 @@ void NmiVramUpload_m1x1(void)
     D = pull16(); nz16(D);
     ret();
 }
+
+void GrowBar087E_m1x1(void);
+void StepColourCycle_m1x1(void);
+
+/* $80:9F17 / $80:9CDD: leave for the BS-X BIOS: interrupts and NMI off,
+ * the BS-X memory mapping reset, the sound CPU back to its loader, JML
+ * $10:5C3C. The port never runs this (port/src/gen_stubs.c replaces both
+ * routines' exits). */
+static void bsx_exit4(u32 site)
+{
+    fi = 1;
+    wr8(ABS(0x4200), 0);
+    lda8(0x00);
+    wr8(LONG(0x035000), 0);
+    wr8(LONG(0x045000), 0);
+    wr8(LONG(0x075000), 0);
+    wr8(LONG(0x085000), 0);
+    lda8(0x80); wr8(LONG(0x0E5000), 0x80);
+    lda8(0xFE); wr8(ABS(0x2140), 0xFE);
+    if (!r816_call_pc(0x105C3C))
+        r816_unknown_target(site, 0x105C3C);
+}
+
+/* $80:9CD1 EndScreenStart (RTS): on a new Start press, with $81:800C set
+ * go to mode $12 ($75 / $77 cleared, $1923 - 1); clear, leave for the
+ * BIOS. */
+void EndScreenStart_m1x1(void)
+{
+    lda8(rd8(DP(0x21)));
+    and8(0x10);
+    if (fz) { ret(); return; }
+    lda8(rd8(LONG(0x81800C)));
+    if (fz) { bsx_exit4(0x809CFE); return; }
+    lda8(0x12); wr8(DP(0x76), 0x12);
+    wr8(DP(0x75), 0);
+    wr8(DP(0x77), 0);
+    wr8(ABS(0x1923), dec8(rd8(ABS(0x1923))));
+    ret();
+}
+
+/* $80:9E9F Mode12_AfterEnd (RTS): the closing credits: the BS-X end check;
+ * while $88 counts down the fade ($1903 = 15 - ($88 - 1) / 16, colour math
+ * $1C00 = 9); every fourth frame the bar and colour cycle and the scroll
+ * $A6 + 1 (at $0700: HDMA off, $88 = $FF, $1905 = 5, $1903 = 0). Below
+ * $0780 the next credits rows ($7E:4B00 + 8 * ($A6 & ~7), $0220 bytes) go to
+ * VRAM $3000 + 4 * (($A6 + $E0) & $1F8); at $0780 the scroll stops, and
+ * after $01C0 frames ($8A) Start leaves for the BIOS. */
+void Mode12_AfterEnd_m1x1(void)
+{
+    push16(0x9EA1); BsxEndIfFlagged_m1x1();
+    lda8(rd8(DP(0x88)));
+    if (!fz) {
+        wr8(DP(0x88), dec8(rd8(DP(0x88))));
+        lda8(dec8((u8)A));
+        lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
+        wr8(DP(0x00), (u8)A);
+        lda8(0x0F);
+        fc = 1; sbc8(rd8(DP(0x00)));
+        wr8(ABS(0x1903), (u8)A);
+        lda8(0x09); wr8(ABS(0x1C00), 0x09);
+        wr8(ABS(0x1C01), 0);
+        wr8(ABS(0x1915), inc8(rd8(ABS(0x1915))));
+        lda8(0xFF); wr8(ABS(0x0880), 0xFF);
+    }
+    lda8(rd8(DP(0x63)));
+    and8(0x03);
+    if (fz) {
+        push16(0x9ECF); GrowBar087E_m1x1();
+        push16(0x9ED2); StepColourCycle_m1x1();
+        rep(0x20);
+        wr16(DP(0xA6), inc16(rd16(DP(0xA6))));
+        lda16(rd16(DP(0xA6)));
+        cmp16(A, 0x0700);
+        if (fz) {
+            sep(0x20);
+            wr8(ABS(0x190F), 0);
+            lda8(0xFF); wr8(DP(0x88), 0xFF);
+            lda8(0x05); wr8(ABS(0x1905), 0x05);
+            wr8(ABS(0x1903), 0);
+        }
+    }
+    rep(0x20);
+    lda16(rd16(DP(0xC1)));
+    if (fz) {
+        lda16(rd16(DP(0xA6)));
+        cmp16(A, 0x0780);
+        if (fn || !fc) {
+            lda16(rd16(DP(0xA6)));
+            and16(0xFFF8);
+            lda16(asl16(A)); lda16(asl16(A)); lda16(asl16(A));
+            fc = 0; adc16(0x4B00);
+            wr16(DP(0x02), A);
+            sep(0x20);
+            lda8(0x7E); wr8(DP(0x04), 0x7E);
+            rep(0x20);
+            lda16(0x0220); wr16(DP(0x10), 0x0220);
+            lda16(rd16(ABS(0x00A6)));
+            fc = 0; adc16(0x00E0);
+            and16(0x01F8);
+            lda16(asl16(A)); lda16(asl16(A));
+            fc = 0; adc16(0x3000);
+            wr16(DP(0x00), A);
+            sep(0x20);
+            push16(0x9F74); QueueTileRows_m1x1();
+            ret();
+            return;
+        }
+        wr16(DP(0xC1), inc16(rd16(DP(0xC1))));
+        lda16(0x01C0); wr16(DP(0x8A), 0x01C0);
+    }
+    lda16(0x0780); wr16(DP(0xA6), 0x0780);
+    lda16(rd16(DP(0x8A)));
+    if (!fz) {
+        wr16(DP(0x8A), dec16(rd16(DP(0x8A))));
+    } else {
+        lda16(rd16(DP(0x21)));
+        and16(0x0010);
+        if (!fz) {
+            sep(0x20);
+            bsx_exit4(0x809F3A);
+            return;
+        }
+    }
+    sep(0x20);
+    ret();
+}
