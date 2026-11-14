@@ -668,6 +668,11 @@ BRIDGE_DYN(HleHand_RaceResultsSetup, RaceResultsSetup_m1x1, g_ram[0x7D] ? 9000 :
 /* EndScreenStart ($80:9DE0) and Mode12_AfterEnd ($80:9F68) pass difftest on
  * s1 but are not hooked: the port replaces their BS-X BIOS exits
  * (HleEndScreenStart, CreditsExit in src/gen_stubs.c). */
+/* SaveChecksum ($80:B79B) and its callers SaveHeaderCheck ($80:B702),
+ * SaveBestRecords ($80:97FF), BroadcastTotals ($80:973F) and StartSession
+ * ($80:91CD) pass difftest on s1 but are not hooked: the checksum takes
+ * longer than a frame, so the original is interrupted by NMI part way;
+ * hooked, the Gen A regression diverges. */
 /* LoadScene ($80:B873) passes difftest on s1 but is not hooked: the hand
  * code calls other routines directly, while the recompiled routine yields to
  * the frame scheduler mid-call (see the RunGameModeScript note); hooked, the

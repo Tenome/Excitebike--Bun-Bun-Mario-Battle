@@ -376,3 +376,8 @@
 8092A0 RaceResultsSetup
 80B873 LoadScene
 80A3AC DigitsToNumber
+80B79B SaveChecksum
+80B702 SaveHeaderCheck
+8097FF SaveBestRecords
+80973F BroadcastTotals
+8091CD StartSession

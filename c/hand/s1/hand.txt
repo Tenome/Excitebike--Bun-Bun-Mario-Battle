@@ -360,3 +360,8 @@
 80A3AC  1 0  full     DigitsToNumber
 809DE0  1 1  mem+A,X,Y,C,V   EndScreenStart
 809F68  1 1  mem+X,Y,C,V     Mode12_AfterEnd
+80B79B  1 1  mem+A,X,Y,C,V   SaveChecksum
+80B702  1 1  mem+X,Y,C,V     SaveHeaderCheck
+8097FF  1 1  mem+A,X,Y,C,V   SaveBestRecords
+80973F  1 1  mem+A,X,Y,C,V   BroadcastTotals
+8091CD  1 1  mem+X,C,V       StartSession
