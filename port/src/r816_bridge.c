@@ -1314,7 +1314,6 @@ static uint32 piece_actions_cost4(void)
 BRIDGE_DYN(HleHand_ThrottleAll, ThrottleAll_m1x1, throttle_all_cost4())
 BRIDGE(HleHand_RiderStateStep, RiderStateStep_m1x1, 20)
 BRIDGE_DYN(HleHand_RiderStepAll, RiderStepAll_m1x1, rider_steps_cost4())
-BRIDGE_DYN(HleHand_SortAndDrawRiders, SortAndDrawRiders_m1x1, 705 + draw_all_riders_cost())
 BRIDGE(HleHand_SpinAllWheels, SpinAllWheels_m1x1, 152)
 BRIDGE(HleHand_RunAllRiderPieces, RunAllRiderPieces_m1x1, 600)
 BRIDGE_DYN(HleHand_RiderGroundHeightsFrom, RiderGroundHeightsFrom_m1x1, ground_heights_cost4(X & 0xFF))
@@ -1339,14 +1338,16 @@ BRIDGE_DYN(HleHand_DrawObjectPieces, DrawObjectPieces_m1x1, object_pieces_cost4(
  * (944-1441 of 1551 frames match instead of 1515): they run inside the IRQ
  * and NMI handlers or at scene setup, where a flat bridge cost does not
  * follow the original's timing. Found by bisecting the hooks added while the
- * Gen B build was broken (2026-11-13 19:55 to 2026-11-14). */
+ * Gen B build was broken (2026-11-13 19:55 to 2026-11-14). The same bisect,
+ * against both runs, also found DmaKick ($80:824E: the DMA it starts stalls
+ * the CPU for the transfer, which a bridge does not charge) and
+ * SortAndDrawRiders ($80:CA93: 33 frames of the race run differ). */
 /* Stadium 4 race results setup (objects.c) */
 BRIDGE_DYN(HleHand_RaceResultsSetup, RaceResultsSetup_m1x1, g_ram[0x7D] ? 9000 : 2500)
 /* video init */
 BRIDGE(HleHand_ForceBlank, ForceBlank_m1x1, 20)
 BRIDGE(HleHand_ClearTilemaps, ClearTilemaps_m1x1, 200)
-/* DMA kick, random course */
-BRIDGE(HleHand_DmaKick, DmaKick_m0x1, 12)
+/* random course */
 BRIDGE(HleHand_StartRandomCourse, StartRandomCourse_m1x1, 800)
 /* screen off, mode dispatcher */
 BRIDGE(HleHand_ScreenOff, ScreenOff_m1x1, 15)
