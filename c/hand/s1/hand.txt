@@ -407,3 +407,4 @@
 80EAFF  1 1  mem+A,X,Y,C,V   SetJumpState1
 80EB04  1 1  mem+A,X,Y,C,V   RiderBumpCrash
 80EBB5  1 1  mem+A,X,Y,C,V   LandingStep
+80E834  1 1  mem+A,X,Y,C,V   PieceAction

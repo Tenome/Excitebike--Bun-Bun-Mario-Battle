@@ -11476,10 +11476,10 @@ void BuildCourseColumn_m1x1(void)
 void ClearOnBonusTiles_m1x1(void);
 void RiderPieceAt_m1x1(void);
 
-/* $80:F850 (RTS, A = action): jump through the rider piece action table
- * $80:F6DF. Not registered on its own: difftest feeds it out-of-range
- * actions, which read past the table. */
-static void piece_action4(void)
+/* $80:F850 PieceAction (RTS, A = action 0-26): jump through the rider
+ * piece action table $80:F6DF. Checked with difftest --set-a for each
+ * action (higher numbers read past the table). */
+void PieceAction_m1x1(void)
 {
     lda8(asl8((u8)A));
     Y = (u8)A; nz8((u8)Y);
@@ -11619,11 +11619,11 @@ void RunRiderPieces_m1x1(void)
         } else {
             bit8(rd8(ABS(0xF6DD)), 0);
             if (fz) {
-                push16(0xF847); piece_action4();
+                push16(0xF847); PieceAction_m1x1();
                 wr8(ABSX(0x0256), inc8(rd8(ABSX(0x0256))));
                 wr8(ABSX(0x0256), inc8(rd8(ABSX(0x0256))));
                 if (!fz) continue;
-                piece_action4();
+                PieceAction_m1x1();
                 return;
             }
             /* L80F8C1 */
@@ -11778,7 +11778,7 @@ void RunPieceActions_m1x1(void)
     ldx8(0x07);
     do {
         lda8(rd8(ABSX(0x0226)));
-        if (!fz) { push16(0xFBFE); piece_action4(); }
+        if (!fz) { push16(0xFBFE); PieceAction_m1x1(); }
         X = dec8((u8)X);
     } while (!fn);
     ret();

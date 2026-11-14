@@ -83,6 +83,8 @@ def main():
     ap.add_argument('--poke', action='append', default=[], help='ADDR=HEX: set WRAM byte(s) before each case (DP addresses get D added)')
     ap.add_argument('--dump-fail', action='store_true', help='save the first failing case per function')
     ap.add_argument('--hand-only', action='store_true', help='test only the hand-written variants')
+    ap.add_argument('--set-a', type=lambda v: int(v, 16), default=None,
+                    help='HEX: force the low byte of A for every case (e.g. a table index)')
     ap.add_argument('--apu-echo', action='store_true',
                     help='APU ports $2140-$2143 read back the last value written (IPL ready = $AA/$BB)')
     a = ap.parse_args()
@@ -144,6 +146,8 @@ def main():
             p &= ~0x08  # decimal mode off unless the routine sets it
             if x.value:
                 regs[1] &= 0xFF; regs[2] &= 0xFF
+            if a.set_a is not None:
+                regs[0] = (regs[0] & 0xFF00) | (a.set_a & 0xFF)
             for pk in a.poke:
                 ad, _, hx = pk.partition('=')
                 ad = int(ad, 16)

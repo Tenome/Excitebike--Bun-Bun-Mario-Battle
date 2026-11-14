@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 403 hand-written (99.0%), 382 of them in the port.
+407 functions in the static map; 404 hand-written (99.3%), 382 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -268,6 +268,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:E775` | AnimateWheels | `mem+V` | `race.c` | yes |
 | `$80:E7A4` | RunAllRiderPieces | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:E7AC` | RunRiderPieces | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:E834` | PieceAction | `mem+A,X,Y,C,V` | `objects.c` |  |
 | `$80:E8B1` | RiderLanePieceAt | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:E8B4` | RiderPieceAt | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:E8B9` | LanePieceAt | `mem+A,X,Y,C,V` | `objects.c` | yes |
@@ -419,7 +420,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s4
 
-532 functions in the static map; 532 hand-written (100.0%), 507 of them in the port.
+532 functions in the static map; 533 hand-written (100.2%), 507 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -728,6 +729,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:F757` | SpinWheels | `mem+X,Y,V` | `objects.c` | yes |
 | `$80:F786` | RunAllRiderPieces | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:F78E` | RunRiderPieces | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:F850` | PieceAction | `mem+A,X,Y,C,V` | `objects.c` |  |
 | `$80:F8D3` | RiderLanePieceAt | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:F8D6` | RiderPieceAt | `mem+A,X,Y,V` | `objects.c` | yes |
 | `$80:F8DB` | LanePieceAt | `mem+A,X,Y,V` | `objects.c` | yes |

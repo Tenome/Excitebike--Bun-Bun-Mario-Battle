@@ -415,3 +415,4 @@
 80EAFF SetJumpState1
 80EB04 RiderBumpCrash
 80EBB5 LandingStep
+80E834 PieceAction

@@ -6130,10 +6130,10 @@ void RiderGroundHeights_m1x1(void)
     RiderGroundHeightsFrom_m1x1();
 }
 
-/* $80:E834 (RTS, A = action): jump through the rider piece action table
- * $80:E701. Not registered on its own: difftest feeds it out-of-range
- * actions, which read past the table. */
-static void piece_action1(void)
+/* $80:E834 PieceAction (RTS, A = action 0-24): jump through the rider
+ * piece action table $80:E701. Checked with difftest --set-a for each
+ * action (higher numbers read past the table). */
+void PieceAction_m1x1(void)
 {
     lda8(asl8((u8)A));
     Y = (u8)A; nz8((u8)Y);
@@ -6241,11 +6241,11 @@ void RunRiderPieces_m1x1(void)
         } else {
             bit8(rd8(ABS(0xE6FF)), 0);
             if (fz) {
-                push16(0xE82B); piece_action1();
+                push16(0xE82B); PieceAction_m1x1();
                 wr8(ABSX(0x0250), inc8(rd8(ABSX(0x0250))));
                 wr8(ABSX(0x0250), inc8(rd8(ABSX(0x0250))));
                 if (!fz) continue;
-                piece_action1();
+                PieceAction_m1x1();
                 return;
             }
             /* L80E8A5 */
@@ -7474,7 +7474,7 @@ void RunPieceActions_m1x1(void)
     ldx8(0x07);
     do {
         lda8(rd8(ABSX(0x0220)));
-        if (!fz) { push16(0xEB89); piece_action1(); }
+        if (!fz) { push16(0xEB89); PieceAction_m1x1(); }
         X = dec8((u8)X);
     } while (!fn);
     ret();
