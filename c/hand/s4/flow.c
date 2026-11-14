@@ -385,3 +385,47 @@ void ItemFlashState_m1x1(void)
     ldx8(0x06);
     ret();
 }
+
+/* $80:F375: the next recorded demo entry (as DemoInputStep's): a duration
+ * of $F8 or more ends the demo through exit $FF - it; else the duration
+ * and input are taken, C clear. */
+static void demo_next_entry4(void)
+{
+    X = rd8(ABS(0x0CE1)); nz8((u8)X);
+    wr8(ABS(0x0CE1), inc8(rd8(ABS(0x0CE1))));
+    lda8(rd8(LONGX(0x9CD300)));
+    cmp8((u8)A, 0xF8);
+    if (fc) {
+        eor8(0xFF);
+        Y = (u8)A; nz8((u8)Y);
+        demo_exit();
+        return;
+    }
+    wr8(ABS(0x0CE3), (u8)A);
+    lda8(rd8(LONGX(0x9CD200)));
+    wr8(ABS(0x017E), (u8)A);
+    wr8(ABS(0x098E), (u8)A);
+    fc = 0;
+    ret();
+}
+
+/* Demo exits that continue with the next entry: $80:F3A2 ($099D = $0990
+ * = $10), $80:F3BA and $80:F3BE (A = $35 + $80:D200,X, unused). */
+void DemoExitBoost_m1x1(void)
+{
+    lda8(0x10);
+    wr8(ABS(0x099D), 0x10);
+    wr8(ABS(0x0990), 0x10);
+    demo_next_entry4();
+}
+void DemoExitSkip40_m1x1(void)
+{
+    lda8(0x40);
+    demo_next_entry4();
+}
+void DemoExitSkip35_m1x1(void)
+{
+    lda8(0x35);
+    fc = 0; adc8(rd8(ABSX(0xD200)));
+    demo_next_entry4();
+}

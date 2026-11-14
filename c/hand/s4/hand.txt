@@ -516,3 +516,12 @@
 80F24D  1 1  mem+A,X,Y,C,V   ResetDemoCourse
 80F9FE  1 1  mem+A,X,Y,C,V   SetJumpKind
 8091F4  1 1  mem+X,Y,C,V     StartRaceBoard
+80F3A2  1 1  mem+X,Y,C,V     DemoExitBoost
+80F3BA  1 1  mem+X,Y,C,V     DemoExitSkip40
+80F3BE  1 1  mem+X,Y,C,V     DemoExitSkip35
+81C641  1 1  mem+X,Y,C,V     PitchHold
+81C62B  1 1  mem+X,Y,C,V     PitchUp4
+81C636  1 1  mem+X,Y,C,V     PitchUp8
+81C643  1 1  mem+X,Y,C,V     PitchDown8
+81C393  1 1  mem+X,Y,C,V     JumpPitchStep
+809D74  1 1  mem+X,Y,C,V     ModeCountdown

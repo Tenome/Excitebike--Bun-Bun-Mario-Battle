@@ -1407,6 +1407,17 @@ BRIDGE(HleHand_ScrollDelta, ScrollDelta_m1x1, 16)
 BRIDGE(HleHand_ResetDemoCourse, ResetDemoCourse_m1x1, 15)
 BRIDGE(HleHand_SetJumpKind, SetJumpKind_m1x1, 20)
 BRIDGE_DYN(HleHand_StartRaceBoard, StartRaceBoard_m1x1, g_ram[0x0CD7] ? 4610 : 7610)
+/* demo exits, pitch tails */
+BRIDGE(HleHand_DemoExitBoost, DemoExitBoost_m1x1, 50)
+BRIDGE(HleHand_DemoExitSkip40, DemoExitSkip40_m1x1, 45)
+BRIDGE(HleHand_DemoExitSkip35, DemoExitSkip35_m1x1, 50)
+BRIDGE(HleHand_PitchHold, PitchHold_m1x1, 14)
+BRIDGE(HleHand_PitchUp4, PitchUp4_m1x1, 24)
+BRIDGE(HleHand_PitchUp8, PitchUp8_m1x1, 24)
+BRIDGE(HleHand_PitchDown8, PitchDown8_m1x1, 24)
+BRIDGE_DYN(HleHand_JumpPitchStep, JumpPitchStep_m1x1,
+           g_ram[0x198A] ? 535 + draw_all_riders_cost() : 20)
+BRIDGE_DYN(HleHand_ModeCountdown, ModeCountdown_m1x1, g_ram[0x88] == 1 && g_ram[0x89] == 0 ? 45 : 20)
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)

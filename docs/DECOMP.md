@@ -413,7 +413,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s4
 
-532 functions in the static map; 517 hand-written (97.2%), 493 of them in the port.
+532 functions in the static map; 526 hand-written (98.9%), 502 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -475,6 +475,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:9CD1` | EndScreenStart | `mem+A,X,Y,C,V` | `objects.c` |  |
 | `$80:9D0E` | LoadEntryScreenStep | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:9D37` | StartPracticeMode | `mem+X,Y,C,V` | `objects.c` | yes |
+| `$80:9D74` | ModeCountdown | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:9DA6` | BeginFadeIn | `mem+X,Y,C,V` | `from_s1.c` | yes |
 | `$80:9DBD` | Mode11 | `mem+X,Y,C,V` | `flow.c` | yes |
 | `$80:9DDA` | StartCredits | `mem+X,Y,C,V` | `spc.c` |  |
@@ -707,7 +708,10 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:F2D2` | Mode0C | `mem+X,Y,C,V` | `objects.c` |  |
 | `$80:F32D` | TurboMeterJmp | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:F330` | DemoInputStep | `mem+X,Y,C,V` | `objects.c` | yes |
+| `$80:F3A2` | DemoExitBoost | `mem+X,Y,C,V` | `flow.c` | yes |
 | `$80:F3AD` | PlaceLastRival | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:F3BA` | DemoExitSkip40 | `mem+X,Y,C,V` | `flow.c` | yes |
+| `$80:F3BE` | DemoExitSkip35 | `mem+X,Y,C,V` | `flow.c` | yes |
 | `$80:F3C7` | StartMode01 | `mem+X,Y,C,V` | `from_s1.c` | yes |
 | `$80:F3DD` | DemoPadDisplay | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:F4C8` | TitlePushStart | `mem+X,Y,C,V` | `objects.c` | yes |
@@ -861,6 +865,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$81:C29A` | JumpRunSteps | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$81:C2D9` | JumpRunStart | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$81:C331` | JumpRun | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$81:C393` | JumpPitchStep | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$81:C3A5` | CourseMinuteCheck | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$81:C3B1` | LeaveJumpContest | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$81:C3BA` | DrawJumpCrowd | `mem+X,Y,C,V` | `objects.c` | yes |
@@ -871,6 +876,10 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$81:C5B5` | ScrollJumpRider | `mem+V` | `objects.c` | yes |
 | `$81:C5D7` | SlotRiderShadow | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$81:C608` | DispatchByDistance | `mem+X,Y,C,V` | `objects.c` | yes |
+| `$81:C62B` | PitchUp4 | `mem+X,Y,C,V` | `objects.c` | yes |
+| `$81:C636` | PitchUp8 | `mem+X,Y,C,V` | `objects.c` | yes |
+| `$81:C641` | PitchHold | `mem+X,Y,C,V` | `objects.c` | yes |
+| `$81:C643` | PitchDown8 | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$81:C64E` | FadeApuVolume | `mem+X,Y,C,V` | `leaves.c` | yes |
 | `$81:C6B4` | QueueBlinkBanner | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$81:C6F9` | CoinMilestone | `mem+X` | `collide.c` | yes |

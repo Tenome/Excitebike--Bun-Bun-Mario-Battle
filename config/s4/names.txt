@@ -516,3 +516,12 @@
 80F24D ResetDemoCourse
 80F9FE SetJumpKind
 8091F4 StartRaceBoard
+80F3A2 DemoExitBoost
+80F3BA DemoExitSkip40
+80F3BE DemoExitSkip35
+81C641 PitchHold
+81C62B PitchUp4
+81C636 PitchUp8
+81C643 PitchDown8
+81C393 JumpPitchStep
+809D74 ModeCountdown

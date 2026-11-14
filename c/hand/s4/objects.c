@@ -14205,3 +14205,66 @@ void StartRaceBoard_m1x1(void)
     if (fz) { push16(0x91FB); DrawRaceHud_m1x1(); }
     ResetRaceBoard_m1x1();
 }
+
+void JumpRiderStep_m1x1(void);
+
+/* $81:C659: send the engine pitch $198A to APU port 2. */
+static void send_pitch4(void)
+{
+    lda8(rd8(ABS(0x198A)));
+    wr8(ABS(0x2142), (u8)A);
+    ret();
+}
+
+/* $81:C641 / $81:C62B / $81:C636 / $81:C643 (RTS): the engine pitch $198A
+ * unchanged, + 4, + 8 or - 8, sent to APU port 2. */
+void PitchHold_m1x1(void) { send_pitch4(); }
+void PitchUp4_m1x1(void)
+{
+    lda8(rd8(ABS(0x198A)));
+    fc = 0; adc8(0x04);
+    wr8(ABS(0x198A), (u8)A);
+    send_pitch4();
+}
+void PitchUp8_m1x1(void)
+{
+    lda8(rd8(ABS(0x198A)));
+    fc = 0; adc8(0x08);
+    wr8(ABS(0x198A), (u8)A);
+    send_pitch4();
+}
+void PitchDown8_m1x1(void)
+{
+    lda8(rd8(ABS(0x198A)));
+    fc = 1; sbc8(0x08);
+    wr8(ABS(0x198A), (u8)A);
+    send_pitch4();
+}
+
+/* $81:C393 (RTS): with no engine pitch, $197F + 1; else the jump rider
+ * step. */
+void JumpPitchStep_m1x1(void)
+{
+    lda8(rd8(ABS(0x198A)));
+    if (fz) wr8(ABS(0x197F), inc8(rd8(ABS(0x197F))));
+    else { push16(0xC39F); JumpRiderStep_m1x1(); }
+    ret();
+}
+
+/* $80:9D74 (RTS): count $88 down, then mode $0F ($75 / $77 cleared, $1923
+ * - 1, $88 = $20). */
+void ModeCountdown_m1x1(void)
+{
+    rep(0x20);
+    wr16(DP(0x88), dec16(rd16(DP(0x88))));
+    sep(0x20);
+    if (!fz) { ret(); return; }
+    lda8(0x0F); wr8(DP(0x76), 0x0F);
+    wr8(DP(0x75), 0);
+    wr8(DP(0x77), 0);
+    wr8(ABS(0x1923), dec8(rd8(ABS(0x1923))));
+    rep(0x20);
+    lda16(0x0020); wr16(DP(0x88), 0x0020);
+    sep(0x20);
+    ret();
+}
