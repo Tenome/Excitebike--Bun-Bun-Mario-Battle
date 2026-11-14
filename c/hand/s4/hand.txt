@@ -472,3 +472,8 @@
 81FA68  1 1  mem+Y,C,V       BsxDetect
 81F80C  1 1  mem+Y,C,V       BsxOpenTimeChannel
 829182  1 1  mem+X,Y,C,V     LoadScene
+81A0F4  1 1  mem+X,Y,C,V     LoadCourse
+80B387  1 1  mem+X,Y,C,V     QueueTileBlockLong
+80F266  1 1  mem+X,Y,C,V     StartDemoRace
+81C1AE  1 1  mem+X,Y,C,V     CourseSelectPreview
+80A859  1 1  mem+X,Y,C,V     RacePlaceRiders

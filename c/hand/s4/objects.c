@@ -13614,3 +13614,344 @@ void LoadScene_m1x1(void)
     DB = pull8(); nz8(DB);
     retl();
 }
+
+void RandomB_m1x0(void);
+
+/* $81:A0F4 LoadCourse (RTL): unpack course $7C (stadium $81:800C; the
+ * attract demo uses entry 8) into the track buffer $7F:4000. Kept when
+ * the buffer is already filled in a free run ($7D). The list at $81:8C8A
+ * (from $81:8C62, length $81:8C76) holds piece bytes; a byte with bit 7
+ * is followed by a repeat count, piece 9 (a jump) fills six columns. In
+ * mode 3 a random jump past a random distance gets bonus piece $8B / $8C.
+ * The port applies custom courses inside this routine (port/src/courses.c),
+ * so it stays recompiled there. */
+void LoadCourse_m1x1(void)
+{
+    rep(0x30);
+    lda16(rd16(LONG(0x7F4000)));
+    if (!fz) {
+        lda16(rd16(DP(0x7D))); and16(0x00FF);
+        if (!fz) { sep(0x30); retl(); return; }
+    }
+    X = 0x0FFE; nz16(X);
+    lda16(0x0000);
+    do {
+        wr16(LONGX(0x7F4000), 0);
+        X = dec16(X); X = dec16(X);
+    } while (!fn);
+    lda16(rd16(ABS(0x0CD7)));
+    if (!fz) {
+        X = 0x0010; nz16(X);
+    } else {
+        lda16(rd16(DP(0x7C))); and16(0x00FF);
+        wr16(DP(0x00), A);
+        lda16(rd16(LONG(0x81800C)));
+        lda16(asl16(A)); lda16(asl16(A));
+        fc = 0; adc16(rd16(DP(0x00)));
+        lda16(asl16(A));
+        X = A; nz16(X);
+    }
+    lda16(rd16(LONGX(0x818C76))); wr16(DP(0x00), A);
+    lda16(rd16(LONGX(0x818C62)));
+    X = A; nz16(X);
+    and16(0x00FF);
+    sep(0x20);
+    Y = 0x0000; nz16(Y);
+    push8(DB);
+    lda8(0x7F);
+    push8(0x7F); DB = pull8(); nz8(DB);
+    do {
+        WAIT_TICK();
+        lda8(rd8(LONGX(0x818C8A)));
+        wr8(ABSY(0x4000), (u8)A);
+        cmp8((u8)A, 0x09);
+        if (fz) {
+            for (int k = 1; k <= 5; k++) wr8(ABSY(0x4000 + k), (u8)A);
+        }
+        fz = (A & 0x80) == 0;
+        if (!fz) {
+            wr8(DP(0x02), (u8)A);
+            rep(0x20);
+            wr16(DP(0x00), dec16(rd16(DP(0x00))));
+            sep(0x20);
+            X = inc16(X);
+            lda8(rd8(LONGX(0x818C8A)));
+            lda8(dec8((u8)A));
+            push16(X);
+            X = A; nz16(X);
+            do {
+                WAIT_TICK();
+                lda8(rd8(DP(0x02)));
+                wr8(ABSY(0x4000), (u8)A);
+                Y = inc16(Y);
+                X = dec16(X);
+            } while (!fn);
+            X = pull16(); nz16(X);
+            Y = dec16(Y);
+        }
+        X = inc16(X);
+        Y = inc16(Y);
+        rep(0x20);
+        wr16(DP(0x00), dec16(rd16(DP(0x00))));
+        sep(0x20);
+    } while (!fz);
+    lda8(rd8(DP(0x76)));
+    cmp8((u8)A, 0x03);
+    if (fz) {
+        push8(0x81); push16(0xA194); RandomB_m1x0();
+        and8(0x03);
+        A = (u16)((A << 8) | (A >> 8)); nz8((u8)A);       /* XBA */
+        push8(0x81); push16(0xA19B); RandomB_m1x0();
+        Y = A; nz16(Y);
+        X = 0x0000; nz16(X);
+        for (;;) {
+            do {
+                WAIT_TICK();
+                lda8(rd8(LONGX(0x7F4000)));
+                cmp8((u8)A, 0x09);
+                if (fz) { X = 0x0000; nz16(X); }
+                X = inc16(X);
+                Y = dec16(Y);
+            } while (!fz);
+            cmp8((u8)A, 0x80);
+            if (fz) break;
+            X = inc16(X);
+            Y = inc16(Y);
+        }
+        push8(0x81); push16(0xA1BA); RandomB_m1x0();
+        and8(0x01);
+        fc = 0; adc8(0x8B);
+        wr8(LONGX(0x7F3FFF), (u8)A);
+    }
+    sep(0x10);
+    DB = pull8(); nz8(DB);
+    retl();
+}
+
+void QueueTileBlock_m1x1(void);
+void LoadStadiumPalette_m1x1(void);
+void DemoPadDisplay_m1x1(void);
+void LoadRiderPalettes_m1x1(void);
+
+/* $80:B387 QueueTileBlockLong (RTL): QueueTileBlock for other banks. */
+void QueueTileBlockLong_m1x1(void)
+{
+    push16(0xB389); QueueTileBlock_m1x1();
+    retl();
+}
+
+/* The riders' start state shared by the demo and course-select setups:
+ * $54 = 5, $0CD5 = $A0, lanes $0936-$093D = $50..$C0, the player's
+ * pieces and positions. */
+static void course_start_riders4(int select)
+{
+    lda8(0x05); wr8(DP(0x54), 0x05);
+    lda8(0xA0); wr8(ABS(0x0CD5), 0xA0);
+    ldx8(0x07);
+    lda8(0xC0);
+    do {
+        wr8(ABSX(0x0936), (u8)A);
+        fc = 1; sbc8(0x10);
+        X = dec8((u8)X);
+    } while (!fn);
+    lda8(0x0E); wr8(ABS(0x01F6), 0x0E);
+    lda8(0x08); wr8(ABS(0x018E), 0x08);
+    lda8(0x09); wr8(ABS(0x0266), 0x09);
+    lda8(0x38); wr8(ABS(0x0196), 0x38);
+    if (select) {
+        lda8(0xB8); wr8(ABS(0x01B6), 0xB8);
+        wr8(ABS(0x0904), 0);
+    }
+    lda8(0x06); wr8(ABS(0x01E6), 0x06);
+    if (select) wr8(ABS(0x08B4), 0x06);
+    wr8(ABS(0x0236), 0x06);
+    lda8(0x01); wr8(ABS(0x019E), 0x01); wr8(ABS(0x01DE), 0x01);
+    lda8(0x01); wr8(ABS(0x08C4), 0x01);
+    wr8(DP(0x94), 0x01);
+    wr8(DP(0x75), 0x01);
+    lda8(0x01); wr8(ABS(0x1923), 0x01);
+    lda8(0x19); wr8(ABS(0x2109), 0x19);
+    lda8(0x01); wr8(ABS(0x210C), 0x01);
+    lda8(0x17); wr8(ABS(0x1905), 0x17);
+}
+
+/* $80:F266 (RTS): the attract demo race: course 7, character 1 with its
+ * stadium palette, the riders' start state, the course loaded and the pad
+ * display. */
+void StartDemoRace_m1x1(void)
+{
+    lda8(0x07); wr8(DP(0x7C), 0x07);
+    lda8(0x01); wr8(ABS(0x154F), 0x01);
+    push8(0x80); push16(0xF272); LoadStadiumPalette_m1x1();
+    course_start_riders4(0);
+    push8(0x80); push16(0xF2CD); CALL(LoadCourse_m1x1, 0x81A0F4, 3);
+    push16(0xF2D0); DemoPadDisplay_m1x1();
+    ret();
+}
+
+/* $81:C1AE (RTL): the course-select preview: BG mode 9, the riders' start
+ * state, the course number label (tiles $C0 + 2 * $7C, palette $42 / $19)
+ * at VRAM $088D, $88 / $1C00 / $0CD7 / $197F / $0928 / $190D cleared,
+ * $1915 + 1, the rider palettes and the course loaded. */
+void CourseSelectPreview_m1x1(void)
+{
+    lda8(0x09); wr8(ABS(0x2105), 0x09);
+    lda8(0x01); wr8(ABS(0x2107), 0x01);
+    course_start_riders4(1);
+    lda8(0x42); wr8(ABS(0x03CF), 0x42);
+    lda8(0x19);
+    for (int k = 0; k < 8; k++) wr8(ABS(0x03D1 + 2 * k), 0x19);
+    lda8(rd8(DP(0x7C)));
+    lda8(asl8((u8)A));
+    ora8(0xC0);
+    for (int k = 0; k < 4; k++) {
+        if (k) { fc = 0; adc8(0x0F); }
+        wr8(ABS(0x03D0 + 4 * k), (u8)A);
+        lda8(inc8((u8)A));
+        wr8(ABS(0x03D2 + 4 * k), (u8)A);
+    }
+    rep(0x20);
+    lda16(0x088D); wr16(DP(0x00), 0x088D);
+    lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+    sep(0x20);
+    lda8(0x18); wr8(DP(0x0F), 0x18);
+    push8(0x81); push16(0xC278); QueueTileBlockLong_m1x1();
+    rep(0x20);
+    wr16(DP(0x88), 0);
+    wr16(ABS(0x1C00), 0);
+    sep(0x20);
+    wr8(ABS(0x0CD7), 0);
+    wr8(ABS(0x197F), 0);
+    wr8(ABS(0x0928), 0);
+    wr8(ABS(0x190D), 0);
+    wr8(ABS(0x1915), inc8(rd8(ABS(0x1915))));
+    push8(0x81); push16(0xC294); LoadRiderPalettes_m1x1();
+    push8(0x81); push16(0xC298); CALL(LoadCourse_m1x1, 0x81A0F4, 3);
+    retl();
+}
+
+void QueueRaceTime_m1x1(void);
+void ClearWords1530_m1x1(void);
+void DrawStartFlags_m1x1(void);
+void ShowCoinRank_m1x1(void);
+
+/* $80:A859 RacePlaceRiders (RTS): set up a race: $1923 = 1, $75 + 1, $54
+ * (default 5), $0CD5 = $A0, lanes $0936-$093D; the riders (the player
+ * only, or all eight in a free run) from $80:B854 / $B84C / $B85C, their
+ * pieces and speeds; one rival's lane piece halved; ground heights and the
+ * sorted riders; in a race the clock $083A = 4:00 and the score copied to
+ * $1549-$154E; the best time and race time at $1897; the course loaded;
+ * $0819-$0836 = $FF; markers, start flags, $A6 = 4; the bonus order
+ * $0D01-$0D10 from $80:A9B1 shuffled 16 times; in a race $1542-$1548
+ * cleared; the coin rank, rider palettes, $1905 = $17. */
+void RacePlaceRiders_m1x1(void)
+{
+    lda8(0x01); wr8(ABS(0x1923), 0x01);
+    wr8(DP(0x75), inc8(rd8(DP(0x75))));
+    lda8(rd8(DP(0x54)));
+    if (fz) lda8(0x05);
+    wr8(DP(0x54), (u8)A);
+    lda8(0xA0); wr8(ABS(0x0CD5), 0xA0);
+    ldx8(0x07);
+    lda8(0xC0);
+    do {
+        wr8(ABSX(0x0936), (u8)A);
+        fc = 1; sbc8(0x10);
+        X = dec8((u8)X);
+    } while (!fn);
+    lda8(0xFF); wr8(ABS(0x098B), 0xFF);
+    ldx8(0x01);
+    wr8(DP(0x94), 0x01);
+    wr8(ABS(0x08C4), 0x01);
+    X = inc8((u8)X);
+    wr8(ABS(0x098C), (u8)X);
+    X = rd8(DP(0x7D)); nz8((u8)X);
+    if (!fz) ldx8(0x07);
+    do {
+        lda8(rd8(ABSX(0xB854))); wr8(ABSX(0x01F6), (u8)A);
+        lda8(0x08); wr8(ABSX(0x018E), 0x08);
+        lda8(rd8(ABSX(0xB84C))); wr8(ABSX(0x0266), (u8)A);
+        lda8(rd8(ABSX(0xB85C))); wr8(ABSX(0x0196), (u8)A);
+        lda8(0x06); wr8(ABSX(0x01E6), 0x06); wr8(ABSX(0x0236), 0x06);
+        lda8(0x01); wr8(ABSX(0x019E), 0x01); wr8(ABSX(0x01DE), 0x01);
+        lda8(rd8(DPX(0x2D)));
+        lda8(lsr8((u8)A));
+        wr8(ABSX(0x022E), (u8)A);
+        X = dec8((u8)X);
+    } while (!fn);
+    lda8(rd8(DPX(0x2D)));
+    and8(0x03);
+    if (fz) lda8(0x02);
+    X = (u8)A; nz8((u8)X);
+    wr8(ABSX(0x0236), lsr8(rd8(ABSX(0x0236))));
+    push16(0xA8CE); RiderGroundHeights_m1x1();
+    push16(0xA8D1); SortAndDrawRiders_m1x1();
+    lda8(rd8(DP(0x7D)));
+    if (fz) {
+        lda8(0x04); wr8(ABS(0x083A), 0x04);
+        wr8(ABS(0x083B), 0);
+        wr8(ABS(0x083C), 0);
+        for (int k = 0; k < 6; k++) {
+            lda8(rd8(ABS(0x0CE5 + k)));
+            wr8(ABS(0x1549 + k), (u8)A);
+        }
+    }
+    wr8(ABS(0x084C), 0);
+    push8(0x80); push16(0xA90B); ShowCourseBest_m1x1();
+    lda8(0x97); wr8(DP(0x00), 0x97);
+    lda8(0x18); wr8(DP(0x01), 0x18);
+    push16(0xA916); QueueRaceTime_m1x1();
+    push8(0x80); push16(0xA91A); CALL(LoadCourse_m1x1, 0x81A0F4, 3);
+    push8(0x80); push16(0xA91E); ClearWords1530_m1x1();
+    lda8(rd8(DP(0x7D)));
+    if (fz) {
+        wr8(ABS(0x0CE0), 0);
+        wr8(ABS(0x0CDF), 0);
+        wr8(ABS(0x1540), 0);
+        wr8(ABS(0x1541), 0);
+    }
+    lda8(rd8(ABS(0x0CE0)));
+    if (!fz) { lda8(0x20); wr8(ABS(0x0990), 0x20); }
+    ldx8(0x1D);
+    lda8(0xFF);
+    do {
+        wr8(ABSX(0x0819), 0xFF);
+        X = dec8((u8)X);
+    } while (!fn);
+    wr8(ABS(0x190D), 0);
+    push8(0x80); push16(0xA949); MarkerObjects_m1x1();
+    ldy8(0xE1);
+    push16(0xA94E); DrawStartFlags_m1x1();
+    lda8(0x04); wr8(ABS(0x00A6), 0x04);
+    ldx8(0x0E);
+    do {
+        lda8(rd8(ABSX(0xA9B1))); wr8(ABSX(0x0D01), (u8)A);
+        lda8(rd8(ABSX(0xA9B2))); wr8(ABSX(0x0D02), (u8)A);
+        X = dec8((u8)X); X = dec8((u8)X);
+    } while (!fn);
+    lda8(0x10); wr8(DP(0x00), 0x10);
+    do {
+        push8(0x80); push16(0xA96D); RandomB_m1x1();
+        and8(0x0E);
+        Y = (u8)A; nz8((u8)Y);
+        push8(0x80); push16(0xA974); RandomB_m1x1();
+        and8(0x0E);
+        X = (u8)A; nz8((u8)X);
+        lda8(rd8(ABSX(0x0D01)));
+        push8((u8)A);
+        lda8(rd8(ABSY(0x0D01))); wr8(ABSX(0x0D01), (u8)A);
+        A = (A & 0xFF00) | pull8(); nz8((u8)A);
+        wr8(ABSY(0x0D01), (u8)A);
+        wr8(DP(0x00), dec8(rd8(DP(0x00))));
+    } while (!fz);
+    lda8(rd8(ABS(0x007D)));
+    if (fz) {
+        wr8(ABS(0x1544), 0); wr8(ABS(0x1545), 0); wr8(ABS(0x1546), 0);
+        wr8(ABS(0x1547), 0); wr8(ABS(0x1548), 0);
+        wr8(ABS(0x1543), 0); wr8(ABS(0x1542), 0);
+    }
+    push16(0xA9A6); ShowCoinRank_m1x1();
+    push8(0x80); push16(0xA9AA); LoadRiderPalettes_m1x1();
+    lda8(0x17); wr8(ABS(0x1905), 0x17);
+    ret();
+}

@@ -473,3 +473,8 @@
 81C8E1 QueueHalfUnits
 809C79 EntryScreenFill
 829182 LoadScene
+81A0F4 LoadCourse
+80B387 QueueTileBlockLong
+80F266 StartDemoRace
+81C1AE CourseSelectPreview
+80A859 RacePlaceRiders

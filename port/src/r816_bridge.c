@@ -1313,6 +1313,11 @@ BRIDGE_DYN(HleHand_NmiVramUpload, NmiVramUpload_m1x1,
  * ($82:8F6F), BroadcastTotals ($80:97B9) and StartSession ($80:8F69) pass
  * difftest on s4 but are not hooked: the checksum runs longer than a frame
  * (see the Stadium 1 note). */
+/* LoadCourse ($81:A0F4) and its callers StartDemoRace ($80:F266),
+ * CourseSelectPreview ($81:C1AE) and RacePlaceRiders ($80:A859) pass
+ * difftest on s4 but are not hooked: custom courses are applied inside the
+ * recompiled LoadCourse (src/courses.c). QueueTileBlockLong ($80:B387) is
+ * hooked. */
 /* LoadScene ($82:9182) passes difftest on s4 but is not hooked: like
  * Stadium 1's $80:B873 the recompiled routine runs long and yields to the
  * frame scheduler part way. */
@@ -1330,6 +1335,8 @@ BRIDGE(HleHand_BsxPollStream, BsxPollStream_m1x1, 120)
 BRIDGE(HleHand_BsxProbeReceiver, BsxProbeReceiver_m1x0, 50)
 BRIDGE(HleHand_BsxDetect, BsxDetect_m1x1, 90)
 BRIDGE(HleHand_BsxOpenTimeChannel, BsxOpenTimeChannel_m1x1, 660)
+/* tile block long */
+BRIDGE_DYN(HleHand_QueueTileBlockLong, QueueTileBlockLong_m1x1, tile_block_cost() + 15)
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)
