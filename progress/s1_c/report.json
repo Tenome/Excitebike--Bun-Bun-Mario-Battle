@@ -1,36 +1,36 @@
 {
  "measures": {
-  "fuzzy_match_percent": 65.0347,
+  "fuzzy_match_percent": 99.9768,
   "total_code": "27972",
-  "matched_code": "9065",
-  "matched_code_percent": 32.4074,
+  "matched_code": "27959",
+  "matched_code_percent": 99.9535,
   "total_data": "0",
   "matched_data": "0",
   "matched_data_percent": 0.0,
   "total_functions": 407,
-  "matched_functions": 158,
-  "matched_functions_percent": 38.8206,
+  "matched_functions": 403,
+  "matched_functions_percent": 99.0172,
   "complete_code": "0",
   "complete_code_percent": 0.0,
   "complete_data": "0",
   "complete_data_percent": 0.0,
   "total_units": 2,
-  "complete_units": 0
+  "complete_units": 1
  },
  "units": [
   {
    "name": "main/bank80",
    "measures": {
-    "fuzzy_match_percent": 61.7514,
+    "fuzzy_match_percent": 99.9699,
     "total_code": "21606",
-    "matched_code": "5636",
-    "matched_code_percent": 26.0853,
+    "matched_code": "21593",
+    "matched_code_percent": 99.9398,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 306,
-    "matched_functions": 95,
-    "matched_functions_percent": 31.0458,
+    "matched_functions": 302,
+    "matched_functions_percent": 98.6928,
     "complete_code": "0",
     "complete_code_percent": 0.0,
     "complete_data": "0",
@@ -42,7 +42,7 @@
     {
      "name": ".text",
      "size": "21606",
-     "fuzzy_match_percent": 61.7514
+     "fuzzy_match_percent": 99.9699
     }
    ],
    "functions": [
@@ -153,7 +153,7 @@
     {
      "name": "SpcUpload",
      "size": "153",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8423648"
      }
@@ -199,9 +199,9 @@
      }
     },
     {
-     "name": "sub_808AFD",
+     "name": "ModeStepNext",
      "size": "3",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8424189"
      }
@@ -239,9 +239,9 @@
      }
     },
     {
-     "name": "sub_808D0C",
+     "name": "StartModeWithSound",
      "size": "10",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8424716"
      }
@@ -257,55 +257,55 @@
     {
      "name": "Mode01",
      "size": "6",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8424741"
      }
     },
     {
-     "name": "sub_808D2F",
+     "name": "RiderSelectFirst",
      "size": "183",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8424751"
      }
     },
     {
-     "name": "sub_808DE6",
+     "name": "RiderSelectSecond",
      "size": "186",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8424934"
      }
     },
     {
-     "name": "sub_808EA0",
+     "name": "SelectTimerDigits",
      "size": "87",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8425120"
      }
     },
     {
-     "name": "sub_808EF7",
+     "name": "TurnSelectWheels",
      "size": "50",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8425207"
      }
     },
     {
-     "name": "sub_808F2D",
+     "name": "DrawSelectWheels",
      "size": "270",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8425261"
      }
     },
     {
-     "name": "sub_809053",
+     "name": "SpriteTextRow",
      "size": "126",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8425555"
      }
@@ -319,17 +319,17 @@
      }
     },
     {
-     "name": "sub_80916B",
+     "name": "PlayerSelectStart",
      "size": "90",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8425835"
      }
     },
     {
-     "name": "sub_8091CD",
+     "name": "StartSession",
      "size": "38",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8425933"
      }
@@ -367,9 +367,9 @@
      }
     },
     {
-     "name": "sub_8092A0",
+     "name": "RaceResultsSetup",
      "size": "722",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8426144"
      }
@@ -385,39 +385,39 @@
     {
      "name": "Mode04_FreeRunSchedule",
      "size": "143",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8427160"
      }
     },
     {
-     "name": "sub_80973F",
+     "name": "BroadcastTotals",
      "size": "192",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8427327"
      }
     },
     {
-     "name": "sub_8097FF",
+     "name": "SaveBestRecords",
      "size": "171",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8427519"
      }
     },
     {
-     "name": "sub_8098B2",
+     "name": "QueueTimeDigits",
      "size": "144",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8427698"
      }
     },
     {
-     "name": "sub_809942",
+     "name": "QueueFiveDigits",
      "size": "64",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8427842"
      }
@@ -441,79 +441,79 @@
     {
      "name": "Mode0F_EndScreen",
      "size": "21",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8427963"
      }
     },
     {
-     "name": "sub_8099E7",
+     "name": "EndScreenTimes",
      "size": "97",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8428007"
      }
     },
     {
-     "name": "sub_809A52",
+     "name": "EndScreenScore",
      "size": "53",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8428114"
      }
     },
     {
-     "name": "sub_809A87",
+     "name": "EndScreenRecord",
      "size": "114",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8428167"
      }
     },
     {
-     "name": "sub_809AF9",
+     "name": "EndScreenCode",
      "size": "83",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8428281"
      }
     },
     {
-     "name": "sub_809B4C",
+     "name": "EndScreenChoice",
      "size": "116",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8428364"
      }
     },
     {
-     "name": "sub_809BC8",
+     "name": "EndScreenScrollIn",
      "size": "69",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8428488"
      }
     },
     {
-     "name": "sub_809C0D",
+     "name": "EntryNumberEditor",
      "size": "246",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8428557"
      }
     },
     {
-     "name": "sub_809D07",
+     "name": "EndScreenPrompt",
      "size": "60",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8428807"
      }
     },
     {
-     "name": "sub_809D43",
+     "name": "DrawEntryScreen",
      "size": "154",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8428867"
      }
@@ -521,7 +521,7 @@
     {
      "name": "EndScreenStart",
      "size": "61",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8429024"
      }
@@ -545,7 +545,7 @@
     {
      "name": "Mode10_Ending",
      "size": "9",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8429166"
      }
@@ -567,9 +567,9 @@
      }
     },
     {
-     "name": "sub_809EAB",
+     "name": "StartCredits",
      "size": "124",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8429227"
      }
@@ -577,7 +577,7 @@
     {
      "name": "Mode12_AfterEnd",
      "size": "215",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8429416"
      }
@@ -607,17 +607,17 @@
      }
     },
     {
-     "name": "sub_80A0BC",
+     "name": "ShowEntryPassword",
      "size": "82",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8429756"
      }
     },
     {
-     "name": "sub_80A10E",
+     "name": "PackEntryCode",
      "size": "152",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8429838"
      }
@@ -631,25 +631,25 @@
      }
     },
     {
-     "name": "sub_80A1BC",
+     "name": "PackRecordTime",
      "size": "117",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8430012"
      }
     },
     {
-     "name": "sub_80A231",
+     "name": "PackEntryNumber",
      "size": "127",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8430129"
      }
     },
     {
-     "name": "sub_80A2B0",
+     "name": "LoadSavedEntry",
      "size": "155",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8430256"
      }
@@ -657,7 +657,7 @@
     {
      "name": "EepromReadWords",
      "size": "60",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8430411"
      }
@@ -665,15 +665,15 @@
     {
      "name": "EepromSendCommand",
      "size": "37",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8430471"
      }
     },
     {
-     "name": "sub_80A3AC",
+     "name": "DigitsToNumber",
      "size": "112",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8430508"
      }
@@ -697,15 +697,15 @@
     {
      "name": "FinalSchedule",
      "size": "170",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8430846"
      }
     },
     {
-     "name": "sub_80A5AC",
+     "name": "DrawRacerNameLow",
      "size": "11",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8431020"
      }
@@ -735,25 +735,25 @@
      }
     },
     {
-     "name": "sub_80A6B2",
+     "name": "EraseCollectedCoin",
      "size": "218",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8431282"
      }
     },
     {
-     "name": "sub_80A7AF",
+     "name": "RedrawUsedItem",
      "size": "192",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8431535"
      }
     },
     {
-     "name": "sub_80A89C",
+     "name": "RacePlaceRiders",
      "size": "270",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8431772"
      }
@@ -761,15 +761,15 @@
     {
      "name": "Mode03_Race",
      "size": "179",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8432058"
      }
     },
     {
-     "name": "sub_80AA78",
+     "name": "RaceBannerSprites",
      "size": "52",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8432248"
      }
@@ -783,49 +783,49 @@
      }
     },
     {
-     "name": "sub_80AB2A",
+     "name": "BallOrGauge",
      "size": "19",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8432426"
      }
     },
     {
-     "name": "sub_80AB3D",
+     "name": "SegmentTimer",
      "size": "93",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8432445"
      }
     },
     {
-     "name": "sub_80AB9A",
+     "name": "ThrottleAll",
      "size": "6",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8432538"
      }
     },
     {
-     "name": "sub_80ABA0",
+     "name": "ThrottleFrom",
      "size": "55",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8432544"
      }
     },
     {
-     "name": "sub_80ABD7",
+     "name": "RiderThrottle",
      "size": "197",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8432599"
      }
     },
     {
-     "name": "sub_80AC9C",
+     "name": "RiderOnRamp",
      "size": "93",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8432796"
      }
@@ -839,81 +839,81 @@
      }
     },
     {
-     "name": "sub_80AE2F",
+     "name": "BrakeOnTurn",
      "size": "4",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8433199"
      }
     },
     {
-     "name": "sub_80AE33",
+     "name": "BrakeRider",
      "size": "147",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8433203"
      }
     },
     {
-     "name": "sub_80AEC6",
+     "name": "CpuRidersStep",
      "size": "65",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8433350"
      }
     },
     {
-     "name": "sub_80AF07",
+     "name": "CpuLaneDecision",
      "size": "69",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8433415"
      }
     },
     {
-     "name": "sub_80AF4C",
+     "name": "CpuSteerUp",
      "size": "37",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8433484"
      }
     },
     {
-     "name": "sub_80AF71",
+     "name": "CpuSteerDown",
      "size": "32",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8433521"
      }
     },
     {
-     "name": "sub_80AF91",
+     "name": "PieceOK",
      "size": "3",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8433553"
      }
     },
     {
-     "name": "sub_80AF94",
+     "name": "PieceFlatish",
      "size": "11",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8433556"
      }
     },
     {
-     "name": "sub_80AF9F",
+     "name": "RiderAhead",
      "size": "54",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8433567"
      }
     },
     {
-     "name": "sub_80AFD5",
+     "name": "CpuThrottle",
      "size": "20",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8433621"
      }
@@ -927,33 +927,33 @@
      }
     },
     {
-     "name": "sub_80AFF2",
+     "name": "CpuReleaseDpad",
      "size": "9",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8433650"
      }
     },
     {
-     "name": "sub_80AFFB",
+     "name": "CpuSteer",
      "size": "26",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8433659"
      }
     },
     {
-     "name": "sub_80B015",
+     "name": "RetargetRival",
      "size": "26",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8433685"
      }
     },
     {
-     "name": "sub_80B02F",
+     "name": "CpuAvoidHurdle",
      "size": "150",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8433711"
      }
@@ -967,17 +967,17 @@
      }
     },
     {
-     "name": "sub_80B0E1",
+     "name": "ReadRiderPieces",
      "size": "52",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8433889"
      }
     },
     {
-     "name": "sub_80B158",
+     "name": "RaceBookkeeping",
      "size": "35",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8434008"
      }
@@ -991,9 +991,9 @@
      }
     },
     {
-     "name": "sub_80B21D",
+     "name": "ScreenOff",
      "size": "9",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8434205"
      }
@@ -1007,9 +1007,9 @@
      }
     },
     {
-     "name": "sub_80B2A1",
+     "name": "VramQueueTilesLong",
      "size": "4",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8434337"
      }
@@ -1063,9 +1063,9 @@
      }
     },
     {
-     "name": "sub_80B538",
+     "name": "RiderPaletteWords",
      "size": "189",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8435000"
      }
@@ -1073,55 +1073,55 @@
     {
      "name": "ModeNop",
      "size": "2",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8435369"
      }
     },
     {
-     "name": "sub_80B702",
+     "name": "SaveHeaderCheck",
      "size": "153",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8435458"
      }
     },
     {
-     "name": "sub_80B79B",
+     "name": "SaveChecksum",
      "size": "72",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8435611"
      }
     },
     {
-     "name": "sub_80B873",
+     "name": "LoadScene",
      "size": "328",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8435827"
      }
     },
     {
-     "name": "sub_80BC55",
+     "name": "ScaleIrqLine",
      "size": "12",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8436821"
      }
     },
     {
-     "name": "sub_80BC61",
+     "name": "Mul16",
      "size": "108",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8436833"
      }
     },
     {
-     "name": "sub_80BCCD",
+     "name": "Mul16c",
      "size": "108",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8436941"
      }
@@ -1135,25 +1135,25 @@
      }
     },
     {
-     "name": "sub_80BE22",
+     "name": "RiderStepAll",
      "size": "11",
-     "fuzzy_match_percent": 0.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8437282"
      }
     },
     {
-     "name": "sub_80BE2D",
+     "name": "EmptyBE2D",
      "size": "1",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8437293"
      }
     },
     {
-     "name": "sub_80BE2E",
+     "name": "RiderStateStep",
      "size": "16",
-     "fuzzy_match_percent": 0.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8437294"
      }
@@ -1167,17 +1167,17 @@
      }
     },
     {
-     "name": "sub_80BE6A",
+     "name": "WalkToStartLane",
      "size": "77",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8437354"
      }
     },
     {
-     "name": "sub_80BEB7",
+     "name": "WalkBackOn",
      "size": "114",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8437431"
      }
@@ -1207,9 +1207,9 @@
      }
     },
     {
-     "name": "sub_80BF88",
+     "name": "RaceMoveStep",
      "size": "30",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8437640"
      }
@@ -1239,33 +1239,33 @@
      }
     },
     {
-     "name": "sub_80C012",
+     "name": "SpawnRivals",
      "size": "57",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8437778"
      }
     },
     {
-     "name": "sub_80C04B",
+     "name": "UpdateRiderDistances",
      "size": "84",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8437835"
      }
     },
     {
-     "name": "sub_80C09F",
+     "name": "PlaceRival",
      "size": "141",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8437919"
      }
     },
     {
-     "name": "sub_80C12C",
+     "name": "RivalTarget",
      "size": "83",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8438060"
      }
@@ -1279,33 +1279,33 @@
      }
     },
     {
-     "name": "sub_80C1C9",
+     "name": "LaunchBall",
      "size": "59",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8438217"
      }
     },
     {
-     "name": "sub_80C225",
+     "name": "RiderLanding",
      "size": "185",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8438309"
      }
     },
     {
-     "name": "sub_80C2DE",
+     "name": "GroundHeightAbove",
      "size": "3",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8438494"
      }
     },
     {
-     "name": "sub_80C2E1",
+     "name": "HeightAbove",
      "size": "14",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8438497"
      }
@@ -1327,25 +1327,25 @@
      }
     },
     {
-     "name": "sub_80C34C",
+     "name": "RiderLandCheck",
      "size": "47",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8438604"
      }
     },
     {
-     "name": "sub_80C37B",
+     "name": "CrashLand",
      "size": "56",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8438651"
      }
     },
     {
-     "name": "sub_80C3B3",
+     "name": "StartJump",
      "size": "66",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8438707"
      }
@@ -1359,105 +1359,105 @@
      }
     },
     {
-     "name": "sub_80C41D",
+     "name": "FinishStep",
      "size": "88",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8438813"
      }
     },
     {
-     "name": "sub_80C475",
+     "name": "CrashRecovery",
      "size": "142",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8438901"
      }
     },
     {
-     "name": "sub_80C503",
+     "name": "RaceStartLights",
      "size": "43",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8439043"
      }
     },
     {
-     "name": "sub_80C52E",
+     "name": "DrawStartFlags",
      "size": "208",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8439086"
      }
     },
     {
-     "name": "sub_80C5FE",
+     "name": "FlagRidersAtLine",
      "size": "6",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8439294"
      }
     },
     {
-     "name": "sub_80C604",
+     "name": "SpeedGauge",
      "size": "80",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8439300"
      }
     },
     {
-     "name": "sub_80C654",
+     "name": "RaceTimer",
      "size": "114",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8439380"
      }
     },
     {
-     "name": "sub_80C7DC",
+     "name": "RaceClockStep",
      "size": "15",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8439772"
      }
     },
     {
-     "name": "sub_80C7EB",
+     "name": "TickRaceClock",
      "size": "26",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8439787"
      }
     },
     {
-     "name": "sub_80C805",
+     "name": "ShowRaceClock",
      "size": "114",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8439813"
      }
     },
     {
-     "name": "sub_80C877",
+     "name": "ShowBestTime",
      "size": "114",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8439927"
      }
     },
     {
-     "name": "sub_80C8E9",
+     "name": "ShowCourseBest",
      "size": "5",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8440041"
      }
     },
     {
-     "name": "sub_80C8EE",
+     "name": "RecordCourseTime",
      "size": "129",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8440046"
      }
@@ -1479,9 +1479,9 @@
      }
     },
     {
-     "name": "sub_80C9C4",
+     "name": "RiderCollisions",
      "size": "341",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8440260"
      }
@@ -1503,49 +1503,49 @@
      }
     },
     {
-     "name": "sub_80CB47",
+     "name": "BallHit",
      "size": "84",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8440647"
      }
     },
     {
-     "name": "sub_80CC38",
+     "name": "SortAndDrawRiders",
      "size": "5",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8440888"
      }
     },
     {
-     "name": "sub_80CC3D",
+     "name": "DrawAllRiders",
      "size": "121",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8440893"
      }
     },
     {
-     "name": "sub_80CCE1",
+     "name": "DrawRider",
      "size": "83",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8441057"
      }
     },
     {
-     "name": "sub_80CD54",
+     "name": "RiderPose",
      "size": "116",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8441172"
      }
     },
     {
-     "name": "sub_80CDF6",
+     "name": "WheelSpark",
      "size": "115",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8441334"
      }
@@ -1559,9 +1559,9 @@
      }
     },
     {
-     "name": "sub_80CF0D",
+     "name": "TemperatureGauge",
      "size": "229",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8441613"
      }
@@ -1631,33 +1631,33 @@
      }
     },
     {
-     "name": "sub_80D20F",
+     "name": "CoinCollected",
      "size": "130",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8442383"
      }
     },
     {
-     "name": "sub_80D29F",
+     "name": "MarkerObjects",
      "size": "64",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8442527"
      }
     },
     {
-     "name": "sub_80D31F",
+     "name": "MarkerObjectStep",
      "size": "38",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8442655"
      }
     },
     {
-     "name": "sub_80D345",
+     "name": "StepObjectX8",
      "size": "5",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8442693"
      }
@@ -1687,9 +1687,9 @@
      }
     },
     {
-     "name": "sub_80D3F7",
+     "name": "ResetCoinMarkers",
      "size": "6",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8442871"
      }
@@ -1703,9 +1703,9 @@
      }
     },
     {
-     "name": "sub_80D7B2",
+     "name": "SetBonusRow",
      "size": "8",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8443826"
      }
@@ -1719,25 +1719,25 @@
      }
     },
     {
-     "name": "sub_80D813",
+     "name": "SetupJumpContest",
      "size": "218",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8443923"
      }
     },
     {
-     "name": "sub_80D8FB",
+     "name": "StartBonusLabel",
      "size": "11",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8444155"
      }
     },
     {
-     "name": "sub_80D906",
+     "name": "ShowBonusLabel",
      "size": "120",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8444166"
      }
@@ -1745,15 +1745,15 @@
     {
      "name": "Mode09",
      "size": "179",
-     "fuzzy_match_percent": 0.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8444286"
      }
     },
     {
-     "name": "sub_80DA31",
+     "name": "BonusBannerSprites",
      "size": "52",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8444465"
      }
@@ -1767,9 +1767,9 @@
      }
     },
     {
-     "name": "sub_80DA99",
+     "name": "PlayerTileState",
      "size": "143",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8444569"
      }
@@ -1783,33 +1783,33 @@
      }
     },
     {
-     "name": "sub_80DB44",
+     "name": "BonusRunOut",
      "size": "43",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8444740"
      }
     },
     {
-     "name": "sub_80DB6F",
+     "name": "BonusTimerStep",
      "size": "26",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8444783"
      }
     },
     {
-     "name": "sub_80DB89",
+     "name": "BuildCourseColumn",
      "size": "260",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8444809"
      }
     },
     {
-     "name": "sub_80DC8D",
+     "name": "CourseColumn",
      "size": "75",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8445069"
      }
@@ -1823,65 +1823,65 @@
      }
     },
     {
-     "name": "sub_80DCEA",
+     "name": "CourseRowTiles",
      "size": "25",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8445162"
      }
     },
     {
-     "name": "sub_80DD03",
+     "name": "CourseRowList",
      "size": "11",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8445187"
      }
     },
     {
-     "name": "sub_80DD0E",
+     "name": "PlayerCrashStep",
      "size": "116",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8445198"
      }
     },
     {
-     "name": "sub_80DD82",
+     "name": "PlayerColumnCheck",
      "size": "37",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8445314"
      }
     },
     {
-     "name": "sub_80DDA7",
+     "name": "PlayerStop",
      "size": "8",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8445351"
      }
     },
     {
-     "name": "sub_80DDAF",
+     "name": "PlayerHalt",
      "size": "73",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8445359"
      }
     },
     {
-     "name": "sub_80DDF8",
+     "name": "EmptyDDF8",
      "size": "1",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8445432"
      }
     },
     {
-     "name": "sub_80DDF9",
+     "name": "StartDemoHdma",
      "size": "14",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8445433"
      }
@@ -1889,31 +1889,31 @@
     {
      "name": "Mode0A",
      "size": "20",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8445447"
      }
     },
     {
-     "name": "sub_80DE23",
+     "name": "BonusResultStart",
      "size": "122",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8445475"
      }
     },
     {
-     "name": "sub_80DEB3",
+     "name": "BonusCountUp",
      "size": "63",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8445619"
      }
     },
     {
-     "name": "sub_80DF01",
+     "name": "BonusResultStep",
      "size": "248",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8445697"
      }
@@ -1921,7 +1921,7 @@
     {
      "name": "CheckEndingMinute",
      "size": "63",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8445956"
      }
@@ -1935,33 +1935,33 @@
      }
     },
     {
-     "name": "sub_80E059",
+     "name": "ShowBonusBest",
      "size": "99",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8446041"
      }
     },
     {
-     "name": "sub_80E29D",
+     "name": "ResetDemoCourse",
      "size": "14",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8446621"
      }
     },
     {
-     "name": "sub_80E2AB",
+     "name": "SetRaceBgMode",
      "size": "11",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8446635"
      }
     },
     {
-     "name": "sub_80E2B6",
+     "name": "StartDemo",
      "size": "99",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8446646"
      }
@@ -1969,55 +1969,55 @@
     {
      "name": "Mode0C",
      "size": "91",
-     "fuzzy_match_percent": 0.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8446745"
      }
     },
     {
-     "name": "sub_80E374",
+     "name": "TemperatureGaugeJmp",
      "size": "3",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8446836"
      }
     },
     {
-     "name": "sub_80E377",
+     "name": "DemoInputStep",
      "size": "93",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8446839"
      }
     },
     {
-     "name": "sub_80E3D4",
+     "name": "DemoExitBoost",
      "size": "11",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8446932"
      }
     },
     {
-     "name": "sub_80E3DF",
+     "name": "PlaceLastRival",
      "size": "15",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8446943"
      }
     },
     {
-     "name": "sub_80E3EE",
+     "name": "DemoExitSkip40",
      "size": "4",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8446958"
      }
     },
     {
-     "name": "sub_80E3F2",
+     "name": "DemoExitSkip35",
      "size": "9",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8446962"
      }
@@ -2031,25 +2031,25 @@
      }
     },
     {
-     "name": "sub_80E411",
+     "name": "DemoPadDisplay",
      "size": "210",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8446993"
      }
     },
     {
-     "name": "sub_80E4FC",
+     "name": "DemoPushStart",
      "size": "79",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8447228"
      }
     },
     {
-     "name": "sub_80E773",
+     "name": "AnimateAllWheels",
      "size": "2",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8447859"
      }
@@ -2063,65 +2063,65 @@
      }
     },
     {
-     "name": "sub_80E7A4",
+     "name": "RunAllRiderPieces",
      "size": "8",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8447908"
      }
     },
     {
-     "name": "sub_80E7AC",
+     "name": "RunRiderPieces",
      "size": "136",
-     "fuzzy_match_percent": 0.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8447916"
      }
     },
     {
-     "name": "sub_80E834",
+     "name": "PieceAction",
      "size": "125",
-     "fuzzy_match_percent": 0.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448052"
      }
     },
     {
-     "name": "sub_80E8B1",
+     "name": "RiderLanePieceAt",
      "size": "3",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448177"
      }
     },
     {
-     "name": "sub_80E8B4",
+     "name": "RiderPieceAt",
      "size": "5",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448180"
      }
     },
     {
-     "name": "sub_80E8B9",
+     "name": "LanePieceAt",
      "size": "28",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448185"
      }
     },
     {
-     "name": "sub_80E8D5",
+     "name": "LanePieceTablesLong",
      "size": "10",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448213"
      }
     },
     {
-     "name": "sub_80E8DF",
+     "name": "LanePieceTables",
      "size": "11",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448223"
      }
@@ -2135,129 +2135,129 @@
      }
     },
     {
-     "name": "sub_80E90D",
+     "name": "RiderGroundHeights",
      "size": "2",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448269"
      }
     },
     {
-     "name": "sub_80E90F",
+     "name": "RiderGroundHeightsFrom",
      "size": "15",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448271"
      }
     },
     {
-     "name": "sub_80E91E",
+     "name": "RiderKickUp",
      "size": "11",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448286"
      }
     },
     {
-     "name": "sub_80E929",
+     "name": "SetJumpBase",
      "size": "7",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448297"
      }
     },
     {
-     "name": "sub_80E930",
+     "name": "RiderHalfDrop",
      "size": "9",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448304"
      }
     },
     {
-     "name": "sub_80E939",
+     "name": "RiderHighJump",
      "size": "14",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448313"
      }
     },
     {
-     "name": "sub_80E947",
+     "name": "RiderPairHeight",
      "size": "5",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448327"
      }
     },
     {
-     "name": "sub_80E94C",
+     "name": "HeightBelow",
      "size": "12",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448332"
      }
     },
     {
-     "name": "sub_80E958",
+     "name": "RiderJumpBase",
      "size": "29",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448344"
      }
     },
     {
-     "name": "sub_80E975",
+     "name": "SetRiderPair",
      "size": "14",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448373"
      }
     },
     {
-     "name": "sub_80E983",
+     "name": "RiderDropStep",
      "size": "37",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448387"
      }
     },
     {
-     "name": "sub_80E9A8",
+     "name": "ClearJumpState",
      "size": "9",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448424"
      }
     },
     {
-     "name": "sub_80E9B1",
+     "name": "StartJumpState",
      "size": "16",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448433"
      }
     },
     {
-     "name": "sub_80E9C1",
+     "name": "FlattenPlayerPiece",
      "size": "43",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448449"
      }
     },
     {
-     "name": "sub_80E9F3",
+     "name": "UseArrowPiece",
      "size": "105",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448499"
      }
     },
     {
-     "name": "sub_80EA6A",
+     "name": "CollectPickupPiece",
      "size": "96",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448618"
      }
@@ -2271,153 +2271,153 @@
      }
     },
     {
-     "name": "sub_80EAFF",
+     "name": "SetJumpState1",
      "size": "5",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448767"
      }
     },
     {
-     "name": "sub_80EB04",
+     "name": "RiderBumpCrash",
      "size": "8",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448772"
      }
     },
     {
-     "name": "sub_80EB0C",
+     "name": "SpeedBumpCrash",
      "size": "25",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448780"
      }
     },
     {
-     "name": "sub_80EB25",
+     "name": "StartJumpBase30",
      "size": "10",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448805"
      }
     },
     {
-     "name": "sub_80EB2F",
+     "name": "JumpBase30",
      "size": "5",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448815"
      }
     },
     {
-     "name": "sub_80EB34",
+     "name": "JumpBase10",
      "size": "5",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448820"
      }
     },
     {
-     "name": "sub_80EB39",
+     "name": "SlowPieceBrake",
      "size": "71",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448825"
      }
     },
     {
-     "name": "sub_80EB80",
+     "name": "RunPieceActions",
      "size": "14",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448896"
      }
     },
     {
-     "name": "sub_80EB8E",
+     "name": "SlowPieceStep",
      "size": "39",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448910"
      }
     },
     {
-     "name": "sub_80EBB5",
+     "name": "LandingStep",
      "size": "12",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448949"
      }
     },
     {
-     "name": "sub_80EBC1",
+     "name": "ResetAndLand",
      "size": "18",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448961"
      }
     },
     {
-     "name": "sub_80EBD3",
+     "name": "ClearRiderAction",
      "size": "12",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448979"
      }
     },
     {
-     "name": "sub_80EBDF",
+     "name": "UpdateLanes",
      "size": "261",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8448991"
      }
     },
     {
-     "name": "sub_80ECE4",
+     "name": "DrawSparksAndMarkers",
      "size": "94",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8449252"
      }
     },
     {
-     "name": "sub_80ED42",
+     "name": "CrossFinish",
      "size": "84",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8449346"
      }
     },
     {
-     "name": "sub_80ED96",
+     "name": "ItemFlashState",
      "size": "28",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8449430"
      }
     },
     {
-     "name": "sub_80EDB2",
+     "name": "NextColumnLong",
      "size": "4",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8449458"
      }
     },
     {
-     "name": "sub_80EDB6",
+     "name": "NextColumn",
      "size": "10",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8449462"
      }
     },
     {
-     "name": "sub_80EDC0",
+     "name": "AddScoreLong",
      "size": "4",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8449472"
      }
@@ -2431,33 +2431,33 @@
      }
     },
     {
-     "name": "sub_80EDEF",
+     "name": "PaceBonus",
      "size": "105",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8449519"
      }
     },
     {
-     "name": "sub_80EE58",
+     "name": "QueueScoreDigitsLong",
      "size": "4",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8449624"
      }
     },
     {
-     "name": "sub_80EE5C",
+     "name": "QueueScoreDigitsHud",
      "size": "12",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8449628"
      }
     },
     {
-     "name": "sub_80EE68",
+     "name": "QueueScoreDigits",
      "size": "54",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8449640"
      }
@@ -2503,51 +2503,51 @@
   {
    "name": "main/bank81",
    "measures": {
-    "fuzzy_match_percent": 76.1781,
+    "fuzzy_match_percent": 100.0,
     "total_code": "6366",
-    "matched_code": "3429",
-    "matched_code_percent": 53.8643,
+    "matched_code": "6366",
+    "matched_code_percent": 100.0,
     "total_data": "0",
     "matched_data": "0",
     "matched_data_percent": 0.0,
     "total_functions": 101,
-    "matched_functions": 63,
-    "matched_functions_percent": 62.3762,
-    "complete_code": "0",
-    "complete_code_percent": 0.0,
+    "matched_functions": 101,
+    "matched_functions_percent": 100.0,
+    "complete_code": "6366",
+    "complete_code_percent": 100.0,
     "complete_data": "0",
     "complete_data_percent": 0.0,
     "total_units": 1,
-    "complete_units": 0
+    "complete_units": 1
    },
    "sections": [
     {
      "name": ".text",
      "size": "6366",
-     "fuzzy_match_percent": 76.1781
+     "fuzzy_match_percent": 100.0
     }
    ],
    "functions": [
     {
-     "name": "sub_818A42",
+     "name": "RaceRowList",
      "size": "11",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8489538"
      }
     },
     {
-     "name": "sub_818A4D",
+     "name": "LoadRaceColumn",
      "size": "405",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8489549"
      }
     },
     {
-     "name": "sub_818BE2",
+     "name": "FillLaneColumn",
      "size": "63",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8489954"
      }
@@ -2593,17 +2593,17 @@
      }
     },
     {
-     "name": "sub_819464",
+     "name": "StepSpriteSlots",
      "size": "20",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8492132"
      }
     },
     {
-     "name": "sub_819480",
+     "name": "EmptyStep9554",
      "size": "1",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8492160"
      }
@@ -2625,25 +2625,25 @@
      }
     },
     {
-     "name": "sub_819520",
+     "name": "ObjectStepDispatch",
      "size": "8",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8492320"
      }
     },
     {
-     "name": "sub_819530",
+     "name": "ConfettiStep",
      "size": "107",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8492336"
      }
     },
     {
-     "name": "sub_8195A3",
+     "name": "SparkPieceStep",
      "size": "72",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8492451"
      }
@@ -2665,9 +2665,9 @@
      }
     },
     {
-     "name": "sub_81966B",
+     "name": "MoveObjectX8",
      "size": "5",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8492651"
      }
@@ -2681,33 +2681,33 @@
      }
     },
     {
-     "name": "sub_8196B4",
+     "name": "SpawnObject",
      "size": "96",
-     "fuzzy_match_percent": 0.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8492724"
      }
     },
     {
-     "name": "sub_819714",
+     "name": "UpdateObjects",
      "size": "64",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8492820"
      }
     },
     {
-     "name": "sub_819754",
+     "name": "EmptyStep9828",
      "size": "1",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8492884"
      }
     },
     {
-     "name": "sub_819755",
+     "name": "FindObjectSlot",
      "size": "12",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8492885"
      }
@@ -2721,9 +2721,9 @@
      }
     },
     {
-     "name": "sub_819778",
+     "name": "FollowObjectPath",
      "size": "84",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8492920"
      }
@@ -2737,33 +2737,33 @@
      }
     },
     {
-     "name": "sub_8197E2",
+     "name": "SkyFadeObject",
      "size": "73",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8493026"
      }
     },
     {
-     "name": "sub_81982B",
+     "name": "FadeInObject",
      "size": "39",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8493099"
      }
     },
     {
-     "name": "sub_819852",
+     "name": "ResultsBonusCount",
      "size": "228",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8493138"
      }
     },
     {
-     "name": "sub_819956",
+     "name": "Empty9956",
      "size": "1",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8493398"
      }
@@ -2777,17 +2777,17 @@
      }
     },
     {
-     "name": "sub_8199CB",
+     "name": "FadePaletteStep",
      "size": "122",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8493515"
      }
     },
     {
-     "name": "sub_819A8D",
+     "name": "QueueMapTile",
      "size": "57",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8493709"
      }
@@ -2809,17 +2809,17 @@
      }
     },
     {
-     "name": "sub_819DC6",
+     "name": "DrawObjectSprites",
      "size": "155",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8494534"
      }
     },
     {
-     "name": "sub_819E61",
+     "name": "SteerObjectStep",
      "size": "148",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8494689"
      }
@@ -2849,9 +2849,9 @@
      }
     },
     {
-     "name": "sub_819F7A",
+     "name": "AimVelocity",
      "size": "18",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8494970"
      }
@@ -2873,17 +2873,17 @@
      }
     },
     {
-     "name": "sub_81A0B5",
+     "name": "EngineSound",
      "size": "113",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8495285"
      }
     },
     {
-     "name": "sub_81A126",
+     "name": "SelectWheelPosition",
      "size": "87",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8495398"
      }
@@ -2907,15 +2907,15 @@
     {
      "name": "SetHdmaPreset",
      "size": "203",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8496672"
      }
     },
     {
-     "name": "sub_81A961",
+     "name": "EmptyHook",
      "size": "1",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8497505"
      }
@@ -2937,9 +2937,9 @@
      }
     },
     {
-     "name": "sub_81B67E",
+     "name": "EmptyB67E",
      "size": "1",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8500862"
      }
@@ -2961,17 +2961,17 @@
      }
     },
     {
-     "name": "sub_81B6C2",
+     "name": "DriftUpObject",
      "size": "111",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8500930"
      }
     },
     {
-     "name": "sub_81B731",
+     "name": "ReleaseBalloons",
      "size": "113",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8501041"
      }
@@ -3177,9 +3177,9 @@
      }
     },
     {
-     "name": "sub_81BBE4",
+     "name": "IdleCycleObject",
      "size": "66",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8502244"
      }
@@ -3249,33 +3249,33 @@
      }
     },
     {
-     "name": "sub_81BD67",
+     "name": "ClearObjectPalette",
      "size": "7",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8502631"
      }
     },
     {
-     "name": "sub_81BD6E",
+     "name": "FrameSequenceA",
      "size": "101",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8502638"
      }
     },
     {
-     "name": "sub_81BDDB",
+     "name": "FrameSequenceB",
      "size": "101",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8502747"
      }
     },
     {
-     "name": "sub_81BE4C",
+     "name": "PodiumWalkIn",
      "size": "96",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8502860"
      }
@@ -3291,7 +3291,7 @@
     {
      "name": "BsxOpenTimeChannel",
      "size": "72",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8517644"
      }
@@ -3323,7 +3323,7 @@
     {
      "name": "BsxDetect",
      "size": "25",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8518248"
      }
@@ -3331,14 +3331,14 @@
     {
      "name": "BsxProbeReceiver",
      "size": "50",
-     "fuzzy_match_percent": 50.0,
+     "fuzzy_match_percent": 100.0,
      "metadata": {
       "virtual_address": "8518273"
      }
     }
    ],
    "metadata": {
-    "complete": false,
+    "complete": true,
     "source_path": "c/hand/s1"
    }
   }
