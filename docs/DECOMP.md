@@ -367,7 +367,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s4
 
-532 functions in the static map; 444 hand-written (83.5%), 435 of them in the port.
+532 functions in the static map; 446 hand-written (83.8%), 435 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -433,10 +433,11 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:A650` | QueueResultsRow | `mem+X,Y,C,V` | `leaves.c` | yes |
 | `$80:A66F` | DrawCoinPickup | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:A76C` | DrawBonusPickup | `mem+X,Y,C,V` | `objects.c` | yes |
+| `$80:A9C1` | Mode03_Race | `mem+X,Y,C,V` | `objects.c` |  |
 | `$80:AA94` | DrawCountdownSign | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:AB34` | SendSpeedToApu | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:AB46` | BallOrGauge | `mem+A,X,Y,C,V` | `objects.c` | yes |
-| `$80:AB59` | RaceFinishStep | `mem+X,Y,C,V` | `flow.c` | yes |
+| `$80:AB59` | RaceFinishStep | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:ABC7` | ThrottleAll | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:ABCD` | RidersThrottle | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:AC04` | RiderThrottleLong | `mem+A,X,Y,C,V` | `objects.c` | yes |
@@ -508,7 +509,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:C0E3` | CrashLand | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:C131` | StartCrash | `mem+X,C,V` | `objects.c` | yes |
 | `$80:C173` | RiderHeightStep | `mem+A,X,Y,C,V` | `objects.c` | yes |
-| `$80:C19B` | OverheatStep | `mem+X,Y,C,V` | `flow.c` | yes |
+| `$80:C19B` | OverheatStep | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:C1F3` | CrashRecovery | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:C290` | RaceStartLights | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:C2BB` | DrawStartFlags | `mem+C,V` | `objects.c` | yes |
@@ -523,8 +524,8 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:C68D` | ShowCourseBest | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:C692` | RecordCourseTime | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:C741` | DivideAX | `mem+X,V` | `objects.c` | yes |
-| `$80:C74F` | RiderLaneBand | `mem+X,Y,C,V` | `from_s1.c` | yes |
-| `$80:C776` | RiderCollisions | `mem+X,Y,C,V` | `collide.c` | yes |
+| `$80:C74F` | RiderLaneBand | `mem+X,Y,C,V` | `objects.c` | yes |
+| `$80:C776` | RiderCollisions | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:C989` | Reach20 | `mem+A,X,Y,V` | `collide.c` | yes |
 | `$80:C990` | Reach2 | `mem+A,X,Y,V` | `collide.c` | yes |
 | `$80:C997` | BallHit | `mem+A,X,Y,C,V` | `objects.c` | yes |
@@ -627,8 +628,9 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:F15B` | BuildScoreDigitsLong | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:F15F` | BuildScoreDigits | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:F1D6` | SetJumpScroll | `mem+X,Y,C,V` | `objects.c` | yes |
+| `$80:F2D2` | Mode0C | `mem+X,Y,C,V` | `objects.c` |  |
 | `$80:F32D` | TurboMeterJmp | `mem+A,X,Y,C,V` | `objects.c` | yes |
-| `$80:F330` | DemoInputStep | `mem+X,Y,C,V` | `flow.c` | yes |
+| `$80:F330` | DemoInputStep | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:F3C7` | StartMode01 | `mem+X,Y,C,V` | `from_s1.c` | yes |
 | `$80:F3DD` | DemoPadDisplay | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:F4C8` | TitlePushStart | `mem+X,Y,C,V` | `objects.c` | yes |
@@ -663,7 +665,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:FC5F` | UpdateLanes | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:FD7E` | DrawShadowsAndMarkers | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:FDDE` | CrossFinish | `mem+A,X,Y,C,V` | `objects.c` | yes |
-| `$80:FE3A` | ItemFlashState | `mem+X,Y,C,V` | `flow.c` | yes |
+| `$80:FE3A` | ItemFlashState | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:FE56` | NextColumnLong | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:FE5A` | NextColumn | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:FE64` | AddScoreLong | `mem+A,X,Y,C,V` | `objects.c` | yes |
@@ -769,7 +771,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$81:C64E` | FadeApuVolume | `mem+X,Y,C,V` | `leaves.c` | yes |
 | `$81:C6B4` | QueueBlinkBanner | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$81:C6F9` | CoinMilestone | `mem+X` | `collide.c` | yes |
-| `$81:C724` | StepJumpBanner | `mem+X,Y,C,V` | `leaves.c` | yes |
+| `$81:C724` | StepJumpBanner | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$81:C743` | SetJumpBanner | `mem+X,Y,C,V` | `leaves.c` | yes |
 | `$81:C75E` | CheckLaneTile | `mem+X,Y,V` | `objects.c` | yes |
 | `$81:C7C3` | ClearOnBonusTiles | `mem+X,Y,V` | `objects.c` | yes |

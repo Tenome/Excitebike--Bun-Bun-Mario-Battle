@@ -1164,6 +1164,9 @@ BRIDGE(HleHand_ChangeModeLong, ChangeModeLong_m1x1, 30)
 BRIDGE(HleHand_LeaveJumpContest, LeaveJumpContest_m1x1, 40)
 BRIDGE(HleHand_JumpRunSteps, JumpRunSteps_m1x1, 660)
 BRIDGE(HleHand_JumpRunStepsMode, JumpRunStepsMode_m1x1, 670)
+/* Mode03_Race ($80:A9C1) and Mode0C ($80:F2D2) pass difftest on s4 but are
+ * not hooked: they only call routines that are hooked one by one, and one
+ * bridge cost could not follow their per-frame cycle total. */
 /* VramQueueTilesLong / QueueTileRowsLong ($80:B2D6 / $80:B431) are
  * verified but unhooked: trampolines whose cost is the callee's. */
 /* c/hand/s4/objects.c, part 26 */

@@ -12021,3 +12021,174 @@ void DrawObjectPieces_m1x1(void)
     sep(0x10);
     ret();
 }
+
+void SendSpeedToApu_m1x1(void);
+void SetRiderLean_m1x1(void);
+void RiderLaneBand_m1x1(void);
+void RaceFinishStep_m1x1(void);
+void RaceClockStep_m1x1(void);
+void OverheatStep_m1x1(void);
+void SpawnRivals_m1x1(void);
+void RankPlayer_m1x1(void);
+void LaunchBall_m1x1(void);
+void RaceTimer_m1x1(void);
+void ItemFlashState_m1x1(void);
+void RiderCollisions_m1x1(void);
+void CrashRecovery_m1x1(void);
+void UpdateLanes_m1x1(void);
+void DrawShadowsAndMarkers_m1x1(void);
+void BallOrGauge_m1x1(void);
+void PlaceAllRiderShadows_m1x1(void);
+void RaceMoveStep_m1x1(void);
+void RaceStartLights_m1x1(void);
+void DrawCountdownSign_m1x1(void);
+void CpuRidersStep_m1x1(void);
+void QueuePlaceBadgeHud_m1x1(void);
+void RecordCourseTime_m1x1(void);
+void QueueStadiumBadge_m1x1(void);
+void VramQueueTiles_m1x1(void);
+void DrawCoinPickup_m1x1(void);
+void DrawBonusPickup_m1x1(void);
+void MarkerObjects_m1x1(void);
+void SpawnExhaust_m1x1(void);
+void ConfettiAll_m1x1(void);
+void RivalEngineSound_m1x1(void);
+void SpeedReadout_m1x1(void);
+void BestTimeBlink_m1x1(void);
+void StadiumBonusBanner_m1x1(void);
+void StepJumpBanner_m1x1(void);
+void DemoInputStep_m1x1(void);
+void DemoPadDisplay_m1x1(void);
+
+/* $80:A9C6 / $80:F2E5: lean and lane band for riders 7-0. */
+static void lean_and_bands4(u16 back1, u16 back2)
+{
+    ldx8(0x07);
+    do {
+        push16(back1); SetRiderLean_m1x1();
+        push16(back2); RiderLaneBand_m1x1();
+        X = dec8((u8)X);
+    } while (!fn);
+}
+
+/* $80:A9C1 Mode03_Race (RTS): one Stadium 4 race frame: engine pitch;
+ * leans and lane bands; the player pad (unless the attract demo $0CD7);
+ * rider state steps, piece scripts and actions. After the finish ($84)
+ * the finish step and clock; else overheating, a free run's rivals, rank
+ * and ball, the race timer, item flash and rider collisions. Then crash
+ * recovery, throttles, lanes, ground heights, shadows and markers, the
+ * course column, ball or gauge, the riders sorted and drawn, their
+ * shadows, the move step, start lights, countdown sign, turbo meter,
+ * wheels, CPU riders, the place badge; at a lap ($AC) the course time
+ * and stadium badge (and after the finish the label $80:AA89 at $1892);
+ * pickups, markers, exhaust, confetti, rival engine, speed readout, best
+ * time blink, bonus banner and jump banner. */
+void Mode03_Race_m1x1(void)
+{
+    push16(0xA9C3); SendSpeedToApu_m1x1();
+    lean_and_bands4(0xA9C8, 0xA9CB);
+    lda8(rd8(ABS(0x0CD7)));
+    if (fz) { lda8(rd8(DP(0x20))); wr8(ABS(0x017E), (u8)A); }
+    push16(0xA9DB); RiderStepAll_m1x1();
+    push16(0xA9DE); RunAllRiderPieces_m1x1();
+    push16(0xA9E1); RunPieceActions_m1x1();
+    lda8(rd8(DP(0x84)));
+    if (!fz) {
+        push16(0xA9E8); RaceFinishStep_m1x1();
+        push16(0xA9EB); RaceClockStep_m1x1();
+    } else {
+        push16(0xA9F1); OverheatStep_m1x1();
+        lda8(rd8(DP(0x7D)));
+        if (!fz) {
+            push16(0xA9F8); SpawnRivals_m1x1();
+            push16(0xA9FB); RankPlayer_m1x1();
+            push16(0xA9FE); LaunchBall_m1x1();
+        }
+        push16(0xAA01); RaceTimer_m1x1();
+        push16(0xAA04); ItemFlashState_m1x1();
+        push16(0xAA07); RiderCollisions_m1x1();
+    }
+    push16(0xAA0A); CrashRecovery_m1x1();
+    push16(0xAA0D); ThrottleAll_m1x1();
+    push16(0xAA10); UpdateLanes_m1x1();
+    push16(0xAA13); RiderGroundHeights_m1x1();
+    push16(0xAA16); DrawShadowsAndMarkers_m1x1();
+    push8(0x80); push16(0xAA1A); LoadRaceColumn_m1x1();
+    push16(0xAA1D); BallOrGauge_m1x1();
+    push16(0xAA20); SortAndDrawRiders_m1x1();
+    push16(0xAA23); PlaceAllRiderShadows_m1x1();
+    push16(0xAA26); RaceMoveStep_m1x1();
+    push16(0xAA29); RaceStartLights_m1x1();
+    push16(0xAA2C); DrawCountdownSign_m1x1();
+    push16(0xAA2F); TurboMeter_m1x1();
+    push16(0xAA32); SpinAllWheels_m1x1();
+    push16(0xAA35); CpuRidersStep_m1x1();
+    push16(0xAA38); QueuePlaceBadgeHud_m1x1();
+    lda8(rd8(DP(0xAC)));
+    if (!fz) {
+        wr8(DP(0xAC), 0);
+        push8(0x80); push16(0xAA42); RecordCourseTime_m1x1();
+        push8(0x80); push16(0xAA46); CALL(QueueStadiumBadge_m1x1, 0x81CA37, 3);
+        lda8(rd8(DP(0x84)));
+        if (!fz) {
+            rep(0x20);
+            lda16(0x1892); wr16(DP(0x00), 0x1892);
+            lda16(0xAA89); wr16(DP(0x02), 0xAA89);
+            sep(0x20);
+            lda8(0x24); wr8(DP(0x0F), 0x24);
+            push16(0xAA5F); VramQueueTiles_m1x1();
+        }
+    }
+    push8(0x80); push16(0xAA63); DrawCoinPickup_m1x1();
+    push8(0x80); push16(0xAA67); DrawBonusPickup_m1x1();
+    push8(0x80); push16(0xAA6B); MarkerObjects_m1x1();
+    push8(0x80); push16(0xAA6F); SpawnExhaust_m1x1();
+    push8(0x80); push16(0xAA73); ConfettiAll_m1x1();
+    push8(0x80); push16(0xAA77); RivalEngineSound_m1x1();
+    push8(0x80); push16(0xAA7B); SpeedReadout_m1x1();
+    push8(0x80); push16(0xAA7F); BestTimeBlink_m1x1();
+    push8(0x80); push16(0xAA83); StadiumBonusBanner_m1x1();
+    push8(0x80); push16(0xAA87); StepJumpBanner_m1x1();
+    ret();
+}
+
+/* $80:F2D2 Mode0C (RTS): one Stadium 4 attract-demo frame: engine pitch,
+ * the CPU pads released, the demo input (carry set: only the end steps);
+ * else the race frame rider steps without the pad, timers or rewards.
+ * Then start lights, turbo meter, wheels, CPU riders, the pad display and
+ * confetti. */
+void Mode0C_m1x1(void)
+{
+    push16(0xF2D4); SendSpeedToApu_m1x1();
+    ldx8(0x07);
+    lda8(0xFF);
+    do {
+        wr8(DPX(0x2C), 0xFF);
+        X = dec8((u8)X);
+    } while (!fn);
+    push16(0xF2E0); DemoInputStep_m1x1();
+    if (!fc) {
+        lean_and_bands4(0xF2E7, 0xF2EA);
+        push16(0xF2F0); RiderStepAll_m1x1();
+        push16(0xF2F3); RunAllRiderPieces_m1x1();
+        push16(0xF2F6); RunPieceActions_m1x1();
+        push16(0xF2F9); OverheatStep_m1x1();
+        push16(0xF2FC); RiderCollisions_m1x1();
+        push16(0xF2FF); CrashRecovery_m1x1();
+        push16(0xF302); ThrottleAll_m1x1();
+        push16(0xF305); UpdateLanes_m1x1();
+        push16(0xF308); RiderGroundHeights_m1x1();
+        push16(0xF30B); DrawShadowsAndMarkers_m1x1();
+        push8(0x80); push16(0xF30F); LoadRaceColumn_m1x1();
+        push16(0xF312); SortAndDrawRiders_m1x1();
+        push16(0xF315); PlaceAllRiderShadows_m1x1();
+        push16(0xF318); RaceMoveStep_m1x1();
+    }
+    push16(0xF31B); RaceStartLights_m1x1();
+    push16(0xF31E); TurboMeterJmp_m1x1();
+    push16(0xF321); SpinAllWheels_m1x1();
+    push16(0xF324); CpuRidersStep_m1x1();
+    push16(0xF327); DemoPadDisplay_m1x1();
+    push8(0x80); push16(0xF32B); ConfettiAll_m1x1();
+    ret();
+}
