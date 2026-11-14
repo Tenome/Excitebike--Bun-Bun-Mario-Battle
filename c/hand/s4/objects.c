@@ -12550,3 +12550,95 @@ void InitPpuRegisters_m1x1(void)
     sep(0x20);
     retl();
 }
+
+/* $80:824E DmaKick (M=0 X=1, RTS), with D = $4300: A = source address,
+ * X = source bank, Y = channel mask for MDMAEN. */
+void DmaKick_m0x1(void)
+{
+    wr16(DP(0x02), A);
+    wr8(DP(0x04), (u8)X);
+    wr8(ABS(0x420B), (u8)Y);
+    ret();
+}
+
+/* $80:88BF (RTS): start a random course: NMI off and forced blank; the
+ * course index is how many thresholds ($80:88B7) the random byte $7F:FFFF
+ * passes ($7C = index / 2, $7D = its low bit); $0100 bytes of tiles
+ * ($80:89AA by 3 * $7D) to VRAM $00C0; NMI back, $75 = 1, $1923 + 1; the
+ * course number label (tile $10 + 2 * $7C, palette $42) at $80:89B0 by
+ * $7D; the PPU registers for the race screen and the HDMA channels. */
+void StartRandomCourse_m1x1(void)
+{
+    wr8(ABS(0x190D), 0);
+    wr8(ABS(0x4200), 0);
+    push8(0x80); push16(0x88C8); ForceBlank_m1x1();
+    ldx8(0xFF); wr8(DP(0x00), 0xFF);
+    lda8(rd8(LONG(0x7FFFFF)));
+    do {
+        WAIT_TICK();
+        wr8(DP(0x00), inc8(rd8(DP(0x00))));
+        X = inc8((u8)X);
+        cmp8((u8)A, rd8(ABSX(0x88B7)));
+    } while (fc);
+    lda8(rd8(DP(0x00)));
+    lda8(lsr8((u8)A));
+    wr8(DP(0x7C), (u8)A);
+    lda8(rol8((u8)A));
+    and8(0x01);
+    wr8(DP(0x7D), (u8)A);
+    lda8(asl8((u8)A));
+    fc = 0; adc8(rd8(DP(0x7D)));
+    wr8(DP(0x00), (u8)A);
+    rep(0x20);
+    push16(D);
+    lda16(0x4300);
+    D = A;
+    ldy8(0x80); wr8(ABS(0x2115), 0x80);
+    lda16(0x1801); wr16(DP(0x00), 0x1801);
+    lda16(0x00C0); wr16(ABS(0x2116), 0x00C0);
+    lda16(0x0100); wr16(DP(0x05), 0x0100);
+    Y = rd8(ABS(0x0000)); nz8((u8)Y);
+    lda16(rd16(ABSY(0x89AA)));
+    X = rd8(ABSY(0x89AC)); nz8((u8)X);
+    ldy8(0x01);
+    push16(0x8912); DmaKick_m0x1();
+    D = pull16(); nz16(D);
+    sep(0x20);
+    lda8(rd8(ABS(0x190E))); wr8(ABS(0x4200), (u8)A);
+    lda8(0x01); wr8(DP(0x75), 0x01);
+    wr8(ABS(0x1923), inc8(rd8(ABS(0x1923))));
+    lda8(0x42); wr8(ABS(0x03CF), 0x42);
+    lda8(rd8(DP(0x7C)));
+    lda8(asl8((u8)A));
+    ora8(0x10);
+    for (int k = 0; k < 4; k++) {
+        if (k) { fc = 0; adc8(0x0F); }
+        wr8(ABS(0x03D0 + 2 * k), (u8)A);
+        lda8(inc8((u8)A));
+        wr8(ABS(0x03D1 + 2 * k), (u8)A);
+    }
+    lda8(rd8(DP(0x7D)));
+    and8(0x01);
+    lda8(asl8((u8)A));
+    Y = (u8)A; nz8((u8)Y);
+    rep(0x20);
+    lda16(rd16(ABSY(0x89B0))); wr16(DP(0x00), A);
+    lda16(0x03CF); wr16(DP(0x02), 0x03CF);
+    sep(0x20);
+    lda8(0x18); wr8(DP(0x0F), 0x18);
+    push16(0x896C); VramQueueTiles_m1x1();
+    lda8(0x01); wr8(ABS(0x2101), 0x01);
+    lda8(0x09); wr8(ABS(0x2105), 0x09); wr8(ABS(0x1904), 0x09);
+    wr8(ABS(0x2106), 0);
+    lda8(0x01); wr8(ABS(0x2107), 0x01); wr8(ABS(0x1900), 0x01);
+    lda8(0x09); wr8(ABS(0x2108), 0x09);
+    wr8(ABS(0x210A), 0);
+    lda8(0x19); wr8(ABS(0x2109), 0x19);
+    lda8(0x44); wr8(ABS(0x210B), 0x44);
+    lda8(0x01); wr8(ABS(0x210C), 0x01);
+    lda8(0x17); wr8(ABS(0x1905), 0x17);
+    wr8(DP(0x86), 0);
+    wr8(DP(0x87), 0);
+    push8(0x80); push16(0x89A8); SetupHdmaChannels_m1x1();
+    ret();
+}

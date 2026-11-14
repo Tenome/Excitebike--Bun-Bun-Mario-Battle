@@ -461,3 +461,5 @@
 828180 ForceBlank
 82818F ClearTilemaps
 82805F InitPpuRegisters
+80824E DmaKick
+8088BF StartRandomCourse

@@ -1284,6 +1284,9 @@ BRIDGE_DYN(HleHand_RaceResultsSetup, RaceResultsSetup_m1x1, g_ram[0x7D] ? 9000 :
 BRIDGE(HleHand_ForceBlank, ForceBlank_m1x1, 20)
 BRIDGE(HleHand_ClearTilemaps, ClearTilemaps_m1x1, 200)
 BRIDGE(HleHand_InitPpuRegisters, InitPpuRegisters_m1x1, 400)
+/* DMA kick, random course */
+BRIDGE(HleHand_DmaKick, DmaKick_m0x1, 12)
+BRIDGE(HleHand_StartRandomCourse, StartRandomCourse_m1x1, 800)
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)

@@ -370,11 +370,12 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s4
 
-532 functions in the static map; 452 hand-written (85.0%), 441 of them in the port.
+532 functions in the static map; 454 hand-written (85.3%), 443 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
 | `$80:81A9` | DrawClockB | `mem+X,Y,C,V` | `misc.c` | yes |
+| `$80:824E` | DmaKick | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:8535` | NmiFlushVramQueue | `mem` | `from_s1.c` | yes |
 | `$80:8603` | Mode00_IntroWait | `mem+X,Y,C,V` | `from_s1.c` | yes |
 | `$80:862A` | StartIntroMode | `mem+X,Y,C,V` | `objects.c` | yes |
@@ -382,6 +383,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:86E4` | Mode0E_TitleWait | `mem+X,Y,C,V` | `from_s1.c` | yes |
 | `$80:86F8` | StartEndScreen | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:889B` | Mode02_SegmentCard | `mem+X,Y,C,V` | `flow.c` | yes |
+| `$80:88BF` | StartRandomCourse | `mem+C,V` | `objects.c` | yes |
 | `$80:89B4` | StartModeWithSound | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:89C8` | FinishModeSetup | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:89D7` | SelectMain | `mem+X,Y,C,V` | `select.c` | yes |
