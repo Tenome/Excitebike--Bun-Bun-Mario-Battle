@@ -518,6 +518,8 @@ static uint32 update_objects_cost1(void)
 BRIDGE_DYN(HleHand_UpdateObjects, UpdateObjects_m1x1, update_objects_cost1())
 BRIDGE_DYN(HleHand_EndScreenTimes, EndScreenTimes_m1x1, g_ram[0x88] == 1 ? 1050 : 12)
 BRIDGE_DYN(HleHand_EndScreenRecord, EndScreenRecord_m1x1, 20 + (g_ram[0x88] == 1 ? 680 : 0) + ((g_ram[0x88] <= 1 && (g_ram[0x26] & 0x80)) ? 1600 : 0))
+BRIDGE(HleHand_Mode09, Mode09_m1x1, 900)
+BRIDGE_DYN(HleHand_BonusResultStep, BonusResultStep_m1x1, g_ram[0x88] == 1 ? 3500 : 10)
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */

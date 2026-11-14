@@ -285,3 +285,5 @@
 819714  1 1  mem+A,X,Y,C,V   UpdateObjects
 8099E7  1 1  mem+A,X,Y,C,V   EndScreenTimes
 809A87  1 1  mem+A,X,Y,C,V   EndScreenRecord
+80D97E  1 1  mem+A,X,Y,C,V   Mode09
+80DF01  1 1  mem+A,X,Y,C,V   BonusResultStep

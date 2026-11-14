@@ -305,3 +305,4 @@
 819714 UpdateObjects
 8099E7 EndScreenTimes
 809A87 EndScreenRecord
+80DF01 BonusResultStep
