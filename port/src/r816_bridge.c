@@ -566,6 +566,7 @@ static uint32 hdma_preset_cost1(uint8 a)
     return 170 + 38 * ((n1 + n2) & 0xFFFF);
 }
 BRIDGE_DYN(HleHand_SetHdmaPreset, SetHdmaPreset_m1x1, hdma_preset_cost1((uint8)A))
+BRIDGE(HleHand_SetupJumpContest, SetupJumpContest_m1x1, 7000)
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */

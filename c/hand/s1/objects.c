@@ -5897,3 +5897,56 @@ void RiderPaletteWords_m1x1(void)
     lda8(rd8(ABSX(0xB60B))); wr8(ABS(0x1546), (u8)A);
     ret();
 }
+
+void DrawAllRiders_m1x1(void);
+
+/* $80:D813 (RTS): set up Stadium 1's jump contest: the lane rows ($09D3
+ * ramps $FC, three empty rows, six scenery rows $3B); the streamer start;
+ * the player at column 9, X $30, angle 6 ($90 = 2, $1905 = $17, HDMA
+ * preset 1), drawn once at ground $B0 then $B8; HDMA channels 7/6
+ * ($80:D8ED -> $210F, $80:D8F4 -> $2108); $88 = $012C, $1B00/$1B02
+ * cleared, $1B20 = 9, $1B21 = 8 and $190F = $DC. */
+void SetupJumpContest_m1x1(void)
+{
+    ldx8(0x3F);
+    do {
+        lda8(0xFC); wr8(ABSX(0x09D3), 0xFC);
+        lda8(0x00);
+        wr8(ABSX(0x0A13), 0); wr8(ABSX(0x0A53), 0); wr8(ABSX(0x0A93), 0);
+        lda8(0x3B);
+        wr8(ABSX(0x0B53), 0x3B); wr8(ABSX(0x0B93), 0x3B); wr8(ABSX(0x0BD3), 0x3B);
+        wr8(ABSX(0x0C13), 0x3B); wr8(ABSX(0x0C53), 0x3B); wr8(ABSX(0x0C93), 0x3B);
+        X = dec8((u8)X);
+    } while (!fn);
+    lda8(0x34); wr8(ABS(0x0270), 0x34);
+    lda8(0x0A); wr8(ABS(0x0273), 0x0A);
+    lda8(0x05); wr8(ABS(0x0272), 0x05);
+    lda8(0x74); wr8(ABS(0x0271), 0x74);
+    lda8(0x08); wr8(ABS(0x0188), 0x08);
+    lda8(0x09); wr8(ABS(0x0260), 0x09);
+    lda8(0x30); wr8(ABS(0x0190), 0x30);
+    lda8(0x06); wr8(ABS(0x01E0), 0x06);
+    lda8(0x01);
+    wr8(ABS(0x0198), 0x01); wr8(ABS(0x01D8), 0x01); wr8(ABS(0x0958), 0x01);
+    lda8(asl8((u8)A));
+    wr8(DP(0x90), (u8)A);
+    lda8(0x17); wr8(ABS(0x1905), 0x17);
+    lda8(0x01);
+    push8(0x80); push16(0xD87C); SetHdmaPreset_m1x1();
+    ldx8(0x00);
+    lda8(0xB0); wr8(ABS(0x0CD5), 0xB0); wr8(ABS(0x01B0), 0xB0);
+    push16(0xD889); DrawAllRiders_m1x1();
+    lda8(0xB8); wr8(ABS(0x0CD5), 0xB8); wr8(ABS(0x01B0), 0xB8);
+    static const u8 ch[12][2] = {
+        {0x70,0x42},{0x71,0x0F},{0x72,0xED},{0x73,0xD8},{0x74,0x80},{0x77,0x00},
+        {0x60,0x40},{0x61,0x08},{0x62,0xF4},{0x63,0xD8},{0x64,0x80},{0x67,0x00} };
+    for (int i = 0; i < 12; i++) { lda8(ch[i][1]); wr8(ABS(0x4300 | ch[i][0]), ch[i][1]); }
+    rep(0x20);
+    lda16(0x012C); wr16(DP(0x88), 0x012C);
+    wr16(ABS(0x1B00), 0); wr16(ABS(0x1B02), 0);
+    sep(0x20);
+    lda8(0x09); wr8(ABS(0x1B20), 0x09);
+    lda8(0x08); wr8(ABS(0x1B21), 0x08);
+    lda8(0xDC); wr8(ABS(0x190F), 0xDC);
+    ret();
+}

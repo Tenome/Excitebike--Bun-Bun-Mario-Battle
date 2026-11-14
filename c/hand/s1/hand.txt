@@ -313,3 +313,4 @@
 80A4FE  1 1  mem+A,X,Y,C,V   FinalSchedule
 81A620  1 1  mem+A,X,Y,C,V   SetHdmaPreset
 80B538  1 1  mem+A,X,Y,C,V   RiderPaletteWords
+80D813  1 1  mem+A,X,Y,C,V   SetupJumpContest

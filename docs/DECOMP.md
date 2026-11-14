@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 309 hand-written (75.9%), 306 of them in the port.
+407 functions in the static map; 310 hand-written (76.2%), 307 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -184,6 +184,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:D3F7` | ResetCoinMarkers | `mem+A,X,C,V` | `objects.c` | yes |
 | `$80:D3FD` | ClearWords1530 | `mem+C,V` | `objects.c` | yes |
 | `$80:D7BA` | SetupSpriteRow15 | `mem+X,Y,C,V` | `title.c` | yes |
+| `$80:D813` | SetupJumpContest | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:D906` | ShowBonusLabel | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:D97E` | Mode09 | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:DA31` | BonusBannerSprites | `mem+A,X,Y,C,V` | `objects.c` | yes |

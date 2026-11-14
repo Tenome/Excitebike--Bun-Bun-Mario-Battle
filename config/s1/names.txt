@@ -331,3 +331,4 @@
 80A4FE FinalSchedule
 81A620 SetHdmaPreset
 80B538 RiderPaletteWords
+80D813 SetupJumpContest
