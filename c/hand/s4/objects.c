@@ -13955,3 +13955,253 @@ void RacePlaceRiders_m1x1(void)
     lda8(0x17); wr8(ABS(0x1905), 0x17);
     ret();
 }
+
+void DrawRaceHud_m1x1(void);
+void QueueResultsRow_m1x1(void);
+void QueueTileBlock_m1x1(void);
+void ChangeModeLong_m1x1(void);
+void JumpResultTotal_m1x1(void);
+
+/* Empty routines (RTS): $80:BB45, $80:F03A, $81:9A26, $81:B928. */
+void EmptyBB45_m1x1(void) { ret(); }
+void EmptyF03A_m1x1(void) { ret(); }
+void Empty9A26_m1x1(void) { ret(); }
+void EmptyB928_m1x1(void) { ret(); }
+
+/* $80:B55D ModeNop (RTS). */
+void ModeNop_m1x1(void) { ret(); }
+
+/* $80:86E1 (RTS): next mode step ($75 + 1). */
+void ModeStepNext_m1x1(void)
+{
+    wr8(DP(0x75), inc8(rd8(DP(0x75))));
+    ret();
+}
+
+/* $80:E9FC (RTS): the jump contest total (JumpResultTotal). */
+void JumpTotalStep_m1x1(void)
+{
+    push8(0x80); push16(0xE9FF); JumpResultTotal_m1x1();
+    ret();
+}
+
+/* $80:FBA4 / $80:FBA9 / $80:FB9A (RTS by tail, X = rider): jump base $30
+ * or $10; the last also sets $0206,X = 2 and $0246,X = 1. */
+void JumpBase30_m1x1(void) { lda8(0x30); SetJumpBase_m1x1(); }
+void JumpBase10_m1x1(void) { lda8(0x10); SetJumpBase_m1x1(); }
+void StartJumpBase30_m1x1(void)
+{
+    lda8(0x02); wr8(ABSX(0x0206), 0x02);
+    lda8(0x01); wr8(ABSX(0x0246), 0x01);
+    JumpBase30_m1x1();
+}
+
+/* $81:C011 (RTS): clear the frame $034F of object $03A3. */
+void ClearObjectFrame_m1x1(void)
+{
+    X = rd8(ABS(0x03A3)); nz8((u8)X);
+    wr8(ABSX(0x034F), 0);
+    ret();
+}
+
+/* $80:8F9D (RTS): the HDMA channels, $95 = 1. */
+void SetupHdmaFlag_m1x1(void)
+{
+    push8(0x80); push16(0x8FA0); SetupHdmaChannels_m1x1();
+    lda8(0x01); wr8(DP(0x95), 0x01);
+    ret();
+}
+
+/* Tail jump through a 16-bit table (same bank) indexed by 2 * v. */
+static void table_jump4(u32 table, u8 v, u32 site)
+{
+    lda8(v);
+    lda8(asl8((u8)A));
+    X = (u8)A; nz8((u8)X);
+    u16 t = rd16(LONG(table + X));
+    if (!r816_call_pc((table & 0xFF0000) | t))
+        r816_unknown_target(site, t);
+}
+
+/* $80:F02D (RTS by tail): step $C7 through $80:F034. */
+void DemoStepDispatch_m1x1(void) { table_jump4(0x80F034, rd8(DP(0xC7)), 0x80F031); }
+
+/* $81:95F4 (RTS by tail, Y = object): step $012E,Y through $81:95FC. */
+void ObjectStepDispatch_m1x1(void) { table_jump4(0x8195FC, rd8(ABSY(0x012E)), 0x8195F9); }
+
+/* Object $03A3's state $030F through a table (RTS by tail): $81:9835,
+ * $81:B8E3, $81:B95D, $81:BA4C, $81:BB80, $81:BCC1, $81:BDDC, $81:BF34,
+ * $81:BFFC. */
+static void object_state_jump4(u32 table, u32 site)
+{
+    X = rd8(ABS(0x03A3)); nz8((u8)X);
+    table_jump4(table, rd8(ABSX(0x030F)), site);
+}
+void ObjectState9835_m1x1(void) { object_state_jump4(0x819840, 0x81983D); }
+void ObjectStateB8E3_m1x1(void) { object_state_jump4(0x81B8EE, 0x81B8EB); }
+void ObjectStateB95D_m1x1(void) { object_state_jump4(0x81B968, 0x81B965); }
+void ObjectStateBA4C_m1x1(void) { object_state_jump4(0x81BA57, 0x81BA54); }
+void ObjectStateBB80_m1x1(void) { object_state_jump4(0x81BB8B, 0x81BB88); }
+void ObjectStateBCC1_m1x1(void) { object_state_jump4(0x81BCCC, 0x81BCC9); }
+void ObjectStateBDDC_m1x1(void) { object_state_jump4(0x81BDE7, 0x81BDE4); }
+void ObjectStateBF34_m1x1(void) { object_state_jump4(0x81BF3F, 0x81BF3C); }
+void ObjectStateBFFC_m1x1(void) { object_state_jump4(0x81C007, 0x81C004); }
+
+/* $80:F952 (RTS by tail, X = rider): the rider pair for 2, halved, then
+ * HeightBelow. */
+void PairHeight2_m1x1(void)
+{
+    lda8(0x02);
+    push16(0xF956); SetRiderPair_m1x1();
+    lda8(lsr8((u8)A));
+    HeightBelow_m1x1();
+}
+
+/* $80:F9FA: $0206,X = A. */
+static void set_jump_state4(void)
+{
+    wr8(ABSX(0x0206), (u8)A);
+    ret();
+}
+
+/* $80:F9F5 (RTS, X = rider): clear $020E,X and $0206,X. */
+void ClearJumpFlags_m1x1(void)
+{
+    lda8(0x00);
+    wr8(ABSX(0x020E), 0);
+    set_jump_state4();
+}
+
+/* $80:FB53 (RTS, X = rider): $0206,X = 1. */
+void SetJumpState1_m1x1(void)
+{
+    lda8(0x01);
+    set_jump_state4();
+}
+
+/* $81:C3A5 (RTS): past this course's minute ($81:C3A1 by $7C) of the
+ * broadcast, go to mode 3. */
+void CourseMinuteCheck_m1x1(void)
+{
+    X = rd8(DP(0x7C)); nz8((u8)X);
+    lda8(rd8(LONG(0x7FFFFF)));
+    cmp8((u8)A, rd8(LONG(0x81C3A1 + X)));
+    if (fc) {
+        lda8(0x03); wr8(DP(0x76), 0x03);
+        push8(0x81); push16(0xC3B8); ChangeModeLong_m1x1();
+    }
+    ret();
+}
+
+/* $80:F25B (RTS): BG mode 9, BG1SC = 1. */
+void SetRaceBgMode_m1x1(void)
+{
+    lda8(0x09); wr8(ABS(0x2105), 0x09);
+    lda8(0x01); wr8(ABS(0x2107), 0x01);
+    ret();
+}
+
+/* $80:F3AD (RTS by tail): rival 7 ($092A = 7, $019E,7 cleared) on lane 3. */
+void PlaceLastRival_m1x1(void)
+{
+    ldx8(0x07);
+    wr8(ABS(0x092A), 0x07);
+    wr8(ABSX(0x019E), 0);
+    ldy8(0x03);
+    PlaceRival_m1x1();
+}
+
+/* $80:F940 (RTS, X = rider): $0246,X = $80; the rider pair for 5, halved,
+ * into $01FE,X and $026E,X. */
+void PairHeight5_m1x1(void)
+{
+    lda8(0x80); wr8(ABSX(0x0246), 0x80);
+    lda8(0x05);
+    push16(0xF949); SetRiderPair_m1x1();
+    lda8(lsr8((u8)A));
+    wr8(ABSX(0x01FE), (u8)A);
+    wr8(ABSX(0x026E), (u8)A);
+    ret();
+}
+
+/* $80:FC53 (RTS, X = rider): clear $0226,X, $01A6,X and $0981,X. */
+void ClearRiderAction_m1x1(void)
+{
+    lda8(0x00);
+    wr8(ABSX(0x0226), 0);
+    wr8(ABSX(0x01A6), 0);
+    wr8(ABSX(0x0981), 0);
+    ret();
+}
+
+/* $80:F95B (RTS, X = rider): the rider pair for 6, the jump base, $0246,X
+ * = $60. */
+void PairJump6_m1x1(void)
+{
+    lda8(0x06);
+    push16(0xF95F); SetRiderPair_m1x1();
+    push16(0xF962); SetJumpBase_m1x1();
+    lda8(0x60); wr8(ABSX(0x0246), 0x60);
+    ret();
+}
+
+/* $80:A62E (RTS by tail): the tile block $80:A63F at VRAM $18D2. */
+void QueueStadiumLabel_m1x1(void)
+{
+    rep(0x20);
+    lda16(0x18D2); wr16(DP(0x00), 0x18D2);
+    lda16(0xA63F); wr16(DP(0x02), 0xA63F);
+    sep(0x20);
+    QueueTileBlock_m1x1();
+}
+
+/* $80:8FF1 (RTS): stadium 1's results row, badge and label ($0928 = 1,
+ * then cleared). */
+void ShowStadium1Row_m1x1(void)
+{
+    lda8(0x01); wr8(ABS(0x0928), 0x01);
+    push16(0x8FF8); QueueResultsRow_m1x1();
+    push8(0x80); push16(0x8FFC); QueueStadiumBadge_m1x1();
+    push16(0x8FFF); QueueStadiumLabel_m1x1();
+    wr8(ABS(0x0928), 0);
+    ret();
+}
+
+/* $80:F03B (RTS): $1569 = $9C - $C8. */
+void ScrollDelta_m1x1(void)
+{
+    rep(0x20);
+    lda16(rd16(DP(0x9C)));
+    fc = 1; sbc16(rd16(DP(0xC8)));
+    wr16(ABS(0x1569), A);
+    sep(0x20);
+    ret();
+}
+
+/* $80:F24D (RTS): course 0, race, $7E cleared, attract demo $0CD7 = $0F. */
+void ResetDemoCourse_m1x1(void)
+{
+    lda8(0x00);
+    wr8(DP(0x7C), 0); wr8(DP(0x7D), 0); wr8(DP(0x7E), 0);
+    lda8(0x0F); wr8(ABS(0x0CD7), 0x0F);
+    ret();
+}
+
+/* $80:F9FE (RTS, X = rider): $020E,X = 1, or 2 when $01F6,X < $20. */
+void SetJumpKind_m1x1(void)
+{
+    lda8(0x01); wr8(ABSX(0x020E), 0x01);
+    lda8(rd8(ABSX(0x01F6)));
+    cmp8((u8)A, 0x20);
+    if (!fc) wr8(ABSX(0x020E), inc8(rd8(ABSX(0x020E))));
+    ret();
+}
+
+/* $80:91F4 (RTS by tail): the race HUD unless in the attract demo, then
+ * ResetRaceBoard. */
+void StartRaceBoard_m1x1(void)
+{
+    lda8(rd8(ABS(0x0CD7)));
+    if (fz) { push16(0x91FB); DrawRaceHud_m1x1(); }
+    ResetRaceBoard_m1x1();
+}
