@@ -328,3 +328,10 @@
 80E90F  1 1  mem+A,X,Y,C,V   RiderGroundHeightsFrom
 80E90D  1 1  mem+A,X,Y,C,V   RiderGroundHeights
 80E7AC  1 1  mem+A,X,Y,C,V   RunRiderPieces
+80EDB6  1 1  mem+A,X,Y,C,V   NextColumn
+80EDB2  1 1  mem+A,X,Y,C,V   NextColumnLong
+80EDC0  1 1  mem+A,X,Y,C,V   AddScoreLong
+80EE58  1 1  mem+X,Y,C,V   QueueScoreDigitsLong
+80DD03  1 1  mem+A,X,Y,C,V   CourseRowList
+80DB89  1 1  mem+A,X,Y,C,V   BuildCourseColumn
+809698  1 1  mem+A,X,Y,C,V   Mode04_FreeRunSchedule

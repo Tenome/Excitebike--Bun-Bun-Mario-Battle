@@ -346,3 +346,10 @@
 80E90F RiderGroundHeightsFrom
 80E90D RiderGroundHeights
 80E7AC RunRiderPieces
+80EDB6 NextColumn
+80EDB2 NextColumnLong
+80EDC0 AddScoreLong
+80EE58 QueueScoreDigitsLong
+80DD03 CourseRowList
+80DB89 BuildCourseColumn
+809698 Mode04_FreeRunSchedule

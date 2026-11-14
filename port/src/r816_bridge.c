@@ -589,6 +589,19 @@ BRIDGE(HleHand_StartJumpState, StartJumpState_m1x1, 28)
 BRIDGE_DYN(HleHand_RiderGroundHeightsFrom, RiderGroundHeightsFrom_m1x1, ground_heights_cost1((uint8)X))
 BRIDGE_DYN(HleHand_RiderGroundHeights, RiderGroundHeights_m1x1, 2 + ground_heights_cost1(7))
 BRIDGE(HleHand_RunRiderPieces, RunRiderPieces_m1x1, 90)
+/* BuildCourseColumn ($80:DB89): ~44 cycles while the builder column $0273
+ * is not at the player column $0260, ~1200 when it builds one. */
+static uint32 build_column_cost1(void)
+{
+    return g_ram[0x0273] != g_ram[0x0260] ? 44 : 1200;
+}
+BRIDGE(HleHand_NextColumn, NextColumn_m1x1, 20)
+BRIDGE(HleHand_NextColumnLong, NextColumnLong_m1x1, 34)
+BRIDGE(HleHand_AddScoreLong, AddScoreLong_m1x1, 160)
+BRIDGE(HleHand_QueueScoreDigitsLong, QueueScoreDigitsLong_m1x1, 300)
+BRIDGE(HleHand_CourseRowList, CourseRowList_m1x1, 24)
+BRIDGE_DYN(HleHand_BuildCourseColumn, BuildCourseColumn_m1x1, build_column_cost1())
+BRIDGE(HleHand_Mode04_FreeRunSchedule, Mode04_FreeRunSchedule_m1x1, 120)
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */

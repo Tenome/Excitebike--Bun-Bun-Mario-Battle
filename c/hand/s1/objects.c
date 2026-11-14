@@ -6259,3 +6259,280 @@ void RunRiderPieces_m1x1(void)
     wr8(ABSX(0x08BC), 0);
     ret();
 }
+
+void BlankQueueRow_m1x1(void);
+void UpdateObjects_m1x1(void);
+
+/* $80:EDB6 (RTS): A + 1, wrapping at $40. */
+void NextColumn_m1x1(void)
+{
+    fc = 0; adc8(0x01);
+    cmp8((u8)A, 0x40);
+    if (fz) lda8(0x00);
+    ret();
+}
+
+/* $80:EDB2 (RTL): NextColumn for other banks. */
+void NextColumnLong_m1x1(void)
+{
+    push16(0xEDB4); NextColumn_m1x1();
+    retl();
+}
+
+/* $80:EDC0 (RTL): AddScore for other banks. */
+void AddScoreLong_m1x1(void)
+{
+    push16(0xEDC2); AddScore_m1x1();
+    retl();
+}
+
+/* $80:EE58 (RTL): QueueScoreDigits for other banks. */
+void QueueScoreDigitsLong_m1x1(void)
+{
+    push16(0xEE5A); QueueScoreDigits_m1x1();
+    retl();
+}
+
+/* $80:DD03 (RTS, X = row type): the row's piece list ($05) from
+ * $80:D4D0 / $80:D4D9. */
+void CourseRowList_m1x1(void)
+{
+    lda8(rd8(ABSX(0xD4D0))); wr8(DP(0x05), (u8)A);
+    lda8(rd8(ABSX(0xD4D9))); wr8(DP(0x06), (u8)A);
+    ret();
+}
+
+/* $80:DCEA (entered with M either way): from Y + 2 on, the list bytes
+ * ($05),Y as tiles $08xx into the course row buffer $7F:000E + X up to
+ * X = $1E. */
+static void course_row_tiles1(void)
+{
+    do {
+        Y = inc8((u8)Y);
+        Y = inc8((u8)Y);
+        rep(0x20);
+        lda16(rd16((((u32)DB << 16) + rd16(DP(0x05)) + Y) & 0xFFFFFF));
+        and16(0x00FF);
+        ora16(0x0800);
+        wr16(LONGX(0x7F000E), A);
+        X = inc8((u8)X);
+        X = inc8((u8)X);
+        cmp8((u8)X, 0x1E);
+    } while (!fz);
+    sep(0x20);
+    ret();
+}
+
+static u8 course_list1(u32 dp)
+{
+    return rd8((((u32)DB << 16) + rd16(DP(dp)) + Y) & 0xFFFFFF);
+}
+
+/* $80:DB89 (RTS): build the course one column ahead. The course script
+ * ($07 from $80:D445 / $80:D447 by the header flag $81:800C) starts with
+ * the scenery byte $09C9. Each time the builder column $0273 reaches the
+ * player column $0260: the next script entry (0 = stop, 9 = loop to
+ * entry 1 as row type 1, $80+ = that many empty rows, else a row type
+ * $0277) and its row list ($80:DD03) give the column pieces; a column
+ * is blanked, filled ($80:DCEA) and queued for VRAM at $0271 - $20 (row
+ * pointer $0270, column $0271 wrapping $80 -> $60 with $0272 ^ 4), and
+ * the builder column steps. */
+void BuildCourseColumn_m1x1(void)
+{
+    lda8(rd8(LONG(0x81800C)));
+    X = (u8)A; nz8((u8)X);
+    lda8(rd8(ABSX(0xD445))); wr8(DP(0x07), (u8)A);
+    lda8(rd8(ABSX(0xD447))); wr8(DP(0x08), (u8)A);
+    Y = rd8(ABS(0x0275)); nz8((u8)Y);
+    if (fz) {
+        lda8(course_list1(0x07));
+        wr8(ABS(0x09C9), (u8)A);
+        Y = inc8((u8)Y);
+        wr8(ABS(0x0275), (u8)Y);
+    }
+    lda8(rd8(ABS(0x0273)));
+    cmp8((u8)A, rd8(ABS(0x0260)));
+    if (!fz) { ret(); return; }
+    int step;   /* 0 = next entry, 1 = counting empty rows, 2 = same row */
+    lda8(rd8(ABS(0x0274)));
+    if (!fz) step = 1;
+    else {
+        lda8(rd8(ABS(0x0278)));
+        step = fz ? 0 : 2;
+    }
+    for (;;) {
+        if (step == 0) {
+            Y = rd8(ABS(0x0275)); nz8((u8)Y);
+            wr8(ABS(0x0275), inc8(rd8(ABS(0x0275))));
+            lda8(course_list1(0x07));
+            if (fz) { ret(); return; }
+            cmp8((u8)A, 0x09);
+            if (fz) {
+                lda8(0x01);
+                wr8(ABS(0x0275), 0x01);
+            }
+            cmp8((u8)A, 0x80);
+            if (fc) {
+                and8(0x7F);
+                wr8(ABS(0x0274), (u8)A);
+                step = 1;
+            } else {
+                wr8(ABS(0x0277), (u8)A);
+                step = 2;
+            }
+        }
+        if (step == 1) {
+            wr8(ABS(0x0274), dec8(rd8(ABS(0x0274))));
+            lda8(0x00);
+            wr8(ABS(0x09C3), 0);
+            wr8(ABS(0x0278), 0);
+            wr8(ABS(0x0277), 0);
+        }
+        /* L80DBE5 */
+        X = rd8(ABS(0x0277)); nz8((u8)X);
+        push16(0xDBEA); CourseRowList_m1x1();
+        Y = rd8(ABS(0x0278)); nz8((u8)Y);
+        lda8(course_list1(0x05));
+        if (!fz) break;
+        wr8(ABS(0x0278), (u8)A);
+        wr8(ABS(0x09C3), (u8)A);
+        step = 0;
+    }
+    push16(0xDBF7); BlankQueueRow_m1x1();
+    lda8(course_list1(0x05));
+    X = (u8)A; nz8((u8)X);
+    push16(0xDBFD); course_row_tiles1();
+    Y = inc8((u8)Y);
+    Y = inc8((u8)Y);
+    wr8(ABS(0x0278), (u8)Y);
+    lda8(0x81); wr8(LONG(0x7F0004), 0x81);
+    lda8(0x01); wr8(LONG(0x7F0005), 0x01);
+    lda8(0x18); wr8(LONG(0x7F0006), 0x18);
+    lda8(rd8(LONG(0x7F0000)));
+    fc = 0; adc8(0x0C);
+    wr8(LONG(0x7F0007), (u8)A);
+    lda8(0x00); wr8(LONG(0x7F0008), 0);
+    lda8(0x7F); wr8(LONG(0x7F0009), 0x7F);
+    rep(0x20);
+    lda16(rd16(LONG(0x7F0000)));
+    fc = 0; adc16(0x002A);
+    wr16(LONG(0x7F0000), A);
+    wr16(LONG(0x7F000C), A);
+    lda16(rd16(ABS(0x0271)));
+    fc = 1; sbc16(0x0020);
+    wr16(LONG(0x7F0002), A);
+    lda16(0x001E); wr16(LONG(0x7F000A), 0x001E);
+    sep(0x20);
+    lda8(rd8(ABS(0x0270)));
+    wr8(DP(0x0F), (u8)A);
+    push16(0xDC59); CourseColumn_m1x1();
+    lda8(rd8(ABS(0x0270)));
+    push16(0xDC5F); NextColumn_m1x1();
+    wr8(ABS(0x0270), (u8)A);
+    wr8(ABS(0x0271), inc8(rd8(ABS(0x0271))));
+    lda8(rd8(ABS(0x0271)));
+    cmp8((u8)A, 0x80);
+    if (fz) {
+        lda8(0x60); wr8(ABS(0x0271), 0x60);
+        lda8(rd8(ABS(0x0272)));
+        eor8(0x04);
+        wr8(ABS(0x0272), (u8)A);
+    }
+    lda8(rd8(ABS(0x0260)));
+    push16(0xDC7F); NextColumn_m1x1();
+    wr8(ABS(0x0273), (u8)A);
+    ret();
+}
+
+/* $80:A576: the free run results wait: objects update; once the timer
+ * $7F:FFFF reaches the stage $80:A5A8 value the next stage starts (mode
+ * 2, $7C + 1, $7D = 0), or after stage 3 the end (mode 9, $1E87 - 10). */
+static void free_run_wait1(void)
+{
+    push8(0x80); push16(0xA579); UpdateObjects_m1x1();
+    X = rd8(DP(0x7C)); nz8((u8)X);
+    lda8(rd8(LONG(0x7FFFFF)));
+    cmp8((u8)A, rd8(ABSX(0xA5A8)));
+    if (!fc) { ret(); return; }
+    wr8(DP(0x75), 0);
+    wr8(DP(0x77), 0);
+    wr8(ABS(0x1923), dec8(rd8(ABS(0x1923))));
+    cmp8((u8)X, 0x03);
+    if (!fc) {
+        wr8(DP(0x7D), 0);
+        wr8(DP(0x7C), inc8(rd8(DP(0x7C))));
+        lda8(0x02); wr8(DP(0x76), 0x02);
+    } else {
+        lda8(0x09); wr8(DP(0x76), 0x09);
+        lda8(rd8(ABS(0x1E87)));
+        fc = 1; sbc8(0x0A);
+        wr8(ABS(0x1E87), (u8)A);
+    }
+    ret();
+}
+
+/* $80:9698 Mode04_FreeRunSchedule (RTS): between free-run stages. After
+ * the stage ($7D set) the results wait. Otherwise, until the timer
+ * $7F:FFFF passes the stage $80:9727 value (then back to mode 2 with $7D
+ * set), every $20 frames ($88) the next of the ten record rows ($0452)
+ * shows: its time ($081C + 3 * row) to $03B1 with sound $42 and the
+ * clock against $80:972B (an empty row skips ahead to the last), sound
+ * $43 at the tenth; from row 10 on, FinalSchedule. */
+void Mode04_FreeRunSchedule_m1x1(void)
+{
+    lda8(rd8(DP(0x7D)));
+    if (!fz) { free_run_wait1(); return; }
+    X = rd8(DP(0x7C)); nz8((u8)X);
+    lda8(rd8(ABSX(0x9727)));
+    cmp8((u8)A, rd8(LONG(0x7FFFFF)));
+    if (!fc) {
+        lda8(0x02); wr8(DP(0x76), 0x02);
+        wr8(DP(0x75), 0);
+        wr8(DP(0x77), 0);
+        wr8(ABS(0x1923), dec8(rd8(ABS(0x1923))));
+        wr8(DP(0x7D), inc8(rd8(DP(0x7D))));
+        ret();
+        return;
+    }
+    wr8(ABS(0x0088), dec8(rd8(ABS(0x0088))));
+    if (!fz) { ret(); return; }
+    lda8(0x20); wr8(ABS(0x0088), 0x20);
+    lda8(rd8(ABS(0x0452)));
+    cmp8((u8)A, 0x0A);
+    if (fc) { push16(0x96C0); FinalSchedule_m1x1(); ret(); return; }
+    lda8(asl8((u8)A));
+    X = (u8)A; nz8((u8)X);
+    fc = 0; adc8(rd8(ABS(0x0452)));
+    Y = (u8)A; nz8((u8)Y);
+    lda8(rd8(ABSY(0x081C)));
+    cmp8((u8)A, 0xFF);
+    if (!fz) {
+        wr8(ABS(0x03B1), (u8)A);
+        lda8(rd8(ABSY(0x081D))); wr8(ABS(0x03B2), (u8)A);
+        lda8(rd8(ABSY(0x081E))); wr8(ABS(0x03B3), (u8)A);
+        lda8(0x42);
+        push8(0x80); push16(0x96F2); QueueSound_m1x1();
+        rep(0x20);
+        lda16(rd16(ABSX(0x972B)));
+        wr16(DP(0x00), A);
+        sep(0x20);
+        push16(0x96FE); TickRaceClock_m1x1();
+    } else {
+        lda8(rd8(ABS(0x0452)));
+        if (fz) {
+            lda8(0x0A); wr8(ABS(0x0452), 0x0A);
+            lda8(0x01); wr8(ABS(0x0088), 0x01);
+            ret();
+            return;
+        }
+        lda8(0x09); wr8(ABS(0x0452), 0x09);
+    }
+    wr8(ABS(0x0452), inc8(rd8(ABS(0x0452))));
+    lda8(rd8(ABS(0x0452)));
+    cmp8((u8)A, 0x0A);
+    if (fz) {
+        lda8(0x43);
+        push8(0x80); push16(0x9725); QueueSound_m1x1();
+    }
+    ret();
+}

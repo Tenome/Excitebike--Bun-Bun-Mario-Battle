@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 324 hand-written (79.6%), 321 of them in the port.
+407 functions in the static map; 331 hand-written (81.3%), 328 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -48,6 +48,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:9236` | RaceHudInit | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:9248` | RaceSetup | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:95AE` | DrawText95C4 | `mem+Y,V` | `misc.c` | yes |
+| `$80:9698` | Mode04_FreeRunSchedule | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:98B2` | QueueTimeDigits | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:9942` | QueueFiveDigits | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:9982` | BsxReadSerial3 | `mem+X,Y,V` | `misc.c` | yes |
@@ -193,8 +194,10 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:DB28` | ScrollFarLayer | `mem+V` | `physics.c` | yes |
 | `$80:DB44` | BonusRunOut | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:DB6F` | BonusTimerStep | `mem+X,Y,C,V` | `objects.c` | yes |
+| `$80:DB89` | BuildCourseColumn | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:DC8D` | CourseColumn | `mem+A,X,Y,C,V` | `objects.c` | yes |
-| `$80:DCD8` | BlankQueueRow | `mem+Y` | `misc.c` | yes |
+| `$80:DCD8` | BlankQueueRow | `mem+Y` | `objects.c` | yes |
+| `$80:DD03` | CourseRowList | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:DD0E` | PlayerCrashStep | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:DD82` | PlayerColumnCheck | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:DDA7` | PlayerStop | `mem+A,X,Y,C,V` | `objects.c` | yes |
@@ -243,8 +246,12 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:ECE4` | DrawSparksAndMarkers | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:ED42` | CrossFinish | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:ED96` | ItemFlashState | `mem+X,Y,C,V` | `from_s4.c` | yes |
+| `$80:EDB2` | NextColumnLong | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:EDB6` | NextColumn | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:EDC0` | AddScoreLong | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:EDC4` | AddScore | `mem+X,Y,C,V` | `race.c` | yes |
 | `$80:EDEF` | PaceBonus | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:EE58` | QueueScoreDigitsLong | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:EE68` | QueueScoreDigits | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$81:8BE2` | FillLaneColumn | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$81:8C21` | BlankQueueRowPal2 | `mem+Y` | `misc.c` | yes |
