@@ -429,3 +429,13 @@
 80DBF1  1 1  mem+A,X,Y,C,V   CourseRowList
 80DA77  1 1  mem+A,X,Y,C,V   BuildCourseColumn
 80F78E  1 1  mem+A,X,Y,C,V   RunRiderPieces
+80ABC7  1 1  mem+A,X,Y,C,V   ThrottleAll
+80BB46  1 1  mem+A,X,Y,C,V   RiderStateStep
+80BB3A  1 1  mem+A,X,Y,C,V   RiderStepAll
+80CA93  1 1  mem+A,X,Y,C,V   SortAndDrawRiders
+80F755  1 1  mem+A,X,Y,C,V   SpinAllWheels
+80F786  1 1  mem+A,X,Y,C,V   RunAllRiderPieces
+80F931  1 1  mem+A,X,Y,C,V   RiderGroundHeightsFrom
+80F92F  1 1  mem+A,X,Y,C,V   RiderGroundHeights
+80FBF5  1 1  mem+A,X,Y,C,V   RunPieceActions
+80F32D  1 1  mem+A,X,Y,C,V   TurboMeterJmp

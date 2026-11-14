@@ -1215,6 +1215,46 @@ BRIDGE(HleHand_CourseRowList, CourseRowList_m1x1, 18)
  * $0266, ~900 when it builds one. */
 BRIDGE_DYN(HleHand_BuildCourseColumn, BuildCourseColumn_m1x1, g_ram[0x0279] != g_ram[0x0266] ? 33 : 900)
 BRIDGE(HleHand_RunRiderPieces, RunRiderPieces_m1x1, 70)
+/* Stadium 4 race frame loops (objects.c) */
+static uint32 throttle_all_cost4(void)
+{
+    uint32 c = 25;
+    if (!g_ram[0x92]) return 20;
+    for (int x = 0; x < 8; x++) c += g_ram[0x01DE + x] ? 165 : 10;
+    return c;
+}
+static uint32 rider_steps_cost4(void)
+{
+    static const uint16 step[6] = { 5, 50, 30, 60, 25, 45 };
+    uint32 c = 5;
+    for (int x = 0; x < 8; x++) {
+        uint8 st = g_ram[0x01D6 + x];
+        c += 60 + (st < 6 ? step[st] : 0);
+    }
+    return c;
+}
+static uint32 ground_heights_cost4(int last)
+{
+    uint32 c = 5;
+    for (int x = 0; x <= last && x < 8; x++) c += g_ram[0x01EE + x] ? 9 : 32;
+    return c;
+}
+static uint32 piece_actions_cost4(void)
+{
+    uint32 c = 8;
+    for (int x = 0; x < 8; x++) c += g_ram[0x0226 + x] ? 54 : 9;
+    return c;
+}
+BRIDGE_DYN(HleHand_ThrottleAll, ThrottleAll_m1x1, throttle_all_cost4())
+BRIDGE(HleHand_RiderStateStep, RiderStateStep_m1x1, 20)
+BRIDGE_DYN(HleHand_RiderStepAll, RiderStepAll_m1x1, rider_steps_cost4())
+BRIDGE_DYN(HleHand_SortAndDrawRiders, SortAndDrawRiders_m1x1, 705 + draw_all_riders_cost())
+BRIDGE(HleHand_SpinAllWheels, SpinAllWheels_m1x1, 152)
+BRIDGE(HleHand_RunAllRiderPieces, RunAllRiderPieces_m1x1, 600)
+BRIDGE_DYN(HleHand_RiderGroundHeightsFrom, RiderGroundHeightsFrom_m1x1, ground_heights_cost4(X & 0xFF))
+BRIDGE_DYN(HleHand_RiderGroundHeights, RiderGroundHeights_m1x1, 2 + ground_heights_cost4(7))
+BRIDGE_DYN(HleHand_RunPieceActions, RunPieceActions_m1x1, piece_actions_cost4())
+BRIDGE(HleHand_TurboMeterJmp, TurboMeterJmp_m1x1, 242)
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)

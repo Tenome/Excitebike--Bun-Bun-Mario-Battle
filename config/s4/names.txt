@@ -441,3 +441,13 @@
 80DBF1 CourseRowList
 80DA77 BuildCourseColumn
 80F78E RunRiderPieces
+80ABC7 ThrottleAll
+80BB46 RiderStateStep
+80BB3A RiderStepAll
+80CA93 SortAndDrawRiders
+80F755 SpinAllWheels
+80F786 RunAllRiderPieces
+80F931 RiderGroundHeightsFrom
+80F92F RiderGroundHeights
+80FBF5 RunPieceActions
+80F32D TurboMeterJmp

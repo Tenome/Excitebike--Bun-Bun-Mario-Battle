@@ -11668,3 +11668,124 @@ void RunRiderPieces_m1x1(void)
     wr8(ABSX(0x08BC), 0);
     ret();
 }
+
+void RidersThrottle_m1x1(void);
+void SpinWheels_m1x1(void);
+void TurboMeter_m1x1(void);
+void RiderShadowY_m1x1(void);
+void GroundHeightAbove_m1x1(void);
+void SortRidersByPosition_m1x1(void);
+void DrawAllRiders_m1x1(void);
+
+/* $80:ABC7 (RTS): while racing ($92), RidersThrottle for all eight riders;
+ * otherwise only its closing check (unpaused, the player holding A/B and
+ * $092D, $84 clear: $092D = 1). */
+void ThrottleAll_m1x1(void)
+{
+    lda8(rd8(DP(0x92)));
+    if (!fz) {
+        ldx8(0x07);
+        RidersThrottle_m1x1();
+        return;
+    }
+    lda8(rd8(DP(0x54)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABS(0x017E)));
+    and8(0xC0);
+    if (fz) { ret(); return; }
+    lda8(rd8(ABS(0x092D)));
+    ora8(rd8(DP(0x84)));
+    if (!fz) { ret(); return; }
+    lda8(0x01); wr8(ABS(0x092D), 0x01);
+    ret();
+}
+
+/* $80:BB46 (RTS, X = rider): the rider's state step $01D6 through the
+ * table $80:BB1F / $80:BB25. */
+void RiderStateStep_m1x1(void)
+{
+    Y = rd8(ABSX(0x01D6)); nz8((u8)Y);
+    lda8(rd8(ABSY(0xBB1F))); wr8(DP(0x00), (u8)A);
+    lda8(rd8(ABSY(0xBB25))); wr8(DP(0x01), (u8)A);
+    if (!r816_call_pc(0x800000u | rd16(LONG(0x000000))))
+        r816_unknown_target(0x80BB53, rd16(LONG(0x000000)));
+}
+
+/* $80:BB3A (RTS): for riders 7-0 the state step and the shadow height. */
+void RiderStepAll_m1x1(void)
+{
+    ldx8(0x07);
+    do {
+        push16(0xBB3E); RiderStateStep_m1x1();
+        push16(0xBB41); RiderShadowY_m1x1();
+        X = dec8((u8)X);
+    } while (!fn);
+    ret();
+}
+
+/* $80:CA93 (RTS): sort the riders by position, then draw all eight. */
+void SortAndDrawRiders_m1x1(void)
+{
+    push16(0xCA95); SortRidersByPosition_m1x1();
+    ldx8(0x07);
+    DrawAllRiders_m1x1();
+}
+
+/* $80:F755 (RTS): SpinWheels for all eight riders. */
+void SpinAllWheels_m1x1(void)
+{
+    ldx8(0x07);
+    SpinWheels_m1x1();
+}
+
+/* $80:F786 (RTS): the piece scripts of riders 7-1, then the player's. */
+void RunAllRiderPieces_m1x1(void)
+{
+    ldx8(0x07);
+    do {
+        push16(0xF78A); RunRiderPieces_m1x1();
+        X = dec8((u8)X);
+    } while (!fz);
+    RunRiderPieces_m1x1();
+}
+
+/* $80:F931 (RTS, X = last rider): riders X-0 on the ground get their
+ * height $01B6 from GroundHeightAbove. */
+void RiderGroundHeightsFrom_m1x1(void)
+{
+    do {
+        lda8(rd8(ABSX(0x01EE)));
+        if (fz) {
+            push16(0xF938); GroundHeightAbove_m1x1();
+            wr8(ABSX(0x01B6), (u8)A);
+        }
+        X = dec8((u8)X);
+    } while (!fn);
+    ret();
+}
+
+/* $80:F92F (RTS): the same for all eight riders. */
+void RiderGroundHeights_m1x1(void)
+{
+    ldx8(0x07);
+    RiderGroundHeightsFrom_m1x1();
+}
+
+/* $80:FBF5 (RTS): for riders 7-0 with a pending piece action $0226, run
+ * it (PieceAction). */
+void RunPieceActions_m1x1(void)
+{
+    ldx8(0x07);
+    do {
+        lda8(rd8(ABSX(0x0226)));
+        if (!fz) { push16(0xFBFE); piece_action4(); }
+        X = dec8((u8)X);
+    } while (!fn);
+    ret();
+}
+
+/* $80:F32D (RTS): TurboMeter. */
+void TurboMeterJmp_m1x1(void)
+{
+    TurboMeter_m1x1();
+}

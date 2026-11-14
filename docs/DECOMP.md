@@ -367,7 +367,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s4
 
-532 functions in the static map; 430 hand-written (80.8%), 421 of them in the port.
+532 functions in the static map; 440 hand-written (82.7%), 431 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -437,6 +437,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:AB34` | SendSpeedToApu | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:AB46` | BallOrGauge | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:AB59` | RaceFinishStep | `mem+X,Y,C,V` | `flow.c` | yes |
+| `$80:ABC7` | ThrottleAll | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:ABCD` | RidersThrottle | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:AC04` | RiderThrottleLong | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:AC0E` | RiderThrottle | `mem+A,X,Y,C,V` | `objects.c` | yes |
@@ -479,6 +480,8 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:B9FA` | Mul16b | `mem` | `objects.c` |  |
 | `$80:B9FA` | Mul16b | `mem` | `objects.c` |  |
 | `$80:BA66` | Nop_BD39 | `mem+Y` | `objects.c` | yes |
+| `$80:BB3A` | RiderStepAll | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:BB46` | RiderStateStep | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:BB56` | RiderRunOut | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:BB82` | WalkToStartLane | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:BBCF` | RiderAtFinish | `mem+X,Y,C,V` | `objects.c` | yes |
@@ -525,6 +528,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:C990` | Reach2 | `mem+A,X,Y,V` | `collide.c` | yes |
 | `$80:C997` | BallHit | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:CA89` | DrawAllRidersLong | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:CA93` | SortAndDrawRiders | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:CA98` | DrawAllRiders | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:CAE5` | DrawRider | `mem+X,Y,V` | `objects.c` | yes |
 | `$80:CB78` | RiderPose | `mem+A,X,V` | `objects.c` | yes |
@@ -620,11 +624,14 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:F15B` | BuildScoreDigitsLong | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:F15F` | BuildScoreDigits | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:F1D6` | SetJumpScroll | `mem+X,Y,C,V` | `objects.c` | yes |
+| `$80:F32D` | TurboMeterJmp | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:F330` | DemoInputStep | `mem+X,Y,C,V` | `flow.c` | yes |
 | `$80:F3C7` | StartMode01 | `mem+X,Y,C,V` | `from_s1.c` | yes |
 | `$80:F3DD` | DemoPadDisplay | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:F4C8` | TitlePushStart | `mem+X,Y,C,V` | `objects.c` | yes |
+| `$80:F755` | SpinAllWheels | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:F757` | SpinWheels | `mem+X,Y,V` | `objects.c` | yes |
+| `$80:F786` | RunAllRiderPieces | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:F78E` | RunRiderPieces | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:F8D3` | RiderLanePieceAt | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:F8D6` | RiderPieceAt | `mem+A,X,Y,V` | `objects.c` | yes |
@@ -632,6 +639,8 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:F8F7` | LanePieceTablesLong | `mem+X` | `objects.c` | yes |
 | `$80:F901` | LanePieceTables | `mem+X,Y,V` | `objects.c` | yes |
 | `$80:F90C` | MarkFastRider | `mem+A,X,Y,C,V` | `from_s1.c` | yes |
+| `$80:F92F` | RiderGroundHeights | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:F931` | RiderGroundHeightsFrom | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:F94B` | SetJumpBase | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:F969` | RiderPairHeight | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:F96E` | HeightBelow | `mem+A,X,Y,C,V` | `objects.c` | yes |
@@ -645,6 +654,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:FB25` | StartWheelie | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:FB60` | BoostOnTile | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:FBAE` | OffTrackBrake | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:FBF5` | RunPieceActions | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:FC03` | SlowTileCheck | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:FC41` | LandFlat | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:FC5F` | UpdateLanes | `mem+X,Y,C,V` | `objects.c` | yes |
