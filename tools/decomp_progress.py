@@ -37,7 +37,7 @@ def main():
         hp = 'c/hand/%s/hand.txt' % ver
         files = {}
         for f in glob.glob('c/hand/%s/*.c' % ver):
-            for m in re.finditer(r'^void (\w+)_m\dx\d\(void\)', open(f).read(), re.M):
+            for m in re.finditer(r'^void (\w+)_m\dx\d\(void\)(?!;)', open(f).read(), re.M):
                 files[m.group(1)] = os.path.basename(f)
         if os.path.exists(hp):
             for line in open(hp):
@@ -46,8 +46,12 @@ def main():
                     rows.append((t[0], t[4], t[3], files.get(t[4], '?'), 'yes' if t[4] in bridged else ''))
         out.append('## %s' % ver)
         out.append('')
+        funcs = {k.upper() for k in code['funcs']}
+        done = {r[0].upper() for r in rows if r[0].upper() in funcs}
+        inport = {r[0].upper() for r in rows if r[0].upper() in funcs and r[4]}
         out.append('%d functions in the static map; %d hand-written (%.1f%%), %d of them in the port.' % (
-            nfunc, len(rows), 100.0 * len(rows) / max(1, nfunc), sum(1 for r in rows if r[4])))
+            nfunc, len(done), 100.0 * len(done) / max(1, nfunc), len(inport)))
+        out.append('One row per hand-written variant (some routines have one per register width).')
         out.append('')
         out.append('| Address | Routine | Compare | File | In port |')
         out.append('|---|---|---|---|---|')
