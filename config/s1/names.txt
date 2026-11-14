@@ -375,3 +375,4 @@
 80E319 Mode0C
 8092A0 RaceResultsSetup
 80B873 LoadScene
+80A3AC DigitsToNumber

@@ -668,6 +668,7 @@ BRIDGE_DYN(HleHand_RaceResultsSetup, RaceResultsSetup_m1x1, g_ram[0x7D] ? 9000 :
 /* LoadScene ($80:B873) passes difftest on s1 but is not hooked: with it
  * hooked the Gen A race regression diverges (every frame differs at any
  * cost), so the recompiled routine stays in use. */
+BRIDGE(HleHand_DigitsToNumber, DigitsToNumber_m1x0, 1200)
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */

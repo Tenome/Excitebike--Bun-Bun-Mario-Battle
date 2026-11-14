@@ -7960,3 +7960,52 @@ void LoadScene_m1x1(void)
     X = pull8(); nz8((u8)X);
     ret();
 }
+
+/* $80:A3AC (RTS, M=1 X=0): the 48-bit number $0000/$0002/$0004 made from
+ * the 11 decimal digits at [$1C] (acc = acc * 10 + digit, the last digit
+ * only added); P and DB kept. */
+void DigitsToNumber_m1x0(void)
+{
+    push8(getP());
+    push8(DB);
+    push8(0x80); DB = pull8(); nz8(DB);
+    sep(0x10);
+    rep(0x20);
+    wr16(ABS(0x0000), 0);
+    wr16(ABS(0x0002), 0);
+    wr16(ABS(0x0004), 0);
+    ldy8(0x00);
+    for (;;) {
+        lda16(rd16(ILDPY(0x1C)));
+        and16(0x00FF);
+        fc = 0; adc16(rd16(ABS(0x0000)));
+        wr16(ABS(0x0000), A);
+        if (fc) {
+            u16 v = inc16(rd16(ABS(0x0002))); wr16(ABS(0x0002), v);
+            if (fz) wr16(ABS(0x0004), inc16(rd16(ABS(0x0004))));
+        }
+        cmp8((u8)Y, 0x0B);
+        if (fz) break;
+        lda16(rd16(ABS(0x0004))); push16(A);
+        lda16(rd16(ABS(0x0002))); push16(A);
+        lda16(rd16(ABS(0x0000))); push16(A);
+        for (int k = 0; k < 2; k++) {
+            wr16(ABS(0x0000), asl16(rd16(ABS(0x0000))));
+            wr16(ABS(0x0002), rol16(rd16(ABS(0x0002))));
+            wr16(ABS(0x0004), rol16(rd16(ABS(0x0004))));
+        }
+        A = pull16(); nz16(A);
+        fc = 0; adc16(rd16(ABS(0x0000))); wr16(ABS(0x0000), A);
+        A = pull16(); nz16(A);
+        adc16(rd16(ABS(0x0002))); wr16(ABS(0x0002), A);
+        A = pull16(); nz16(A);
+        adc16(rd16(ABS(0x0004))); wr16(ABS(0x0004), A);
+        wr16(ABS(0x0000), asl16(rd16(ABS(0x0000))));
+        wr16(ABS(0x0002), rol16(rd16(ABS(0x0002))));
+        wr16(ABS(0x0004), rol16(rd16(ABS(0x0004))));
+        Y = inc8((u8)Y);
+    }
+    DB = pull8(); nz8(DB);
+    setP(pull8());
+    ret();
+}
