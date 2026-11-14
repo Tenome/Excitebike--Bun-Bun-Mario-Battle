@@ -366,3 +366,4 @@
 80973F  1 1  mem+A,X,Y,C,V   BroadcastTotals
 8091CD  1 1  mem+X,C,V       StartSession
 809D43  1 1  mem+X,Y,C,V     DrawEntryScreen
+80DCEA  1 1  mem+A,X,Y,C,V   CourseRowTiles

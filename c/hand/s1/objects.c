@@ -6326,7 +6326,7 @@ void CourseRowList_m1x1(void)
 /* $80:DCEA (entered with M either way): from Y + 2 on, the list bytes
  * ($05),Y as tiles $08xx into the course row buffer $7F:000E + X up to
  * X = $1E. */
-static void course_row_tiles1(void)
+void CourseRowTiles_m1x1(void)
 {
     do {
         WAIT_TICK();
@@ -6424,7 +6424,7 @@ void BuildCourseColumn_m1x1(void)
     push16(0xDBF7); BlankQueueRow_m1x1();
     lda8(course_list1(0x05));
     X = (u8)A; nz8((u8)X);
-    push16(0xDBFD); course_row_tiles1();
+    push16(0xDBFD); CourseRowTiles_m1x1();
     Y = inc8((u8)Y);
     Y = inc8((u8)Y);
     wr8(ABS(0x0278), (u8)Y);

@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 362 hand-written (88.9%), 348 of them in the port.
+407 functions in the static map; 363 hand-written (89.2%), 348 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -220,6 +220,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:DB89` | BuildCourseColumn | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:DC8D` | CourseColumn | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:DCD8` | BlankQueueRow | `mem+Y` | `objects.c` | yes |
+| `$80:DCEA` | CourseRowTiles | `mem+A,X,Y,C,V` | `objects.c` |  |
 | `$80:DD03` | CourseRowList | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:DD0E` | PlayerCrashStep | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:DD82` | PlayerColumnCheck | `mem+A,X,Y,C,V` | `objects.c` | yes |
