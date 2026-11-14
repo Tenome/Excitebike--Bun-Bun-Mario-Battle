@@ -11789,3 +11789,162 @@ void TurboMeterJmp_m1x1(void)
 {
     TurboMeter_m1x1();
 }
+
+void QueueBestTime_m1x1(void);
+void BlankQueueRowB_m1x1(void);
+void CopyPieceColumn_m1x1(void);
+void CourseColumnB_m1x1(void);
+
+/* $80:C68D (RTL): the best time at VRAM $18D7 (palette $24) and, before
+ * the race end ($84 clear), the race clock restarted; X and Y kept. */
+void ShowCourseBest_m1x1(void)
+{
+    push8((u8)X); push8((u8)Y);
+    lda8(0xD7); wr8(DP(0x00), 0xD7);
+    lda8(0x18); wr8(DP(0x01), 0x18);
+    lda8(0x24); wr8(DP(0x0F), 0x24);
+    push16(0xC6FF); QueueBestTime_m1x1();
+    lda8(rd8(DP(0x84)));
+    if (fz) {
+        wr8(ABS(0x03AE), 0);
+        wr8(ABS(0x03AF), 0);
+        wr8(ABS(0x03B0), 0);
+    }
+    Y = pull8(); nz8((u8)Y);
+    X = pull8(); nz8((u8)X);
+    retl();
+}
+
+/* $80:EEB0 (RTS, X = row type): the bonus course row piece list ($05)
+ * from $80:E00D / $80:E01E. */
+void BonusRowList_m1x1(void)
+{
+    lda8(rd8(ABSX(0xE00D))); wr8(DP(0x05), (u8)A);
+    lda8(rd8(ABSX(0xE01E))); wr8(DP(0x06), (u8)A);
+    ret();
+}
+
+/* $80:ED1D (RTS): build the bonus course one column ahead, as
+ * BuildCourseColumn but from the long script ([$07] from $81:CAAC /
+ * $81:CAB4 / $81:CABC by 4 * $81:800C + $7C), empty-row counts in the
+ * low five bits, row type 3 counting $97, the row lists $80:EEB0 and the
+ * plain column copy (BlankQueueRowB, CopyPieceColumn, CourseColumnB). */
+void BuildBonusColumn_m1x1(void)
+{
+    lda8(rd8(LONG(0x81800C)));
+    lda8(asl8((u8)A)); lda8(asl8((u8)A));
+    wr8(DP(0x00), (u8)A);
+    lda8(rd8(ABS(0x007C)));
+    fc = 0; adc8(rd8(DP(0x00)));
+    X = (u8)A; nz8((u8)X);
+    lda8(rd8(LONGX(0x81CAAC))); wr8(DP(0x07), (u8)A);
+    lda8(rd8(LONGX(0x81CAB4))); wr8(DP(0x08), (u8)A);
+    lda8(rd8(LONGX(0x81CABC))); wr8(DP(0x09), (u8)A);
+    Y = rd8(ABS(0x027B)); nz8((u8)Y);
+    if (fz) {
+        lda8(rd8(ILDPY(0x07)));
+        wr8(ABS(0x09C9), (u8)A);
+        Y = inc8((u8)Y);
+        wr8(ABS(0x027B), (u8)Y);
+    }
+    lda8(rd8(ABS(0x0279)));
+    cmp8((u8)A, rd8(ABS(0x0266)));
+    if (!fz) { ret(); return; }
+    int step;   /* 0 = next entry, 1 = counting empty rows, 2 = same row */
+    lda8(rd8(ABS(0x027A)));
+    if (!fz) step = 1;
+    else {
+        lda8(rd8(ABS(0x027E)));
+        step = fz ? 0 : 2;
+    }
+    for (;;) {
+        WAIT_TICK();
+        if (step == 0) {
+            Y = rd8(ABS(0x027B)); nz8((u8)Y);
+            wr8(ABS(0x027B), inc8(rd8(ABS(0x027B))));
+            lda8(rd8(ILDPY(0x07)));
+            if (fz) { ret(); return; }
+            cmp8((u8)A, 0x09);
+            if (fz) {
+                lda8(0x01);
+                wr8(ABS(0x027B), 0x01);
+            }
+            cmp8((u8)A, 0x80);
+            if (fc) {
+                and8(0x7F);
+                wr8(ABS(0x027A), (u8)A);
+                lda8(rd8(ILDPY(0x07)));
+                and8(0x1F);
+                wr8(ABS(0x027A), (u8)A);
+                step = 1;
+            } else {
+                step = 3;
+            }
+        }
+        if (step == 1) {
+            wr8(ABS(0x027A), dec8(rd8(ABS(0x027A))));
+            lda8(0x00);
+            wr8(ABS(0x09C3), 0);
+            wr8(ABS(0x027E), 0);
+        }
+        if (step != 2) {
+            /* L80ED8F */
+            wr8(ABS(0x027D), (u8)A);
+            cmp8((u8)A, 0x03);
+            if (fz) wr8(DP(0x97), inc8(rd8(DP(0x97))));
+        }
+        /* L80ED98 */
+        X = rd8(ABS(0x027D)); nz8((u8)X);
+        push16(0xED9D); BonusRowList_m1x1();
+        Y = rd8(ABS(0x027E)); nz8((u8)Y);
+        lda8(rd8((((u32)DB << 16) + rd16(DP(0x05)) + Y) & 0xFFFFFF));
+        if (!fz) break;
+        wr8(ABS(0x027E), (u8)A);
+        wr8(ABS(0x09C3), (u8)A);
+        step = 0;
+    }
+    push16(0xEDAA); BlankQueueRowB_m1x1();
+    lda8(rd8((((u32)DB << 16) + rd16(DP(0x05)) + Y) & 0xFFFFFF));
+    X = (u8)A; nz8((u8)X);
+    push16(0xEDB0); CopyPieceColumn_m1x1();
+    Y = inc8((u8)Y);
+    Y = inc8((u8)Y);
+    wr8(ABS(0x027E), (u8)Y);
+    lda8(0x81); wr8(LONG(0x7F0004), 0x81);
+    lda8(0x01); wr8(LONG(0x7F0005), 0x01);
+    lda8(0x18); wr8(LONG(0x7F0006), 0x18);
+    lda8(rd8(LONG(0x7F0000)));
+    fc = 0; adc8(0x0C);
+    wr8(LONG(0x7F0007), (u8)A);
+    lda8(0x00); wr8(LONG(0x7F0008), 0);
+    lda8(0x7F); wr8(LONG(0x7F0009), 0x7F);
+    rep(0x20);
+    lda16(rd16(LONG(0x7F0000)));
+    fc = 0; adc16(0x002A);
+    wr16(LONG(0x7F0000), A);
+    wr16(LONG(0x7F000C), A);
+    lda16(rd16(ABS(0x0277)));
+    fc = 0; adc16(0x07E0);
+    wr16(LONG(0x7F0002), A);
+    lda16(0x001E); wr16(LONG(0x7F000A), 0x001E);
+    sep(0x20);
+    lda8(rd8(ABS(0x0276)));
+    wr8(DP(0x0F), (u8)A);
+    push16(0xEE0C); CourseColumnB_m1x1();
+    lda8(rd8(ABS(0x0276)));
+    push16(0xEE12); NextColumn_m1x1();
+    wr8(ABS(0x0276), (u8)A);
+    wr8(ABS(0x0277), inc8(rd8(ABS(0x0277))));
+    lda8(rd8(ABS(0x0277)));
+    cmp8((u8)A, 0x80);
+    if (fz) {
+        lda8(0x60); wr8(ABS(0x0277), 0x60);
+        lda8(rd8(ABS(0x0278)));
+        eor8(0x04);
+        wr8(ABS(0x0278), (u8)A);
+    }
+    lda8(rd8(ABS(0x0266)));
+    push16(0xEE32); NextColumn_m1x1();
+    wr8(ABS(0x0279), (u8)A);
+    ret();
+}

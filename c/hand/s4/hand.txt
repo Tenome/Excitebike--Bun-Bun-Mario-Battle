@@ -439,3 +439,6 @@
 80F92F  1 1  mem+A,X,Y,C,V   RiderGroundHeights
 80FBF5  1 1  mem+A,X,Y,C,V   RunPieceActions
 80F32D  1 1  mem+A,X,Y,C,V   TurboMeterJmp
+80C68D  1 1  mem+X,Y,C,V     ShowCourseBest
+80EEB0  1 1  mem+A,X,Y,C,V   BonusRowList
+80ED1D  1 1  mem+A,X,Y,C,V   BuildBonusColumn

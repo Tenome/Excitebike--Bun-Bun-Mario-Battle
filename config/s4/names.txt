@@ -451,3 +451,6 @@
 80F92F RiderGroundHeights
 80FBF5 RunPieceActions
 80F32D TurboMeterJmp
+80C68D ShowCourseBest
+80EEB0 BonusRowList
+80ED1D BuildBonusColumn

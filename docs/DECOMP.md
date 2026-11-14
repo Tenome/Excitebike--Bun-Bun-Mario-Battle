@@ -367,7 +367,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s4
 
-532 functions in the static map; 440 hand-written (82.7%), 431 of them in the port.
+532 functions in the static map; 443 hand-written (83.3%), 434 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -520,6 +520,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:C5B0` | QueueRaceTime | `mem+X,Y,C,V` | `objects.c` |  |
 | `$80:C619` | QueueBestTimeLong | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:C623` | QueueBestTime | `mem+X,Y,C,V` | `objects.c` | yes |
+| `$80:C68D` | ShowCourseBest | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:C692` | RecordCourseTime | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:C741` | DivideAX | `mem+X,V` | `objects.c` | yes |
 | `$80:C74F` | RiderLaneBand | `mem+X,Y,C,V` | `from_s1.c` | yes |
@@ -610,9 +611,11 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:EBD0` | ReadBonusTrack | `mem+X,Y,V` | `objects.c` | yes |
 | `$80:ECD8` | ScrollBySpeed16B | `mem+X,Y,V` | `leaves.c` | yes |
 | `$80:ECF4` | JumpRunUp | `mem+X,Y,V` | `objects.c` | yes |
+| `$80:ED1D` | BuildBonusColumn | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:EE40` | CourseColumnB | `mem+A,X,Y,C,V` | `objects.c` | yes |
-| `$80:EE8B` | BlankQueueRowB | `mem+Y` | `leaves.c` | yes |
+| `$80:EE8B` | BlankQueueRowB | `mem+Y` | `objects.c` | yes |
 | `$80:EE9D` | CopyPieceColumn | `mem+X,Y` | `objects.c` | yes |
+| `$80:EEB0` | BonusRowList | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:EEBB` | PlayerCrashStepB | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:EF37` | PlayerColumnCheckB | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:EF5C` | PlayerStopB | `mem+A,X,Y,C,V` | `objects.c` | yes |

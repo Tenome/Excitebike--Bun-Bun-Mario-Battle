@@ -1255,6 +1255,10 @@ BRIDGE_DYN(HleHand_RiderGroundHeightsFrom, RiderGroundHeightsFrom_m1x1, ground_h
 BRIDGE_DYN(HleHand_RiderGroundHeights, RiderGroundHeights_m1x1, 2 + ground_heights_cost4(7))
 BRIDGE_DYN(HleHand_RunPieceActions, RunPieceActions_m1x1, piece_actions_cost4())
 BRIDGE(HleHand_TurboMeterJmp, TurboMeterJmp_m1x1, 242)
+/* Stadium 4 course best and bonus course builder (objects.c) */
+BRIDGE(HleHand_ShowCourseBest, ShowCourseBest_m1x1, 1350)
+BRIDGE(HleHand_BonusRowList, BonusRowList_m1x1, 18)
+BRIDGE_DYN(HleHand_BuildBonusColumn, BuildBonusColumn_m1x1, g_ram[0x0279] != g_ram[0x0266] ? 40 : 900)
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)
