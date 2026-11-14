@@ -4044,6 +4044,7 @@ void BsxEndIfFlagged_m1x1(void)
 void CopyPieceColumn_m1x1(void)
 {
     do {
+        WAIT_TICK();
         Y = inc8((u8)Y); Y = inc8((u8)Y);
         rep(0x20);
         lda16(rd16((((u32)DB << 16) + rd16(DP(0x05)) + Y) & 0xFFFFFF));
@@ -4060,6 +4061,7 @@ void CopyPieceColumn_m1x1(void)
 void CopyPieceColumnPal2_m1x1(void)
 {
     do {
+        WAIT_TICK();
         Y = inc8((u8)Y); Y = inc8((u8)Y);
         rep(0x20);
         lda16(rd16((((u32)DB << 16) + rd16(DP(0x05)) + Y) & 0xFFFFFF));
@@ -11186,6 +11188,7 @@ void LoadRaceColumn_m1x1(void)
     lda8(rd8(ABS(0x027E)));
     if (!fz) goto column;
 next_entry:
+    WAIT_TICK();
     rep(0x10);
     Y = rd16(ABS(0x027B)); nz16(Y);
     if (fz) {
@@ -11332,4 +11335,336 @@ out:
     sep(0x10);
     DB = pull8(); nz8(DB);
     retl();
+}
+
+void BlankQueueRow_m1x1(void);
+void CopyPieceColumnPal2_m1x1(void);
+void CourseColumn_m1x1(void);
+
+/* $80:DBF1 (RTS, X = row type): the row piece list ($05) from
+ * $80:D2FB / $80:D304. */
+void CourseRowList_m1x1(void)
+{
+    lda8(rd8(ABSX(0xD2FB))); wr8(DP(0x05), (u8)A);
+    lda8(rd8(ABSX(0xD304))); wr8(DP(0x06), (u8)A);
+    ret();
+}
+
+static u8 course_list4(u32 dp)
+{
+    return rd8((((u32)DB << 16) + rd16(DP(dp)) + Y) & 0xFFFFFF);
+}
+
+/* $80:DA77 (RTS): build the course one column ahead. The course script
+ * ($07 from $80:D270 / $80:D272 by the header flag $81:800C) starts with
+ * the scenery byte $09C9. Each time the builder column $0279 reaches the
+ * player column $0266: the next script entry (0 = stop, 9 = loop to
+ * entry 1 as row type 1, $80+ = that many empty rows, else a row type
+ * $027D) and its row list ($80:DBF1) give the column pieces; a column
+ * is blanked, filled (CopyPieceColumnPal2) and queued for VRAM at $0277 + $07E0 (row
+ * pointer $0276, column $0277 wrapping $80 -> $60 with $0278 ^ 4), and
+ * the builder column steps. */
+void BuildCourseColumn_m1x1(void)
+{
+    lda8(rd8(LONG(0x81800C)));
+    X = (u8)A; nz8((u8)X);
+    lda8(rd8(ABSX(0xD270))); wr8(DP(0x07), (u8)A);
+    lda8(rd8(ABSX(0xD272))); wr8(DP(0x08), (u8)A);
+    Y = rd8(ABS(0x027B)); nz8((u8)Y);
+    if (fz) {
+        lda8(course_list4(0x07));
+        wr8(ABS(0x09C9), (u8)A);
+        Y = inc8((u8)Y);
+        wr8(ABS(0x027B), (u8)Y);
+    }
+    lda8(rd8(ABS(0x0279)));
+    cmp8((u8)A, rd8(ABS(0x0266)));
+    if (!fz) { ret(); return; }
+    int step;   /* 0 = next entry, 1 = counting empty rows, 2 = same row */
+    lda8(rd8(ABS(0x027A)));
+    if (!fz) step = 1;
+    else {
+        lda8(rd8(ABS(0x027E)));
+        step = fz ? 0 : 2;
+    }
+    for (;;) {
+        WAIT_TICK();
+        if (step == 0) {
+            Y = rd8(ABS(0x027B)); nz8((u8)Y);
+            wr8(ABS(0x027B), inc8(rd8(ABS(0x027B))));
+            lda8(course_list4(0x07));
+            if (fz) { ret(); return; }
+            cmp8((u8)A, 0x09);
+            if (fz) {
+                lda8(0x01);
+                wr8(ABS(0x027B), 0x01);
+            }
+            cmp8((u8)A, 0x80);
+            if (fc) {
+                and8(0x7F);
+                wr8(ABS(0x027A), (u8)A);
+                step = 1;
+            } else {
+                wr8(ABS(0x027D), (u8)A);
+                step = 2;
+            }
+        }
+        if (step == 1) {
+            wr8(ABS(0x027A), dec8(rd8(ABS(0x027A))));
+            lda8(0x00);
+            wr8(ABS(0x09C3), 0);
+            wr8(ABS(0x027E), 0);
+            wr8(ABS(0x027D), 0);
+        }
+        /* L80DBE5 */
+        X = rd8(ABS(0x027D)); nz8((u8)X);
+        push16(0xDAD8); CourseRowList_m1x1();
+        Y = rd8(ABS(0x027E)); nz8((u8)Y);
+        lda8(course_list4(0x05));
+        if (!fz) break;
+        wr8(ABS(0x027E), (u8)A);
+        wr8(ABS(0x09C3), (u8)A);
+        step = 0;
+    }
+    push16(0xDAE5); BlankQueueRow_m1x1();
+    lda8(course_list4(0x05));
+    X = (u8)A; nz8((u8)X);
+    push16(0xDAEB); CopyPieceColumnPal2_m1x1();
+    Y = inc8((u8)Y);
+    Y = inc8((u8)Y);
+    wr8(ABS(0x027E), (u8)Y);
+    lda8(0x81); wr8(LONG(0x7F0004), 0x81);
+    lda8(0x01); wr8(LONG(0x7F0005), 0x01);
+    lda8(0x18); wr8(LONG(0x7F0006), 0x18);
+    lda8(rd8(LONG(0x7F0000)));
+    fc = 0; adc8(0x0C);
+    wr8(LONG(0x7F0007), (u8)A);
+    lda8(0x00); wr8(LONG(0x7F0008), 0);
+    lda8(0x7F); wr8(LONG(0x7F0009), 0x7F);
+    rep(0x20);
+    lda16(rd16(LONG(0x7F0000)));
+    fc = 0; adc16(0x002A);
+    wr16(LONG(0x7F0000), A);
+    wr16(LONG(0x7F000C), A);
+    lda16(rd16(ABS(0x0277)));
+    fc = 0; adc16(0x07E0);
+    wr16(LONG(0x7F0002), A);
+    lda16(0x001E); wr16(LONG(0x7F000A), 0x001E);
+    sep(0x20);
+    lda8(rd8(ABS(0x0276)));
+    wr8(DP(0x0F), (u8)A);
+    push16(0xDB47); CourseColumn_m1x1();
+    lda8(rd8(ABS(0x0276)));
+    push16(0xDB4D); NextColumn_m1x1();
+    wr8(ABS(0x0276), (u8)A);
+    wr8(ABS(0x0277), inc8(rd8(ABS(0x0277))));
+    lda8(rd8(ABS(0x0277)));
+    cmp8((u8)A, 0x80);
+    if (fz) {
+        lda8(0x60); wr8(ABS(0x0277), 0x60);
+        lda8(rd8(ABS(0x0278)));
+        eor8(0x04);
+        wr8(ABS(0x0278), (u8)A);
+    }
+    lda8(rd8(ABS(0x0266)));
+    push16(0xDB6D); NextColumn_m1x1();
+    wr8(ABS(0x0279), (u8)A);
+    ret();
+}
+
+
+void ClearOnBonusTiles_m1x1(void);
+void RiderPieceAt_m1x1(void);
+
+/* $80:F850 (RTS, A = action): jump through the rider piece action table
+ * $80:F6DF. Not registered on its own: difftest feeds it out-of-range
+ * actions, which read past the table. */
+static void piece_action4(void)
+{
+    lda8(asl8((u8)A));
+    Y = (u8)A; nz8((u8)Y);
+    lda8(rd8(ABSY(0xF6DF))); wr8(DP(0x00), (u8)A);
+    lda8(rd8(ABSY(0xF6E0))); wr8(DP(0x01), (u8)A);
+    if (!r816_call_pc(0x800000u | rd16(LONG(0x000000))))
+        r816_unknown_target(0x80F85C, rd16(LONG(0x000000)));
+}
+
+/* ($0A),Y in bank DB. */
+static u8 script_byte4(void)
+{
+    return rd8((((u32)DB << 16) + rd16(DP(0x0A)) + Y) & 0xFFFFFF);
+}
+
+/* $80:F78E RunRiderPieces (RTS, X = rider): the rider's piece script.
+ * Its distance $024E advances by the speed $0186. With no script running
+ * ($0176 = 0) a piece type $021E below $1A starts script type + 1 (a $1A+
+ * piece clears bonus tiles and, in jump state 3 in lanes 0-2, starts $0C
+ * + 1; otherwise the player's $1979 clears). In a free run ($7D set) a
+ * rider outside X $00B0-$026F instead drops out of the script and its
+ * jump (lane height $80:F8CD). Then $0256 = 0 and $024E = $018E - 1, and
+ * the script ($80:F536 / $80:F54F) runs pairs (distance, action) up to
+ * $024E: an action with a $80:F6DE bit sets the angle ($01E6, $01A6 from
+ * $80:F6D3) on the ground; one with a $80:F6DD bit sets $0226 / $023E;
+ * others go through PieceAction ($80:F850). At the $FF end the script
+ * stops ($0176, $01A6 cleared, $01FE cleared on the ground outside jump
+ * state 1, state 2 -> 3) and $08BC clears. */
+void RunRiderPieces_m1x1(void)
+{
+    lda8(rd8(ABSX(0x0186)));
+    fc = 0; adc8(rd8(ABSX(0x024E)));
+    wr8(ABSX(0x024E), (u8)A);
+    lda8(rd8(ABSX(0x0176)));
+    if (fz) {
+        lda8(rd8(ABSX(0x021E)));
+        cmp8((u8)A, 0x1A);
+        if (fc) {
+            push8(0x80); push16(0xF7A7); ClearOnBonusTiles_m1x1();
+            int start = 0;
+            lda8(rd8(ABSX(0x020E)));
+            cmp8((u8)A, 0x03);
+            if (fz) {
+                lda8(rd8(ABSX(0x08A4)));
+                cmp8((u8)A, 0x03);
+                if (!fc) {
+                    lda8(0x0C);
+                    wr8(ABSX(0x021E), 0x0C);
+                    start = 1;
+                }
+            }
+            if (!start) {
+                cmp8((u8)X, 0x00);
+                if (fz) wr8(ABS(0x1979), 0);
+                ret();
+                return;
+            }
+        }
+        wr8(ABSX(0x0176), (u8)A);
+        wr8(ABSX(0x0176), inc8(rd8(ABSX(0x0176))));
+        lda8(rd8(DP(0x7D)));
+        if (!fz) {
+            lda8(rd8(ABSX(0x019E)));
+            A = (u16)((A >> 8) | (A << 8)); nz8((u8)A);
+            lda8(rd8(ABSX(0x0196)));
+            rep(0x20);
+            int out = 0;
+            cmp16(A, 0x00B0);
+            if (!fc) out = 1;
+            else {
+                cmp16(A, 0x0270);
+                out = fc;
+            }
+            if (out) {
+                sep(0x20);
+                wr8(ABSX(0x0226), 0);
+                wr8(ABSX(0x01A6), 0);
+                wr8(ABSX(0x0981), 0);
+                wr8(ABSX(0x0176), 0);
+                wr8(ABSX(0x01FE), 0);
+                Y = rd8(ABSX(0x08A4)); nz8((u8)Y);
+                lda8(rd8(ABSY(0xF8CD)));
+                wr8(ABSX(0x01F6), (u8)A);
+                wr8(ABSX(0x01D6), 0);
+                wr8(ABSX(0x199E), 0);
+                wr8(ABSX(0x01AE), 0);
+                ret();
+                return;
+            }
+        }
+        sep(0x20);
+        lda8(0x00);
+        wr8(ABSX(0x0256), 0);
+        lda8(rd8(ABSX(0x018E)));
+        wr8(ABSX(0x024E), (u8)A);
+        wr8(ABSX(0x024E), dec8(rd8(ABSX(0x024E))));
+    }
+    for (;;) {
+        /* L80F816 */
+        Y = rd8(ABSX(0x0176)); nz8((u8)Y);
+        lda8(rd8(ABSY(0xF536))); wr8(DP(0x0A), (u8)A);
+        lda8(rd8(ABSY(0xF54F))); wr8(DP(0x0B), (u8)A);
+        Y = rd8(ABSX(0x0256)); nz8((u8)Y);
+        lda8(script_byte4());
+        cmp8((u8)A, 0xFF);
+        if (fz) break;
+        wr8(DP(0x0F), (u8)A);
+        cmp8((u8)A, rd8(ABSX(0x024E)));
+        if (!fz && fc) { ret(); return; }
+        Y = inc8((u8)Y);
+        lda8(script_byte4());
+        bit8(rd8(ABS(0xF6DE)), 0);
+        if (!fz) {
+            /* L80F85F */
+            lda8(rd8(ABSX(0x01EE)));
+            ora8(rd8(ABSX(0x01CE)));
+            if (fz) {
+                lda8(script_byte4());
+                and8(0x0F);
+                wr8(DP(0x00), (u8)A);
+                lda8(rd8(ABSX(0x020E)));
+                cmp8((u8)A, 0x01);
+                if (!fz) {
+                    lda8(rd8(DP(0x00)));
+                    wr8(ABSX(0x01E6), (u8)A);
+                    lda8(rd8(ABSX(0x0176)));
+                    cmp8((u8)A, 0x03);
+                    if (!fz) {
+                        lda8(rd8(ABSX(0x01E6)));
+                        fc = 1; sbc8(0x02);
+                        Y = (u8)A; nz8((u8)Y);
+                        lda8(rd8(ABSY(0xF6D3)));
+                        wr8(ABSX(0x01A6), (u8)A);
+                    }
+                }
+            }
+        } else {
+            bit8(rd8(ABS(0xF6DD)), 0);
+            if (fz) {
+                push16(0xF847); piece_action4();
+                wr8(ABSX(0x0256), inc8(rd8(ABSX(0x0256))));
+                wr8(ABSX(0x0256), inc8(rd8(ABSX(0x0256))));
+                if (!fz) continue;
+                piece_action4();
+                return;
+            }
+            /* L80F8C1 */
+            and8(0x1F);
+            wr8(ABSX(0x0226), (u8)A);
+            lda8(rd8(DP(0x0F)));
+            wr8(ABSX(0x023E), (u8)A);
+            if (fn) {
+                /* falls into the table bytes at $80:F8CD, decoded as code,
+                 * and on into RiderPieceAt */
+                and8(rd8((((u32)DB << 16) + rd16(DP(0x32))) & 0xFFFFFF));
+                { u32 ea = DP(0x1A); wr8(ea, rol8(rd8(ea))); }
+                lda8(inc8((u8)A));
+                { u32 ea = ABS(0xA4BC); wr8(ea, asl8(rd8(ea))); }
+                push8(getP());
+                RiderPieceAt_m1x1();
+                return;
+            }
+        }
+        /* L80F88D */
+        wr8(ABSX(0x0256), inc8(rd8(ABSX(0x0256))));
+        wr8(ABSX(0x0256), inc8(rd8(ABSX(0x0256))));
+        if (fz) break;
+    }
+    /* L80F898 */
+    lda8(0x00);
+    wr8(ABSX(0x0176), 0);
+    wr8(ABSX(0x01A6), 0);
+    lda8(rd8(ABSX(0x0206)));
+    if (fz) {
+        lda8(rd8(ABSX(0x020E)));
+        cmp8((u8)A, 0x01);
+        if (!fz) {
+            lda8(0x00);
+            wr8(ABSX(0x01FE), 0);
+            lda8(rd8(ABSX(0x020E)));
+            cmp8((u8)A, 0x02);
+            if (fz) wr8(ABSX(0x020E), inc8(rd8(ABSX(0x020E))));
+        }
+    }
+    lda8(0x00);
+    wr8(ABSX(0x08BC), 0);
+    ret();
 }

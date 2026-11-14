@@ -1209,6 +1209,12 @@ BRIDGE(HleHand_RaceRowList, RaceRowList_m1x1, 23)
 /* ~38 cycles while the builder column $0279 is not at the player column
  * $0266, ~1050 when it loads one. */
 BRIDGE_DYN(HleHand_LoadRaceColumn, LoadRaceColumn_m1x1, g_ram[0x0279] != g_ram[0x0266] ? 38 : 1050)
+/* Stadium 4 course builder and piece scripts (objects.c) */
+BRIDGE(HleHand_CourseRowList, CourseRowList_m1x1, 18)
+/* ~33 cycles while the builder column $0279 is not at the player column
+ * $0266, ~900 when it builds one. */
+BRIDGE_DYN(HleHand_BuildCourseColumn, BuildCourseColumn_m1x1, g_ram[0x0279] != g_ram[0x0266] ? 33 : 900)
+BRIDGE(HleHand_RunRiderPieces, RunRiderPieces_m1x1, 70)
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)

@@ -6329,6 +6329,7 @@ void CourseRowList_m1x1(void)
 static void course_row_tiles1(void)
 {
     do {
+        WAIT_TICK();
         Y = inc8((u8)Y);
         Y = inc8((u8)Y);
         rep(0x20);
@@ -6382,6 +6383,7 @@ void BuildCourseColumn_m1x1(void)
         step = fz ? 0 : 2;
     }
     for (;;) {
+        WAIT_TICK();
         if (step == 0) {
             Y = rd8(ABS(0x0275)); nz8((u8)Y);
             wr8(ABS(0x0275), inc8(rd8(ABS(0x0275))));
@@ -7193,6 +7195,7 @@ void LoadRaceColumn_m1x1(void)
     lda8(rd8(ABS(0x0278)));
     if (!fz) goto column;
 next_entry:
+    WAIT_TICK();
     rep(0x10);
     Y = rd16(ABS(0x0275)); nz16(Y);
     if (fz) {

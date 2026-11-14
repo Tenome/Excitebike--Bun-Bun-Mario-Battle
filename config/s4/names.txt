@@ -438,3 +438,6 @@
 80FE56 NextColumnLong
 818A42 RaceRowList
 818A4D LoadRaceColumn
+80DBF1 CourseRowList
+80DA77 BuildCourseColumn
+80F78E RunRiderPieces

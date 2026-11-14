@@ -367,7 +367,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s4
 
-532 functions in the static map; 427 hand-written (80.3%), 418 of them in the port.
+532 functions in the static map; 430 hand-written (80.8%), 421 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -561,9 +561,11 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:DA0E` | ScrollBySpeed16 | `mem+V` | `leaves.c` | yes |
 | `$80:DA2A` | BonusScrollStep | `mem+V` | `objects.c` | yes |
 | `$80:DA55` | BonusTimerStep | `mem+V` | `objects.c` | yes |
+| `$80:DA77` | BuildCourseColumn | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:DB7B` | CourseColumn | `mem+A,X,Y,C,V` | `objects.c` | yes |
-| `$80:DBC6` | BlankQueueRow | `mem+Y` | `from_s1.c` | yes |
+| `$80:DBC6` | BlankQueueRow | `mem+Y` | `objects.c` | yes |
 | `$80:DBD8` | CopyPieceColumnPal2 | `mem+Y` | `objects.c` | yes |
+| `$80:DBF1` | CourseRowList | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:DBFC` | PlayerCrashStep | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:DC70` | PlayerColumnCheck | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:DC95` | PlayerStop | `mem+A,X,Y,C,V` | `objects.c` | yes |
@@ -623,6 +625,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:F3DD` | DemoPadDisplay | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:F4C8` | TitlePushStart | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:F757` | SpinWheels | `mem+X,Y,V` | `objects.c` | yes |
+| `$80:F78E` | RunRiderPieces | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:F8D3` | RiderLanePieceAt | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:F8D6` | RiderPieceAt | `mem+A,X,Y,V` | `objects.c` | yes |
 | `$80:F8DB` | LanePieceAt | `mem+A,X,Y,V` | `objects.c` | yes |
@@ -755,7 +758,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$81:C724` | StepJumpBanner | `mem+X,Y,C,V` | `leaves.c` | yes |
 | `$81:C743` | SetJumpBanner | `mem+X,Y,C,V` | `leaves.c` | yes |
 | `$81:C75E` | CheckLaneTile | `mem+X,Y,V` | `objects.c` | yes |
-| `$81:C7C3` | ClearOnBonusTiles | `mem+X,Y,V` | `leaves.c` | yes |
+| `$81:C7C3` | ClearOnBonusTiles | `mem+X,Y,V` | `objects.c` | yes |
 | `$81:C7EF` | JumpResultDistance | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$81:C84F` | JumpResultTotal | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$81:C883` | QueueResultsTiles | `mem+A,X,Y,C,V` | `objects.c` | yes |

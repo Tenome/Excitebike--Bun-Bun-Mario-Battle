@@ -426,3 +426,6 @@
 80FE56  1 1  mem+A,X,Y,C,V   NextColumnLong
 818A42  1 1  mem+A,X,Y,C,V   RaceRowList
 818A4D  1 1  mem+A,X,Y,C,V   LoadRaceColumn
+80DBF1  1 1  mem+A,X,Y,C,V   CourseRowList
+80DA77  1 1  mem+A,X,Y,C,V   BuildCourseColumn
+80F78E  1 1  mem+A,X,Y,C,V   RunRiderPieces
