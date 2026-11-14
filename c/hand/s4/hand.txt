@@ -422,3 +422,7 @@
 81C3B1  1 1  mem+A,X,Y,C,V   LeaveJumpContest
 81C29A  1 1  mem+A,X,Y,C,V   JumpRunSteps
 80B7F1  1 1  mem+A,X,Y,C,V   JumpRunStepsMode
+80FE5A  1 1  mem+A,X,Y,C,V   NextColumn
+80FE56  1 1  mem+A,X,Y,C,V   NextColumnLong
+818A42  1 1  mem+A,X,Y,C,V   RaceRowList
+818A4D  1 1  mem+A,X,Y,C,V   LoadRaceColumn

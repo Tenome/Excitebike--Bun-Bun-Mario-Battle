@@ -434,3 +434,7 @@
 81C3B1 LeaveJumpContest
 81C29A JumpRunSteps
 80B7F1 JumpRunStepsMode
+80FE5A NextColumn
+80FE56 NextColumnLong
+818A42 RaceRowList
+818A4D LoadRaceColumn

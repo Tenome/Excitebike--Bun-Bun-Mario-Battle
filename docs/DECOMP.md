@@ -367,7 +367,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s4
 
-532 functions in the static map; 423 hand-written (79.5%), 414 of them in the port.
+532 functions in the static map; 427 hand-written (80.3%), 418 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -648,14 +648,18 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:FD7E` | DrawShadowsAndMarkers | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:FDDE` | CrossFinish | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:FE3A` | ItemFlashState | `mem+X,Y,C,V` | `flow.c` | yes |
+| `$80:FE56` | NextColumnLong | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:FE5A` | NextColumn | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:FE64` | AddScoreLong | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:FE68` | AddScore | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:FE93` | TrackRiderPace | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:FEFC` | QueueBonusDigitsLong | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:FF00` | QueueBonusDigitsAt | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:FF0C` | QueueBonusDigits | `mem+V` | `objects.c` | yes |
+| `$81:8A42` | RaceRowList | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$81:8A4D` | LoadRaceColumn | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$81:8BEB` | FillLaneColumn | `mem+A,X,Y,C,V` | `objects.c` | yes |
-| `$81:8C2A` | BlankQueueRowPal2 | `mem+Y` | `from_s1.c` | yes |
+| `$81:8C2A` | BlankQueueRowPal2 | `mem+Y` | `objects.c` | yes |
 | `$81:8C3C` | CopyTrackColumn | `mem+X,Y` | `objects.c` | yes |
 | `$81:93FE` | SpawnPlayerSpark | `mem+X,C,V` | `objects.c` | yes |
 | `$81:9436` | SpawnDustPuff | `mem+X,Y,V` | `objects.c` | yes |

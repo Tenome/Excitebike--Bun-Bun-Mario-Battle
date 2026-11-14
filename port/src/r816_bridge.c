@@ -1202,6 +1202,13 @@ BRIDGE_DYN(HleHand_TitlePushStart, TitlePushStart_m1x1, g_ram[0x1FFFF] >= 6 ? 14
 BRIDGE(HleHand_OverheatStep, OverheatStep_m1x1, 60)
 /* c/hand/s4/flow.c, part 5 */
 BRIDGE(HleHand_ItemFlashState, ItemFlashState_m1x1, 30)
+/* Stadium 4 race column loader (objects.c) */
+BRIDGE(HleHand_NextColumn, NextColumn_m1x1, 15)
+BRIDGE(HleHand_NextColumnLong, NextColumnLong_m1x1, 26)
+BRIDGE(HleHand_RaceRowList, RaceRowList_m1x1, 23)
+/* ~38 cycles while the builder column $0279 is not at the player column
+ * $0266, ~1050 when it loads one. */
+BRIDGE_DYN(HleHand_LoadRaceColumn, LoadRaceColumn_m1x1, g_ram[0x0279] != g_ram[0x0266] ? 38 : 1050)
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)
