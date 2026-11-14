@@ -365,3 +365,4 @@
 8097FF  1 1  mem+A,X,Y,C,V   SaveBestRecords
 80973F  1 1  mem+A,X,Y,C,V   BroadcastTotals
 8091CD  1 1  mem+X,C,V       StartSession
+809D43  1 1  mem+X,Y,C,V     DrawEntryScreen

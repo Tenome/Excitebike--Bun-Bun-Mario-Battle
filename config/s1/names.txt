@@ -381,3 +381,4 @@
 8097FF SaveBestRecords
 80973F BroadcastTotals
 8091CD StartSession
+809D43 DrawEntryScreen

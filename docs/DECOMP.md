@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 361 hand-written (88.7%), 347 of them in the port.
+407 functions in the static map; 362 hand-written (88.9%), 348 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -66,6 +66,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:9BC8` | EndScreenScrollIn | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:9C0D` | EntryNumberEditor | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:9D07` | EndScreenPrompt | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:9D43` | DrawEntryScreen | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:9DE0` | EndScreenStart | `mem+A,X,Y,C,V` | `objects.c` |  |
 | `$80:9E1D` | EndScreenTimeout | `mem+X,Y,C,V` | `misc.c` | yes |
 | `$80:9E46` | BeginFadeInBg3 | `mem+X,Y,C,V` | `misc.c` | yes |

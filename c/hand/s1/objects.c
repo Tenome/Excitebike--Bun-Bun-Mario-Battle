@@ -8391,3 +8391,62 @@ void StartSession_m1x1(void)
     lda8(0x0F);
     ret();
 }
+
+void ShowEntryPassword_m1x1(void);
+
+/* $80:9D43 (RTS): the entry screen: tilemaps cleared, the font page
+ * ($89:C800, $0800 bytes) to VRAM $0800, $0453 and $1923 + 1, $9A/$9B
+ * cleared; the saved best total ($11:572C) at $08F5 and best score
+ * ($11:5730) at $0936; the row at $03A5 (palette 1) at $0978; the entry
+ * password; with $81:800C set the row $80:9DDD at $09EB. */
+void DrawEntryScreen_m1x1(void)
+{
+    push8(0x80); push16(0x9D46); ClearTilemaps_m1x1();
+    rep(0x20);
+    push16(D);
+    lda16(0x4300);
+    D = A;
+    ldy8(0x80); wr8(ABS(0x2115), 0x80);
+    lda16(0x1801); wr16(DP(0x00), 0x1801);
+    lda16(0x0800); wr16(ABS(0x2116), 0x0800);
+    lda16(0x0800); wr16(DP(0x05), 0x0800);
+    lda16(0xC800);
+    ldx8(0x89);
+    ldy8(0x01);
+    push16(0x9D6C); DmaKick_m0x1();
+    D = pull16(); nz16(D);
+    sep(0x20);
+    wr8(ABS(0x0453), inc8(rd8(ABS(0x0453))));
+    wr8(ABS(0x1923), inc8(rd8(ABS(0x1923))));
+    wr8(ABS(0x009A), 0);
+    wr8(ABS(0x009B), 0);
+    rep(0x20);
+    lda16(0x08F5); wr16(DP(0x00), 0x08F5);
+    lda16(0x572C); wr16(DP(0x18), 0x572C);
+    sep(0x20);
+    lda8(0x11); wr8(DP(0x1A), 0x11);
+    push8(0x80); push16(0x9D91); QueueTimeDigits_m1x1();
+    rep(0x20);
+    lda16(0x0936); wr16(DP(0x00), 0x0936);
+    lda16(0x5730); wr16(DP(0x18), 0x5730);
+    sep(0x20);
+    lda8(0x11); wr8(DP(0x1A), 0x11);
+    push8(0x80); push16(0x9DA7); QueueFiveDigits_m1x1();
+    rep(0x20);
+    lda16(0x0978); wr16(DP(0x00), 0x0978);
+    lda16(0x03A5); wr16(DP(0x02), 0x03A5);
+    sep(0x20);
+    lda8(0x01); wr8(DP(0x0F), 0x01);
+    push16(0x9DBC); VramQueueTiles_m1x1();
+    push8(0x80); push16(0x9DC0); ShowEntryPassword_m1x1();
+    lda8(rd8(LONG(0x81800C)));
+    if (!fz) {
+        rep(0x20);
+        lda16(0x09EB); wr16(DP(0x00), 0x09EB);
+        lda16(0x9DDD); wr16(DP(0x02), 0x9DDD);
+        sep(0x20);
+        lda8(0x01); wr8(DP(0x0F), 0x01);
+        push16(0x9DDB); VramQueueTiles20_m1x1();
+    }
+    ret();
+}

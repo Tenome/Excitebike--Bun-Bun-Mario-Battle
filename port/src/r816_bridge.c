@@ -678,6 +678,7 @@ BRIDGE_DYN(HleHand_RaceResultsSetup, RaceResultsSetup_m1x1, g_ram[0x7D] ? 9000 :
  * the frame scheduler mid-call (see the RunGameModeScript note); hooked, the
  * Gen A race regression diverges at any cost. */
 BRIDGE(HleHand_DigitsToNumber, DigitsToNumber_m1x0, 1200)
+BRIDGE_DYN(HleHand_DrawEntryScreen, DrawEntryScreen_m1x1, r816_bus_read(0x81800C) ? 7450 : 6250)
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */
