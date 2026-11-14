@@ -345,3 +345,11 @@
 818A42  1 1  mem+A,X,Y,C,V   RaceRowList
 818A4D  1 1  mem+A,X,Y,C,V   LoadRaceColumn
 80A5AC  1 1  mem+X,Y,C,V   DrawRacerNameLow
+80ABA0  1 1  mem+A,X,Y,C,V   ThrottleFrom
+80AB9A  1 1  mem+A,X,Y,C,V   ThrottleAll
+80BE2E  1 1  mem+A,X,Y,C,V   RiderStateStep
+80BE22  1 1  mem+A,X,Y,C,V   RiderStepAll
+80E773  1 1  mem+A,X,Y,C,V   AnimateAllWheels
+80E7A4  1 1  mem+A,X,Y,C,V   RunAllRiderPieces
+80EB80  1 1  mem+A,X,Y,C,V   RunPieceActions
+80E374  1 1  mem+A,X,Y,C,V   TemperatureGaugeJmp

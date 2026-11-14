@@ -626,6 +626,41 @@ static uint32 race_column_cost1(void)
 BRIDGE(HleHand_RaceRowList, RaceRowList_m1x1, 30)
 BRIDGE_DYN(HleHand_LoadRaceColumn, LoadRaceColumn_m1x1, race_column_cost1())
 BRIDGE(HleHand_DrawRacerNameLow, DrawRacerNameLow_m1x1, 1300)
+/* ThrottleAll ($80:AB9A) / ThrottleFrom ($80:ABA0): ~205 cycles per
+ * racing rider ($01D8; RiderThrottle's 180 included), ~12 otherwise. */
+static uint32 throttle_from_cost1(int last)
+{
+    uint32 c = 20;
+    for (int x = 0; x <= last && x < 8; x++) c += g_ram[0x01D8 + x] ? 205 : 12;
+    return c;
+}
+/* RiderStepAll ($80:BE22): per rider its state step ($01D0: the hooked
+ * steps' costs) plus RiderShadowY (40). */
+static uint32 rider_steps_cost1(void)
+{
+    static const uint16 step[6] = { 6, 50, 100, 50, 25, 80 };
+    uint32 c = 6;
+    for (int x = 0; x < 8; x++) {
+        uint8 st = g_ram[0x01D0 + x];
+        c += 70 + (st < 6 ? step[st] : 0);
+    }
+    return c;
+}
+/* RunPieceActions ($80:EB80): ~12 per rider, ~60 more per pending action. */
+static uint32 piece_actions_cost1(void)
+{
+    uint32 c = 10;
+    for (int x = 0; x < 8; x++) c += g_ram[0x0220 + x] ? 72 : 12;
+    return c;
+}
+BRIDGE_DYN(HleHand_ThrottleFrom, ThrottleFrom_m1x1, throttle_from_cost1(X & 0xFF))
+BRIDGE_DYN(HleHand_ThrottleAll, ThrottleAll_m1x1, g_ram[0x8E] ? 4 + throttle_from_cost1(7) : 25)
+BRIDGE(HleHand_RiderStateStep, RiderStateStep_m1x1, 70)
+BRIDGE_DYN(HleHand_RiderStepAll, RiderStepAll_m1x1, rider_steps_cost1())
+BRIDGE(HleHand_AnimateAllWheels, AnimateAllWheels_m1x1, 202)
+BRIDGE(HleHand_RunAllRiderPieces, RunAllRiderPieces_m1x1, 800)
+BRIDGE_DYN(HleHand_RunPieceActions, RunPieceActions_m1x1, piece_actions_cost1())
+BRIDGE(HleHand_TemperatureGaugeJmp, TemperatureGaugeJmp_m1x1, 423)
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */

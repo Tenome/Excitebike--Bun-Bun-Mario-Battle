@@ -7364,3 +7364,121 @@ void DrawRacerNameLow_m1x1(void)
     sep(0x20);
     VramQueueBlock_m1x1();
 }
+
+void RiderShadowY_m1x1(void);
+void AnimateWheels_m1x1(void);
+void TemperatureGauge_m1x1(void);
+
+/* $80:ABA0 (RTS, X = last rider): riders X-0 that are racing ($01D8) get
+ * their throttle; a crashed, held ($0940) or otherwise busy one (state
+ * $01D0 not 5) has its pad $0178 cleared first. Then, unpaused ($54) with
+ * the player holding A/B and $092D, $84 clear, $092D = 1. */
+void ThrottleFrom_m1x1(void)
+{
+    do {
+        lda8(rd8(ABSX(0x01D8)));
+        if (!fz) {
+            lda8(rd8(ABSX(0x01D0)));
+            cmp8((u8)A, 0x05);
+            if (!fz) {
+                ora8(rd8(ABSX(0x01C8)));
+                ora8(rd8(ABSX(0x0940)));
+                if (!fz) { lda8(0x00); wr8(ABSX(0x0178), 0); }
+            }
+            push16(0xABBB); RiderThrottle_m1x1();
+        }
+        X = dec8((u8)X);
+    } while (!fn);
+    lda8(rd8(DP(0x54)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABS(0x0178)));
+    and8(0xC0);
+    if (fz) { ret(); return; }
+    lda8(rd8(ABS(0x092D)));
+    ora8(rd8(DP(0x84)));
+    if (!fz) { ret(); return; }
+    lda8(0x01); wr8(ABS(0x092D), 0x01);
+    ret();
+}
+
+/* $80:AB9A (RTS): while racing ($8E), ThrottleFrom for all eight riders
+ * (else only its closing check). */
+void ThrottleAll_m1x1(void)
+{
+    lda8(rd8(DP(0x8E)));
+    if (!fz) {
+        ldx8(0x07);
+        ThrottleFrom_m1x1();
+        return;
+    }
+    lda8(rd8(DP(0x54)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABS(0x0178)));
+    and8(0xC0);
+    if (fz) { ret(); return; }
+    lda8(rd8(ABS(0x092D)));
+    ora8(rd8(DP(0x84)));
+    if (!fz) { ret(); return; }
+    lda8(0x01); wr8(ABS(0x092D), 0x01);
+    ret();
+}
+
+/* $80:BE2E (RTS, X = rider): the rider's state step $01D0 through the
+ * table $80:BE07 / $80:BE0D. */
+void RiderStateStep_m1x1(void)
+{
+    Y = rd8(ABSX(0x01D0)); nz8((u8)Y);
+    lda8(rd8(ABSY(0xBE07))); wr8(DP(0x00), (u8)A);
+    lda8(rd8(ABSY(0xBE0D))); wr8(DP(0x01), (u8)A);
+    if (!r816_call_pc(0x800000u | rd16(LONG(0x000000))))
+        r816_unknown_target(0x80BE3B, rd16(LONG(0x000000)));
+}
+
+/* $80:BE22 (RTS): for riders 7-0 the state step and the shadow height. */
+void RiderStepAll_m1x1(void)
+{
+    ldx8(0x07);
+    do {
+        push16(0xBE26); RiderStateStep_m1x1();
+        push16(0xBE29); RiderShadowY_m1x1();
+        X = dec8((u8)X);
+    } while (!fn);
+    ret();
+}
+
+/* $80:E773 (RTS): AnimateWheels for all eight riders. */
+void AnimateAllWheels_m1x1(void)
+{
+    ldx8(0x07);
+    AnimateWheels_m1x1();
+}
+
+/* $80:E7A4 (RTS): the piece scripts of riders 7-1, then the player's. */
+void RunAllRiderPieces_m1x1(void)
+{
+    ldx8(0x07);
+    do {
+        push16(0xE7A8); RunRiderPieces_m1x1();
+        X = dec8((u8)X);
+    } while (!fz);
+    RunRiderPieces_m1x1();
+}
+
+/* $80:EB80 (RTS): for riders 7-0 with a pending piece action $0220, run
+ * it (PieceAction). */
+void RunPieceActions_m1x1(void)
+{
+    ldx8(0x07);
+    do {
+        lda8(rd8(ABSX(0x0220)));
+        if (!fz) { push16(0xEB89); piece_action1(); }
+        X = dec8((u8)X);
+    } while (!fn);
+    ret();
+}
+
+/* $80:E374 (RTS): TemperatureGauge. */
+void TemperatureGaugeJmp_m1x1(void)
+{
+    TemperatureGauge_m1x1();
+}

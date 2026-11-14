@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 341 hand-written (83.8%), 337 of them in the port.
+407 functions in the static map; 349 hand-written (85.7%), 345 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -88,6 +88,8 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:AB18` | SendSpeedToApu | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:AB2A` | BallOrGauge | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:AB3D` | SegmentTimer | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:AB9A` | ThrottleAll | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:ABA0` | ThrottleFrom | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:ABD7` | RiderThrottle | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:AC9C` | RiderOnRamp | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:ADF9` | AccelerateRider | `mem+X,V` | `race.c` | yes |
@@ -123,6 +125,8 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:BC61` | Mul16 | `mem+Y,V` | `objects.c` | yes |
 | `$80:BCCD` | Mul16c | `mem+V` | `objects.c` | yes |
 | `$80:BD39` | Nop_BD39 | `mem+Y` | `objects.c` | yes |
+| `$80:BE22` | RiderStepAll | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:BE2E` | RiderStateStep | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:BE3E` | RiderRunOut | `mem+X,Y,C,V` | `from_s4.c` | yes |
 | `$80:BE6A` | WalkToStartLane | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:BEB7` | WalkBackOn | `mem+A,X,Y,C,V` | `objects.c` | yes |
@@ -217,11 +221,14 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:E043` | AnimSourceFromFrame | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:E059` | ShowBonusBest | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:E2B6` | StartDemo | `mem+X,Y,C,V` | `objects.c` |  |
+| `$80:E374` | TemperatureGaugeJmp | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:E377` | DemoInputStep | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:E3FB` | StartMode01 | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:E411` | DemoPadDisplay | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:E4FC` | DemoPushStart | `mem+X,Y,C,V` | `objects.c` | yes |
+| `$80:E773` | AnimateAllWheels | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:E775` | AnimateWheels | `mem+V` | `race.c` | yes |
+| `$80:E7A4` | RunAllRiderPieces | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:E7AC` | RunRiderPieces | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:E8B1` | RiderLanePieceAt | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:E8B4` | RiderPieceAt | `mem+A,X,Y,C,V` | `objects.c` | yes |
@@ -248,6 +255,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:EAD1` | PlayerOverheatWarn | `mem+A,X,Y,C,V` | `race.c` | yes |
 | `$80:EB0C` | SpeedBumpCrash | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:EB39` | SlowPieceBrake | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:EB80` | RunPieceActions | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:EB8E` | SlowPieceStep | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:EBDF` | UpdateLanes | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:ECE4` | DrawSparksAndMarkers | `mem+A,X,Y,C,V` | `objects.c` | yes |

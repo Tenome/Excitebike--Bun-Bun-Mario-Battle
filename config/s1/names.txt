@@ -363,3 +363,11 @@
 818A42 RaceRowList
 818A4D LoadRaceColumn
 80A5AC DrawRacerNameLow
+80ABA0 ThrottleFrom
+80AB9A ThrottleAll
+80BE2E RiderStateStep
+80BE22 RiderStepAll
+80E773 AnimateAllWheels
+80E7A4 RunAllRiderPieces
+80EB80 RunPieceActions
+80E374 TemperatureGaugeJmp
