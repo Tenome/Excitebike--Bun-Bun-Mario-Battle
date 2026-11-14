@@ -5657,7 +5657,7 @@ void PlayerSelectStart_m1x1(void)
     ret();
 }
 
-void sub_80EE5C_m1x1(void);
+void QueueScoreDigitsHud_m1x1(void);
 void LoadSavedEntry_m1x1(void);
 void MergeBsxFlags_m1x1(void);
 void SumBytes0850_m1x1(void);
@@ -5680,7 +5680,7 @@ void RaceBookkeeping_m1x1(void)
     if (fc) { ret(); return; }
     push16(0xB173); PaceBonus_m1x1();
     push16(0xB176); AddScore_m1x1();
-    push16(0xB179); CALL(sub_80EE5C_m1x1, 0x80EE5C, 2);
+    push16(0xB179); CALL(QueueScoreDigitsHud_m1x1, 0x80EE5C, 2);
     ret();
 }
 
@@ -8649,4 +8649,198 @@ void LoadSavedEntry_m1x1(void)
     lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A));
     wr8(ABS(0x0850), tsb8(rd8(ABS(0x0850))));
     retl();
+}
+
+void Mul16c_m1x1(void);
+void FinishModeSetup_m1x1(void);
+void ShowBonusLabel_m1x1(void);
+void QueueScoreDigits_m1x1(void);
+void SetJumpBase_m1x1(void);
+void PlaceRival_m1x1(void);
+void CrashLand_m1x1(void);
+void EmptyHook_m1x1(void);
+
+/* Empty routines (RTS): $80:BE2D, $80:DDF8, $81:9956, $81:B67E. */
+void EmptyBE2D_m1x1(void) { ret(); }
+void EmptyDDF8_m1x1(void) { ret(); }
+void Empty9956_m1x1(void) { ret(); }
+void EmptyB67E_m1x1(void) { ret(); }
+
+/* $80:B6A9 ModeNop (RTS). */
+void ModeNop_m1x1(void) { ret(); }
+
+/* $80:8AFD (RTS): next mode step ($75 + 1). */
+void ModeStepNext_m1x1(void)
+{
+    wr8(DP(0x75), inc8(rd8(DP(0x75))));
+    ret();
+}
+
+/* $80:8D0C (RTS): the (empty) hook, sound $03, then FinishModeSetup. */
+void StartModeWithSound_m1x1(void)
+{
+    push8(0x80); push16(0x8D0F); EmptyHook_m1x1();
+    lda8(0x03);
+    push8(0x80); push16(0x8D15); QueueSound_m1x1();
+    FinishModeSetup_m1x1();
+}
+
+/* $81:BD67 (RTS): clear the palette $0349 of object $039D. */
+void ClearObjectPalette_m1x1(void)
+{
+    X = rd8(ABS(0x039D)); nz8((u8)X);
+    wr8(ABSX(0x0349), 0);
+    ret();
+}
+
+/* $80:B21D ScreenOff (RTS): screen off ($1903 shadow). */
+void ScreenOff_m1x1(void)
+{
+    lda8(0x80);
+    wr8(ABS(0x2100), 0x80);
+    wr8(ABS(0x1903), 0x80);
+    ret();
+}
+
+/* $81:9520 (RTS by tail): run the step $0128,Y of object Y through the
+ * table $81:9528 (one entry, $81:9530). */
+void ObjectStepDispatch_m1x1(void)
+{
+    lda8(rd8(ABSY(0x0128)));
+    lda8(asl8((u8)A));
+    X = (u8)A; nz8((u8)X);
+    u16 t = rd16(LONG(0x819528 + X));
+    if (!r816_call_pc(0x810000 | t))
+        r816_unknown_target(0x819525, t);
+}
+
+/* $80:9E96: leave the ending for mode $0F ($75 / $77 cleared, $1923 - 1,
+ * $88 = $20). */
+static void ending_done1(void)
+{
+    lda8(0x0F); wr8(DP(0x76), 0x0F);
+    wr8(DP(0x75), 0);
+    wr8(DP(0x77), 0);
+    wr8(ABS(0x1923), dec8(rd8(ABS(0x1923))));
+    rep(0x20);
+    lda16(0x0020); wr16(DP(0x88), 0x0020);
+    sep(0x20);
+    ret();
+}
+
+/* $80:9E6E Mode10_Ending (RTS): count $88 down, then mode $0F. */
+void Mode10_Ending_m1x1(void)
+{
+    rep(0x20);
+    wr16(DP(0x88), dec16(rd16(DP(0x88))));
+    sep(0x20);
+    if (fz) { ending_done1(); return; }
+    ret();
+}
+
+/* $80:D7B2 (RTS): $09C2 = $85 / 4. */
+void SetBonusRow_m1x1(void)
+{
+    lda8(rd8(DP(0x85)));
+    lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
+    wr8(ABS(0x09C2), (u8)A);
+    ret();
+}
+
+/* $80:D8FB (RTS): $1958 + 1, $AC = $1E, $AD = 1, then the bonus label. */
+void StartBonusLabel_m1x1(void)
+{
+    wr8(ABS(0x1958), inc8(rd8(ABS(0x1958))));
+    lda8(0x1E); wr8(DP(0xAC), 0x1E);
+    lda8(0x01); wr8(DP(0xAD), 0x01);
+    ShowBonusLabel_m1x1();
+}
+
+/* $80:E2AB (RTS): BG mode 9, BG1 map at $0000 (BG1SC = 1). */
+void SetRaceBgMode_m1x1(void)
+{
+    lda8(0x09); wr8(ABS(0x2105), 0x09);
+    lda8(0x01); wr8(ABS(0x2107), 0x01);
+    ret();
+}
+
+/* $80:EBD3 (RTS, X = rider): clear $0220,X, $01A0,X and $0981,X. */
+void ClearRiderAction_m1x1(void)
+{
+    lda8(0x00);
+    wr8(ABSX(0x0220), 0);
+    wr8(ABSX(0x01A0), 0);
+    wr8(ABSX(0x0981), 0);
+    ret();
+}
+
+/* $80:BC55 (RTS, M=0): A * $40 through Mul16c ($42 = A), the middle word
+ * $45 back in A. */
+void ScaleIrqLine_m0x1(void)
+{
+    wr16(DP(0x42), A);
+    sep(0x20);
+    push16(0xBC5B); Mul16c_m1x1();
+    rep(0x20);
+    lda16(rd16(DP(0x45)));
+    ret();
+}
+
+/* $80:DDF9 (RTS): HDMA preset 2, $3A = $0CD7 = $20. */
+void StartDemoHdma_m1x1(void)
+{
+    lda8(0x02);
+    push8(0x80); push16(0xDDFE); SetHdmaPreset_m1x1();
+    lda8(0x20); wr8(DP(0x3A), 0x20);
+    wr8(ABS(0x0CD7), 0x20);
+    ret();
+}
+
+/* $80:E29D (RTS): course 0, race, $7E cleared, attract demo $0CD7 = $0F. */
+void ResetDemoCourse_m1x1(void)
+{
+    lda8(0x00);
+    wr8(DP(0x7C), 0); wr8(DP(0x7D), 0); wr8(DP(0x7E), 0);
+    lda8(0x0F); wr8(ABS(0x0CD7), 0x0F);
+    ret();
+}
+
+/* $80:EE5C (RTS): the score digits at VRAM $1B38, palette $20. */
+void QueueScoreDigitsHud_m1x1(void)
+{
+    lda8(0x38); wr8(DP(0x00), 0x38);
+    lda8(0x1B); wr8(DP(0x01), 0x1B);
+    lda8(0x20); wr8(DP(0x0F), 0x20);
+    QueueScoreDigits_m1x1();
+}
+
+/* $80:E3DF (RTS by tail): place rival 7 ($092A = 7, $0198,7 cleared) on
+ * lane 3. */
+void PlaceLastRival_m1x1(void)
+{
+    ldx8(0x07);
+    wr8(ABS(0x092A), 0x07);
+    lda8(0x00); wr8(ABSX(0x0198), 0);
+    ldy8(0x03);
+    PlaceRival_m1x1();
+}
+
+/* $80:EBC1 (RTS by tail, X = rider): clear $09C4 / $09C7, then land. */
+void ResetAndLand_m1x1(void)
+{
+    lda8(0x00);
+    wr8(ABS(0x09C4), 0);
+    wr8(ABS(0x09C7), 0);
+    CrashLand_m1x1();
+}
+
+/* $80:EB25 / $80:EB2F / $80:EB34 (RTS by tail, X = rider): jump base $30
+ * or $10 (SetJumpBase); the first also sets $0200,X = 2 and $0240,X = 1. */
+void JumpBase30_m1x1(void) { lda8(0x30); SetJumpBase_m1x1(); }
+void JumpBase10_m1x1(void) { lda8(0x10); SetJumpBase_m1x1(); }
+void StartJumpBase30_m1x1(void)
+{
+    lda8(0x02); wr8(ABSX(0x0200), 0x02);
+    lda8(0x01); wr8(ABSX(0x0240), 0x01);
+    JumpBase30_m1x1();
 }

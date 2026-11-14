@@ -6,6 +6,7 @@
 #ifndef R816_EXTERNAL_BUS
 #include "lifted.h"
 void LoadScene_m1x1(void);
+void ScreenOff_m1x1(void);
 #endif
 
 /* Game mode state (direct page). */
@@ -74,7 +75,7 @@ void RunGameModeScript_m1x1(void)
         return;
     }
     /* step 0 (or >= $81): reset the mode's working state */
-    push16(0x8A30); CALL(sub_80B21D_m1x1, 0x80B21D, 2);
+    push16(0x8A30); CALL(ScreenOff_m1x1, 0x80B21D, 2);
     push16(0x8A33); CALL(LoadScene_m1x1, 0x80B873, 2);
     for (u16 a = 0x0818; a != 0x008B; a--)
         wr8((u16)(D + a), 0);
