@@ -9,7 +9,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s1
 
-407 functions in the static map; 335 hand-written (82.3%), 331 of them in the port.
+407 functions in the static map; 337 hand-written (82.8%), 333 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -87,8 +87,10 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:AB18` | SendSpeedToApu | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:AB2A` | BallOrGauge | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:AB3D` | SegmentTimer | `mem+A,X,Y,C,V` | `objects.c` | yes |
+| `$80:ABD7` | RiderThrottle | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:AC9C` | RiderOnRamp | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:ADF9` | AccelerateRider | `mem+X,V` | `race.c` | yes |
+| `$80:AE2F` | BrakeOnTurn | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:AE33` | BrakeRider | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:AEC6` | CpuRidersStep | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:AF07` | CpuLaneDecision | `mem+A,X,Y,C,V` | `objects.c` | yes |

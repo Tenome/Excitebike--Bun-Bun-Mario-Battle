@@ -357,3 +357,5 @@
 80C8E9 ShowCourseBest
 80CC38 SortAndDrawRiders
 80A89C RacePlaceRiders
+80AE2F BrakeOnTurn
+80ABD7 RiderThrottle

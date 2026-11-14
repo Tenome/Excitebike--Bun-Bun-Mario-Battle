@@ -614,6 +614,8 @@ BRIDGE(HleHand_ShowCourseBest, ShowCourseBest_m1x1, 1360)
  * so the recompiled routine keeps calling it through the hook. */
 BRIDGE_DYN(HleHand_ResultsBonusCount, ResultsBonusCount_m1x1, bonus_count_cost1())
 BRIDGE(HleHand_SortAndDrawRiders, SortAndDrawRiders_m1x1, 3800)
+BRIDGE_DYN(HleHand_BrakeOnTurn, BrakeOnTurn_m1x1, (X & 0xFF) == g_ram[0x7F] ? 50 : 10)
+BRIDGE(HleHand_RiderThrottle, RiderThrottle_m1x1, 180)
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */

@@ -6773,3 +6773,204 @@ void RacePlaceRiders_m1x1(void)
     } while (!fz);
     ret();
 }
+
+void RiderOnRamp_m1x1(void);
+void AccelerateRider_m1x1(void);
+void BrakeRider_m1x1(void);
+
+/* $80:AE2F (RTS, X = rider, Y = how hard): BrakeRider on the rider whose
+ * turn it is ($7F). */
+void BrakeOnTurn_m1x1(void)
+{
+    cmp8((u8)X, rd8(DP(0x7F)));
+    if (!fz) { ret(); return; }
+    BrakeRider_m1x1();
+}
+
+/* $80:C31B: lean rider X one step toward angle A, every Y frames ($45,X). */
+static void lean_toward1(void)
+{
+    wr8(DP(0x00), (u8)A);
+    lda8(rd8(DPX(0x45)));
+    if (!fz) { ret(); return; }
+    lda8((u8)Y);
+    wr8(DPX(0x45), (u8)A);
+    lda8(rd8(ABSX(0x01E0)));
+    cmp8((u8)A, rd8(DP(0x00)));
+    if (fz) { ret(); return; }
+    if (fc) {
+        wr8(ABSX(0x01E0), dec8(rd8(ABSX(0x01E0))));
+        wr8(ABSX(0x01E0), dec8(rd8(ABSX(0x01E0))));
+    }
+    wr8(ABSX(0x01E0), inc8(rd8(ABSX(0x01E0))));
+    ret();
+}
+
+/* $80:AE62: the d-pad leans rider X (every $80:B86D frames by air state):
+ * up ($00 bit 0) leans back to $80:B861; otherwise forward to $80:B863,
+ * and holding a button past it on the ground keeps tipping until angle
+ * $0D flips it ($01C8 = 1, $3D,X = $0A, sound $24 / $29). */
+static void lean_by_pad1(void)
+{
+    lda8(rd8(DPX(0x45)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABSX(0x01E8)));
+    lda8(lsr8((u8)A));
+    Y = (u8)A; nz8((u8)Y);
+    lda8(rd8(ABSY(0xB86D)));
+    wr8(DPX(0x45), (u8)A);
+    {
+        u8 v = rd8(DP(0x00));
+        fc = v & 1;
+        v >>= 1;
+        wr8(DP(0x00), v);
+        nz8(v);
+    }
+    if (fc) {
+        lda8(rd8(ABSX(0x01E0)));
+        cmp8((u8)A, rd8(ABSY(0xB861)));
+        if (fz) { ret(); return; }
+        if (!fc) { wr8(ABSX(0x01E0), inc8(rd8(ABSX(0x01E0)))); ret(); return; }
+        wr8(ABSX(0x01E0), dec8(rd8(ABSX(0x01E0))));
+        ret();
+        return;
+    }
+    lda8(rd8(ABSX(0x08F4)));
+    and8(0x02);
+    wr8(ABSX(0x08F4), (u8)A);
+    lda8(rd8(ABSX(0x01E0)));
+    cmp8((u8)A, rd8(ABSY(0xB863)));
+    if (!fc) { wr8(ABSX(0x01E0), inc8(rd8(ABSX(0x01E0)))); ret(); return; }
+    lda8(rd8(ABSX(0x0178)));
+    and8(0xC0);
+    if (fz) { ret(); return; }
+    lda8(rd8(ABSX(0x01E8)));
+    if (!fz) { ret(); return; }
+    wr8(ABSX(0x01E0), inc8(rd8(ABSX(0x01E0))));
+    lda8(0x0D); wr8(DPX(0x45), 0x0D);
+    lda8(rd8(ABSX(0x01E0)));
+    cmp8((u8)A, 0x0D);
+    if (!fc) { ret(); return; }
+    lda8(0x01); wr8(ABSX(0x01C8), 0x01);
+    lda8(0x0A); wr8(DPX(0x3D), 0x0A);
+    lda8((u8)X);
+    if (!fz) lda8(0x05);
+    fc = 0; adc8(0x24);
+    push8(0x80); push16(0xAEC4); QueueSound_m1x1();
+    ret();
+}
+
+/* $80:ABD7 RiderThrottle (RTS, X = rider): rider X's throttle and lean
+ * from its pad $0178. Not crashed or held, on the ground with a button
+ * down (A/B: $C0) it accelerates up to the top speed $80:B86A / $80:B867
+ * (by button and, for the player, $84), with sound $3F when the player
+ * starts from still; otherwise it brakes (BrakeOnTurn, Y = how hard).
+ * Then, not crashed: in the air or fast enough ($A0) the d-pad leans it;
+ * on the ground it settles toward the piece angle $08B4. */
+void RiderThrottle_m1x1(void)
+{
+    lda8(rd8(ABSX(0x0178)));
+    and8(0x03);
+    wr8(DP(0x0A), (u8)A);
+    ldy8(0x00);
+    lda8(rd8(ABSX(0x08CC)));
+    ora8(rd8(ABSX(0x01C8)));
+    if (!fz) goto brake;
+    lda8(rd8(ABSX(0x01D0)));
+    if (!fz) {
+        cmp8((u8)A, 0x05);
+        if (!fz) goto brake;
+    }
+    lda8((u8)X);
+    if (fz) {
+        ldy8(0x02);
+        lda8(rd8(DP(0x84)));
+        if (!fz) goto top;
+        ldy8(0x00);
+    }
+    lda8(rd8(ABSX(0x01E8)));
+    if (!fz) {
+        ldy8(0x04);
+        lda8(rd8(DP(0x0A)));
+        if (fz) goto brake;
+        Y = (u8)A; nz8((u8)Y);
+        goto harder;
+    }
+    lda8(rd8(ABSX(0x0178)));
+    and8(0xC0);
+    if (fz) goto brake;
+    wr8(DP(0x00), (u8)X);
+    cmp8((u8)X, 0x00);
+    if (fz) {
+        lda8(rd8(ABSX(0x01B8)));
+        ora8(rd8(ABSX(0x01C0)));
+        if (fz) {
+            lda8(rd8(DP(0x21)));
+            and8(0xC0);
+            if (!fz) { lda8(0x3F); push8(0x80); push16(0xAC21); QueueSound_m1x1(); }
+        }
+    }
+    lda8(rd8(ABSX(0x0178)));
+    lda8(asl8((u8)A));
+    if (!fc) wr8(DP(0x00), inc8(rd8(DP(0x00))));
+    push16(0xAC2C); RiderOnRamp_m1x1();
+    if (!fz) {
+        lda8(rd8(ABSX(0x0208)));
+        if (fz) {
+            lda8(rd8(ABSX(0x01C0)));
+            if (!fz) goto brake;
+        }
+    }
+    Y = rd8(DP(0x00)); nz8((u8)Y);
+    lda8((u8)X);
+    if (!fz) goto accel;
+top:
+    lda8(rd8(ABSX(0x01C0)));
+    cmp8((u8)A, rd8(ABSY(0xB86A)));
+    if (!fc) goto accel;
+    if (!fz) goto harder;
+    lda8(rd8(ABSX(0x01B8)));
+    cmp8((u8)A, rd8(ABSY(0xB867)));
+    if (fz) goto after;
+    if (fc) goto harder;
+accel:
+    push16(0xAC54); AccelerateRider_m1x1();
+    goto after;
+harder:
+    Y = inc8((u8)Y);
+brake:
+    push16(0xAC62); BrakeOnTurn_m1x1();
+after:
+    lda8(rd8(ABSX(0x01C8)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABSX(0x01E8)));
+    int pad = !fz;
+    if (!pad) {
+        lda8(rd8(ABSX(0x0170)));
+        ora8(rd8(DP(0x84)));
+        if (fz) {
+            lda8(rd8(ABSX(0x01C0)));
+            pad = !fz;
+            if (!pad) {
+                lda8(rd8(ABSX(0x01B8)));
+                cmp8((u8)A, 0xA0);
+                pad = fc;
+            }
+        }
+    }
+    if (pad) {
+        lda8(rd8(DP(0x0A)));
+        if (!fz) {
+            wr8(DP(0x00), (u8)A);
+            lean_by_pad1();
+            return;
+        }
+    }
+    lda8(rd8(ABSX(0x01E8)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABSX(0x08B4)));
+    cmp8((u8)A, rd8(ABSX(0x01E0)));
+    if (fz) { ret(); return; }
+    ldy8(0x05);
+    lean_toward1();
+}
