@@ -103,6 +103,72 @@ static void put(u32 snes, const uint8_t *src, size_t n)
         memcpy(s_rom + off, src, n);
 }
 
+/* SPC upload streams ([len16][dest16][data]..., len 0 ends) in a LoROM
+ * image; the reader steps to the next bank at $8000 like the uploader. */
+static size_t lorom_off(u32 a) { return ((a >> 16) & 0x7F) << 15 | (a & 0x7FFF); }
+static u32 lorom_next(u32 a) { a++; return (a & 0xFFFF) ? a : ((a & 0xFF0000) + 0x18000); }
+typedef struct { u16 dest, len; u32 at; } SpcChunk;
+static int spc_chunks(const uint8_t *img, size_t size, u32 a, SpcChunk *out, int max)
+{
+    int n = 0;
+    for (;;) {
+        u8 b[4];
+        for (int i = 0; i < 4; i++) {
+            if (lorom_off(a) >= size) return n;
+            b[i] = img[lorom_off(a)]; a = lorom_next(a);
+        }
+        u16 len = (u16)(b[0] | b[1] << 8);
+        if (!len || n >= max) return n;
+        out[n].len = len; out[n].dest = (u16)(b[2] | b[3] << 8); out[n].at = a;
+        n++;
+        for (u32 i = 0; i < len; i++) a = lorom_next(a);
+    }
+}
+static void spc_copy(uint8_t *dst, const uint8_t *img, u32 a, size_t n)
+{
+    for (size_t i = 0; i < n; i++) { dst[i] = img[lorom_off(a)]; a = lorom_next(a); }
+}
+
+/* Luigi's race sound set. The Stadium 4 driver lays Yoshi's voice sample
+ * over Luigi's at ARAM $8E6D (directory entries $0C and $10 both point
+ * there), and the Stadium 3 race set ($9D:8000, instruments $20-$24 up to
+ * $EEB3) leaves no room below the echo buffer ($EF00) for Luigi's 6381-byte
+ * sample. So Luigi's race takes Yoshi's own small race set (the S4 $9D:8000
+ * stream: songs at $C360 on driver instruments), and Luigi's sample from the
+ * Stadium 3 driver ($9E:8000 chunk $5F00, at $8E6D) goes to $C400 with
+ * directory entry $0C pointed at it: sound $38 (Luigi's crash voice) plays
+ * Luigi, sound $35 still plays Yoshi (entry $10). */
+#define LUIGI_SAMPLE_ARAM 0xC400
+#define LUIGI_SAMPLE_LEN  6381
+static size_t build_luigi_sound(const uint8_t *s3, size_t s3size, uint8_t *out, size_t cap)
+{
+    SpcChunk c[32];
+    size_t o = 0;
+    int n = spc_chunks(s_rom, s_rom_size, 0x9D8000, c, 32);      /* S4: Yoshi's race set */
+    for (int i = 0; i < n; i++) {
+        if (o + 4 + c[i].len > cap) return 0;
+        out[o++] = (u8)c[i].len; out[o++] = (u8)(c[i].len >> 8);
+        out[o++] = (u8)c[i].dest; out[o++] = (u8)(c[i].dest >> 8);
+        spc_copy(out + o, s_rom, c[i].at, c[i].len); o += c[i].len;
+    }
+    n = spc_chunks(s3, s3size, 0x9E8000, c, 32);                  /* S3 driver */
+    int k = -1;
+    for (int i = 0; i < n; i++)
+        if (c[i].dest == 0x5F00 && c[i].len >= 0x8E6D - 0x5F00 + LUIGI_SAMPLE_LEN) k = i;
+    if (k < 0 || o + 8 + LUIGI_SAMPLE_LEN + 4 + 4 > cap) return 0;
+    u32 at = c[k].at;
+    for (u32 i = 0; i < 0x8E6D - 0x5F00; i++) at = lorom_next(at);
+    out[o++] = (u8)LUIGI_SAMPLE_LEN; out[o++] = (u8)(LUIGI_SAMPLE_LEN >> 8);
+    out[o++] = (u8)LUIGI_SAMPLE_ARAM; out[o++] = (u8)(LUIGI_SAMPLE_ARAM >> 8);
+    spc_copy(out + o, s3, at, LUIGI_SAMPLE_LEN); o += LUIGI_SAMPLE_LEN;
+    u16 end = (u16)(LUIGI_SAMPLE_ARAM + LUIGI_SAMPLE_LEN);       /* no loop: loop = end, as S3 */
+    const u8 dir[8] = { 4, 0, 0x30, 0x5C, (u8)LUIGI_SAMPLE_ARAM, (u8)(LUIGI_SAMPLE_ARAM >> 8), (u8)end, (u8)(end >> 8) };
+    memcpy(out + o, dir, 8); o += 8;
+    const u8 fin[4] = { 0, 0, 0x00, 0x08 };                      /* end, start $0800 */
+    memcpy(out + o, fin, 4); o += 4;
+    return o;
+}
+
 static void add_luigi(void)
 {
     uint8_t *s3 = bunbun_data_load_dump("s3.sfc");
@@ -111,7 +177,15 @@ static void add_luigi(void)
         return;
     }
     put(EXT_LUIGI_SET, s3 + (((0x9A8000 >> 16) & 0x7F) << 15), 0x4000);    /* $9A:8000 */
-    put(EXT_LUIGI_VOICE, s3 + (((0x9D8000 >> 16) & 0x7F) << 15), 0x3000);  /* $9D:8000 */
+    {
+        static uint8_t snd[0x8000];
+        size_t n = build_luigi_sound(s3, 0x100000, snd, sizeof snd);
+        if (n)
+            put(EXT_LUIGI_VOICE, snd, n);
+        else    /* fall back to the Stadium 3 race set as it is */
+            put(EXT_LUIGI_VOICE, s3 + (((0x9D8000 >> 16) & 0x7F) << 15), 0x3000);
+        SDL_Log("[roster] Luigi sound set: %u bytes", (unsigned)n);
+    }
     SDL_free(s3);
 
     /* Luigi takes Yoshi's place in Yoshi's own races (lineup Luigi, Wario,
@@ -132,6 +206,7 @@ static void add_luigi(void)
         for (int v = 0; v < 2; v++) {
             l->pal[st][v][0] = 0x828AF0;
             l->pal[st][v][3] = g_ch[1].pal[1][v][0];      /* Yoshi, $82:8B10 */
+            l->voice[st][v][0] = 0x38;                    /* Luigi's own voice (Stadium 3) */
             l->voice[st][v][3] = g_ch[1].voice[1][v][0];  /* Yoshi's voice $35 */
         }
     l->name = 0x800000 | (u16)(0xA598 + 1 * 15);

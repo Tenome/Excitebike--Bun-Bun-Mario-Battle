@@ -389,3 +389,16 @@ default names.
 * A character swap mod (Peach/Yoshi into a Gen A slot) needs the 16 KB rider
   set, that slot's 16 colours in each OBJ palette block, and the name record
   (Gen B name tiles + `$50`).
+
+## Crash voices (Gen B sound driver)
+
+Measured by poking each sound id into the port-0 ring ($1400) during a race
+and tracing the DSP sample numbers: $35 Yoshi (sample $10), $36 Peach ($0F),
+$37 Mario ($0B), $38 Luigi ($0C), $39 Kinopio ($0D), $3A Wario ($0E). The
+driver upload ($9E:8000) holds the samples at ARAM $31F0-$C35F; the Stadium 4
+driver adds Yoshi's sample (entry $10) over ARAM $8E6D-$A21C, where Luigi's
+(entry $0C, 6381 bytes) was, so in Stadium 4 both entries play Yoshi. The
+per-character race sets ($82:857E stream table, X = character + 1) add
+instruments $20-$24 and their samples from $C360 up; the echo buffer is
+$EF00-$FEFF (ESA $EF, EDL 2). Sound ids $1B-$1F are songs, pointed at by
+the word table at $5CFF + 2 * id.
