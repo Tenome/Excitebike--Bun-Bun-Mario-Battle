@@ -665,9 +665,10 @@ BRIDGE(HleHand_TemperatureGaugeJmp, TemperatureGaugeJmp_m1x1, 423)
  * not hooked: they only call some forty routines that are hooked one by one,
  * and one bridge cost could not follow their per-frame cycle total. */
 BRIDGE_DYN(HleHand_RaceResultsSetup, RaceResultsSetup_m1x1, g_ram[0x7D] ? 9000 : 2500)
-/* LoadScene ($80:B873) passes difftest on s1 but is not hooked: with it
- * hooked the Gen A race regression diverges (every frame differs at any
- * cost), so the recompiled routine stays in use. */
+/* LoadScene ($80:B873) passes difftest on s1 but is not hooked: the hand
+ * code calls other routines directly, while the recompiled routine yields to
+ * the frame scheduler mid-call (see the RunGameModeScript note); hooked, the
+ * Gen A race regression diverges at any cost. */
 BRIDGE(HleHand_DigitsToNumber, DigitsToNumber_m1x0, 1200)
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
@@ -1287,6 +1288,11 @@ BRIDGE(HleHand_InitPpuRegisters, InitPpuRegisters_m1x1, 400)
 /* DMA kick, random course */
 BRIDGE(HleHand_DmaKick, DmaKick_m0x1, 12)
 BRIDGE(HleHand_StartRandomCourse, StartRandomCourse_m1x1, 800)
+/* screen off, mode dispatcher */
+BRIDGE(HleHand_ScreenOff, ScreenOff_m1x1, 15)
+/* Not bridged: RunGameModeScript ($80:85A9, passes difftest on s4). Its
+ * reset path calls the recompiled BS-X boot check $82:9182 (not a tail
+ * call), which hand C cannot resume if it yields; same rule as Stadium 1. */
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)

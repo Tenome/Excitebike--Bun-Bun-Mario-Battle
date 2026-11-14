@@ -463,3 +463,4 @@
 82805F InitPpuRegisters
 80824E DmaKick
 8088BF StartRandomCourse
+80B2CD ScreenOff

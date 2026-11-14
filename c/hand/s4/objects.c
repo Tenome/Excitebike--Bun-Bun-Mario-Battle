@@ -12642,3 +12642,68 @@ void StartRandomCourse_m1x1(void)
     push8(0x80); push16(0x89A8); SetupHdmaChannels_m1x1();
     ret();
 }
+
+void sub_829182_m1x1(void);
+
+/* $80:B2CD (RTS): screen off ($1903 shadow). */
+void ScreenOff_m1x1(void)
+{
+    lda8(0x80);
+    wr8(ABS(0x2100), 0x80);
+    wr8(ABS(0x1903), 0x80);
+    ret();
+}
+
+/* $80:85A9 RunGameModeScript (RTS): with $75 set, run mode $76's frame
+ * routine ($80:B4F9). Otherwise (unless $50) run the next step $77 of mode
+ * $76's setup script ($80:B52B); before the first step, screen off, the
+ * BS-X boot check ($82:9182) and $8F-$0815 cleared. */
+void RunGameModeScript_m1x1(void)
+{
+    lda8(rd8(DP(0x75)));
+    if (!fz) {
+        lda8(rd8(DP(0x76)));
+        lda8(asl8((u8)A));
+        Y = (u8)A; nz8((u8)Y);
+        lda8(rd8(ABSY(0xB4F9))); wr8(DP(0x00), (u8)A);
+        Y = inc8((u8)Y);
+        lda8(rd8(ABSY(0xB4F9))); wr8(DP(0x01), (u8)A);
+        if (!r816_call_pc(0x800000 | rd16(0x0000)))
+            r816_unknown_target(0x8085BC, rd16(0x0000));
+        return;
+    }
+    lda8(rd8(DP(0x50)));
+    if (!fz) { ret(); return; }
+    lda8(rd8(DP(0x76)));
+    lda8(asl8((u8)A));
+    X = (u8)A; nz8((u8)X);
+    lda8(rd8(ABSX(0xB52B))); wr8(DP(0x02), (u8)A);
+    X = inc8((u8)X);
+    lda8(rd8(ABSX(0xB52B))); wr8(DP(0x03), (u8)A);
+    Y = rd8(DP(0x77)); nz8((u8)Y);
+    wr8(DP(0x77), inc8(rd8(DP(0x77))));
+    Y = dec8((u8)Y);
+    if (!fn) {
+        lda8((u8)Y);
+        lda8(asl8((u8)A));
+        Y = (u8)A; nz8((u8)Y);
+        lda8(rd8(IDPY(0x02))); wr8(DP(0x00), (u8)A);
+        Y = inc8((u8)Y);
+        lda8(rd8(IDPY(0x02))); wr8(DP(0x01), (u8)A);
+        if (!r816_call_pc(0x800000 | rd16(0x0000)))
+            r816_unknown_target(0x8085E7, rd16(0x0000));
+        return;
+    }
+    push16(0x85EC); ScreenOff_m1x1();
+    push8(0x80); push16(0x85F0); CALL(sub_829182_m1x1, 0x829182, 3);
+    rep(0x10);
+    lda8(0x00);
+    X = 0x0815; nz16(X);
+    do {
+        wr8(DPX(0x00), (u8)A);
+        X = dec16(X);
+        cmp16(X, 0x008F);
+    } while (!fz);
+    sep(0x10);
+    ret();
+}

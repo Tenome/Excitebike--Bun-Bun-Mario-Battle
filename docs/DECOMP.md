@@ -370,13 +370,14 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s4
 
-532 functions in the static map; 454 hand-written (85.3%), 443 of them in the port.
+532 functions in the static map; 456 hand-written (85.7%), 444 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
 | `$80:81A9` | DrawClockB | `mem+X,Y,C,V` | `misc.c` | yes |
 | `$80:824E` | DmaKick | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:8535` | NmiFlushVramQueue | `mem` | `from_s1.c` | yes |
+| `$80:85A9` | RunGameModeScript | `mem+A,X,Y,C,V` | `objects.c` |  |
 | `$80:8603` | Mode00_IntroWait | `mem+X,Y,C,V` | `from_s1.c` | yes |
 | `$80:862A` | StartIntroMode | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:865A` | TitleScrollStep | `mem+X,Y,C,V` | `objects.c` | yes |
@@ -469,6 +470,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:B194` | ReadRiderPieces | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:B208` | RaceFrameStep | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:B22B` | DrawBigSprite | `mem+X,Y,V` | `objects.c` | yes |
+| `$80:B2CD` | ScreenOff | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:B2D6` | VramQueueTilesLong | `mem+X,Y,C,V` | `objects.c` |  |
 | `$80:B2DA` | VramQueueTiles20 | `mem+A,X,Y,C,V` | `vram.c` | yes |
 | `$80:B2DE` | VramQueueTiles | `mem+X,Y,C,Z,N,V` | `vram.c` | yes |
