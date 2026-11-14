@@ -417,7 +417,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 
 ## s4
 
-532 functions in the static map; 526 hand-written (98.9%), 502 of them in the port.
+532 functions in the static map; 530 hand-written (99.6%), 505 of them in the port.
 
 | Address | Routine | Compare | File | In port |
 |---|---|---|---|---|
@@ -547,6 +547,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:B736` | EndJumpMode | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:B76A` | StartJumpMode | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:B7A0` | Mode17_BonusIntro | `mem+X,Y,C,V` | `objects.c` | yes |
+| `$80:B7EC` | CourseSelectStep | `mem+X,Y,C,V` | `objects.c` |  |
 | `$80:B7F1` | JumpRunStepsMode | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:B912` | ScaleByScroll | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:B91E` | ParallaxLines | `mem+A,X,Y,C,V` | `objects.c` | yes |
@@ -632,6 +633,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:D5D9` | SetupBonusScreen | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:D5FD` | SetupSpriteRow15 | `mem+X,Y,C,V` | `from_s1.c` | yes |
 | `$80:D656` | StartBonusCourse | `mem+X,Y,C,V` | `objects.c` | yes |
+| `$80:D79D` | StartBonusCount | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:D7AB` | QueueBonusCount | `mem+V` | `objects.c` | yes |
 | `$80:D81B` | BonusCourseFrame | `mem+X,Y,C,V` | `objects.c` |  |
 | `$80:D8EF` | CheckBonusTime | `mem+X,Y,C,V` | `objects.c` | yes |
@@ -672,6 +674,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$80:E835` | SetJumpRiderSprites | `mem+X,Y,V` | `objects.c` | yes |
 | `$80:E85B` | JumpContestFrame | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:E8E5` | JumpResultTally | `mem+X,Y,C,V` | `objects.c` | yes |
+| `$80:E933` | JumpDistanceStepNear | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:E938` | ShowJumpCountLong | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$80:E93C` | JumpResultCount | `mem+X,Y,C,V` | `objects.c` | yes |
 | `$80:E956` | ShowJumpCount | `mem+X,Y,V` | `objects.c` | yes |
@@ -891,6 +894,7 @@ passes `tools/difftest816.py` on everything its callers can observe
 | `$81:C743` | SetJumpBanner | `mem+X,Y,C,V` | `leaves.c` | yes |
 | `$81:C75E` | CheckLaneTile | `mem+X,Y,V` | `objects.c` | yes |
 | `$81:C7C3` | ClearOnBonusTiles | `mem+X,Y,V` | `objects.c` | yes |
+| `$81:C7E0` | JumpDistanceStep | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$81:C7EF` | JumpResultDistance | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$81:C84F` | JumpResultTotal | `mem+A,X,Y,C,V` | `objects.c` | yes |
 | `$81:C883` | QueueResultsTiles | `mem+A,X,Y,C,V` | `objects.c` | yes |

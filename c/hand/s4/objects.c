@@ -14268,3 +14268,45 @@ void ModeCountdown_m1x1(void)
     sep(0x20);
     ret();
 }
+
+void QueueBonusCount_m1x1(void);
+void JumpResultDistance_m1x1(void);
+void DrawAllRidersLong_m1x1(void);
+
+/* $80:D79D (RTS): $1958 + 1, $B4 = $1E, $B5 = 1, $1990 cleared, then the
+ * bonus count. */
+void StartBonusCount_m1x1(void)
+{
+    wr8(ABS(0x1958), inc8(rd8(ABS(0x1958))));
+    lda8(0x1E); wr8(DP(0xB4), 0x1E);
+    lda8(0x01); wr8(DP(0xB5), 0x01);
+    wr8(ABS(0x1990), 0);
+    QueueBonusCount_m1x1();
+}
+
+/* $81:C7E0 (RTL): the jump contest result frame: riders drawn, $1961 =
+ * $19; when the delay $8C runs out, the jump distance. */
+void JumpDistanceStep_m1x1(void)
+{
+    ldx8(0x00);
+    push8(0x81); push16(0xC7E5); DrawAllRidersLong_m1x1();
+    lda8(0x19); wr8(ABS(0x1961), 0x19);
+    wr8(DP(0x8C), dec8(rd8(DP(0x8C))));
+    if (!fz) { retl(); return; }
+    JumpResultDistance_m1x1();
+}
+
+/* $80:E933 (RTS): JumpDistanceStep. */
+void JumpDistanceStepNear_m1x1(void)
+{
+    push8(0x80); push16(0xE936); JumpDistanceStep_m1x1();
+    ret();
+}
+
+/* $80:B7EC (RTS): the course-select preview (CourseSelectPreview loads the
+ * course, so this stays recompiled in the port). */
+void CourseSelectStep_m1x1(void)
+{
+    push8(0x80); push16(0xB7EF); CALL(CourseSelectPreview_m1x1, 0x81C1AE, 3);
+    ret();
+}

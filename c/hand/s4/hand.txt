@@ -525,3 +525,7 @@
 81C643  1 1  mem+X,Y,C,V     PitchDown8
 81C393  1 1  mem+X,Y,C,V     JumpPitchStep
 809D74  1 1  mem+X,Y,C,V     ModeCountdown
+80D79D  1 1  mem+X,Y,C,V     StartBonusCount
+81C7E0  1 1  mem+A,X,Y,C,V   JumpDistanceStep
+80E933  1 1  mem+A,X,Y,C,V   JumpDistanceStepNear
+80B7EC  1 1  mem+X,Y,C,V     CourseSelectStep

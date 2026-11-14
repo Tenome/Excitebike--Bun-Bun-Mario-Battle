@@ -1351,7 +1351,8 @@ BRIDGE_DYN(HleHand_NmiVramUpload, NmiVramUpload_m1x1,
  * CourseSelectPreview ($81:C1AE) and RacePlaceRiders ($80:A859) pass
  * difftest on s4 but are not hooked: custom courses are applied inside the
  * recompiled LoadCourse (src/courses.c). QueueTileBlockLong ($80:B387) is
- * hooked. */
+ * hooked; CourseSelectStep ($80:B7EC) calls CourseSelectPreview, so it stays
+ * recompiled too. */
 /* LoadScene ($82:9182) passes difftest on s4 but is not hooked: like
  * Stadium 1's $80:B873 the recompiled routine runs long and yields to the
  * frame scheduler part way. */
@@ -1422,6 +1423,12 @@ BRIDGE(HleHand_PitchDown8, PitchDown8_m1x1, 24)
 BRIDGE_DYN(HleHand_JumpPitchStep, JumpPitchStep_m1x1,
            g_ram[0x198A] ? 535 + draw_all_riders_cost() : 20)
 BRIDGE_DYN(HleHand_ModeCountdown, ModeCountdown_m1x1, g_ram[0x88] == 1 && g_ram[0x89] == 0 ? 45 : 20)
+/* bonus count start, jump distance step */
+BRIDGE(HleHand_StartBonusCount, StartBonusCount_m1x1, 1345)
+BRIDGE_DYN(HleHand_JumpDistanceStep, JumpDistanceStep_m1x1,
+           25 + draw_all_riders_cost() + (g_ram[0x8C] == 1 ? 750 : 5))
+BRIDGE_DYN(HleHand_JumpDistanceStepNear, JumpDistanceStepNear_m1x1,
+           35 + draw_all_riders_cost() + (g_ram[0x8C] == 1 ? 750 : 5))
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)

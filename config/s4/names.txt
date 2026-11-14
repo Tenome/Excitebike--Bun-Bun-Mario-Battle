@@ -525,3 +525,7 @@
 81C643 PitchDown8
 81C393 JumpPitchStep
 809D74 ModeCountdown
+80D79D StartBonusCount
+81C7E0 JumpDistanceStep
+80E933 JumpDistanceStepNear
+80B7EC CourseSelectStep
