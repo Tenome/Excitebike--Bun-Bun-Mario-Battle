@@ -5285,3 +5285,133 @@ void Mode01_m1x1(void)
     X = rd8(ABS(0x1E8B)); nz8((u8)X);
     r816_call_pc(0x800000u | rd16(LONGX(0x808D2B)));
 }
+
+/* $80:E9C1 FlattenPlayerPiece (RTS, X = rider): the player on the ground
+ * (and $84 clear) turns its piece flat ($1F) and sets the coin type $AA
+ * from its lane ($80:E9EC). */
+void FlattenPlayerPiece_m1x1(void)
+{
+    cmp8((u8)X, 0x00);
+    if (!fz) { ret(); return; }
+    lda8(rd8(ABSX(0x01E8)));
+    ora8(rd8(DP(0x84)));
+    if (!fz) { ret(); return; }
+    push16(0xE9CE); RiderLanePieceAt_m1x1();
+    rep(0x30);
+    lda16(Y);
+    fc = 0; adc16(0x0180);
+    Y = A; nz16(Y);
+    sep(0x20);
+    lda8(0x1F);
+    wr8((((u32)DB << 16) + rd16(DP(0x03)) + Y) & 0xFFFFFF, 0x1F);
+    sep(0x10);
+    push8((u8)X);
+    X = rd8(ABS(0x08A4)); nz8((u8)X);
+    lda8(rd8(ABSX(0xE9EC)));
+    wr8(DP(0xAA), (u8)A);
+    sep(0x10);
+    X = pull8(); nz8((u8)X);
+    ret();
+}
+
+/* $80:B0E1 ReadRiderPieces (RTS): for riders 7-0 the piece under the
+ * wheel (type $0218, height $0210) and four heights on ($0884 + 4X). */
+void ReadRiderPieces_m1x1(void)
+{
+    ldx8(0x07);
+    do {
+        lda8((u8)X);
+        lda8(asl8((u8)A)); lda8(asl8((u8)A));
+        wr8(DP(0x0C), (u8)A);
+        lda8(0x04); wr8(DP(0x0B), 0x04);
+        push16(0xB0EE); RiderLanePieceAt_m1x1();
+        wr8(ABSX(0x0218), (u8)A);
+        lda8(rd8(DP(0x10)));
+        wr8(ABSX(0x0210), (u8)A);
+        for (;;) {
+            push8((u8)A);
+            Y = inc8((u8)Y);
+            lda8((u8)Y);
+            and8(0x3F);
+            wr8(DP(0x08), (u8)A);
+            Y = rd8(DP(0x0C)); nz8((u8)Y);
+            lda8(pull8());
+            wr8(ABSY(0x0884), (u8)A);
+            wr8(DP(0x0C), inc8(rd8(DP(0x0C))));
+            u8 n = dec8(rd8(DP(0x0B)));
+            wr8(DP(0x0B), n);
+            if (fz) break;
+            Y = rd8(DP(0x08)); nz8((u8)Y);
+            lda8(rd8((((u32)DB << 16) + rd16(DP(0x03)) + Y) & 0xFFFFFF));
+        }
+        X = dec8((u8)X);
+    } while (!fn);
+    ret();
+}
+
+/* $81:9A8D QueueMapTile (RTL): object X's map tile ($81:9AA6 by row /
+ * column, palette $11) as one word at VRAM $1840 + offset. */
+void QueueMapTile_m1x1(void)
+{
+    rep(0x20);
+    lda16(rd16(ABSX(0x0289)));
+    and16(0x00F8);
+    lda16(asl16(A)); lda16(asl16(A));
+    wr16(DP(0x00), A);
+    lda16(rd16(ABSX(0x0279)));
+    lda16(lsr16(A)); lda16(lsr16(A)); lda16(lsr16(A));
+    fc = 0; adc16(rd16(DP(0x00)));
+    Y = (u8)A; nz8((u8)Y);
+    fc = 0; adc16(0x1840);
+    wr16(DP(0x00), A);
+    lda16(0x039F); wr16(DP(0x02), 0x039F);
+    lda16(rd16(ABSY(0x9AA6)));
+    and16(0x00FF);
+    A = (u16)((A >> 8) | (A << 8)); nz8((u8)A);
+    ora16(0x0011);
+    wr16(ABS(0x039F), A);
+    sep(0x20);
+    lda8(0x1C); wr8(DP(0x0F), 0x1C);
+    push8(0x81); push16(0x9AC4); VramQueueTilesLong_m1x1();
+    retl();
+}
+
+/* $80:BE6A WalkToStartLane (RTS, X = rider): Stadium 4's $80:BB82 for
+ * Stadium 1 (targets $80:BDA2, ResetCoinMarkers, QueueSound). */
+void WalkToStartLane_m1x1(void)
+{
+    lda8((u8)X);
+    Y = (u8)A; nz8((u8)Y);
+    if (!fz) {
+        lda8(rd8(ABSX(0x01F8)));
+        if (!fz) ldy8(0x04);
+    }
+    lda8(rd8(ABSX(0x01F0)));
+    cmp8((u8)A, rd8(ABSY(0xBDA2)));
+    if (!fz) {
+        ldy8(0x01);
+        if (fc) ldy8(0xFF);
+        lda8((u8)Y);
+        wr8(ABSX(0x01A8), (u8)A);
+        ret();
+        return;
+    }
+    lda8(0x00);
+    wr8(ABSX(0x091C), 0);
+    wr8(ABSX(0x01A8), 0);
+    wr8(ABSX(0x01D0), inc8(rd8(ABSX(0x01D0))));
+    lda8((u8)X);
+    if (fz) {
+        Y = rd8(ABS(0x0CE0)); nz8((u8)Y);
+        if (!fz) wr8(ABS(0x0990), (u8)A);
+        wr8(ABS(0x0CE0), (u8)A);
+        wr8(ABS(0x0CDF), (u8)A);
+        push8(0x80); push16(0xBEA9); ResetCoinMarkers_m1x1();
+        lda8(0x80);
+        push8(0x80); push16(0xBEAF); QueueSound_m1x1();
+        lda8(0x02);
+    }
+    lda8(0x08);
+    wr8(DPX(0x45), 0x08);
+    ret();
+}

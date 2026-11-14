@@ -317,3 +317,7 @@
 80E8B1 RiderLanePieceAt
 80B2A1 VramQueueTilesLong
 80D3F7 ResetCoinMarkers
+80E9C1 FlattenPlayerPiece
+80B0E1 ReadRiderPieces
+819A8D QueueMapTile
+80BE6A WalkToStartLane

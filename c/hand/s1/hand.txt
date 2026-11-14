@@ -299,3 +299,7 @@
 80B2A1  1 1  mem+X,Y,C,V     VramQueueTilesLong
 80D3F7  1 1  mem+A,X,C,V     ResetCoinMarkers
 808D25  1 1  mem+X,Y,C,V     Mode01
+80E9C1  1 1  mem+A,X,Y,C,V   FlattenPlayerPiece
+80B0E1  1 1  mem+A,X,Y,C,V   ReadRiderPieces
+819A8D  1 1  mem+X,Y,C,V     QueueMapTile
+80BE6A  1 1  mem+A,X,Y,C,V   WalkToStartLane

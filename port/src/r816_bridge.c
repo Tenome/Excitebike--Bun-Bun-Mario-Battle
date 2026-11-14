@@ -534,6 +534,10 @@ BRIDGE(HleHand_ResetCoinMarkers, ResetCoinMarkers_m1x1, 40)
 BRIDGE(HleHand_Mode01, Mode01_m1x1, 20)
 /* VramQueueTilesLong ($80:B2A1) is verified but unhooked: a trampoline
  * whose cost is the callee's. */
+BRIDGE(HleHand_FlattenPlayerPiece, FlattenPlayerPiece_m1x1, 90)
+BRIDGE(HleHand_ReadRiderPieces, ReadRiderPieces_m1x1, 1400)
+BRIDGE(HleHand_QueueMapTile, QueueMapTile_m1x1, 200)
+BRIDGE(HleHand_WalkToStartLane, WalkToStartLane_m1x1, 100)
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */
