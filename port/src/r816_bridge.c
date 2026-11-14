@@ -718,6 +718,7 @@ BRIDGE(HleHand_DemoExitSkip40, DemoExitSkip40_m1x1, 55)
 BRIDGE(HleHand_DemoExitSkip35, DemoExitSkip35_m1x1, 60)
 BRIDGE(HleHand_SetJumpState1, SetJumpState1_m1x1, 12)
 BRIDGE(HleHand_RiderBumpCrash, RiderBumpCrash_m1x1, 190)
+BRIDGE(HleHand_LandingStep, LandingStep_m1x1, 170)
 /* BsxFindFile ($81:F9C8) passes difftest on s1 but is not hooked here:
  * with it the Gen A race run diverges (it is hooked in Gen B, where both
  * runs are unchanged). */
@@ -1432,6 +1433,8 @@ BRIDGE_DYN(HleHand_JumpDistanceStepNear, JumpDistanceStepNear_m1x1,
            35 + draw_all_riders_cost() + (g_ram[0x8C] == 1 ? 750 : 5))
 /* bump crash */
 BRIDGE(HleHand_RiderBumpCrash, RiderBumpCrash_m1x1, 190)
+/* landing step */
+BRIDGE(HleHand_LandingStep, LandingStep_m1x1, 170)
 /* carried over from Stadium 1 (identical or moved-operand code, c/hand/s4/from_s1.c) */
 BRIDGE(HleHand_DmaFillZero, DmaFillZero_m0x1, 70)
 BRIDGE(HleHand_ReadJoypads, ReadJoypads_m1x1, 150)

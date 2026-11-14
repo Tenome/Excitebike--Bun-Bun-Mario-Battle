@@ -406,3 +406,4 @@
 80E3F2  1 1  mem+X,Y,C,V     DemoExitSkip35
 80EAFF  1 1  mem+A,X,Y,C,V   SetJumpState1
 80EB04  1 1  mem+A,X,Y,C,V   RiderBumpCrash
+80EBB5  1 1  mem+A,X,Y,C,V   LandingStep

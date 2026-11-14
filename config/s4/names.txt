@@ -530,3 +530,4 @@
 80E933 JumpDistanceStepNear
 80B7EC CourseSelectStep
 80FB58 RiderBumpCrash
+80FC35 LandingStep

@@ -14334,3 +14334,22 @@ void RiderBumpCrash_m1x1(void)
     crash_from();
     ret();
 }
+
+/* $80:FC35 (RTS, X = rider): by the jump state $020E: 1 = landed ($01FE,
+ * $09C4, $09C7 cleared, then CrashLand), 3 = the jump flags cleared. */
+void LandingStep_m1x1(void)
+{
+    lda8(rd8(ABSX(0x020E)));
+    cmp8((u8)A, 0x01);
+    if (fz) {
+        lda8(0x00); wr8(ABSX(0x01FE), 0);
+        lda8(0x00);
+        wr8(ABS(0x09C4), 0);
+        wr8(ABS(0x09C7), 0);
+        CrashLand_m1x1();
+        return;
+    }
+    cmp8((u8)A, 0x03);
+    if (!fz) { ret(); return; }
+    ClearJumpFlags_m1x1();
+}
