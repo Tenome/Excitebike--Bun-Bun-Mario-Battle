@@ -444,7 +444,7 @@ void RiderStartLane_m1x1(void)
         lda8(asl8((u8)A));
         lda8(asl8((u8)A));
         adc8(0x1C);
-        wr8(DPX(0x3D), (u8)A);
+        wr8(DPX(RIDER_HOLD), (u8)A);
     }
     wr8(ABSX(RIDER_TIMER), inc8(rd8(ABSX(RIDER_TIMER))));
     ret();

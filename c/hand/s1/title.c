@@ -107,8 +107,8 @@ void Mode0D_IntroText_m1x1(void)
             lda8(0x05);
             wr8(DP(TIMER_A), 0x05);
             rep(0x20);
-            u16 line = inc16(rd16(DP(0x9E)));
-            wr16(DP(0x9E), line);
+            u16 line = inc16(rd16(DP(PIC_SCROLL)));
+            wr16(DP(PIC_SCROLL), line);
             A = (u16)((line & 0xFFF8) << 3);
             fc = 0; adc16(0xE800);
             wr16(DP(0x02), A);              /* source $8B:E800 + 8 * (line & ~7) */
@@ -117,7 +117,7 @@ void Mode0D_IntroText_m1x1(void)
             wr8(DP(0x04), 0x8B);
             rep(0x20);
             A = 0x0220; wr16(DP(0x10), 0x0220);   /* 32 words, 2 rows */
-            A = rd16(ABS(0x009E));
+            A = rd16(ABS(PIC_SCROLL));
             fc = 0; adc16(0x00E0);
             A = (u16)((A & 0x01F8) << 2);
             fc = 0; adc16(0x2800);

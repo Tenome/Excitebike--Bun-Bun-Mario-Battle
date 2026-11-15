@@ -129,7 +129,7 @@ void RiderStartLane_m1x1(void)
         lda8(asl8((u8)A));
         lda8(asl8((u8)A));
         adc8(0x1C);
-        wr8(DPX(0x3D), (u8)A);
+        wr8(DPX(RIDER_HOLD), (u8)A);
     }
     wr8(ABSX(RIDER_TIMER), inc8(rd8(ABSX(RIDER_TIMER))));
     ret();
@@ -222,10 +222,10 @@ void SetRiderLean_m1x1(void)
         if (fz) { lda8(0x0A); table = 0; }
     }
     if (table) lda8(rd8(ABSY(0xBD65)));
-    wr8(ABSX(0x08B4), (u8)A);
+    wr8(ABSX(RIDER_PIECE_LEAN), (u8)A);
     lda8(rd8(ABSX(RIDER_JUMP)));
     cmp8((u8)A, 0x01);
-    if (fz) { lda8(0x06); wr8(ABSX(0x08B4), 0x06); }
+    if (fz) { lda8(0x06); wr8(ABSX(RIDER_PIECE_LEAN), 0x06); }
     ret();
 }
 /* $81:9623 DrawSpark (RTS, object Y): sprite at OAM buffer $1610,Y from

@@ -161,8 +161,12 @@ The rest of the 1 MB is graphics, tracks, music and other data.
    result board step. Twelve race globals that sit at the same address in
    both generations: LAP, ATTRACT_DEMO, OVERHEAT_LOCK, GAUGE_ON,
    TOTAL_TIME, BONUS_RESULT, TRACK_ROWS, TURBO_HEAT_FRAC, the pace counters,
-   GROUND_LINE and COLOUR_CYCLE. Next: the rest of the direct page ($3C,
-   $54, $79, $94, $A6, $CB) and the remaining $08xx-$0Cxx globals.
+   GROUND_LINE and COLOUR_CYCLE; then RIDER_HOLD, PIC_SCROLL, PLACE_BONUS,
+   CLOCK_HIDE, COIN_TAKEN, WAVE_FRAME on the direct page and
+   RIDER_PIECE_LEAN, RIDER_LANDED, PLAYER_GROUND, COURSE_ENDED,
+   BUILD_COLUMN, the demo script position and timer and ENTRY_CODE.
+   Still unnamed because each has several uses: DP $3C, $54, $56, $79,
+   $94, $5E; $0904, $09C7, $09C9 and the per-course time tables.
 
 ### Phase 5: merge the Stadiums
 0. ✅ Found that each build already holds two Stadiums behind `$81:800C`; the

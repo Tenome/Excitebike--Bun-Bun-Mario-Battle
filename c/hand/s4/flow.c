@@ -232,20 +232,20 @@ void DemoInputStep_m1x1(void)
     if (fz) {
         wr8(DP(FRAME_COUNT), 0);
         lda8(rd8(LONG(0x9CD200))); wr8(ABS(0x197C), (u8)A);
-        lda8(rd8(LONG(0x9CD300))); wr8(ABS(0x0CE3), (u8)A);
-        lda8(0x01); wr8(ABS(0x0CE1), 0x01);
+        lda8(rd8(LONG(0x9CD300))); wr8(ABS(DEMO_TIME), (u8)A);
+        lda8(0x01); wr8(ABS(DEMO_INDEX), 0x01);
     } else {
-        lda8(rd8(ABS(0x0CE3)));
+        lda8(rd8(ABS(DEMO_TIME)));
         if (!fz) {
-            wr8(ABS(0x0CE3), dec8(rd8(ABS(0x0CE3))));
-            X = rd8(ABS(0x0CE1)); nz8((u8)X);
+            wr8(ABS(DEMO_TIME), dec8(rd8(ABS(DEMO_TIME))));
+            X = rd8(ABS(DEMO_INDEX)); nz8((u8)X);
             X = dec8((u8)X);
             lda8(rd8(LONGX(0x9CD200)));
             wr8(ABS(RIDER_INPUT), (u8)A);
             wr8(ABS(0x098E), (u8)A);
         } else {
-            X = rd8(ABS(0x0CE1)); nz8((u8)X);
-            wr8(ABS(0x0CE1), inc8(rd8(ABS(0x0CE1))));
+            X = rd8(ABS(DEMO_INDEX)); nz8((u8)X);
+            wr8(ABS(DEMO_INDEX), inc8(rd8(ABS(DEMO_INDEX))));
             lda8(rd8(LONGX(0x9CD300)));
             cmp8((u8)A, 0xF8);
             if (fc) {
@@ -254,7 +254,7 @@ void DemoInputStep_m1x1(void)
                 demo_exit();
                 return;
             }
-            wr8(ABS(0x0CE3), (u8)A);
+            wr8(ABS(DEMO_TIME), (u8)A);
             lda8(rd8(LONGX(0x9CD200)));
             wr8(ABS(RIDER_INPUT), (u8)A);
             wr8(ABS(0x098E), (u8)A);
@@ -392,8 +392,8 @@ void ItemFlashState_m1x1(void)
  * and input are taken, C clear. */
 static void demo_next_entry4(void)
 {
-    X = rd8(ABS(0x0CE1)); nz8((u8)X);
-    wr8(ABS(0x0CE1), inc8(rd8(ABS(0x0CE1))));
+    X = rd8(ABS(DEMO_INDEX)); nz8((u8)X);
+    wr8(ABS(DEMO_INDEX), inc8(rd8(ABS(DEMO_INDEX))));
     lda8(rd8(LONGX(0x9CD300)));
     cmp8((u8)A, 0xF8);
     if (fc) {
@@ -402,7 +402,7 @@ static void demo_next_entry4(void)
         demo_exit();
         return;
     }
-    wr8(ABS(0x0CE3), (u8)A);
+    wr8(ABS(DEMO_TIME), (u8)A);
     lda8(rd8(LONGX(0x9CD200)));
     wr8(ABS(RIDER_INPUT), (u8)A);
     wr8(ABS(0x098E), (u8)A);

@@ -109,7 +109,7 @@ void StartCredits_m1x1(void)
     lda8(0x44); wr8(ABS(BG12NBA), 0x44);
     lda8(0x01); wr8(ABS(BG34NBA), 0x01);
     rep(0x20);
-    lda16(0xFFFF); wr16(DP(0x9E), 0xFFFF);
+    lda16(0xFFFF); wr16(DP(PIC_SCROLL), 0xFFFF);
     lda16(0x0090); wr16(ABS(PALETTE_BUF), 0x0090);
     lda16(0x0020); wr16(ABS(0x1C01), 0x0020);
     sep(0x20);

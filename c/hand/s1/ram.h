@@ -139,6 +139,7 @@
 #define RACE_END        0x0084  /* the run is over (2 = the time ran out; even and nonzero ends the mode) */
 #define SUB_STEP        0x0085  /* a screen's own step: the DispatchBy85 tables, the 20 jump steps */
 #define UPLOAD_SRC      0x0086  /* word: the NMI animation tile upload source ($0200 bytes; Gen B bank $9B to VRAM $5A00, Gen A $9E to $4A00) */
+#define COURSE_COLUMN   0x00A6  /* the course column being loaded into the track */
 
 /* ---- race globals ---- */
 #define LAP             0x0928  /* the lap number (Gen B also shows it as the stadium badge) */
@@ -153,6 +154,21 @@
 #define PACE_DIST       0x0996  /* distance counted for the pace band (every $3C picks one) */
 #define GROUND_LINE     0x0CD5  /* the ground line the riders' heights are measured from ($A0) */
 #define COLOUR_CYCLE    0x0880  /* the colour cycle's index into its list ($FF stopped) */
+
+/* ---- direct page, part 3 ---- */
+#define RIDER_HOLD      0x003D  /* X = rider: frames the rider is held (start-line delay X * 8 + $1C, $0A after a crash) */
+#define PIC_SCROLL      0x009E  /* word: the title and credits picture's scroll (also the intro zoom to $0100) */
+#define PLACE_BONUS     0x00B2  /* the place bonus, counted down into the score on the results */
+
+/* ---- race globals, part 2 ---- */
+#define RIDER_PIECE_LEAN 0x08B4  /* X = rider: the lean the piece under it asks for (0 while landing) */
+#define RIDER_LANDED    0x08AC  /* X = rider: settled after a landing (2 after a crash landing) */
+#define PLAYER_GROUND   0x09C4  /* the track height under the player (follows TRACK_ROWS' height row) */
+#define COURSE_ENDED    0x099C  /* the course's end tile was reached (once) */
+#define BUILD_COLUMN    0x09C3  /* the next column of the course's lane data to build */
+#define DEMO_INDEX      0x0CE1  /* the attract demo's input script position */
+#define DEMO_TIME       0x0CE3  /* frames left on the demo input entry ($F8 or more ends the demo) */
+#define ENTRY_CODE      0x0850  /* the end screen entry code (packed digits, flags and check bytes up to $085B) */
 
 /* ---- sprites ---- */
 #define OAM_BUF         0x1600  /* $0200 bytes: the OAM low table image */

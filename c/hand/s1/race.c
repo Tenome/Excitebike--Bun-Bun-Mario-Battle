@@ -411,7 +411,7 @@ void AnimateWheels_m1x1(void)
  */
 void RiderStartCheck_m1x1(void)
 {
-    lda8(rd8(DPX(0x3D)));
+    lda8(rd8(DPX(RIDER_HOLD)));
     if (!fz) { ret(); return; }
     lda8((u8)X);
     if (!fz) { lda8(0x01); wr8(ABS(0x01A8 + X), 0x01); }
