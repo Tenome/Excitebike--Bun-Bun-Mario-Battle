@@ -23,13 +23,13 @@ static void queue_sound_body(void)
     rep(0x10);
     push16(X);
     sep(0x30);
-    wr8(ABS(0x0071), (u8)A);
-    X = rd8(ABS(0x0065));
-    wr8(ABS(0x1400 + X), (u8)A);
+    wr8(ABS(SND_LAST), (u8)A);
+    X = rd8(ABS(SND_WRITE));
+    wr8(ABS(SND_RING + X), (u8)A);
     X = (u8)(X + 1);
     SET_A8((u8)X);
     and8(0x3F);
-    wr8(ABS(0x0065), (u8)A);
+    wr8(ABS(SND_WRITE), (u8)A);
     rep(0x10);
     X = pull16();
     setP(pull8());
@@ -617,10 +617,10 @@ void SelectMain_m1x1(void)
         wr8(ABS(NMITIMEN), 0);
         rep(0x20);
         for (int x = 0x3E; x >= 0; x -= 2) {
-            wr16(ABS(0x1400 + x), 0);
-            wr16(ABS(0x1440 + x), 0);
-            wr16(ABS(0x1480 + x), 0);
-            wr16(ABS(0x14C0 + x), 0);
+            wr16(ABS(SND_RING + x), 0);
+            wr16(ABS(SND_RING + 0x40 + x), 0);
+            wr16(ABS(SND_RING + 0x80 + x), 0);
+            wr16(ABS(SND_RING + 0xC0 + x), 0);
         }
         X = 0xFE;
         sep(0x20);

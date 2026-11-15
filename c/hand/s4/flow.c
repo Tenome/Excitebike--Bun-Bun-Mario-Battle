@@ -43,7 +43,7 @@ void RaceFinishStep_m1x1(void)
         wr8(ABS(0x092D), 0x00);
         wr8(ABS(0x0940), 0x00);
         wr8(DP(OVERHEATED), 0x00);
-        X = rd8(DP(0x84)); nz8((u8)X);
+        X = rd8(DP(RACE_END)); nz8((u8)X);
         X = dec8((u8)X);
         if (!fz) { ret(); return; }
         ldx8(0x12);
@@ -67,7 +67,7 @@ void RaceFinishStep_m1x1(void)
         push16(0xAB6F); ChangeMode_m1x1();
     } else {
         push16(0xAB74); NextMode_m1x1();
-        wr8(DP(0x86), 0);
+        wr8(DP(UPLOAD_SRC), 0);
         wr8(DP(0x87), 0);
     }
     lda8(rd8(ABS(0x0CD7)));
@@ -105,7 +105,7 @@ static void pace_target(void)
  * random low byte from $80:BAE7 ($2F,X & $0F). */
 void RivalTarget_m1x1(void)
 {
-    lda8(rd8(DP(0x84)));
+    lda8(rd8(DP(RACE_END)));
     if (!fz) {
         lda8(0x03);
         goto table_lo;
@@ -369,7 +369,7 @@ void OverheatStep_m1x1(void)
  * its odd steps from $0D) or X = 0 on even steps from $0D, Y = 7. */
 void ItemFlashState_m1x1(void)
 {
-    lda8(rd8(DP(0x84)));
+    lda8(rd8(DP(RACE_END)));
     ora8(rd8(DP(OVERHEATED)));
     if (!fz) { lda8(0x00); wr8(DP(0x5E), 0x00); ret(); return; }
     lda8(rd8(DP(0x5E)));

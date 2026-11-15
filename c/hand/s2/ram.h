@@ -126,6 +126,23 @@
 #define END_STEP        0x0453  /* end screen: its step */
 #define ENTRY_CURSOR    0x0452  /* end screen: the digit being entered */
 
+/* ---- sound commands: four channels, one per APU port. The game appends a
+ * command to channel n's ring; the NMI sends it to APUIO<n> and waits for
+ * the port to echo it before it sends the next. Only channel 0 is ever
+ * queued (QueueSound); rings 1-3 are only cleared. ---- */
+#define SND_WRITE       0x0065  /* + channel: the ring's write index (0-63) */
+#define SND_READ        0x0069  /* + channel: the ring's read index (0-63) */
+#define SND_PENDING     0x006D  /* + channel: the command sent, waiting for the echo */
+#define SND_LAST        0x0071  /* the last command queued */
+#define SND_RING        0x1400  /* 4 rings of 64 commands, channel n at + $40 * n */
+
+/* ---- more direct page ---- */
+#define RANDOM_LFSR     0x002C  /* 12 bytes: the shift register StepLfsr turns (a random source) */
+#define RIDER_LEAN_TIMER 0x0045  /* X = rider: frames until the next lean step (the finish wave timer) */
+#define RACE_END        0x0084  /* the run is over (2 = the time ran out; even and nonzero ends the mode) */
+#define SUB_STEP        0x0085  /* a screen's own step: the DispatchBy85 tables, the 20 jump steps */
+#define UPLOAD_SRC      0x0086  /* word: the NMI animation tile upload source ($0200 bytes; Gen B bank $9B to VRAM $5A00, Gen A $9E to $4A00) */
+
 /* ---- sprites ---- */
 #define OAM_BUF         0x1600  /* $0200 bytes: the OAM low table image */
 #define OAM_SIZE_BUF    0x1820  /* 128 size bytes, packed into the high table */

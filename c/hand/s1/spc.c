@@ -154,8 +154,8 @@ static void select_rider1(int shift, u16 back_upload, u16 back_sound)
     rep(0x20);
     ldx8(0x3E);
     do {
-        wr16(ABSX(0x1400), 0); wr16(ABSX(0x1440), 0);
-        wr16(ABSX(0x1480), 0); wr16(ABSX(0x14C0), 0);
+        wr16(ABSX(SND_RING), 0); wr16(ABSX(SND_RING + 0x40), 0);
+        wr16(ABSX(SND_RING + 0x80), 0); wr16(ABSX(SND_RING + 0xC0), 0);
         X = dec8((u8)X); X = dec8((u8)X);
     } while (!fn);
     sep(0x20);

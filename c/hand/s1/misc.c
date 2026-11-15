@@ -474,7 +474,7 @@ void SendSpeedToApu_m1x1(void)
  * $80:D409 indexed by $85 (pointer kept at $00/$01, X = 0). */
 void DispatchBy85_m1x1(void)
 {
-    lda8(rd8(DP(0x85)));
+    lda8(rd8(DP(SUB_STEP)));
     lda8(asl8((u8)A));
     Y = (u8)A; nz8((u8)Y);
     lda8(rd8(ABS(0xD409 + Y))); wr8(DP(0x00), (u8)A);
@@ -512,7 +512,7 @@ void AnimSourceFromFrame_m1x1(void)
         lda16(asl16(A));
     fc = 0;
     adc16(0xB800);
-    wr16(ABS(0x0086), A);
+    wr16(ABS(UPLOAD_SRC), A);
     sep(0x20);
     retl();
 }
@@ -521,7 +521,7 @@ void AnimSourceFromFrame_m1x1(void)
  * ($1903 = $80), scroll $92 = 0, and the four channels $1959-$195C = 1-4. */
 void InitFadeState_m1x1(void)
 {
-    lda8(0x0F); wr8(DP(0x2C), 0x0F);
+    lda8(0x0F); wr8(DP(RANDOM_LFSR), 0x0F);
     lda8(0x80); wr8(ABS(SH_INIDISP), 0x80);
     wr8(DP(BG_SCROLL), 0);
     lda8(0x01);

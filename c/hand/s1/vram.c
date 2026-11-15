@@ -266,8 +266,8 @@ void NmiFixedUploads_m1x1(void)
     }
     rep(0x20);
     sep(0x10);
-    if (rd16(ABS(0x0086)) != 0)
-        vram_upload(0x8853, 0x4A00, 0x0200, rd16(ABS(0x0086)), 0x9E);
+    if (rd16(ABS(UPLOAD_SRC)) != 0)
+        vram_upload(0x8853, 0x4A00, 0x0200, rd16(ABS(UPLOAD_SRC)), 0x9E);
 
     rep(0x10);
     sep(0x20);

@@ -128,6 +128,33 @@
 #define JUMP_RANK       0x156B  /* the jump's rank ($FF none) */
 #define JUMP_BEST_SCORE 0x156D  /* word: the best score */
 
+/* ---- sound commands: four channels, one per APU port. The game appends a
+ * command to channel n's ring; the NMI sends it to APUIO<n> and waits for
+ * the port to echo it before it sends the next. Only channel 0 is ever
+ * queued (QueueSound); rings 1-3 are only cleared. ---- */
+#define SND_WRITE       0x0065  /* + channel: the ring's write index (0-63) */
+#define SND_READ        0x0069  /* + channel: the ring's read index (0-63) */
+#define SND_PENDING     0x006D  /* + channel: the command sent, waiting for the echo */
+#define SND_LAST        0x0071  /* the last command queued */
+#define SND_RING        0x1400  /* 4 rings of 64 commands, channel n at + $40 * n */
+
+/* ---- more direct page ---- */
+#define RANDOM_LFSR     0x002C  /* 12 bytes: the shift register StepLfsr turns (a random source) */
+#define RIDER_LEAN_TIMER 0x0045  /* X = rider: frames until the next lean step (the finish wave timer) */
+#define RACE_END        0x0084  /* the run is over (2 = the time ran out; even and nonzero ends the mode) */
+#define SUB_STEP        0x0085  /* a screen's own step: the DispatchBy85 tables, the 20 jump steps */
+#define UPLOAD_SRC      0x0086  /* word: the NMI animation tile upload source ($0200 bytes; Gen B bank $9B to VRAM $5A00, Gen A $9E to $4A00) */
+#define LIGHTS_TIMER    0x008E  /* how long the countdown lights stay up */
+#define HDMA_ZOOM       0x0095  /* the IRQ builds the HDMA line table from the scroll */
+#define PARALLAX_ON     0x0096  /* the IRQ builds the parallax lines (ParallaxLines) */
+#define BONUS_SIGN      0x0097  /* the bonus course sign is up */
+#define BG1_VSCROLL     0x009E  /* word: BG1 vertical scroll */
+#define ZOOM            0x00A2  /* word: the jump and bonus screens' zoom ($0100 = 1:1) */
+#define COURSE_COLUMN   0x00AE  /* the course column being loaded into the track */
+#define BONUS_SECONDS   0x00B4  /* the bonus course clock, seconds left */
+#define BONUS_TICK      0x00B5  /* frames into the bonus clock's second */
+#define JUMP_BOARD_STEP 0x00CD  /* jump contest result board: its step */
+
 /* ---- sprites ---- */
 #define OAM_BUF         0x1600  /* $0200 bytes: the OAM low table image */
 #define OAM_SIZE_BUF    0x1820  /* 128 size bytes, packed into the high table */

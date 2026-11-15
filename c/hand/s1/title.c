@@ -77,7 +77,7 @@ void Mode0E_Setup_m1x1(void)
     lda8(0x01); wr8(DP(SCROLL_HALF), 0x01);
     ldx8(0x02);
     wr8(DP(BG_SCROLL), 0x02);
-    wr8(DP(0x84), 0x02);
+    wr8(DP(RACE_END), 0x02);
     lda8(0x2D); push8(0x80); push16(0x8B3B); QueueSound_m1x1();
     lda8(0x45); push8(0x80); push16(0x8B41); QueueSound_m1x1();
     lda8(rd8(LONG(BCAST_MINUTE)));

@@ -77,11 +77,11 @@ void QueueSound_m1x1(void)
     u8 cmd = (u8)A;
     push8(getP());
     push16(X);
-    wr8(ABS(0x0071), cmd);
-    u8 slot = rd8(ABS(0x0065));
-    wr8(ABS(0x1400 + slot), cmd);
+    wr8(ABS(SND_LAST), cmd);
+    u8 slot = rd8(ABS(SND_WRITE));
+    wr8(ABS(SND_RING + slot), cmd);
     slot = (u8)((slot + 1) & 0x3F);
-    wr8(ABS(0x0065), slot);
+    wr8(ABS(SND_WRITE), slot);
     SET_A8(slot);
     X = pull16();
     setP(pull8());

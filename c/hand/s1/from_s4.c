@@ -152,7 +152,7 @@ void StepFallingSprite_m1x1(void)
         if (fz) { wr8(ABSX(0x0110), 0); ret(); return; }
     }
     lda8(rd8(ABS(RIDER_BUMPED)));
-    ora8(rd8(DP(0x84)));
+    ora8(rd8(DP(RACE_END)));
     if (fz) {
         lda8((u8)X);
         lda8(asl8((u8)A));
@@ -211,7 +211,7 @@ void SortRidersByPosition_m1x1(void)
 void SetRiderLean_m1x1(void)
 {
     Y = rd8(ABSX(RIDER_POSE)); nz8((u8)Y);
-    lda8(rd8(DP(0x84)));
+    lda8(rd8(DP(RACE_END)));
     cmp8((u8)A, 0x01);
     int table = 1;
     if (fz) {
@@ -358,7 +358,7 @@ void DrawDustPair_m1x1(void)
         if (fz) { wr8(ABSX(0x0110), 0); ret(); return; }
     }
     lda8(rd8(ABS(RIDER_BUMPED)));
-    ora8(rd8(DP(0x84)));
+    ora8(rd8(DP(RACE_END)));
     if (fz) {
         lda8((u8)X);
         lda8(asl8((u8)A));
@@ -462,7 +462,7 @@ void SpawnExhaust_m1x1(void)
     do {
         lda8(rd8(ABSX(0x0110)));
         if (fz) {
-            lda8(rd8(DP(0x2C))); and8(0x07); fc = 0; adc8(0x38);
+            lda8(rd8(DP(RANDOM_LFSR))); and8(0x07); fc = 0; adc8(0x38);
             wr8(ABSX(0x0100), (u8)A);
             lda8(rd8(DP(0x2D))); and8(0x0F); fc = 0; adc8(rd8(ABS(RIDER_Y))); sbc8(0x02);
             wr8(ABSX(0x0108), (u8)A);
@@ -797,7 +797,7 @@ void RiderRunOut_m1x1(void)
     }
     u8 v = inc8(rd8(ABSX(RIDER_TIMER)));
     wr8(ABSX(RIDER_TIMER), v);
-    if (!fz) { lda8(0x08); wr8(DPX(0x45), 0x08); }
+    if (!fz) { lda8(0x08); wr8(DPX(RIDER_LEAN_TIMER), 0x08); }
     ret();
 }
 /* $81:F9C8 BsxFindFile (M=0 X=0, RTL): look up the broadcast directory
@@ -913,7 +913,7 @@ void StepObjectX_m1x1(void);
  * its odd steps from $0D) or X = 0 on even steps from $0D, Y = 7. */
 void ItemFlashState_m1x1(void)
 {
-    lda8(rd8(DP(0x84)));
+    lda8(rd8(DP(RACE_END)));
     ora8(rd8(DP(OVERHEATED)));
     if (!fz) { lda8(0x00); wr8(DP(0x5E), 0x00); ret(); return; }
     lda8(rd8(DP(0x5E)));

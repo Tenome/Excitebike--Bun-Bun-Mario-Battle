@@ -152,8 +152,14 @@ The rest of the 1 MB is graphics, tracks, music and other data.
    sprite buffers. The long addresses all four dumps share are in
    `c/hand/long_ram.h`: the VRAM upload queue and its record fields
    (`$7F:0000`), the track buffer, the broadcast clock, the save block and
-   the two ROM switches (`$81:800C` Stadium, `$81:800E` debug). Next: the
-   sound state and the remaining direct-page globals.
+   the two ROM switches (`$81:800C` Stadium, `$81:800E` debug). The sound
+   command rings (`SND_RING` `$1400`, indexes `$65-$70`) are named; only
+   channel 0 is ever queued. Fifteen more direct-page globals in Gen B
+   (five in Gen A): the random shift register, the per-rider lean timer,
+   the race-over flag, the sub-step, the NMI animation source, the IRQ's
+   zoom and parallax switches, the zoom, the bonus clock and the jump
+   result board step. Next: the rest of the direct page ($3C, $54, $79,
+   $94, $A6, $CB) and the $08xx-$0Cxx race globals.
 
 ### Phase 5: merge the Stadiums
 0. ✅ Found that each build already holds two Stadiums behind `$81:800C`; the

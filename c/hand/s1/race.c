@@ -42,7 +42,7 @@ void ClearRaceState_m1x1(void)
         wr8(DPX(0x80), 0);
     }
     X = 0xFF;
-    wr8(DP(0x84), 0);
+    wr8(DP(RACE_END), 0);
     lda8(0x2D);
     push8(0x80); push16(0x9234); QueueSound_m1x1();
     ret();
@@ -100,7 +100,7 @@ void DrawHudLabelA_m1x1(void)
 /* $80:A68F DrawHudLabelB (RTS): unless $84, block $80:A6A5 to VRAM $1891. */
 void DrawHudLabelB_m1x1(void)
 {
-    lda8(rd8(DP(0x84)));
+    lda8(rd8(DP(RACE_END)));
     if ((u8)A != 0) { ret(); return; }
     set_list(0x1891, 0xA6A5);
     VramQueueBlock_m1x1();
@@ -209,7 +209,7 @@ void RaceSetup_m1x1(void)
  */
 void UpdatePlayerPlace_m1x1(void)
 {
-    if (rd8(ABS(PLAYER_PLACE)) == 0 || rd8(DP(0x84)) != 0 || rd8(DP(RACE_STARTED)) == 0) {
+    if (rd8(ABS(PLAYER_PLACE)) == 0 || rd8(DP(RACE_END)) != 0 || rd8(DP(RACE_STARTED)) == 0) {
         ret();
         return;
     }

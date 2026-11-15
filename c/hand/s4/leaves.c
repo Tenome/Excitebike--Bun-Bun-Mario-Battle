@@ -21,7 +21,7 @@ void QueueNameplate_m1x1(void)
  * $80:A666 at VRAM $1892 through $80:B38B. */
 void QueueResultsRow_m1x1(void)
 {
-    lda8(rd8(DP(0x84)));
+    lda8(rd8(DP(RACE_END)));
     if (!fz) { ret(); return; }
     rep(0x20);
     lda16(0x1892); wr16(DP(0x00), 0x1892);
@@ -113,7 +113,7 @@ void StepAnimTimer_m1x1(void)
  * indexed by $85 (pointer kept at $00/$01, X = 0). */
 void DispatchBy85B_m1x1(void)
 {
-    lda8(rd8(DP(0x85)));
+    lda8(rd8(DP(SUB_STEP)));
     lda8(asl8((u8)A));
     Y = (u8)A; nz8((u8)Y);
     lda8(rd8(ABSY(0xDFCF))); wr8(DP(0x00), (u8)A);
@@ -318,7 +318,7 @@ void StopWhenStill_m1x1(void)
     ora8(rd8(ABS(RIDER_SPEED_HI)));
     ora8(rd8(ABS(RIDER_BUMPED)));
     if (fz) {
-        lda8(0x01); wr8(DP(0xCD), 0x01);
+        lda8(0x01); wr8(DP(JUMP_BOARD_STEP), 0x01);
         lda8(0x20); wr8(DP(0xCF), 0x20);
         lda8(0x01);
         u8 m = rd8(DP(FRAME_COUNT));
@@ -423,7 +423,7 @@ void SetupJumpScreen_m1x1(void)
     lda8(0x25); wr8(ABS(BGMODE), 0x25);
     lda8(0x01); wr8(DP(0x79), 0x01); wr8(DP(MODE_ACTIVE), 0x01);
     lda8(lsr8((u8)A)); wr8(DP(MODE_STEP), (u8)A);
-    lda8(0x08); wr8(ABS(0x00A2), 0x08);
+    lda8(0x08); wr8(ABS(ZOOM), 0x08);
     ret();
 }
 
@@ -484,7 +484,7 @@ void SetBgTileBase_m1x1(void)
     lda16(asl16(A)); lda16(asl16(A)); lda16(asl16(A)); lda16(asl16(A)); lda16(asl16(A));
     fc = 0; adc16(0x2000);
     fc = 0; adc16(0xC000);
-    wr16(ABS(0x0086), A);
+    wr16(ABS(UPLOAD_SRC), A);
     sep(0x20);
     retl();
 }
@@ -493,7 +493,7 @@ void SetBgTileBase_m1x1(void)
  * BG2SC = $43, BG12NBA = $55, $01FE = $30, $1958 = 0. */
 void SetupCourseScreen_m1x1(void)
 {
-    lda8(rd8(DP(0x85)));
+    lda8(rd8(DP(SUB_STEP)));
     lda8(lsr8((u8)A));
     lda8(lsr8((u8)A));
     wr8(ABS(0x09C2), (u8)A);

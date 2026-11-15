@@ -176,7 +176,7 @@ void NmiFlushVramQueue_m1x1(void)
  */
 void StepLfsr_m1x1(void)
 {
-    u8 a = rd8(DP(0x2C)) & 0x02;
+    u8 a = rd8(DP(RANDOM_LFSR)) & 0x02;
     wr8(ABS(0x0000), a);
     a = (u8)((rd8(DP(0x2D)) & 0x02) ^ rd8(ABS(0x0000)));
     lda8(a);
@@ -476,7 +476,7 @@ void Add32_m1x1(void)
  * $80:D409 indexed by $85 (pointer kept at $00/$01, X = 0). */
 void DispatchBy85_m1x1(void)
 {
-    lda8(rd8(DP(0x85)));
+    lda8(rd8(DP(SUB_STEP)));
     lda8(asl8((u8)A));
     Y = (u8)A; nz8((u8)Y);
     lda8(rd8(ABS(0xD234 + Y))); wr8(DP(0x00), (u8)A);

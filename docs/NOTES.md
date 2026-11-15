@@ -90,6 +90,13 @@ addresses, carried over by `tools/port_hand.py`):
 * `$1903-$190F`: PPU shadow registers (INIDISP, TM, TS, TMW, TSW, CGWSEL,
   CGADSUB, NMITIMEN, HDMAEN).
 * `$1E12`, `$1543`: VRAM upload source.
+* Sound commands: four rings of 64 at `$1400` (channel n at `+$40n`), write
+  index `$65+n`, read index `$69+n`, pending command `$6D+n`, last command
+  `$71`. The NMI sends a channel's next command to `APUIO<n>` once the port
+  echoes the last one. Only channel 0 is ever queued. Same in both
+  generations.
+* The IRQ's parallax code (ParallaxLines, ScaleByScroll, Mul16b) runs with
+  D = `$1B00`, so its `$60-$6E` are `$1B60-$1B6E`, not the sound indexes.
 
 ## Each build holds two Stadiums
 The course loader (`$81:A01B` Gen A, `$81:A11E` area Gen B) indexes
