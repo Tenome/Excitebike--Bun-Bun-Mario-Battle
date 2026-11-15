@@ -158,6 +158,20 @@
 #define BONUS_TICK      0x00B5  /* frames into the bonus clock's second */
 #define JUMP_BOARD_STEP 0x00CD  /* jump contest result board: its step */
 
+/* ---- race globals ---- */
+#define LAP             0x0928  /* the lap number (Gen B also shows it as the stadium badge) */
+#define ATTRACT_DEMO    0x0CD7  /* the attract demo or a practice run (no pad, the special course) */
+#define OVERHEAT_LOCK   0x0940  /* overheated: set with OVERHEATED, the player cools down standing */
+#define GAUGE_ON        0x092D  /* the player's throttle flag: the speed gauge is on */
+#define TOTAL_TIME      0x084D  /* 3 bytes: the broadcast's total time (minutes, seconds, hundredths) */
+#define BONUS_RESULT    0x09C5  /* the bonus course's landing points */
+#define TRACK_ROWS      0x09D3  /* six 128-byte track tables (tile, height, flags, coin value ...; X = column) */
+#define TURBO_HEAT_FRAC 0x098F  /* the turbo heat's fraction (ENGINE_HEAT is the whole part) */
+#define PACE_FRAMES     0x0995  /* frames counted for the pace band */
+#define PACE_DIST       0x0996  /* distance counted for the pace band (every $3C picks one) */
+#define GROUND_LINE     0x0CD5  /* the ground line the riders' heights are measured from ($A0) */
+#define COLOUR_CYCLE    0x0880  /* the colour cycle's index into its list ($FF stopped) */
+
 /* ---- sprites ---- */
 #define OAM_BUF         0x1600  /* $0200 bytes: the OAM low table image */
 #define OAM_SIZE_BUF    0x1820  /* 128 size bytes, packed into the high table */

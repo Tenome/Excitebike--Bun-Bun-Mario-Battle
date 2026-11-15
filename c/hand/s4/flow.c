@@ -40,8 +40,8 @@ void RaceFinishStep_m1x1(void)
     cmp8((u8)A, 0x01);
     if (!fz) {
         lda8(0x00);
-        wr8(ABS(0x092D), 0x00);
-        wr8(ABS(0x0940), 0x00);
+        wr8(ABS(GAUGE_ON), 0x00);
+        wr8(ABS(OVERHEAT_LOCK), 0x00);
         wr8(DP(OVERHEATED), 0x00);
         X = rd8(DP(RACE_END)); nz8((u8)X);
         X = dec8((u8)X);
@@ -70,7 +70,7 @@ void RaceFinishStep_m1x1(void)
         wr8(DP(UPLOAD_SRC), 0);
         wr8(DP(0x87), 0);
     }
-    lda8(rd8(ABS(0x0CD7)));
+    lda8(rd8(ABS(ATTRACT_DEMO)));
     if (fz) { ret(); return; }
     ldx8(0x2B);
     do {
@@ -327,12 +327,12 @@ static void overheat_dust(void)
 void OverheatStep_m1x1(void)
 {
     lda8(rd8(DP(OVERHEATED)));
-    ora8(rd8(ABS(0x0940)));
+    ora8(rd8(ABS(OVERHEAT_LOCK)));
     if (fz) { ret(); return; }
     lda8(rd8(DP(OVERHEATED)));
     cmp8((u8)A, 0x08);
     if (fz) {
-        lda8(0x00); wr8(ABS(0x0940), 0x00);
+        lda8(0x00); wr8(ABS(OVERHEAT_LOCK), 0x00);
         lda8(0x2D);
         push8(0x80); push16(0xC1DF); QueueSoundB_m1x1();
         lda8(0x05);

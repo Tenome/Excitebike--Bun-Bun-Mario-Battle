@@ -129,7 +129,7 @@ void StartCredits_m1x1(void)
     lda8(0x80); wr8(ABS(SH_HDMAEN), 0x80);
     lda8(0x04); wr8(ABS(SH_TM), 0x04);
         wr8(ABS(0x087E), 0);
-    wr8(ABS(0x0880), 0);
+    wr8(ABS(COLOUR_CYCLE), 0);
     wr8(ABS(0x0882), 0);
     wr8(DP(MODE_TIMER), 0);
     ret();

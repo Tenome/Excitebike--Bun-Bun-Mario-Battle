@@ -158,8 +158,11 @@ The rest of the 1 MB is graphics, tracks, music and other data.
    (five in Gen A): the random shift register, the per-rider lean timer,
    the race-over flag, the sub-step, the NMI animation source, the IRQ's
    zoom and parallax switches, the zoom, the bonus clock and the jump
-   result board step. Next: the rest of the direct page ($3C, $54, $79,
-   $94, $A6, $CB) and the $08xx-$0Cxx race globals.
+   result board step. Twelve race globals that sit at the same address in
+   both generations: LAP, ATTRACT_DEMO, OVERHEAT_LOCK, GAUGE_ON,
+   TOTAL_TIME, BONUS_RESULT, TRACK_ROWS, TURBO_HEAT_FRAC, the pace counters,
+   GROUND_LINE and COLOUR_CYCLE. Next: the rest of the direct page ($3C,
+   $54, $79, $94, $A6, $CB) and the remaining $08xx-$0Cxx globals.
 
 ### Phase 5: merge the Stadiums
 0. ✅ Found that each build already holds two Stadiums behind `$81:800C`; the

@@ -157,7 +157,7 @@ void LoadCourse_m1x1(void)
     /* index = (Stadium * 4 + course) * 2, or Stadium * 2 + $10 for the
      * special course; done with the original's ASL/ADC so C and V match. */
     u16 index;
-    if (rd16(ABS(0x0CD7)) != 0) {
+    if (rd16(ABS(ATTRACT_DEMO)) != 0) {
         A = asl16(rd16(LONG(STADIUM_SELECT)));
         fc = 0;
         adc16(0x0010);

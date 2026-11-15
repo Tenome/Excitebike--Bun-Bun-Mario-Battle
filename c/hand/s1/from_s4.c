@@ -121,7 +121,7 @@ void RiderStartLane_m1x1(void)
     if (!fz) { ret(); return; }
     lda8((u8)X);
     if (fz) {
-        lda8(rd8(ABS(0x0940)));
+        lda8(rd8(ABS(OVERHEAT_LOCK)));
         if (!fz) { ret(); return; }
     } else {
         lda8((u8)X);
@@ -970,13 +970,13 @@ void FlagRidersAtLine_m1x1(void)
         if (fc) {
             ldy8(0x80);
             cmp8((u8)A, 0x40);
-            if (!fc) { lda8(0x01); wr8(ABSX(0x092D), 0x01); continue; }
+            if (!fc) { lda8(0x01); wr8(ABSX(GAUGE_ON), 0x01); continue; }
         }
-        lda8(rd8(ABSX(0x092D)));
+        lda8(rd8(ABSX(GAUGE_ON)));
         if (fz) continue;
         lda8((u8)Y);
         lda8(0x00);
-        wr8(ABSX(0x092D), 0x00);
+        wr8(ABSX(GAUGE_ON), 0x00);
     }
     ret();
 }
@@ -1009,7 +1009,7 @@ void HeightAbove_m1x1(void)
  * $0CD5. */
 void GroundHeightAbove_m1x1(void)
 {
-    lda8(rd8(ABS(0x0CD5)));
+    lda8(rd8(ABS(GROUND_LINE)));
     HeightAbove_m1x1();
 }
 

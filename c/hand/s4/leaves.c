@@ -436,7 +436,7 @@ void RiderStartLane_m1x1(void)
     if (!fz) { ret(); return; }
     lda8((u8)X);
     if (fz) {
-        lda8(rd8(ABS(0x0940)));
+        lda8(rd8(ABS(OVERHEAT_LOCK)));
         if (!fz) { ret(); return; }
     } else {
         lda8((u8)X);

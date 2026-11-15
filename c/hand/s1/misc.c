@@ -225,7 +225,7 @@ void BroadcastEventInject_m1x1(void)
     lda8(rd8(LONG(BCAST_MINUTE)));
     cmp8((u8)A, rd8(ABS(0x00B7)));
     if (fz) goto done;
-    lda8(rd8(ABS(0x0CD7)));
+    lda8(rd8(ABS(ATTRACT_DEMO)));
     if (!fz) goto done;
     lda8(rd8(DP(GAME_MODE)));
     cmp8((u8)A, 0x03);
@@ -600,19 +600,19 @@ void GrowBar087E_m1x1(void)
  * to $1C00 and flag the palette upload ($1915). */
 void StepColourCycle_m1x1(void)
 {
-    lda8(rd8(ABS(0x0880)));
+    lda8(rd8(ABS(COLOUR_CYCLE)));
     lda8(inc8((u8)A));
     if (!fz) {
         lda8(rd8(ABS(0x0882)));
         if (fz) {
-            X = rd8(ABS(0x0880));
+            X = rd8(ABS(COLOUR_CYCLE));
             rep(0x20);
             lda16(rd16(LONGX(0x88BC00)));
             wr16(ABS(PALETTE_BUF), A);
             sep(0x20);
             wr8(ABS(PALETTE_DIRTY), inc8(rd8(ABS(PALETTE_DIRTY))));
-            wr8(ABS(0x0880), inc8(rd8(ABS(0x0880))));
-            wr8(ABS(0x0880), inc8(rd8(ABS(0x0880))));
+            wr8(ABS(COLOUR_CYCLE), inc8(rd8(ABS(COLOUR_CYCLE))));
+            wr8(ABS(COLOUR_CYCLE), inc8(rd8(ABS(COLOUR_CYCLE))));
             lda8(0x0E);
             wr8(ABS(0x0882), 0x0E);
         }

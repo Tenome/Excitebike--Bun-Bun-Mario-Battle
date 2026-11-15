@@ -144,7 +144,7 @@ void DrawLap_m1x1(void)
 {
     lda8(0x94); wr8(DP(0x00), 0x94);
     lda8(0x18); wr8(DP(0x01), 0x18);
-    lda8(rd8(ABS(0x0928)));
+    lda8(rd8(ABS(LAP)));
     X = dec8((u8)A);
     queue_big_digit(0xD17B, rd8(ABS(0xD17D + X)));
     ret();
@@ -155,11 +155,11 @@ void DrawLap_m1x1(void)
 void RaceHudInit_m1x1(void)
 {
     lda8(0x01);
-    wr8(ABS(0x0928), 0x01);
+    wr8(ABS(LAP), 0x01);
     push16(0x923D); DrawHudLabelB_m1x1();
     push16(0x9240); DrawLap_m1x1();
     push16(0x9243); DrawHudLabelA_m1x1();
-    wr8(ABS(0x0928), 0);
+    wr8(ABS(LAP), 0);
     ret();
 }
 
@@ -171,7 +171,7 @@ void RaceHudInit_m1x1(void)
  */
 void RaceSetup_m1x1(void)
 {
-    lda8(rd8(ABS(0x0CD7)));
+    lda8(rd8(ABS(ATTRACT_DEMO)));
     if ((u8)A == 0) {
         push16(0x924F);
         DrawRacerName_m1x1();
@@ -317,7 +317,7 @@ void QueueSound_m1x1(void);
 void PlayerOverheatWarn_m1x1(void)
 {
     lda8((u8)X);
-    ora8(rd8(ABS(0x0940)));
+    ora8(rd8(ABS(OVERHEAT_LOCK)));
     ora8(rd8(DP(OVERHEATED)));
     ora8(rd8(ABS(0x01E8 + X)));
     ora8(rd8(ABS(TURBO_ON)));

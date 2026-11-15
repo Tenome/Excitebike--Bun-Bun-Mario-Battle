@@ -142,7 +142,7 @@ void StartCredits_m1x1(void)
         wr8(ABS(SH_TS), 0);
     lda8(0x09); wr8(ABS(BGMODE), 0x09);
     wr8(ABS(0x087E), 0);
-    wr8(ABS(0x0880), 0);
+    wr8(ABS(COLOUR_CYCLE), 0);
     wr8(ABS(0x0882), 0);
     wr8(DP(MODE_TIMER), 0);
     ret();
