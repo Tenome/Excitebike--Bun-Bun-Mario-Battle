@@ -110,6 +110,18 @@ The rest of the 1 MB is graphics, tracks, music and other data.
    routines as `hle_func`s. Gen A now runs five hand-written routines
    (QueueSound, DmaCopyToWram, DmaFillZero, LoadCourse, BsxPollStream);
    verified by play-through to a race and an identical track buffer.
+0d. ✅ Every routine of the S1 and S4 static maps is hand-written C (both
+   100%, docs/DECOMP.md). The S2 and S3 dumps (separate, older builds of the
+   same engines) take that C over with `tools/port_hand.py s1 s2` / `s4 s3`:
+   it follows the cross-version function map, accepts routines whose
+   instructions match apart from moved code and data addresses and changed
+   16-bit immediates, and translates return addresses (push16, return-address
+   tables and arguments, addresses built from a routine's start), CALL()
+   targets and data operands per code bank. S2: 382 routines, S3: 468, all
+   passing the difftest on the S1 / S4 snapshots except PieceAction's
+   out-of-range jump table (which fails the same way on S1). Left: the
+   routines that really differ (S2 24, S3 64, among them the Gen B roster
+   users).
 1. Hand-lift routines to readable C, kept in `c/`. `c/s1_core.c` is the start.
 2. Use the same approach as the NES Excitebike port: test each routine
    against the recompiled or interpreted original. Compare RAM and the order
