@@ -256,7 +256,7 @@ void DrawSpark_m1x1(void)
     u8 t = dec8(rd8(ABSX(EFFECT_TIMER)));
     wr8(ABSX(EFFECT_TIMER), t);
     if (fz) {
-        lda8(0x01); wr8(ABSX(0x0128), 0x01);
+        lda8(0x01); wr8(ABSX(EFFECT_STEP), 0x01);
         lda8(0x04); wr8(ABSX(EFFECT_TIMER), 0x04);
         wr8(ABSX(EFFECT_FRAME), 0);
     }
@@ -348,9 +348,9 @@ void DrawDustPair_m1x1(void)
     lda8(rd8(ABSX(EFFECT_X)));
     fc = 1; sbc8(rd8(ABS(RIDER_STEP)));
     wr8(ABSX(EFFECT_X), (u8)A);
-    lda8(rd8(ABSX(0x0128)));
+    lda8(rd8(ABSX(EFFECT_STEP)));
     fc = 1; sbc8(rd8(ABS(RIDER_STEP)));
-    wr8(ABSX(0x0128), (u8)A);
+    wr8(ABSX(EFFECT_STEP), (u8)A);
     lda8(rd8(DP(FRAME_COUNT)));
     and8(0x03);
     if (fz) {
@@ -369,7 +369,7 @@ void DrawDustPair_m1x1(void)
         lda8(rd8(ABSX(EFFECT_Y))); wr8(ABSY(OAM_BUF + 0x11), (u8)A);
         lda8(rd8(ABSX(EFFECT_FRAME))); wr8(ABSY(OAM_BUF + 0x12), (u8)A);
         lda8(0x2D); wr8(ABSY(OAM_BUF + 0x13), 0x2D);
-        lda8(rd8(ABSX(0x0128))); wr8(ABSY(OAM_BUF + 0x1E0), (u8)A);
+        lda8(rd8(ABSX(EFFECT_STEP))); wr8(ABSY(OAM_BUF + 0x1E0), (u8)A);
         lda8(rd8(ABSX(0x0130))); wr8(ABSY(OAM_BUF + 0x1E1), (u8)A);
         lda8(rd8(ABSX(EFFECT_FRAME))); wr8(ABSY(OAM_BUF + 0x1E2), (u8)A);
         lda8(0x2D); wr8(ABSY(OAM_BUF + 0x1E3), 0x2D);
@@ -469,7 +469,7 @@ void SpawnExhaust_m1x1(void)
             lda8(rd8(DP(0x2D))); and8(0x0F); fc = 0; adc8(rd8(ABS(RIDER_Y))); sbc8(0x02);
             wr8(ABSX(EFFECT_Y), (u8)A);
             lda8(rd8(DP(0x2E))); and8(0x07); fc = 0; adc8(0x3C);
-            wr8(ABSX(0x0128), (u8)A);
+            wr8(ABSX(EFFECT_STEP), (u8)A);
             lda8(rd8(DP(0x2F))); and8(0x0F); fc = 0; adc8(rd8(ABS(RIDER_Y))); sbc8(0x02);
             wr8(ABSX(0x0130), (u8)A);
             lda8(0xB2); wr8(ABSX(EFFECT_FRAME), 0xB2);

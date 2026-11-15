@@ -221,7 +221,7 @@ static void rider_select1(int second, u16 base)
         lda8(rd8(DP(P1_HELD_LO)));
         and8(0x80);
         if (!fz) {
-            lda8(rd8(ABS(0x154B)));
+            lda8(rd8(ABS(SELECT_TURN)));
             if (fz) choose = 1;
         }
     }

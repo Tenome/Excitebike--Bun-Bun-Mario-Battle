@@ -210,15 +210,15 @@ void AddBcdDigits_m1x1(void)
 {
     ldx8(0x04);
     do {
-        lda8(rd8(ABSX(0x154A)));
+        lda8(rd8(ABSX(SCORE_COPY + 0x01)));
         fc = 0;
         adc8(rd8(ABSX(DIGIT_ROW)));
         cmp8((u8)A, 0x0A);
         if (fc) {
             sbc8(0x0A);
-            wr8(ABSX(0x1549), inc8(rd8(ABSX(0x1549))));
+            wr8(ABSX(SCORE_COPY), inc8(rd8(ABSX(SCORE_COPY))));
         }
-        wr8(ABSX(0x154A), (u8)A);
+        wr8(ABSX(SCORE_COPY + 0x01), (u8)A);
         X = dec8((u8)X);
     } while (!fn);
     ret();

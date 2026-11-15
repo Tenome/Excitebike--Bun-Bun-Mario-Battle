@@ -193,6 +193,13 @@
 #define COURSE_NUM      0x0277  /* the course being built (picks its pointer tables) */
 #define PLAYER_BUF_COL  0x0275  /* the player's column in TRACK_BUF */
 
+/* ---- more globals ---- */
+#define RIDER_PIECE_ACTION 0x0220  /* [+$8] X = rider: the pending piece action (PieceAction runs it) */
+#define EFFECT_STEP     0x0128  /* [+$8] Y = slot: the effect's step or second X */
+#define LAPS_LEFT       0x093F  /* laps left (one off at each lap; nonzero at the finish picks the sound) */
+#define FINISH_POSE     0x091C  /* the player's walk or wave pose at the finish (0, 1, 3, 4) */
+#define SELECT_TURN     0x154B  /* player select: the carousel's turn step (+2 / -2, 0 still) */
+
 /* ---- sprites ---- */
 #define OAM_BUF         0x1600  /* [+$200] $0200 bytes: the OAM low table image */
 #define OAM_SIZE_BUF    0x1820  /* [+$80] 128 size bytes, packed into the high table */

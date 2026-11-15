@@ -169,7 +169,7 @@ void CarouselPos_m1x1(void)
         u8 a0 = rd8(ABS(0x1554));
         lda8(a0);
         if (roster_select_is_stop(a0)) {
-            lda8(rd8(ABS(0x1559)));
+            lda8(rd8(ABS(SELECT_TURN)));
             if (!fz) {
                 lda8(rd8(DP(P1_HELD_HI)));
                 and8(0x03);
@@ -177,7 +177,7 @@ void CarouselPos_m1x1(void)
                 if (!fz) {
                     lda8(0x41);
                     push8(0x81); push16(0xA297); QueueSoundB_m1x1();
-                    wr8(ABS(0x1559), 0);
+                    wr8(ABS(SELECT_TURN), 0);
                 }
             }
         }
@@ -192,7 +192,7 @@ void CarouselPos_m1x1(void)
  */
 void SelectRotate_m1x1(void)
 {
-    lda8(rd8(ABS(0x1559)));
+    lda8(rd8(ABS(SELECT_TURN)));
     int tick = 0;
     if (!fz) {
         tick = 1;
@@ -203,7 +203,7 @@ void SelectRotate_m1x1(void)
             wr8(ABS(0x198C), (u8)A);
             X = (u8)A; nz8((u8)X);
             lda8(rd8(ABS(0x8BAA + X)));
-            wr8(ABS(0x1559), (u8)A);
+            wr8(ABS(SELECT_TURN), (u8)A);
             tick = 1;
         }
     }
@@ -219,7 +219,7 @@ void SelectRotate_m1x1(void)
     do {
         lda8(rd8(ABS(0x1554 + X)));
         fc = 0;
-        adc8(rd8(ABS(0x1559)));
+        adc8(rd8(ABS(SELECT_TURN)));
         wr8(ABS(0x1554 + X), (u8)A);
         push8(0x80); push16(0x8BA5); CarouselPos_m1x1();
         X = dec8((u8)X);
@@ -596,7 +596,7 @@ void SelectMain_m1x1(void)
         lda8(rd8(DP(P1_PRESS_LO)));
         and8(0x80);
         if (fz) goto tail;
-        lda8(rd8(ABS(0x1559)));
+        lda8(rd8(ABS(SELECT_TURN)));
         if (!fz) goto tail;
     }
     /* the choice */
