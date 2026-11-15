@@ -2,6 +2,7 @@
  * Stadium 1 video initialisation, hand-written.
  */
 #include "hand/hand.h"
+#include "ram.h"
 
 void DmaFillZero_m0x1(void);
 void DmaKick_m0x1(void);
@@ -10,10 +11,10 @@ void DmaKick_m0x1(void);
 void ForceBlank_m1x1(void)
 {
     lda8(0x80);
-    wr8(ABS(0x2100), 0x80);                            /* INIDISP: forced blank */
+    wr8(ABS(INIDISP), 0x80);                            /* INIDISP: forced blank */
     wr8(ABS(0x0819), 0x80);
-    wr8(ABS(0x420C), 0);                               /* HDMAEN */
-    wr8(ABS(0x190F), 0);                               /* its shadow */
+    wr8(ABS(HDMAEN), 0);                               /* HDMAEN */
+    wr8(ABS(SH_HDMAEN), 0);                               /* its shadow */
     retl();
 }
 
@@ -22,15 +23,15 @@ void ForceBlank_m1x1(void)
 static void vram_fill_half(u16 vram, int wide_stz, u8 bbad, u16 bytes)
 {
     if (wide_stz)
-        wr16(ABS(0x2115), 0);                          /* STZ VMAIN in 16-bit mode: also $2116 */
+        wr16(ABS(VMAIN), 0);                          /* STZ VMAIN in 16-bit mode: also $2116 */
     else
-        wr8(ABS(0x2115), 0);                           /* VMAIN = 0: increment after low byte */
-    wr16(ABS(0x2116), vram);
+        wr8(ABS(VMAIN), 0);                           /* VMAIN = 0: increment after low byte */
+    wr16(ABS(VMADDL), vram);
     wr16(DP(0x00), (u16)(bbad << 8 | 0x08));           /* DMAP0 = $08 (fixed source) */
     wr16(DP(0x02), 0);                                 /* source $00:0000 */
     wr16(DP(0x04), 0);
     wr16(DP(0x05), bytes);
-    wr8(ABS(0x420B), 0x01);
+    wr8(ABS(MDMAEN), 0x01);
 }
 
 /*
@@ -51,22 +52,22 @@ void ClearTilemaps_m1x1(void)
     vram_fill_half(0x0000, 0, 0x18, 0x1000);        /* low bytes: $FC */
     /* the original then sets DAS0 again and re-addresses VRAM */
     wr16(DP(0x05), 0x1000);
-    wr16(ABS(0x2116), 0x0000);
+    wr16(ABS(VMADDL), 0x0000);
     wr16(ABS(0x0000), 0);                              /* source byte: $00 */
-    X = 0x80; wr8(ABS(0x2115), 0x80);
+    X = 0x80; wr8(ABS(VMAIN), 0x80);
     X = 0x19; wr8(DP(0x01), 0x19);                     /* BBAD0 = VMDATAH */
     wr16(DP(0x05), 0x1000);
-    wr8(ABS(0x420B), 0x01);                            /* high bytes: $00 */
+    wr8(ABS(MDMAEN), 0x01);                            /* high bytes: $00 */
 
     X = 0xFC; wr8(ABS(0x0000), 0xFC);
     vram_fill_half(0x1800, 1, 0x18, 0x0800);
     wr16(DP(0x05), 0x0800);
-    wr16(ABS(0x2116), 0x1800);
+    wr16(ABS(VMADDL), 0x1800);
     wr16(ABS(0x0000), 0);
-    X = 0x80; wr8(ABS(0x2115), 0x80);
+    X = 0x80; wr8(ABS(VMAIN), 0x80);
     X = 0x19; wr8(DP(0x01), 0x19);
     wr16(DP(0x05), 0x0800);
-    wr8(ABS(0x420B), 0x01);
+    wr8(ABS(MDMAEN), 0x01);
     A = 0x0800;
     sep(0x20);
     D = pull16();
@@ -120,8 +121,8 @@ void InitPpuRegisters_m1x1(void)
     wr8(ABS(0x1912), 0x20);
     wr8(ABS(0x1913), 0x40);
     wr8(ABS(0x1914), 0x80);
-    wr8(ABS(0x420C), 0);                               /* HDMAEN off */
-    wr8(ABS(0x190F), 0);
+    wr8(ABS(HDMAEN), 0);                               /* HDMAEN off */
+    wr8(ABS(SH_HDMAEN), 0);
     static const u8 hdma[2][6] = {                     /* ch7, ch6: DMAP BBAD A1TL A1TH A1B DASB */
         {0x42, 0x0F, 0x82, 0x84, 0x80, 0x00},          /* indirect, BG2HOFS, table $80:8482 */
         {0x42, 0x0D, 0x9E, 0x84, 0x80, 0x00},          /* indirect, BG1HOFS, table $80:849E */
@@ -136,9 +137,9 @@ void InitPpuRegisters_m1x1(void)
     }
     rep(0x20);
     A = 0x4300; D = 0x4300;
-    Y = 0x80; wr8(ABS(0x2115), 0x80);
+    Y = 0x80; wr8(ABS(VMAIN), 0x80);
     A = 0x1801; wr16(DP(0x00), 0x1801);                /* channel 0 -> VMDATA */
-    wr16(ABS(0x2116), 0x1000);
+    wr16(ABS(VMADDL), 0x1000);
     wr16(DP(0x05), 0x1000);
     A = 0x8000; X = 0x88; Y = 0x01;
     push16(0x847D); DmaKick_m0x1();                    /* font: $88:8000 -> VRAM $1000 */

@@ -12,6 +12,7 @@
  * start at $7F:0002; head $0002 = empty, $FFFF = locked) and resets the head.
  */
 #include "hand/hand.h"
+#include "ram.h"
 
 #define QUEUE_HEAD   LONG(0x7F0000)
 
@@ -212,7 +213,7 @@ void DmaKick_m0x1(void);
  * address the original JSR pushes. */
 static void vram_upload(u16 jsr_ret, u16 vram, u16 bytes, u16 src, u8 bank)
 {
-    wr16(ABS(0x2116), vram);                           /* VMADD */
+    wr16(ABS(VMADDL), vram);                           /* VMADD */
     wr16(DP(0x05), bytes);                             /* DAS0 */
     A = src;
     X = bank;
@@ -238,7 +239,7 @@ void NmiFixedUploads_m1x1(void)
     push16(D);
     A = 0x4300; D = 0x4300;
     rep(0x10);
-    wr8(ABS(0x2115), 0x80);                            /* VMAIN: +1 after high byte */
+    wr8(ABS(VMAIN), 0x80);                            /* VMAIN: +1 after high byte */
     Y = 0x1801;
     wr16(DP(0x00), 0x1801);                            /* DMAP0 = $01, BBAD0 = $18 (VMDATA) */
     rep(0x20);
@@ -255,7 +256,7 @@ void NmiFixedUploads_m1x1(void)
             u8 bank = rd8(ABS(slot[i].bank));
             vram_upload(slot[i].ret1, slot[i].vram, 0x0100, rd16(ABS(slot[i].src)), bank);
             /* second half: +$100 VRAM words, +$200 source bytes (CLC / ADC) */
-            wr16(ABS(0x2116), (u16)(slot[i].vram + 0x100));
+            wr16(ABS(VMADDL), (u16)(slot[i].vram + 0x100));
             wr16(DP(0x05), 0x0100);
             A = rd16(ABS(slot[i].src));
             fc = 0;
@@ -271,32 +272,32 @@ void NmiFixedUploads_m1x1(void)
 
     rep(0x10);
     sep(0x20);
-    if (rd8(ABS(0x1915)) != 0) {                        /* palette upload request */
-        wr8(ABS(0x2121), 0);                           /* CGADD */
+    if (rd8(ABS(PALETTE_DIRTY)) != 0) {                        /* palette upload request */
+        wr8(ABS(CGADD), 0);                           /* CGADD */
         Y = 0x2200; wr16(DP(0x00), 0x2200);            /* DMAP0 = $00, BBAD0 = $22 (CGDATA) */
         Y = 0x1C00; wr16(DP(0x02), 0x1C00);
         SET_A8(0);  wr8(DP(0x04), 0x00);
         Y = 0x0200; wr16(DP(0x05), 0x0200);
-        SET_A8(1);  wr8(ABS(0x420B), 0x01);
-        wr8(ABS(0x1915), 0);
+        SET_A8(1);  wr8(ABS(MDMAEN), 0x01);
+        wr8(ABS(PALETTE_DIRTY), 0);
     }
     if (rd8(ABS(0x1E0C)) != 0) {
         rep(0x20);
         sep(0x10);
         if (rd16(ABS(0x1E10)) != 0) {
-            Y = 0x80; wr8(ABS(0x2115), 0x80);
+            Y = 0x80; wr8(ABS(VMAIN), 0x80);
             A = 0x1801; wr16(DP(0x00), 0x1801);
             vram_upload(0x88A7, rd16(ABS(0x1E10)), 0x0200, rd16(ABS(0x1E0A)), 0x8A);
         }
     }
     rep(0x20);
     sep(0x10);
-    wr16(ABS(0x2102), 0);                              /* OAMADD = 0 */
+    wr16(ABS(OAMADDL), 0);                              /* OAMADD = 0 */
     wr16(DP(0x00), 0x0400);                            /* DMAP0 = $00, BBAD0 = $04 (OAMDATA) */
     wr16(DP(0x02), 0x1600);
     wr16(DP(0x04), 0x0000);
     wr16(DP(0x05), 0x0220);
-    Y = 1; wr8(ABS(0x420B), 0x01);
+    Y = 1; wr8(ABS(MDMAEN), 0x01);
     A = 0x1801; wr16(DP(0x00), 0x1801);                /* leave channel 0 set up for VRAM */
     sep(0x30);
     D = pull16();

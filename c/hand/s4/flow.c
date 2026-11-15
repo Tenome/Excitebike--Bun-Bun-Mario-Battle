@@ -2,6 +2,7 @@
  * Stadium 3-4 (Gen B): mode changes and the end of a race, hand-written.
  */
 #include "hand/hand.h"
+#include "ram.h"
 #include "roster.h"
 
 void ChangeMode_m1x1(void);
@@ -10,19 +11,19 @@ void ChangeMode_m1x1(void);
  * APUIO3 = 0, $75 = $77 = 0, fade out ($1923 = -1). */
 void ChangeMode_m1x1(void)
 {
-    wr8(ABS(0x2143), 0);
+    wr8(ABS(APUIO3), 0);
     lda8(0x00);
-    wr8(DP(0x75), 0x00);
-    wr8(DP(0x77), 0x00);
+    wr8(DP(MODE_ACTIVE), 0x00);
+    wr8(DP(MODE_STEP), 0x00);
     lda8(0xFF);
-    wr8(ABS(0x1923), 0xFF);
+    wr8(ABS(FADE_STATE), 0xFF);
     ret();
 }
 
 /* $80:8F15 NextMode (RTS): $76 + 1, then ChangeMode. */
 void NextMode_m1x1(void)
 {
-    wr8(DP(0x76), inc8(rd8(DP(0x76))));
+    wr8(DP(GAME_MODE), inc8(rd8(DP(GAME_MODE))));
     ChangeMode_m1x1();
 }
 
@@ -59,10 +60,10 @@ void RaceFinishStep_m1x1(void)
         ret();
         return;
     }
-    lda8(rd8(DP(0x7D)));
+    lda8(rd8(DP(FINAL_RACE)));
     if (port_race_is_final()) {
         lda8(0x13);
-        wr8(DP(0x76), 0x13);
+        wr8(DP(GAME_MODE), 0x13);
         push16(0xAB6F); ChangeMode_m1x1();
     } else {
         push16(0xAB74); NextMode_m1x1();
@@ -76,7 +77,7 @@ void RaceFinishStep_m1x1(void)
         wr8(DPX(0x38), 0);
         X = dec8((u8)X);
     } while (!fn);
-    wr8(DP(0x76), 0);
+    wr8(DP(GAME_MODE), 0);
     wr8(DP(0x79), inc8(rd8(DP(0x79))));
     ChangeMode_m1x1();
 }
@@ -111,29 +112,29 @@ void RivalTarget_m1x1(void)
     }
     lda8(rd8(ABSX(0xBEB9)));
     if (!fz) {
-        lda8(rd8(ABSX(0x019E)));
+        lda8(rd8(ABSX(RIDER_PAGE)));
         lda8(lsr8((u8)A));
         lda8(lsr8((u8)A));
         if (!fc) {
-            lda8(rd8(ABS(0x01C6)));
+            lda8(rd8(ABS(RIDER_SPEED_HI)));
             if (!fz) {
-                wr8(ABSX(0x0236), (u8)A);
-                lda8(rd8(ABS(0x01BE)));
-                wr8(ABSX(0x022E), (u8)A);
-                lda8(rd8(ABSX(0x019E)));
+                wr8(ABSX(RIDER_TARGET_HI), (u8)A);
+                lda8(rd8(ABS(RIDER_SPEED_LO)));
+                wr8(ABSX(RIDER_TARGET_LO), (u8)A);
+                lda8(rd8(ABSX(RIDER_PAGE)));
                 int bump = fz;
                 if (!bump) {
-                    lda8(rd8(ABSX(0x0196)));
+                    lda8(rd8(ABSX(RIDER_X)));
                     cmp8((u8)A, 0x40);
                     if (fc) goto table;
-                    lda8(rd8(ABS(0x0958)));
+                    lda8(rd8(ABS(RIDER_BAND)));
                     cmp8((u8)A, rd8(ABS(0x095B)));
                     bump = !fz;
                 }
                 if (bump) {
-                    lda8(rd8(ABSX(0x0236)));
+                    lda8(rd8(ABSX(RIDER_TARGET_HI)));
                     cmp8((u8)A, 0x04);
-                    if (!fc) wr8(ABSX(0x0236), inc8(rd8(ABSX(0x0236))));
+                    if (!fc) wr8(ABSX(RIDER_TARGET_HI), inc8(rd8(ABSX(RIDER_TARGET_HI))));
                 }
                 pace_target();
                 ret();
@@ -144,12 +145,12 @@ void RivalTarget_m1x1(void)
 table:
     lda8(rd8(ABSY(0xBAEF)));
 table_lo:
-    wr8(ABSX(0x0236), (u8)A);
+    wr8(ABSX(RIDER_TARGET_HI), (u8)A);
     lda8(rd8(DPX(0x2F)));
     and8(0x0F);
     Y = (u8)A; nz8((u8)Y);
     lda8(rd8(ABSY(0xBAE7)));
-    wr8(ABSX(0x022E), (u8)A);
+    wr8(ABSX(RIDER_TARGET_LO), (u8)A);
     pace_target();
     ret();
 }
@@ -158,9 +159,9 @@ table_lo:
  * ($80:88AF by course $7C * 2 + final $7D), then the next mode. */
 void Mode02_SegmentCard_m1x1(void)
 {
-    lda8(rd8(DP(0x7C)));
+    lda8(rd8(DP(COURSE_SLOT)));
     lda8(asl8((u8)A));
-    fc = 0; adc8(rd8(DP(0x7D)));
+    fc = 0; adc8(rd8(DP(FINAL_RACE)));
     X = (u8)A; nz8((u8)X);
     lda8(rd8(LONG(0x7FFFFF)));
     cmp8((u8)A, rd8(ABSX(0x88AF)));
@@ -175,16 +176,16 @@ void BsxEndIfFlagged_m1x1(void);
 void Mode11_m1x1(void)
 {
     rep(0x20);
-    u16 t = dec16(rd16(DP(0x88)));
-    wr16(DP(0x88), t);
+    u16 t = dec16(rd16(DP(MODE_TIMER)));
+    wr16(DP(MODE_TIMER), t);
     sep(0x20);
     if (!fz) { ret(); return; }
-    lda8(0x0F); wr8(DP(0x76), 0x0F);
-    wr8(DP(0x75), 0);
-    wr8(DP(0x77), 0);
-    wr8(ABS(0x1923), dec8(rd8(ABS(0x1923))));
+    lda8(0x0F); wr8(DP(GAME_MODE), 0x0F);
+    wr8(DP(MODE_ACTIVE), 0);
+    wr8(DP(MODE_STEP), 0);
+    wr8(ABS(FADE_STATE), dec8(rd8(ABS(FADE_STATE))));
     rep(0x20);
-    lda16(0x0020); wr16(DP(0x88), 0x0020);
+    lda16(0x0020); wr16(DP(MODE_TIMER), 0x0020);
     sep(0x20);
     ret();
 }
@@ -223,13 +224,13 @@ void DemoInputStep_m1x1(void)
 {
     lda8(rd8(LONG(0x81800E)));
     if (!fz) {
-        lda8(rd8(DP(0x21)));
+        lda8(rd8(DP(P1_PRESS_HI)));
         and8(0x10);
         if (!fz) { ldy8(0x00); demo_exit(); return; }
     }
-    lda8(rd8(DP(0x92)));
+    lda8(rd8(DP(RACE_STARTED)));
     if (fz) {
-        wr8(DP(0x63), 0);
+        wr8(DP(FRAME_COUNT), 0);
         lda8(rd8(LONG(0x9CD200))); wr8(ABS(0x197C), (u8)A);
         lda8(rd8(LONG(0x9CD300))); wr8(ABS(0x0CE3), (u8)A);
         lda8(0x01); wr8(ABS(0x0CE1), 0x01);
@@ -240,7 +241,7 @@ void DemoInputStep_m1x1(void)
             X = rd8(ABS(0x0CE1)); nz8((u8)X);
             X = dec8((u8)X);
             lda8(rd8(LONGX(0x9CD200)));
-            wr8(ABS(0x017E), (u8)A);
+            wr8(ABS(RIDER_INPUT), (u8)A);
             wr8(ABS(0x098E), (u8)A);
         } else {
             X = rd8(ABS(0x0CE1)); nz8((u8)X);
@@ -255,7 +256,7 @@ void DemoInputStep_m1x1(void)
             }
             wr8(ABS(0x0CE3), (u8)A);
             lda8(rd8(LONGX(0x9CD200)));
-            wr8(ABS(0x017E), (u8)A);
+            wr8(ABS(RIDER_INPUT), (u8)A);
             wr8(ABS(0x098E), (u8)A);
         }
     }
@@ -289,10 +290,10 @@ void TitlePushStart_m1x1(void)
     lda16(0x18F1); wr16(DP(0x00), 0x18F1);
     sep(0x20);
     push16(0xF4FB); VramQueueTiles20_m1x1();
-    lda8(rd8(DP(0x21)));
+    lda8(rd8(DP(P1_PRESS_HI)));
     and8(0x10);
     if (fz) { ret(); return; }
-    lda8(0x2D); wr8(ABS(0x2140), 0x2D);
+    lda8(0x2D); wr8(ABS(APUIO0), 0x2D);
     ldy8(0x00);
     demo_exit();
 }
@@ -304,7 +305,7 @@ void QueueSoundB_m1x1(void);
  * $00 = $58, X = 7, Y = $1C. */
 static void overheat_dust(void)
 {
-    lda8(rd8(DP(0x63)));
+    lda8(rd8(DP(FRAME_COUNT)));
     and8(0x0F);
     if (fz) { push8(0x80); push16(0xABB5); SpawnDustPuff_m1x1(); }
     lda8(rd8(DP(0x60)));
@@ -335,28 +336,28 @@ void OverheatStep_m1x1(void)
         lda8(0x2D);
         push8(0x80); push16(0xC1DF); QueueSoundB_m1x1();
         lda8(0x05);
-        wr8(ABS(0x0990), 0x05);
+        wr8(ABS(ENGINE_HEAT), 0x05);
         wr8(ABS(0x08CC), 0x05);
-        Y = rd8(ABS(0x01D6)); nz8((u8)Y);
-        if (fz) wr8(ABS(0x01D6), (u8)A);
+        Y = rd8(ABS(RIDER_TIMER)); nz8((u8)Y);
+        if (fz) wr8(ABS(RIDER_TIMER), (u8)A);
         ret();
         return;
     }
     if (!fc) { ret(); return; }
-    lda8(rd8(ABS(0x01C6)));
-    ora8(rd8(ABS(0x01CE)));
-    ora8(rd8(ABS(0x01D6)));
+    lda8(rd8(ABS(RIDER_SPEED_HI)));
+    ora8(rd8(ABS(RIDER_BUMPED)));
+    ora8(rd8(ABS(RIDER_TIMER)));
     if (fz) {
-        lda8(rd8(ABS(0x0176)));
+        lda8(rd8(ABS(RIDER_SCRIPT)));
         if (!fz) {
-            lda8(0xC0); wr8(ABS(0x01BE), 0xC0);
+            lda8(0xC0); wr8(ABS(RIDER_SPEED_LO), 0xC0);
         } else {
-            wr8(ABS(0x01BE), (u8)A);
+            wr8(ABS(RIDER_SPEED_LO), (u8)A);
             ldx8(0x01);
-            lda8(rd8(ABS(0x01F6)));
+            lda8(rd8(ABS(RIDER_LANE)));
             cmp8((u8)A, rd8(ABS(0xBACF)));
             if (fz) X = dec8((u8)X);
-            wr8(ABS(0x01AE), (u8)X);
+            wr8(ABS(RIDER_STEER), (u8)X);
         }
     }
     overheat_dust();
@@ -403,7 +404,7 @@ static void demo_next_entry4(void)
     }
     wr8(ABS(0x0CE3), (u8)A);
     lda8(rd8(LONGX(0x9CD200)));
-    wr8(ABS(0x017E), (u8)A);
+    wr8(ABS(RIDER_INPUT), (u8)A);
     wr8(ABS(0x098E), (u8)A);
     fc = 0;
     ret();
@@ -415,7 +416,7 @@ void DemoExitBoost_m1x1(void)
 {
     lda8(0x10);
     wr8(ABS(0x099D), 0x10);
-    wr8(ABS(0x0990), 0x10);
+    wr8(ABS(ENGINE_HEAT), 0x10);
     demo_next_entry4();
 }
 void DemoExitSkip40_m1x1(void)

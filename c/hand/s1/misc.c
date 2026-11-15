@@ -4,6 +4,7 @@
  * overflow and decimal mode behave exactly as before.
  */
 #include "hand/hand.h"
+#include "ram.h"
 
 void VramQueueTiles20_m1x1(void);
 
@@ -14,13 +15,13 @@ void VramQueueTiles20_m1x1(void);
  */
 void Random_m1x1(void)
 {
-    lda8(rd8(ABS(0x2137)));                 /* SLHV: latch the counters */
-    lda8(rd8(ABS(0x213F)));                 /* STAT78: reset the read flip-flops */
-    adc8(rd8(ABS(0x213C)));                 /* OPHCT low, high */
-    adc8(rd8(ABS(0x213C)));
-    adc8(rd8(ABS(0x213D)));                 /* OPVCT low, high */
-    adc8(rd8(ABS(0x213D)));
-    eor8(rd8(DP(0x63)));
+    lda8(rd8(ABS(SLHV)));                 /* SLHV: latch the counters */
+    lda8(rd8(ABS(STAT78)));                 /* STAT78: reset the read flip-flops */
+    adc8(rd8(ABS(OPHCT)));                 /* OPHCT low, high */
+    adc8(rd8(ABS(OPHCT)));
+    adc8(rd8(ABS(OPVCT)));                 /* OPVCT low, high */
+    adc8(rd8(ABS(OPVCT)));
+    eor8(rd8(DP(FRAME_COUNT)));
     adc8(rd8(DP(0x64)));
     adc8(rd8(LONG(0x7FFFFF)));              /* minute */
     adc8(rd8(LONG(0x7FFFFA)));              /* frame within the minute */
@@ -129,7 +130,7 @@ void Mode00_IntroWait_m1x1(void)
     int skip = 0;
     lda8(rd8(LONG(0x81800E)));
     if ((u8)A != 0) {
-        lda8(rd8(DP(0x21)));
+        lda8(rd8(DP(P1_PRESS_HI)));
         and8(0x10);
         skip = (u8)A != 0;
     }
@@ -138,16 +139,16 @@ void Mode00_IntroWait_m1x1(void)
         cmp8((u8)A, 0x04);
         if (!fc) {
             rep(0x20);
-            wr16(DP(0x88), dec16(rd16(DP(0x88))));
+            wr16(DP(MODE_TIMER), dec16(rd16(DP(MODE_TIMER))));
             sep(0x20);
             if (!fz) { ret(); return; }
         }
     }
     lda8(0x0E);
-    wr8(DP(0x76), 0x0E);
-    wr8(DP(0x75), 0);
+    wr8(DP(GAME_MODE), 0x0E);
+    wr8(DP(MODE_ACTIVE), 0);
     lda8(0x01);
-    wr8(DP(0x77), 0x01);
+    wr8(DP(MODE_STEP), 0x01);
     ret();
 }
 
@@ -161,10 +162,10 @@ void Mode0E_TitleWait_m1x1(void)
     cmp8((u8)A, 0x04);
     if (fc) {
         lda8(0x0C);
-        wr8(DP(0x76), 0x0C);
-        wr8(DP(0x75), 0);
-        wr8(DP(0x77), 0);
-        wr8(ABS(0x1923), dec8(rd8(ABS(0x1923))));
+        wr8(DP(GAME_MODE), 0x0C);
+        wr8(DP(MODE_ACTIVE), 0);
+        wr8(DP(MODE_STEP), 0);
+        wr8(ABS(FADE_STATE), dec8(rd8(ABS(FADE_STATE))));
     }
     ret();
 }
@@ -181,10 +182,10 @@ void QueueSound_m1x1(void);
  */
 void FadeStep_m1x1(void)
 {
-    lda8(rd8(ABS(0x1903)));
+    lda8(rd8(ABS(SH_INIDISP)));
     and8(0x0F);
     fc = 0;
-    adc8(rd8(ABS(0x1923)));
+    adc8(rd8(ABS(FADE_STATE)));
     if (fn) {
         for (int a = 0x92; a <= 0x95; a++)
             wr8(DP(a), 0);
@@ -195,19 +196,19 @@ void FadeStep_m1x1(void)
         lda8(0x01);
         wr8(ABS(0x1E84), 0x01);
         lda8(0x80);
-        wr8(ABS(0x1903), 0x80);
-        wr8(ABS(0x2142), 0);                    /* APUIO2 */
+        wr8(ABS(SH_INIDISP), 0x80);
+        wr8(ABS(APUIO2), 0);                    /* APUIO2 */
         for (int a = 0x1961; a <= 0x1964; a++)
             wr8(ABS(a), 0);
-        wr8(ABS(0x1923), 0);
+        wr8(ABS(FADE_STATE), 0);
     } else {
         cmp8((u8)A, 0x0F);
         if (fc) {
             lda8(0x0F);
-            wr8(ABS(0x1923), 0);
+            wr8(ABS(FADE_STATE), 0);
         }
     }
-    wr8(ABS(0x1903), (u8)A);
+    wr8(ABS(SH_INIDISP), (u8)A);
     retl();
 }
 
@@ -226,7 +227,7 @@ void BroadcastEventInject_m1x1(void)
     if (fz) goto done;
     lda8(rd8(ABS(0x0CD7)));
     if (!fz) goto done;
-    lda8(rd8(DP(0x76)));
+    lda8(rd8(DP(GAME_MODE)));
     cmp8((u8)A, 0x03);
     if (!fz) goto done;
     {
@@ -408,7 +409,7 @@ void BlankQueueRowPal2_m1x1(void)
  * to the next state ($0309 + 1, 16-bit) and reload 208 frames. */
 void RivalCountdown_97CC_m1x1(void)
 {
-    X = rd8(ABS(0x039D));
+    X = rd8(ABS(OBJ_CURRENT));
     rep(0x20);
     u16 t = dec16(rd16(ABS(0x0319 + X)));
     wr16(ABS(0x0319 + X), t);
@@ -442,15 +443,15 @@ void DrawText95C4_m1x1(void)
  * ($1905 = $11) and clear $190D. */
 void BeginFadeIn_m1x1(void)
 {
-    wr8(ABS(0x1923), inc8(rd8(ABS(0x1923))));
-    wr8(DP(0x75), inc8(rd8(DP(0x75))));
+    wr8(ABS(FADE_STATE), inc8(rd8(ABS(FADE_STATE))));
+    wr8(DP(MODE_ACTIVE), inc8(rd8(DP(MODE_ACTIVE))));
     rep(0x20);
     lda16(0x0384);
-    wr16(DP(0x88), 0x0384);
+    wr16(DP(MODE_TIMER), 0x0384);
     sep(0x20);
     lda8(0x11);
-    wr8(ABS(0x1905), 0x11);
-    wr8(ABS(0x190D), 0);
+    wr8(ABS(SH_TM), 0x11);
+    wr8(ABS(SH_CGADSUB), 0);
     ret();
 }
 
@@ -458,14 +459,14 @@ void BeginFadeIn_m1x1(void)
  * >> 3, low byte to APUIO2. */
 void SendSpeedToApu_m1x1(void)
 {
-    lda8(rd8(ABS(0x01C0)));
+    lda8(rd8(ABS(RIDER_SPEED_HI)));
     A = (u16)((A << 8) | (A >> 8));             /* XBA */
     nz8((u8)A);
-    lda8(rd8(ABS(0x01B8)));
+    lda8(rd8(ABS(RIDER_SPEED_LO)));
     rep(0x20);
     lda16(lsr16(lsr16(lsr16(A))));
     sep(0x20);
-    wr8(ABS(0x2142), (u8)A);
+    wr8(ABS(APUIO2), (u8)A);
     ret();
 }
 
@@ -489,13 +490,13 @@ void StartMode01_m1x1(void)
 {
     rep(0x20);
     lda16(0x0708);
-    wr16(DP(0x88), 0x0708);
+    wr16(DP(MODE_TIMER), 0x0708);
     sep(0x20);
     lda8(0x01);
-    wr8(DP(0x76), 0x01);
-    wr8(DP(0x75), 0);
-    wr8(DP(0x77), 0);
-    wr8(ABS(0x1923), dec8(rd8(ABS(0x1923))));
+    wr8(DP(GAME_MODE), 0x01);
+    wr8(DP(MODE_ACTIVE), 0);
+    wr8(DP(MODE_STEP), 0);
+    wr8(ABS(FADE_STATE), dec8(rd8(ABS(FADE_STATE))));
     fc = 1;
     ret();
 }
@@ -505,7 +506,7 @@ void StartMode01_m1x1(void)
 void AnimSourceFromFrame_m1x1(void)
 {
     rep(0x20);
-    lda16(rd16(DP(0x63)));
+    lda16(rd16(DP(FRAME_COUNT)));
     and16(0x0030);
     for (int i = 0; i < 5; i++)
         lda16(asl16(A));
@@ -521,7 +522,7 @@ void AnimSourceFromFrame_m1x1(void)
 void InitFadeState_m1x1(void)
 {
     lda8(0x0F); wr8(DP(0x2C), 0x0F);
-    lda8(0x80); wr8(ABS(0x1903), 0x80);
+    lda8(0x80); wr8(ABS(SH_INIDISP), 0x80);
     wr8(DP(0x92), 0);
     lda8(0x01);
     for (int a = 0x1959; a <= 0x195C; a++) {
@@ -537,17 +538,17 @@ void InitFadeState_m1x1(void)
  * timer, main screen $17 and colour math $190D = $E3. */
 void BeginFadeInBg3_m1x1(void)
 {
-    lda8(0x2A); wr8(ABS(0x2109), 0x2A);
-    lda8(0x44); wr8(ABS(0x210B), 0x44);
-    lda8(0x01); wr8(ABS(0x210C), 0x01);
-    wr8(ABS(0x1923), inc8(rd8(ABS(0x1923))));
-    wr8(DP(0x75), inc8(rd8(DP(0x75))));
+    lda8(0x2A); wr8(ABS(BG3SC), 0x2A);
+    lda8(0x44); wr8(ABS(BG12NBA), 0x44);
+    lda8(0x01); wr8(ABS(BG34NBA), 0x01);
+    wr8(ABS(FADE_STATE), inc8(rd8(ABS(FADE_STATE))));
+    wr8(DP(MODE_ACTIVE), inc8(rd8(DP(MODE_ACTIVE))));
     rep(0x20);
     lda16(0x0708);
-    wr16(DP(0x88), 0x0708);
+    wr16(DP(MODE_TIMER), 0x0708);
     sep(0x20);
-    lda8(0x17); wr8(ABS(0x1905), 0x17);
-    lda8(0xE3); wr8(ABS(0x190D), 0xE3);
+    lda8(0x17); wr8(ABS(SH_TM), 0x17);
+    lda8(0xE3); wr8(ABS(SH_CGADSUB), 0xE3);
     ret();
 }
 
@@ -607,9 +608,9 @@ void StepColourCycle_m1x1(void)
             X = rd8(ABS(0x0880));
             rep(0x20);
             lda16(rd16(LONGX(0x88BC00)));
-            wr16(ABS(0x1C00), A);
+            wr16(ABS(PALETTE_BUF), A);
             sep(0x20);
-            wr8(ABS(0x1915), inc8(rd8(ABS(0x1915))));
+            wr8(ABS(PALETTE_DIRTY), inc8(rd8(ABS(PALETTE_DIRTY))));
             wr8(ABS(0x0880), inc8(rd8(ABS(0x0880))));
             wr8(ABS(0x0880), inc8(rd8(ABS(0x0880))));
             lda8(0x0E);
@@ -645,8 +646,8 @@ void VramQueueCopy_m1x1(void);
  * 16x17 tilemap at $89:DB00 to VRAM $0300 and set $0453 = 9. */
 void EndScreenTimeout_m1x1(void)
 {
-    u8 t = dec8(rd8(DP(0x88)));
-    wr8(DP(0x88), t);
+    u8 t = dec8(rd8(DP(MODE_TIMER)));
+    wr8(DP(MODE_TIMER), t);
     if (t != 0) { ret(); return; }
     lda8(0x00); wr8(DP(0x02), 0x00);
     lda8(0xDB); wr8(DP(0x03), 0xDB);

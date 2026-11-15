@@ -4,6 +4,7 @@
  * more characters than the original's tables hold.
  */
 #include "hand/hand.h"
+#include "ram.h"
 #include "roster.h"
 
 /*
@@ -57,10 +58,10 @@ void RiderSpriteSets_m1x1(void)
     push8(0x82);
     DB = pull8(); nz8(DB);
     push16(0x8804); RiderGfxCycle_m1x1();
-    lda8(rd8(ABS(0x1923)));
+    lda8(rd8(ABS(FADE_STATE)));
     int on = 0;
     if (fz) {
-        X = rd8(DP(0x76));
+        X = rd8(DP(GAME_MODE));
         lda8(rd8(ABS(0x928E + X)));
         on = !fz;
     }
@@ -173,7 +174,7 @@ void LoadRiderPalettes_m1x1(void)
         cmp16(Y, 0x0005);
     }
     sep(0x30);
-    wr8(ABS(0x1915), inc8(rd8(ABS(0x1915))));
+    wr8(ABS(PALETTE_DIRTY), inc8(rd8(ABS(PALETTE_DIRTY))));
     DB = pull8(); nz8(DB);
     retl();
 }

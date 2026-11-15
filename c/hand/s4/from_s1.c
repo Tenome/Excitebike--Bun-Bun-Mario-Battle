@@ -4,12 +4,8 @@
  * moved. Checked by tools/difftest816.py on s4.
  */
 #include "hand/hand.h"
+#include "ram.h"
 
-enum {
-    P1_HELD_HI = 0x20, P1_PRESS_HI = 0x21, P2_HELD_HI = 0x22, P2_PRESS_HI = 0x23,
-    P1_HELD_LO = 0x24, P2_HELD_LO = 0x25, P1_PRESS_LO = 0x26, P2_PRESS_LO = 0x27,
-    P1_PREV_HI = 0x28, P2_PREV_HI = 0x29, P1_PREV_LO = 0x2A, P2_PREV_LO = 0x2B,
-};
 enum { BSX_STATUS = 0x2190, BSX_CTRL = 0x2191, BSX_DATA = 0x2192, BSX_ERR = 0x2193,
        BSX_RESET = 0x2197, BSX_CHANNEL = 0x218E };
 #define ARG_LEN     DP(0x00)    /* 16-bit byte count */
@@ -24,7 +20,6 @@ enum { BSX_STATUS = 0x2190, BSX_CTRL = 0x2191, BSX_DATA = 0x2192, BSX_ERR = 0x21
 #define BS_FRAME      LONG(0x7FFFFA)    /* 16-bit: frames into the minute */
 #define BS_SYNCED     LONG(0x7FFFFC)    /* 16-bit: clock set from the stream */
 #define BS_MINUTE     LONG(0x7FFFFF)
-enum { MODE_ACTIVE = 0x75, GAME_MODE = 0x76, MODE_STEP = 0x77, MODE_HOLD = 0x50 };
 #define QUEUE_HEAD   LONG(0x7F0000)
 
 
@@ -210,7 +205,7 @@ void Mode00_IntroWait_m1x1(void)
     int skip = 0;
     lda8(rd8(LONG(0x81800E)));
     if ((u8)A != 0) {
-        lda8(rd8(DP(0x21)));
+        lda8(rd8(DP(P1_PRESS_HI)));
         and8(0x10);
         skip = (u8)A != 0;
     }
@@ -219,16 +214,16 @@ void Mode00_IntroWait_m1x1(void)
         cmp8((u8)A, 0x04);
         if (!fc) {
             rep(0x20);
-            wr16(DP(0x88), dec16(rd16(DP(0x88))));
+            wr16(DP(MODE_TIMER), dec16(rd16(DP(MODE_TIMER))));
             sep(0x20);
             if (!fz) { ret(); return; }
         }
     }
     lda8(0x0E);
-    wr8(DP(0x76), 0x0E);
-    wr8(DP(0x75), 0);
+    wr8(DP(GAME_MODE), 0x0E);
+    wr8(DP(MODE_ACTIVE), 0);
     lda8(0x01);
-    wr8(DP(0x77), 0x01);
+    wr8(DP(MODE_STEP), 0x01);
     ret();
 }
 /*
@@ -241,10 +236,10 @@ void Mode0E_TitleWait_m1x1(void)
     cmp8((u8)A, 0x04);
     if (fc) {
         lda8(0x0C);
-        wr8(DP(0x76), 0x0C);
-        wr8(DP(0x75), 0);
-        wr8(DP(0x77), 0);
-        wr8(ABS(0x1923), dec8(rd8(ABS(0x1923))));
+        wr8(DP(GAME_MODE), 0x0C);
+        wr8(DP(MODE_ACTIVE), 0);
+        wr8(DP(MODE_STEP), 0);
+        wr8(ABS(FADE_STATE), dec8(rd8(ABS(FADE_STATE))));
     }
     ret();
 }
@@ -262,11 +257,11 @@ void FinishModeSetup_m1x1(void)
 {
     lda8(0x01);
     wr8(DP(0x79), 0x01);
-    wr8(DP(0x75), 0x01);
+    wr8(DP(MODE_ACTIVE), 0x01);
     SET_A8(lsr8(0x01));                     /* A = 0, C = 1 */
-    wr8(DP(0x77), 0x00);
+    wr8(DP(MODE_STEP), 0x00);
     lda8(0x01);
-    wr8(ABS(0x1923), 0x01);                 /* fade in */
+    wr8(ABS(FADE_STATE), 0x01);                 /* fade in */
     ret();
 }
 /*
@@ -419,29 +414,29 @@ void BlankQueueRowPal2_m1x1(void)
  * ($1905 = $11) and clear $190D. */
 void BeginFadeIn_m1x1(void)
 {
-    wr8(ABS(0x1923), inc8(rd8(ABS(0x1923))));
-    wr8(DP(0x75), inc8(rd8(DP(0x75))));
+    wr8(ABS(FADE_STATE), inc8(rd8(ABS(FADE_STATE))));
+    wr8(DP(MODE_ACTIVE), inc8(rd8(DP(MODE_ACTIVE))));
     rep(0x20);
     lda16(0x0384);
-    wr16(DP(0x88), 0x0384);
+    wr16(DP(MODE_TIMER), 0x0384);
     sep(0x20);
     lda8(0x11);
-    wr8(ABS(0x1905), 0x11);
-    wr8(ABS(0x190D), 0);
+    wr8(ABS(SH_TM), 0x11);
+    wr8(ABS(SH_CGADSUB), 0);
     ret();
 }
 /* $80:AB34 SendSpeedToApu (RTS): engine pitch = player speed ($01C0:$01B8)
  * >> 3, low byte to APUIO2. */
 void SendSpeedToApu_m1x1(void)
 {
-    lda8(rd8(ABS(0x01C6)));
+    lda8(rd8(ABS(RIDER_SPEED_HI)));
     A = (u16)((A << 8) | (A >> 8));             /* XBA */
     nz8((u8)A);
-    lda8(rd8(ABS(0x01BE)));
+    lda8(rd8(ABS(RIDER_SPEED_LO)));
     rep(0x20);
     lda16(lsr16(lsr16(lsr16(A))));
     sep(0x20);
-    wr8(ABS(0x2142), (u8)A);
+    wr8(ABS(APUIO2), (u8)A);
     ret();
 }
 /*
@@ -506,13 +501,13 @@ void StartMode01_m1x1(void)
 {
     rep(0x20);
     lda16(0x0708);
-    wr16(DP(0x88), 0x0708);
+    wr16(DP(MODE_TIMER), 0x0708);
     sep(0x20);
     lda8(0x01);
-    wr8(DP(0x76), 0x01);
-    wr8(DP(0x75), 0);
-    wr8(DP(0x77), 0);
-    wr8(ABS(0x1923), dec8(rd8(ABS(0x1923))));
+    wr8(DP(GAME_MODE), 0x01);
+    wr8(DP(MODE_ACTIVE), 0);
+    wr8(DP(MODE_STEP), 0);
+    wr8(ABS(FADE_STATE), dec8(rd8(ABS(FADE_STATE))));
     fc = 1;
     ret();
 }
@@ -570,9 +565,9 @@ void StepColourCycle_m1x1(void)
             X = rd8(ABS(0x0880));
             rep(0x20);
             lda16(rd16(LONGX(0x9CD000)));
-            wr16(ABS(0x1C00), A);
+            wr16(ABS(PALETTE_BUF), A);
             sep(0x20);
-            wr8(ABS(0x1915), inc8(rd8(ABS(0x1915))));
+            wr8(ABS(PALETTE_DIRTY), inc8(rd8(ABS(PALETTE_DIRTY))));
             wr8(ABS(0x0880), inc8(rd8(ABS(0x0880))));
             wr8(ABS(0x0880), inc8(rd8(ABS(0x0880))));
             lda8(0x0E);
@@ -686,13 +681,13 @@ void ScrollRivalsRelative_m1x1(void)
             if (fc)
                 wr8(ABS(0x019E + X), inc8(rd8(ABS(0x019E + X))));
             fc = 1;
-            sbc8(rd8(ABS(0x0186)));
+            sbc8(rd8(ABS(RIDER_STEP)));
             wr8(ABS(0x0196 + X), (u8)A);
             if (!fc)
                 wr8(ABS(0x019E + X), dec8(rd8(ABS(0x019E + X))));
             lda8(rd8(ABS(0x090C + X)));
             fc = 1;
-            sbc8(rd8(ABS(0x0186)));
+            sbc8(rd8(ABS(RIDER_STEP)));
             wr8(ABS(0x090C + X), (u8)A);
         }
         X = dec8((u8)X);
@@ -874,8 +869,8 @@ void SpawnPlayerSpark_m1x1(void)
     DB = pull8(); nz8(DB);
     push8((u8)X);
     ldx8(0x00);
-    lda8(rd8(ABS(0x0196))); wr8(ABS(0x0106 + X), (u8)A);
-    lda8(rd8(ABS(0x01B6))); wr8(ABS(0x010E + X), (u8)A);
+    lda8(rd8(ABS(RIDER_X))); wr8(ABS(0x0106 + X), (u8)A);
+    lda8(rd8(ABS(RIDER_Y))); wr8(ABS(0x010E + X), (u8)A);
     lda8(0x00); wr8(ABS(0x011E + X), 0x00);
     lda8(0x03); wr8(ABS(0x0116 + X), 0x03);
     lda8(0xF8); wr8(ABS(0x013E + X), 0xF8);

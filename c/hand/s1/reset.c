@@ -6,6 +6,7 @@
  * the port runs the recompiled main loop, which yields at the NMI wait.
  */
 #include "runtime816.h"
+#include "ram.h"
 
 void BsxDetect_m1x1(void);
 void BsxOpenTimeChannel_m1x1(void);
@@ -48,14 +49,14 @@ R816_EXPORT void ResetBoot1(void)
     wr8(ABS(0x1E85), 0);
     sep(0x20);
     lda8(0x00); push8(0x00); DB = pull8(); nz8(DB);
-    wr8(ABS(0x4200), 0);
-    wr8(ABS(0x420C), 0);
-    wr8(ABS(0x420B), 0);
-    wr8(ABS(0x2140), 0);
-    wr8(ABS(0x2141), 0);
-    wr8(ABS(0x2142), 0);
-    wr8(ABS(0x2143), 0);
-    lda8(0x80); wr8(ABS(0x2100), 0x80);
+    wr8(ABS(NMITIMEN), 0);
+    wr8(ABS(HDMAEN), 0);
+    wr8(ABS(MDMAEN), 0);
+    wr8(ABS(APUIO0), 0);
+    wr8(ABS(APUIO1), 0);
+    wr8(ABS(APUIO2), 0);
+    wr8(ABS(APUIO3), 0);
+    lda8(0x80); wr8(ABS(INIDISP), 0x80);
     push8(0x80); push16(0x805E); InitPpuRegisters_m1x1();
     lda8(0x00);
     wr8(ABS(0x1E1C), 0);
@@ -71,17 +72,17 @@ R816_EXPORT void ResetBoot1Spc(void)
 {
     ldx8(0x00);
     push8(0x80); push16(0x8077); SpcUpload_m1x1();
-    wr8(ABS(0x4200), 0);
+    wr8(ABS(NMITIMEN), 0);
 }
 
 /* $80:807B: wait until all four APU ports read 0. */
 static void wait_apu_idle1(void)
 {
     do {
-        lda8(rd8(ABS(0x2140)));
-        ora8(rd8(ABS(0x2141)));
-        ora8(rd8(ABS(0x2142)));
-        ora8(rd8(ABS(0x2143)));
+        lda8(rd8(ABS(APUIO0)));
+        ora8(rd8(ABS(APUIO1)));
+        ora8(rd8(ABS(APUIO2)));
+        ora8(rd8(ABS(APUIO3)));
     } while (!fz);
 }
 
@@ -96,16 +97,16 @@ R816_EXPORT void ResetBoot2(void)
     push8(0x80); push16(0x8092); InitFadeState_m1x1();
     lda8(0x80); push8(0x80); DB = pull8(); nz8(DB);
     rep(0x20);
-    lda16(0x00D0); wr16(ABS(0x4209), A);
-    lda16(0x0098); wr16(ABS(0x4207), A);
+    lda16(0x00D0); wr16(ABS(VTIMEL), A);
+    lda16(0x0098); wr16(ABS(HTIMEL), A);
     sep(0x20);
-    lda8(0x01); wr8(ABS(0x420D), 0x01);
-    lda8(0x81); wr8(ABS(0x4200), 0x81);
-    wr8(ABS(0x190E), 0x81);
-    wr8(ABS(0x2141), 0);
-    wr8(ABS(0x2142), 0);
-    wr8(ABS(0x2143), 0);
-    lda8(0xFC); wr8(ABS(0x2140), 0xFC);
+    lda8(0x01); wr8(ABS(MEMSEL), 0x01);
+    lda8(0x81); wr8(ABS(NMITIMEN), 0x81);
+    wr8(ABS(SH_NMITIMEN), 0x81);
+    wr8(ABS(APUIO1), 0);
+    wr8(ABS(APUIO2), 0);
+    wr8(ABS(APUIO3), 0);
+    lda8(0xFC); wr8(ABS(APUIO0), 0xFC);
     wr8(ABS(0x1E87), 0);
     wr8(ABS(0x1E88), 0);
     wr8(ABS(0x1556), 0);
@@ -117,7 +118,7 @@ R816_EXPORT void ResetBoot2(void)
     wr8(ABS(0x0840), 0x04);
     wr8(ABS(0x0843), 0x04);
     wr8(ABS(0x0846), 0x04);
-    lda8(0x0D); wr8(ABS(0x0076), 0x0D);
+    lda8(0x0D); wr8(ABS(GAME_MODE), 0x0D);
 }
 
 /* $80:8103-$80:819C: one main loop frame after NMI ($081A set): minute to
@@ -138,7 +139,7 @@ R816_EXPORT void MainLoopFrame1(void)
     fi = 0;
     lda8(rd8(LONG(0x81800E)));
     if (!fz) {
-        lda8(rd8(DP(0x27)));
+        lda8(rd8(DP(P2_PRESS_LO)));
         and8(0xC0);
         if (!fz) {
             lda8(asl8((u8)A));
@@ -156,25 +157,25 @@ R816_EXPORT void MainLoopFrame1(void)
             lda16(0x0000); wr16(LONG(0x7FFFFA), 0);
             sep(0x20);
         }
-        lda8(rd8(DP(0x26)));
+        lda8(rd8(DP(P1_PRESS_LO)));
         and8(0x20);
-        if (!fz) wr8(ABS(0x1917), inc8(rd8(ABS(0x1917))));
-        lda8(rd8(DP(0x26)));
+        if (!fz) wr8(ABS(DEBUG_PAUSE), inc8(rd8(ABS(DEBUG_PAUSE))));
+        lda8(rd8(DP(P1_PRESS_LO)));
         and8(0x10);
         if (fz) {
-            lda8(rd8(ABS(0x1917)));
+            lda8(rd8(ABS(DEBUG_PAUSE)));
             and8(0x01);
-            wr8(ABS(0x1917), (u8)A);
+            wr8(ABS(DEBUG_PAUSE), (u8)A);
             if (!fz) goto paused;
         }
     }
-    lda8(rd8(ABS(0x1923)));
+    lda8(rd8(ABS(FADE_STATE)));
     if (!fz) {
         push8(0x80); push16(0x8171); FadeStep_m1x1();
         goto tail;
     }
     rep(0x20);
-    wr16(DP(0x63), inc16(rd16(DP(0x63))));
+    wr16(DP(FRAME_COUNT), inc16(rd16(DP(FRAME_COUNT))));
     sep(0x20);
     push16(0x817C); TickTimers_m1x1();
     push16(0x817F); BroadcastEventInject_m1x1();
@@ -190,7 +191,7 @@ tail:
     push16(0x8192); RiderPaletteWords_m1x1();
     push16(0x8195); PackOamHighTable_m1x1();
     push16(0x8198); DrawClock_m1x1();
-    wr8(ABS(0x081A), 0);
+    wr8(ABS(NMI_FRAME_READY), 0);
 }
 
 /* $80:FFA5 -> $80:8000 Reset: the boot, then a main loop frame after each
@@ -208,7 +209,7 @@ R816_EXPORT void ResetBootAll(void)
 
 R816_EXPORT void MainLoopTurn(void)
 {
-    lda8(rd8(ABS(0x081A)));
+    lda8(rd8(ABS(NMI_FRAME_READY)));
     if (!fz)
         MainLoopFrame1();
 }
@@ -217,7 +218,7 @@ void ResetVector_m1x1(void)
 {
     ResetBootAll();
     for (;;) {
-        do lda8(rd8(ABS(0x081A))); while (fz);
+        do lda8(rd8(ABS(NMI_FRAME_READY))); while (fz);
         MainLoopFrame1();
     }
 }

@@ -2,6 +2,7 @@
  * Stadium 1 course cards ("コース N フリー走行" / "コース N 決勝"), hand-written.
  */
 #include "hand/hand.h"
+#include "ram.h"
 
 void ForceBlank_m1x1(void);
 void DmaKick_m0x1(void);
@@ -18,8 +19,8 @@ void VramQueueTiles_m1x1(void);
  */
 void Mode02_Setup_m1x1(void)
 {
-    wr8(ABS(0x190D), 0);
-    wr8(ABS(0x4200), 0);                               /* NMITIMEN off */
+    wr8(ABS(SH_CGADSUB), 0);
+    wr8(ABS(NMITIMEN), 0);                               /* NMITIMEN off */
     push8(0x80); push16(0x8C5C); ForceBlank_m1x1();
 
     /* segment from the minute */
@@ -46,9 +47,9 @@ void Mode02_Setup_m1x1(void)
     rep(0x20);
     push16(D);
     A = 0x4300; D = 0x4300;
-    Y = 0x80; wr8(ABS(0x2115), 0x80);
+    Y = 0x80; wr8(ABS(VMAIN), 0x80);
     A = 0x1801; wr16(DP(0x00), 0x1801);
-    wr16(ABS(0x2116), 0x00C0);
+    wr16(ABS(VMADDL), 0x00C0);
     wr16(DP(0x05), 0x0100);
     Y = rd8(ABS(0x0000));
     A = rd16(ABS(0x8D02 + Y));                         /* source address */
@@ -57,11 +58,11 @@ void Mode02_Setup_m1x1(void)
     push16(0x8CA6); DmaKick_m0x1();
     D = pull16();
     sep(0x20);
-    lda8(rd8(ABS(0x190E)));
-    wr8(ABS(0x4200), (u8)A);                           /* NMITIMEN back */
+    lda8(rd8(ABS(SH_NMITIMEN)));
+    wr8(ABS(NMITIMEN), (u8)A);                           /* NMITIMEN back */
     lda8(0x01);
     wr8(DP(0x75), 0x01);
-    wr8(ABS(0x1923), inc8(rd8(ABS(0x1923))));          /* fade in */
+    wr8(ABS(FADE_STATE), inc8(rd8(ABS(FADE_STATE))));          /* fade in */
 
     /* "course N" tiles: list at $03D2 = [size $42][8 tiles] */
     lda8(0x42);
@@ -97,10 +98,10 @@ void Mode02_Setup_m1x1(void)
  */
 void Mode02_SegmentCard_m1x1(void)
 {
-    lda8(rd8(DP(0x7C)));
+    lda8(rd8(DP(COURSE_SLOT)));
     SET_A8(asl8((u8)A));
     fc = 0;
-    adc8(rd8(DP(0x7D)));
+    adc8(rd8(DP(FINAL_RACE)));
     X = (u8)A;
     lda8(rd8(LONG(0x7FFFFF)));
     cmp8((u8)A, rd8(ABS(0x8C43 + X)));
@@ -117,12 +118,12 @@ void Mode02_SegmentCard_m1x1(void)
  * the same without the increment, is jumped to from mode handlers.) */
 void SegmentNext_m1x1(void)
 {
-    wr8(DP(0x76), inc8(rd8(DP(0x76))));
-    wr8(ABS(0x2143), 0);                               /* APUIO3 */
+    wr8(DP(GAME_MODE), inc8(rd8(DP(GAME_MODE))));
+    wr8(ABS(APUIO3), 0);                               /* APUIO3 */
     lda8(0x00);
-    wr8(DP(0x75), 0);
-    wr8(DP(0x77), 0);
+    wr8(DP(MODE_ACTIVE), 0);
+    wr8(DP(MODE_STEP), 0);
     lda8(0xFF);
-    wr8(ABS(0x1923), 0xFF);                            /* fade out */
+    wr8(ABS(FADE_STATE), 0xFF);                            /* fade out */
     ret();
 }

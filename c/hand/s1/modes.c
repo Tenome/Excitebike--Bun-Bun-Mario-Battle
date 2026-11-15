@@ -3,14 +3,13 @@
  * (lifted or hand-written), so it links against c/auto/s1/lifted.h.
  */
 #include "hand/hand.h"
+#include "ram.h"
 #ifndef R816_EXTERNAL_BUS
 #include "lifted.h"
 void LoadScene_m1x1(void);
 void ScreenOff_m1x1(void);
 #endif
 
-/* Game mode state (direct page). */
-enum { MODE_ACTIVE = 0x75, GAME_MODE = 0x76, MODE_STEP = 0x77, MODE_HOLD = 0x50 };
 
 /*
  * $80:89ED RunGameModeScript (M=1, X=1, RTS), once per frame.

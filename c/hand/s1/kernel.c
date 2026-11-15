@@ -3,6 +3,7 @@
  * of the same name (see hand.txt) and is checked by tools/difftest816.py.
  */
 #include "hand/hand.h"
+#include "ram.h"
 #include "port.h"
 
 /* Direct page scratch used as call arguments by the DMA helpers. */
@@ -10,12 +11,6 @@
 #define ARG_SRC     DP(0x02)    /* 16-bit source address */
 #define ARG_SRCBANK DP(0x04)    /* source bank */
 
-/* Joypad state (direct page, see config/s1/ram.txt). */
-enum {
-    P1_HELD_HI = 0x20, P1_PRESS_HI = 0x21, P2_HELD_HI = 0x22, P2_PRESS_HI = 0x23,
-    P1_HELD_LO = 0x24, P2_HELD_LO = 0x25, P1_PRESS_LO = 0x26, P2_PRESS_LO = 0x27,
-    P1_PREV_HI = 0x28, P2_PREV_HI = 0x29, P1_PREV_LO = 0x2A, P2_PREV_LO = 0x2B,
-};
 
 /*
  * $80:8539 DmaKick (M=0, X=1, RTS). Called with the direct page at $4300, so
@@ -149,8 +144,8 @@ void ReadJoypads_m1x1(void)
  */
 void LoadCourse_m1x1(void)
 {
-    if (rd16(LONG(0x7F4000)) != 0 && (rd16(DP(0x7D)) & 0xFF) != 0) {
-        A = rd16(DP(0x7D)) & 0xFF;
+    if (rd16(LONG(0x7F4000)) != 0 && (rd16(DP(FINAL_RACE)) & 0xFF) != 0) {
+        A = rd16(DP(FINAL_RACE)) & 0xFF;
         sep(0x30);
         retl();
         return;
@@ -168,7 +163,7 @@ void LoadCourse_m1x1(void)
         adc16(0x0010);
         index = A;
     } else {
-        wr16(DP(0x00), rd16(DP(0x7C)) & 0xFF);
+        wr16(DP(0x00), rd16(DP(COURSE_SLOT)) & 0xFF);
         A = asl16(asl16(rd16(LONG(0x81800C))));
         fc = 0;
         adc16(rd16(DP(0x00)));

@@ -2,6 +2,7 @@
  * Stadium 3-4 (Gen B): race HUD and results, hand-written.
  */
 #include "hand/hand.h"
+#include "ram.h"
 #include "roster.h"
 
 void VramQueueTiles20_m1x1(void);
@@ -28,7 +29,7 @@ void DrawRaceHud_m1x1(void)
     push16(0xA4EA); VramQueueTiles20_m1x1();
     rep(0x20);
     lda16(0x1886); wr16(DP(0x00), 0x1886);
-    lda16(rd16(DP(0x7C)) & 0x00FF);
+    lda16(rd16(DP(COURSE_SLOT)) & 0x00FF);
     lda16(asl16(A));
     fc = 0;
     adc16(0xA590);
@@ -38,7 +39,7 @@ void DrawRaceHud_m1x1(void)
     queue20(0x1B24, 0xA574);
     lda8(0x20); wr8(DP(0x0F), 0x20);
     push16(0xA517); VramQueueTiles_m1x1();
-    lda8(rd8(DP(0x7D)));
+    lda8(rd8(DP(FINAL_RACE)));
     if (!fz) {
         queue20(0x185C, 0xA586);
         push16(0xA52C); VramQueueTiles20_m1x1();
@@ -50,12 +51,12 @@ void DrawRaceHud_m1x1(void)
     sep(0x20);
     u8 ch = rd8(ABS(0x154F));
     lda8(ch);
-    wr8(ABS(0x4202), ch);                           /* WRMPYA: ch * 15 */
+    wr8(ABS(WRMPYA), ch);                           /* WRMPYA: ch * 15 */
     lda8(0x0F);
-    wr8(ABS(0x4203), 0x0F);
+    wr8(ABS(WRMPYB), 0x0F);
     rep(0x20);
     int st = rd8(LONG(0x81800C)) != 0;
-    lda16(rd16(ABS(0x4216)));                       /* RDMPYL: ch * 15 */
+    lda16(rd16(ABS(RDMPYL)));                       /* RDMPYL: ch * 15 */
     fc = 0;
     adc16(0xA598);
     wr16(DP(0x02), A);
@@ -86,7 +87,7 @@ void DrawRaceHud_m1x1(void)
  */
 void WinnerFigure_m1x1(void)
 {
-    X = rd8(ABS(0x03A3));
+    X = rd8(ABS(OBJ_CURRENT));
     lda8(rd8(ABS(0x036F + X)));
     if (fz) {
         lda8(rd8(ABS(0x031F + X)));

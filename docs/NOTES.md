@@ -133,9 +133,16 @@ Both generations read a block the BS-X BIOS maintains (open bus without it):
 A port could fill this block from a save file to recreate the player's BS-X
 profile.
 
-## Race state layout (first look)
+## Race state layout
 Like the NES Excitebike, state is kept in parallel arrays indexed by X:
-* `$0200-$026F`: 14 fields, stride 8, X = rider 0..7 (races have 8 riders).
+* Riders: stride 8, X = rider 0..7 (0 = the player). Gen B has fields at
+  `$0176-$026E` (and more at `$08BC-$0971`); Gen A's sit 6 bytes lower
+  (`$0170-$0268`), found by pairing the operands of the routines both engines
+  share. Every field understood so far is named in `c/hand/<ver>/ram.h`
+  (RIDER_X / RIDER_PAGE track position, RIDER_SPEED_LO/HI, RIDER_LANE,
+  RIDER_HEIGHT, RIDER_LEAN, RIDER_AIR, ...), with the game-flow globals and
+  the PPU register shadows; `tools/ramname.py <ver>` writes the names into
+  the C.
 * `$0279-$0389`: 18 fields, stride 16, X = object slot 0..15. The object
   update in bank `$81` dispatches on type through `JSR ($AAD1,X)` and friends
   (`$81:970D/973C/9748`).

@@ -2,6 +2,7 @@
  * Stadium 1 intro text and title screen modes, hand-written.
  */
 #include "hand/hand.h"
+#include "ram.h"
 
 void QueueSound_m1x1(void);
 void VramQueueCopy_m1x1(void);
@@ -12,11 +13,11 @@ void FinishModeSetup_m1x1(void)
 {
     lda8(0x01);
     wr8(DP(0x79), 0x01);
-    wr8(DP(0x75), 0x01);
+    wr8(DP(MODE_ACTIVE), 0x01);
     SET_A8(lsr8(0x01));                     /* A = 0, C = 1 */
-    wr8(DP(0x77), 0x00);
+    wr8(DP(MODE_STEP), 0x00);
     lda8(0x01);
-    wr8(ABS(0x1923), 0x01);                 /* fade in */
+    wr8(ABS(FADE_STATE), 0x01);                 /* fade in */
     ret();
 }
 
@@ -30,19 +31,19 @@ void Mode0D_Setup_m1x1(void)
     cmp8((u8)A, 0x03);
     if (fc) {
         lda8(0x00);
-        wr8(ABS(0x0076), 0);
-        wr8(DP(0x75), 0);
-        wr8(DP(0x77), 0);
+        wr8(ABS(GAME_MODE), 0);
+        wr8(DP(MODE_ACTIVE), 0);
+        wr8(DP(MODE_STEP), 0);
         ret();
         return;
     }
-    lda8(0x2A); wr8(ABS(0x2109), 0x2A);     /* BG3SC */
-    lda8(0x44); wr8(ABS(0x210B), 0x44);     /* BG12NBA */
-    lda8(0x01); wr8(ABS(0x210C), 0x01);     /* BG34NBA */
+    lda8(0x2A); wr8(ABS(BG3SC), 0x2A);     /* BG3SC */
+    lda8(0x44); wr8(ABS(BG12NBA), 0x44);     /* BG12NBA */
+    lda8(0x01); wr8(ABS(BG34NBA), 0x01);     /* BG34NBA */
     rep(0x20);
-    A = 0x0A8C; wr16(DP(0x88), 0x0A8C);
+    A = 0x0A8C; wr16(DP(MODE_TIMER), 0x0A8C);
     sep(0x20);
-    wr8(ABS(0x1923), inc8(rd8(ABS(0x1923))));
+    wr8(ABS(FADE_STATE), inc8(rd8(ABS(FADE_STATE))));
     FinishModeSetup_m1x1();                 /* JMP */
 }
 
@@ -68,11 +69,11 @@ static void queue_text(u16 jsr_ret, u16 vram, u16 src, u16 size)
 void Mode0E_Setup_m1x1(void)
 {
     rep(0x20);
-    A = 0x0384; wr16(DP(0x88), 0x0384);
+    A = 0x0384; wr16(DP(MODE_TIMER), 0x0384);
     sep(0x20);
-    lda8(0x19); wr8(ABS(0x2109), 0x19);     /* BG3SC */
-    lda8(0x01); wr8(ABS(0x210C), 0x01);     /* BG34NBA */
-    lda8(0x17); wr8(ABS(0x1905), 0x17);     /* TM shadow */
+    lda8(0x19); wr8(ABS(BG3SC), 0x19);     /* BG3SC */
+    lda8(0x01); wr8(ABS(BG34NBA), 0x01);     /* BG34NBA */
+    lda8(0x17); wr8(ABS(SH_TM), 0x17);     /* TM shadow */
     lda8(0x01); wr8(DP(0x8C), 0x01);
     ldx8(0x02);
     wr8(DP(0x92), 0x02);
@@ -96,7 +97,7 @@ void Mode0D_IntroText_m1x1(void)
     int done = 0;
     lda8(rd8(LONG(0x81800E)));
     if ((u8)A != 0) {
-        lda8(rd8(DP(0x21)));
+        lda8(rd8(DP(P1_PRESS_HI)));
         and8(0x10);
         done = (u8)A != 0;
     }
@@ -127,8 +128,8 @@ void Mode0D_IntroText_m1x1(void)
         }
         wr8(DP(0x8A), dec8(rd8(DP(0x8A))));
         rep(0x20);
-        u16 t = dec16(rd16(DP(0x88)));
-        wr16(DP(0x88), t);
+        u16 t = dec16(rd16(DP(MODE_TIMER)));
+        wr16(DP(MODE_TIMER), t);
         sep(0x20);
         if (t != 0) {
             ret();
@@ -136,10 +137,10 @@ void Mode0D_IntroText_m1x1(void)
         }
     }
     lda8(0x00);
-    wr8(DP(0x76), 0x00);
-    wr8(DP(0x75), 0);
-    wr8(DP(0x77), 0);
-    wr8(ABS(0x1923), dec8(rd8(ABS(0x1923))));
+    wr8(DP(GAME_MODE), 0x00);
+    wr8(DP(MODE_ACTIVE), 0);
+    wr8(DP(MODE_STEP), 0);
+    wr8(ABS(FADE_STATE), dec8(rd8(ABS(FADE_STATE))));
     ret();
 }
 

@@ -4,6 +4,7 @@
  * (from_s1.c). Checked by tools/difftest816.py s2.
  */
 #include "hand/hand.h"
+#include "ram.h"
 
 void VramQueueBlock_m1x1(void);
 void AddScoreLong_m1x1(void);
@@ -24,11 +25,11 @@ void DrawRacerNameLow_m1x1(void)
     lda16(0x1C2D); wr16(DP(0x00), 0x1C2D);
     sep(0x20);
     lda8(rd8(ABS(0x1542)));
-    wr8(ABS(0x4202), (u8)A);
+    wr8(ABS(WRMPYA), (u8)A);
     lda8(0x1D);
-    wr8(ABS(0x4203), 0x1D);
+    wr8(ABS(WRMPYB), 0x1D);
     rep(0x20);
-    A = rd16(ABS(0x4216));
+    A = rd16(ABS(RDMPYL));
     fc = 0; adc16(0xA5F4);
     wr16(DP(0x02), A);
     sep(0x20);
@@ -57,32 +58,32 @@ void SetupJumpContest_m1x1(void)
     lda8(0x0A); wr8(ABS(0x0273), 0x0A);
     lda8(0x05); wr8(ABS(0x0272), 0x05);
     lda8(0x74); wr8(ABS(0x0271), 0x74);
-    lda8(0x08); wr8(ABS(0x0188), 0x08);
-    lda8(0x09); wr8(ABS(0x0260), 0x09);
-    lda8(0x30); wr8(ABS(0x0190), 0x30);
-    lda8(0x06); wr8(ABS(0x01E0), 0x06);
+    lda8(0x08); wr8(ABS(RIDER_WHEEL), 0x08);
+    lda8(0x09); wr8(ABS(RIDER_COLUMN), 0x09);
+    lda8(0x30); wr8(ABS(RIDER_X), 0x30);
+    lda8(0x06); wr8(ABS(RIDER_LEAN), 0x06);
     lda8(0x01);
-    wr8(ABS(0x0198), 0x01); wr8(ABS(0x01D8), 0x01); wr8(ABS(0x0958), 0x01);
+    wr8(ABS(RIDER_PAGE), 0x01); wr8(ABS(RIDER_ACTIVE), 0x01); wr8(ABS(RIDER_BAND), 0x01);
     lda8(asl8((u8)A));
     wr8(DP(0x90), (u8)A);
-    lda8(0x17); wr8(ABS(0x1905), 0x17);
+    lda8(0x17); wr8(ABS(SH_TM), 0x17);
     lda8(0x01);
     push8(0x80); push16(0xD875); SetHdmaPreset_m1x1();
     ldx8(0x00);
-    lda8(0xB0); wr8(ABS(0x0CD5), 0xB0); wr8(ABS(0x01B0), 0xB0);
+    lda8(0xB0); wr8(ABS(0x0CD5), 0xB0); wr8(ABS(RIDER_Y), 0xB0);
     push16(0xD882); DrawAllRiders_m1x1();
-    lda8(0xB8); wr8(ABS(0x0CD5), 0xB8); wr8(ABS(0x01B0), 0xB8);
+    lda8(0xB8); wr8(ABS(0x0CD5), 0xB8); wr8(ABS(RIDER_Y), 0xB8);
     static const u8 ch[12][2] = {
         {0x70,0x42},{0x71,0x0F},{0x72,0xE6},{0x73,0xD8},{0x74,0x80},{0x77,0x00},
         {0x60,0x40},{0x61,0x08},{0x62,0xED},{0x63,0xD8},{0x64,0x80},{0x67,0x00} };
     for (int i = 0; i < 12; i++) { lda8(ch[i][1]); wr8(ABS(0x4300 | ch[i][0]), ch[i][1]); }
     rep(0x20);
-    lda16(0x012C); wr16(DP(0x88), 0x012C);
+    lda16(0x012C); wr16(DP(MODE_TIMER), 0x012C);
     wr16(ABS(0x1B00), 0); wr16(ABS(0x1B02), 0);
     sep(0x20);
     lda8(0x09); wr8(ABS(0x1B20), 0x09);
     lda8(0x08); wr8(ABS(0x1B21), 0x08);
-    lda8(0xDC); wr8(ABS(0x190F), 0xDC);
+    lda8(0xDC); wr8(ABS(SH_HDMAEN), 0xDC);
     ret();
 }
 
@@ -96,7 +97,7 @@ void SetupJumpContest_m1x1(void)
  * steps. */
 void ResultsBonusCount_m1x1(void)
 {
-    lda8(rd8(DP(0x88)));
+    lda8(rd8(DP(MODE_TIMER)));
     if (!fz) goto tick;
     lda8(rd8(DP(0xB2)));
     if (fz) {
@@ -119,16 +120,16 @@ void ResultsBonusCount_m1x1(void)
         lda8(0x03); wr8(DP(0x01), 0x03);
         lda8(0x07);
         push8(0x81); push16(0x9882); FindObjectSlot_m1x1();
-        lda8(rd8(DP(0x01))); wr8(ABSY(0x0309), (u8)A);
-        lda8(0x10); wr8(ABSY(0x0369), 0x10);
-        X = rd8(ABS(0x039D)); nz8((u8)X);
-        wr8(ABSX(0x0309), inc8(rd8(ABSX(0x0309))));
+        lda8(rd8(DP(0x01))); wr8(ABSY(OBJ_STATE), (u8)A);
+        lda8(0x10); wr8(ABSY(OBJ_DELAY), 0x10);
+        X = rd8(ABS(OBJ_CURRENT)); nz8((u8)X);
+        wr8(ABSX(OBJ_STATE), inc8(rd8(ABSX(OBJ_STATE))));
         Y = rd8(DP(0x00)); nz8((u8)Y);
         lda8(rd8(ABSY(0x9936)));
         push8(0x81); push16(0x989B); FindObjectSlot_m1x1();
-        lda8(0x04); wr8(ABSY(0x0309), 0x04);
-        lda8(0xFF); wr8(ABSY(0x0369), 0xFF);
-        lda8(0xFF); wr8(ABSY(0x0379), 0xFF);
+        lda8(0x04); wr8(ABSY(OBJ_STATE), 0x04);
+        lda8(0xFF); wr8(ABSY(OBJ_DELAY), 0xFF);
+        lda8(0xFF); wr8(ABSY(OBJ_COUNTER), 0xFF);
         goto tick;
     }
     wr8(DP(0xB2), dec8(rd8(DP(0xB2))));
@@ -161,7 +162,7 @@ void ResultsBonusCount_m1x1(void)
         wr8(ABS(0x03DA), 0xFC); wr8(ABS(0x03DB), 0xFC);
     }
     lda8(0xFC); wr8(ABS(0x03D3), 0xFC); wr8(ABS(0x03D8), 0xFC);
-    lda8(0x04); wr8(DP(0x88), 0x04);
+    lda8(0x04); wr8(DP(MODE_TIMER), 0x04);
     rep(0x20);
     lda16(0x1CB6); wr16(DP(0x00), 0x1CB6);
     lda16(0x03D2); wr16(DP(0x02), 0x03D2);
@@ -174,8 +175,8 @@ void ResultsBonusCount_m1x1(void)
     lda8(0x28); wr8(DP(0x0F), 0x28);
     push8(0x81); push16(0x992F); QueueScoreDigitsLong_m1x1();
 tick:
-    wr8(DP(0x88), dec8(rd8(DP(0x88))));
-    X = rd8(ABS(0x039D)); nz8((u8)X);
+    wr8(DP(MODE_TIMER), dec8(rd8(DP(MODE_TIMER))));
+    X = rd8(ABS(OBJ_CURRENT)); nz8((u8)X);
     ret();
 }
 
@@ -201,32 +202,32 @@ void TemperatureGauge_m1x1(void)
         top = 0x01;
         goto draw;
     }
-    lda8(rd8(ABS(0x0178)));
+    lda8(rd8(ABS(RIDER_INPUT)));
     and8(0xC0);
     if (!fz) {
-        Y = rd8(DP(0x8E)); nz8((u8)Y);
+        Y = rd8(DP(RACE_STARTED)); nz8((u8)Y);
         if (fz) lda8(0x80);
         lda8(asl8((u8)A)); lda8(rol8((u8)A)); lda8(rol8((u8)A));
     }
     Y = (u8)A; nz8((u8)Y);
-    lda8(rd8(ABS(0x0990)));
+    lda8(rd8(ABS(ENGINE_HEAT)));
     cmp8((u8)A, rd8(ABSY(0xBDFE)));
     if (!fc) {
         lda8(rd8(ABS(0x098F)));
         fc = 0; adc8(rd8(ABSY(0xBDFA)));
         wr8(ABS(0x098F), (u8)A);
-        if (fc) wr8(ABS(0x0990), inc8(rd8(ABS(0x0990))));
+        if (fc) wr8(ABS(ENGINE_HEAT), inc8(rd8(ABS(ENGINE_HEAT))));
     } else if (!fz) {
         lda8(rd8(ABS(0x098F)));
         fc = 1; sbc8(0x0B);
         wr8(ABS(0x098F), (u8)A);
         if (!fc) {
-            lda8(rd8(ABS(0x0990)));
-            if (!fz) wr8(ABS(0x0990), dec8(rd8(ABS(0x0990))));
+            lda8(rd8(ABS(ENGINE_HEAT)));
+            if (!fz) wr8(ABS(ENGINE_HEAT), dec8(rd8(ABS(ENGINE_HEAT))));
         }
     }
     ldx8(0x00);
-    lda8(rd8(ABS(0x0990)));
+    lda8(rd8(ABS(ENGINE_HEAT)));
     cmp8((u8)A, 0x20);
     if (fc) {
         wr8(DP(0x60), (u8)A);
@@ -258,7 +259,7 @@ off:
 draw:
     lda8(top);
     wr8(DP(0x01), (u8)A);
-    lda8(rd8(ABS(0x0990)));
+    lda8(rd8(ABS(ENGINE_HEAT)));
     fc = 0; adc8(0x58);
     X = rd8(ABS(0x0CE0)); nz8((u8)X);
     if (!fz) lda8(0x78);
@@ -308,19 +309,19 @@ static void end_box2(u8 lo, u8 hi, u16 back)
  * the box.) */
 void EndScreenCode_m1x1(void)
 {
-    lda8(rd8(DP(0x88)));
+    lda8(rd8(DP(MODE_TIMER)));
     if (!fz) {
-        u8 t = dec8(rd8(DP(0x88)));
-        wr8(DP(0x88), t);
+        u8 t = dec8(rd8(DP(MODE_TIMER)));
+        wr8(DP(MODE_TIMER), t);
         if (!fz) { ret(); return; }
         end_box2(0x80, 0xD8, 0x9B1A);
     }
-    lda8(rd8(DP(0x26)));
+    lda8(rd8(DP(P1_PRESS_LO)));
     and8(0x80);
     if (fz) { ret(); return; }
     wr8(ABS(0x0453), inc8(rd8(ABS(0x0453))));
     wr8(ABS(0x0453), inc8(rd8(ABS(0x0453))));
-    lda8(0x20); wr8(DP(0x88), 0x20);
+    lda8(0x20); wr8(DP(MODE_TIMER), 0x20);
     end_box2(0x80, 0xD9, 0x9B49);
     rep(0x20);
     lda16(0x0A15); wr16(DP(0x00), 0x0A15);
@@ -339,14 +340,14 @@ void EndScreenCode_m1x1(void)
  * (Stadium 1 jumps straight to the code step $0A from step 5.) */
 void EndScreenChoice_m1x1(void)
 {
-    lda8(rd8(DP(0x88)));
+    lda8(rd8(DP(MODE_TIMER)));
     if (!fz) {
-        u8 t = dec8(rd8(DP(0x88)));
-        wr8(DP(0x88), t);
+        u8 t = dec8(rd8(DP(MODE_TIMER)));
+        wr8(DP(MODE_TIMER), t);
         if (!fz) { ret(); return; }
         end_box2(0x00, 0xD9, 0x9B8D);
     }
-    lda8(rd8(DP(0x26)));
+    lda8(rd8(DP(P1_PRESS_LO)));
     and8(0x80);
     if (fz) { ret(); return; }
     lda8(rd8(ABS(0x0454)));
@@ -359,7 +360,7 @@ void EndScreenChoice_m1x1(void)
         push8(0x80); push16(0x9BA8); QueueSound_m1x1();
     }
     lda8(rd8(ABS(0x0454))); wr8(ABS(0x0453), (u8)A);
-    lda8(0x20); wr8(DP(0x88), 0x20);
+    lda8(0x20); wr8(DP(MODE_TIMER), 0x20);
     end_box2(0x80, 0xD9, 0x9BD1);
     ret();
 }
@@ -376,9 +377,9 @@ void SaveBestRecords_m1x1(void);
  * left as it is. */
 void BroadcastTotals_m1x1(void)
 {
-    lda8(0x19); wr8(ABS(0x2109), 0x19);
-    lda8(0x44); wr8(ABS(0x210B), 0x44);
-    lda8(0x01); wr8(ABS(0x210C), 0x01);
+    lda8(0x19); wr8(ABS(BG3SC), 0x19);
+    lda8(0x44); wr8(ABS(BG12NBA), 0x44);
+    lda8(0x01); wr8(ABS(BG34NBA), 0x01);
     rep(0x20);
     lda16(0x09D3); wr16(DP(0x00), 0x09D3);
     lda16(0x572C); wr16(DP(0x18), 0x572C);
@@ -426,12 +427,12 @@ void BroadcastTotals_m1x1(void)
         cmp8((u8)X, 0x0C);
     } while (!fc);
     push8(0x80); push16(0x97E2); SaveBestRecords_m1x1();
-    lda8(0x17); wr8(ABS(0x1905), 0x17);
-    wr8(ABS(0x1923), inc8(rd8(ABS(0x1923))));
-    wr8(DP(0x75), inc8(rd8(DP(0x75))));
+    lda8(0x17); wr8(ABS(SH_TM), 0x17);
+    wr8(ABS(FADE_STATE), inc8(rd8(ABS(FADE_STATE))));
+    wr8(DP(MODE_ACTIVE), inc8(rd8(DP(MODE_ACTIVE))));
     wr8(ABS(0x0453), 0);
     wr8(ABS(0x0452), 0);
-    lda8(0x20); wr8(DP(0x88), 0x20);
+    lda8(0x20); wr8(DP(MODE_TIMER), 0x20);
     lda8(0xD8); wr8(DP(0x9A), 0xD8);
     ret();
 }
@@ -442,17 +443,17 @@ void BroadcastTotals_m1x1(void)
 void Mode10_Ending_m1x1(void)
 {
     rep(0x20);
-    wr16(DP(0x88), dec16(rd16(DP(0x88))));
-    lda16(rd16(DP(0x88)));
+    wr16(DP(MODE_TIMER), dec16(rd16(DP(MODE_TIMER))));
+    lda16(rd16(DP(MODE_TIMER)));
     cmp16(A, 0x0708);
     if (fz) { lda16(0x0100); wr16(DP(0x9E), 0x0100); }
-    lda16(rd16(DP(0x88)));
+    lda16(rd16(DP(MODE_TIMER)));
     sep(0x20);
     if (!fz) { ret(); return; }
-    lda8(0x11); wr8(DP(0x76), 0x11);
-    wr8(DP(0x75), 0);
-    wr8(DP(0x77), 0);
-    wr8(ABS(0x1923), dec8(rd8(ABS(0x1923))));
+    lda8(0x11); wr8(DP(GAME_MODE), 0x11);
+    wr8(DP(MODE_ACTIVE), 0);
+    wr8(DP(MODE_STEP), 0);
+    wr8(ABS(FADE_STATE), dec8(rd8(ABS(FADE_STATE))));
     ret();
 }
 
@@ -483,14 +484,28 @@ void TickTimers_m1x1(void);
 
 /* $80:FFA5 -> $80:8000 Reset (Stadium 2): the boot, then a main loop frame after each
  * NMI. */
-void ResetVector_m1x1(void)
+/* The boot alone, and one turn of the main loop (a frame if the NMI has
+ * flagged 081A), for a frame-loop driver (port/src/native_driver.c). */
+R816_EXPORT void ResetBootAll(void)
 {
     ResetBoot1();
     ResetBoot1Spc();
     wait_apu_idle1();
     ResetBoot2();
+}
+
+R816_EXPORT void MainLoopTurn(void)
+{
+    lda8(rd8(ABS(NMI_FRAME_READY)));
+    if (!fz)
+        MainLoopFrame1();
+}
+
+void ResetVector_m1x1(void)
+{
+    ResetBootAll();
     for (;;) {
-        do lda8(rd8(ABS(0x081A))); while (fz);
+        do lda8(rd8(ABS(NMI_FRAME_READY))); while (fz);
         MainLoopFrame1();
     }
 }
@@ -516,14 +531,14 @@ R816_EXPORT void ResetBoot1(void)
     wr8(ABS(0x1E85), 0);
     sep(0x20);
     lda8(0x00); push8(0x00); DB = pull8(); nz8(DB);
-    wr8(ABS(0x4200), 0);
-    wr8(ABS(0x420C), 0);
-    wr8(ABS(0x420B), 0);
-    wr8(ABS(0x2140), 0);
-    wr8(ABS(0x2141), 0);
-    wr8(ABS(0x2142), 0);
-    wr8(ABS(0x2143), 0);
-    lda8(0x80); wr8(ABS(0x2100), 0x80);
+    wr8(ABS(NMITIMEN), 0);
+    wr8(ABS(HDMAEN), 0);
+    wr8(ABS(MDMAEN), 0);
+    wr8(ABS(APUIO0), 0);
+    wr8(ABS(APUIO1), 0);
+    wr8(ABS(APUIO2), 0);
+    wr8(ABS(APUIO3), 0);
+    lda8(0x80); wr8(ABS(INIDISP), 0x80);
     push8(0x80); push16(0x805E); InitPpuRegisters_m1x1();
     lda8(0x00);
     wr8(ABS(0x1E1C), 0);
@@ -545,11 +560,11 @@ R816_EXPORT void ResetBoot1Spc(void)
 static void wait_apu_idle1(void)
 {
     do {
-        wr8(ABS(0x4200), 0);
-        lda8(rd8(ABS(0x2140)));
-        ora8(rd8(ABS(0x2141)));
-        ora8(rd8(ABS(0x2142)));
-        ora8(rd8(ABS(0x2143)));
+        wr8(ABS(NMITIMEN), 0);
+        lda8(rd8(ABS(APUIO0)));
+        ora8(rd8(ABS(APUIO1)));
+        ora8(rd8(ABS(APUIO2)));
+        ora8(rd8(ABS(APUIO3)));
     } while (!fz);
 }
 /* $80:8089-$80:80E9: the second SPC upload, the fade state; DB = $80; IRQ
@@ -563,16 +578,16 @@ R816_EXPORT void ResetBoot2(void)
     push8(0x80); push16(0x8092); InitFadeState_m1x1();
     lda8(0x80); push8(0x80); DB = pull8(); nz8(DB);
     rep(0x20);
-    lda16(0x00D0); wr16(ABS(0x4209), A);
-    lda16(0x0098); wr16(ABS(0x4207), A);
+    lda16(0x00D0); wr16(ABS(VTIMEL), A);
+    lda16(0x0098); wr16(ABS(HTIMEL), A);
     sep(0x20);
-    lda8(0x01); wr8(ABS(0x420D), 0x01);
-    lda8(0x81); wr8(ABS(0x4200), 0x81);
-    wr8(ABS(0x190E), 0x81);
-    wr8(ABS(0x2141), 0);
-    wr8(ABS(0x2142), 0);
-    wr8(ABS(0x2143), 0);
-    lda8(0xFC); wr8(ABS(0x2140), 0xFC);
+    lda8(0x01); wr8(ABS(MEMSEL), 0x01);
+    lda8(0x81); wr8(ABS(NMITIMEN), 0x81);
+    wr8(ABS(SH_NMITIMEN), 0x81);
+    wr8(ABS(APUIO1), 0);
+    wr8(ABS(APUIO2), 0);
+    wr8(ABS(APUIO3), 0);
+    lda8(0xFC); wr8(ABS(APUIO0), 0xFC);
     wr8(ABS(0x1E87), 0);
     wr8(ABS(0x1E88), 0);
     wr8(ABS(0x1556), 0);
@@ -584,7 +599,7 @@ R816_EXPORT void ResetBoot2(void)
     wr8(ABS(0x0840), 0x04);
     wr8(ABS(0x0843), 0x04);
     wr8(ABS(0x0846), 0x04);
-    lda8(0x0D); wr8(ABS(0x0076), 0x0D);
+    lda8(0x0D); wr8(ABS(GAME_MODE), 0x0D);
 }
 /* $80:8103-$80:819C: one main loop frame after NMI ($081A set): minute to
  * $B7, the BS-X stream, the random shift register, the joypads, IRQs on.
@@ -604,7 +619,7 @@ R816_EXPORT void MainLoopFrame1(void)
     fi = 0;
     lda8(rd8(LONG(0x81800E)));
     if (!fz) {
-        lda8(rd8(DP(0x27)));
+        lda8(rd8(DP(P2_PRESS_LO)));
         and8(0xC0);
         if (!fz) {
             lda8(asl8((u8)A));
@@ -622,25 +637,25 @@ R816_EXPORT void MainLoopFrame1(void)
             lda16(0x0000); wr16(LONG(0x7FFFFA), 0);
             sep(0x20);
         }
-        lda8(rd8(DP(0x26)));
+        lda8(rd8(DP(P1_PRESS_LO)));
         and8(0x20);
-        if (!fz) wr8(ABS(0x1917), inc8(rd8(ABS(0x1917))));
-        lda8(rd8(DP(0x26)));
+        if (!fz) wr8(ABS(DEBUG_PAUSE), inc8(rd8(ABS(DEBUG_PAUSE))));
+        lda8(rd8(DP(P1_PRESS_LO)));
         and8(0x10);
         if (fz) {
-            lda8(rd8(ABS(0x1917)));
+            lda8(rd8(ABS(DEBUG_PAUSE)));
             and8(0x01);
-            wr8(ABS(0x1917), (u8)A);
+            wr8(ABS(DEBUG_PAUSE), (u8)A);
             if (!fz) goto paused;
         }
     }
-    lda8(rd8(ABS(0x1923)));
+    lda8(rd8(ABS(FADE_STATE)));
     if (!fz) {
         push8(0x80); push16(0x8171); FadeStep_m1x1();
         goto tail;
     }
     rep(0x20);
-    wr16(DP(0x63), inc16(rd16(DP(0x63))));
+    wr16(DP(FRAME_COUNT), inc16(rd16(DP(FRAME_COUNT))));
     sep(0x20);
     push16(0x817C); TickTimers_m1x1();
     push16(0x817F); BroadcastEventInject_m1x1();
@@ -656,5 +671,5 @@ tail:
     push16(0x8192); RiderPaletteWords_m1x1();
     push16(0x8195); PackOamHighTable_m1x1();
     push16(0x8198); DrawClock_m1x1();
-    wr8(ABS(0x081A), 0);
+    wr8(ABS(NMI_FRAME_READY), 0);
 }

@@ -10,6 +10,7 @@
  * beyond them are computed from a0.
  */
 #include "hand/hand.h"
+#include "ram.h"
 #include "roster.h"
 
 void VramQueueTiles20_m1x1(void);
@@ -41,13 +42,13 @@ void QueueSoundB_m0x1(void) { queue_sound_body(); }
  * the frame counter $63/$64 and the broadcast clock into A. */
 static void random_body(void)
 {
-    lda8(rd8(ABS(0x2137)));
-    lda8(rd8(ABS(0x213F)));
-    adc8(rd8(ABS(0x213C)));
-    adc8(rd8(ABS(0x213C)));
-    adc8(rd8(ABS(0x213D)));
-    adc8(rd8(ABS(0x213D)));
-    eor8(rd8(DP(0x63)));
+    lda8(rd8(ABS(SLHV)));
+    lda8(rd8(ABS(STAT78)));
+    adc8(rd8(ABS(OPHCT)));
+    adc8(rd8(ABS(OPHCT)));
+    adc8(rd8(ABS(OPVCT)));
+    adc8(rd8(ABS(OPVCT)));
+    eor8(rd8(DP(FRAME_COUNT)));
     adc8(rd8(DP(0x64)));
     adc8(rd8(LONG(0x7FFFFF)));
     adc8(rd8(LONG(0x7FFFFA)));
@@ -67,26 +68,26 @@ void SinCos_m1x1(void)
 {
     push8((u8)X);
     lda8(rd8(DP(0x08)));
-    wr8(ABS(0x4202), (u8)A);
+    wr8(ABS(WRMPYA), (u8)A);
     lda8(rd8(LONG(0x81A427 + X)));
-    wr8(ABS(0x4203), (u8)A);
+    wr8(ABS(WRMPYB), (u8)A);
     lda8(rd8(LONG(0x81A527 + X)));
     wr8(DP(0x02), (u8)A);
     wr8(DP(0x03), 0);
-    lda8(rd8(ABS(0x4216)));
+    lda8(rd8(ABS(RDMPYL)));
     lda8(asl8((u8)A));
-    lda8(rd8(ABS(0x4217)));
+    lda8(rd8(ABS(RDMPYH)));
     adc8(0x00);
     wr8(DP(0x00), (u8)A);
     wr8(DP(0x01), 0);
     lda8(rd8(LONG(0x81A327 + X)));
-    wr8(ABS(0x4203), (u8)A);
+    wr8(ABS(WRMPYB), (u8)A);
     lda8(rd8(LONG(0x81A627 + X)));
     wr8(DP(0x06), (u8)A);
     wr8(DP(0x07), 0);
-    lda8(rd8(ABS(0x4216)));
+    lda8(rd8(ABS(RDMPYL)));
     lda8(asl8((u8)A));
-    lda8(rd8(ABS(0x4217)));
+    lda8(rd8(ABS(RDMPYH)));
     adc8(0x00);
     wr8(DP(0x04), (u8)A);
     wr8(DP(0x05), 0);
@@ -170,7 +171,7 @@ void CarouselPos_m1x1(void)
         if (roster_select_is_stop(a0)) {
             lda8(rd8(ABS(0x1559)));
             if (!fz) {
-                lda8(rd8(DP(0x20)));
+                lda8(rd8(DP(P1_HELD_HI)));
                 and8(0x03);
                 cmp8((u8)A, rd8(ABS(0x198C)));
                 if (!fz) {
@@ -196,7 +197,7 @@ void SelectRotate_m1x1(void)
     if (!fz) {
         tick = 1;
     } else {
-        lda8(rd8(DP(0x20)));
+        lda8(rd8(DP(P1_HELD_HI)));
         and8(0x03);
         if (!fz) {
             wr8(ABS(0x198C), (u8)A);
@@ -207,7 +208,7 @@ void SelectRotate_m1x1(void)
         }
     }
     if (tick) {
-        lda8(rd8(DP(0x63)));
+        lda8(rd8(DP(FRAME_COUNT)));
         and8(0x03);
         if (fz) {
             lda8(0x40);
@@ -309,7 +310,7 @@ static void draw_portrait(int i, u8 cursor, int st)
         if (r < 2) { fc = 0; adc8(0x1C); }
     }
     u8 attr;
-    lda8(rd8(DP(0x20)));
+    lda8(rd8(DP(P1_HELD_HI)));
     and8(0x03);
     int dim = !fz;
     if (!dim) {
@@ -414,16 +415,16 @@ void SelectSlideY_m1x1(void)
 void SelectTransition_m1x1(void)
 {
     rep(0x20);
-    wr16(ABS(0x0088), dec16(rd16(ABS(0x0088))));
+    wr16(ABS(MODE_TIMER), dec16(rd16(ABS(MODE_TIMER))));
     X = rd8(ABS(0x198B)); nz8((u8)X);
     if (!fz) {
-        wr16(ABS(0x0088), dec16(rd16(ABS(0x0088))));
-        wr16(ABS(0x0088), dec16(rd16(ABS(0x0088))));
+        wr16(ABS(MODE_TIMER), dec16(rd16(ABS(MODE_TIMER))));
+        wr16(ABS(MODE_TIMER), dec16(rd16(ABS(MODE_TIMER))));
     }
-    lda16(rd16(ABS(0x0088)));
+    lda16(rd16(ABS(MODE_TIMER)));
     if (fn) {
         lda16(0x0001);
-        wr16(ABS(0x0088), 0x0001);
+        wr16(ABS(MODE_TIMER), 0x0001);
     }
     sep(0x20);
     push8(0x80); push16(0x8D8C); SelectDraw_m1x1();
@@ -442,7 +443,7 @@ void SelectTransition_m1x1(void)
         if (fz) {
             wr8(DP(0x90), 0);
             lda8(0x17);
-            wr8(ABS(0x1905), 0x17);
+            wr8(ABS(SH_TM), 0x17);
         }
         wr8(ABS(0x198D), 0);
     }
@@ -456,11 +457,11 @@ void SelectTransition_m1x1(void)
  */
 void SelectTimer_m1x1(void)
 {
-    lda8(rd8(DP(0x88))); wr8(ABS(0x4204), (u8)A);
-    lda8(rd8(DP(0x89))); wr8(ABS(0x4205), (u8)A);
-    lda8(0x3C); wr8(ABS(0x4206), 0x3C);
+    lda8(rd8(DP(MODE_TIMER))); wr8(ABS(WRDIVL), (u8)A);
+    lda8(rd8(DP(0x89))); wr8(ABS(WRDIVH), (u8)A);
+    lda8(0x3C); wr8(ABS(WRDIVB), 0x3C);
     wr8(DP(0x00), 0);
-    lda8(rd8(ABS(0x4214)));
+    lda8(rd8(ABS(RDDIVL)));
     for (;;) {
         cmp8((u8)A, 0x0A);
         if (!fc) break;
@@ -506,29 +507,29 @@ void SelectMain_m1x1(void)
 {
     lda8(rd8(LONG(0x81800E)));
     if (!fz) {
-        lda8(rd8(DP(0x21)));
+        lda8(rd8(DP(P1_PRESS_HI)));
         and8(0x10);
         if (!fz) goto next_segment;
     }
     lda8(rd8(ABS(0x198D)));
     if (!fz) {
-        wr8(DP(0x20), 0);
+        wr8(DP(P1_HELD_HI), 0);
         push16(0x89EC); SelectTransition_m1x1();
         goto tail;
     }
     lda8(rd8(ABS(0x198F)));
     if (!fz) {
         rep(0x20);
-        wr16(ABS(0x0088), dec16(rd16(ABS(0x0088))));
-        lda16(rd16(ABS(0x0088)));
+        wr16(ABS(MODE_TIMER), dec16(rd16(ABS(MODE_TIMER))));
+        lda16(rd16(ABS(MODE_TIMER)));
         cmp16(A, 0x0001);
         if (fn) {
             lda16(0x0001);
-            wr16(ABS(0x0088), 0x0001);
+            wr16(ABS(MODE_TIMER), 0x0001);
         }
         sep(0x20);
         wr8(ABS(0x198F), dec8(rd8(ABS(0x198F))));
-        wr8(DP(0x20), 0);
+        wr8(DP(P1_HELD_HI), 0);
         push8(0x80); push16(0x8A12); SelectDraw_m1x1();
         lda8(rd8(ABS(0x198B)));
         if (!fz) {
@@ -551,10 +552,10 @@ void SelectMain_m1x1(void)
             if (fc) goto next_segment;
         }
         rep(0x20);
-        wr16(ABS(0x0088), dec16(rd16(ABS(0x0088))));
+        wr16(ABS(MODE_TIMER), dec16(rd16(ABS(MODE_TIMER))));
         sep(0x20);
         if (fz) goto next_segment;
-        lda8(rd8(DP(0x21)));
+        lda8(rd8(DP(P1_PRESS_HI)));
         and8(0x80);
         if (!fz) {
             lda8(0x3D);
@@ -564,35 +565,35 @@ void SelectMain_m1x1(void)
             wr8(ABS(0x198B), 0);
             wr8(ABS(0x198D), inc8(rd8(ABS(0x198D))));
         }
-        wr8(DP(0x20), 0);
+        wr8(DP(P1_HELD_HI), 0);
         push8(0x80); push16(0x8A65); SelectDraw_m1x1();
         push16(0x8A68); SelectSlideY_m1x1();
         push16(0x8A6B); SelectHideRest_m1x1();
         goto tail;
     }
     rep(0x20);
-    lda16(rd16(ABS(0x0088)));
+    lda16(rd16(ABS(MODE_TIMER)));
     cmp16(A, 0x0001);
     sep(0x20);
     if (fz)
-        wr8(DP(0x20), 0);
+        wr8(DP(P1_HELD_HI), 0);
     lda8(rd8(ABS(0x1E8B)));
     wr8(DP(0x1F), (u8)A);
     push8(0x80); push16(0x8A85); SelectRotate_m1x1();
     push8(0x80); push16(0x8A89); SelectDraw_m1x1();
     rep(0x20);
-    wr16(ABS(0x0088), dec16(rd16(ABS(0x0088))));
+    wr16(ABS(MODE_TIMER), dec16(rd16(ABS(MODE_TIMER))));
     sep(0x20);
     if (fz) {
         lda8(rd8(ABS(0x1701)));
         cmp8((u8)A, 0xF0);
         if (fz) {
             lda8(0x01);
-            wr8(ABS(0x0088), 0x01);
+            wr8(ABS(MODE_TIMER), 0x01);
             goto tail;
         }
     } else {
-        lda8(rd8(DP(0x26)));
+        lda8(rd8(DP(P1_PRESS_LO)));
         and8(0x80);
         if (fz) goto tail;
         lda8(rd8(ABS(0x1559)));
@@ -602,7 +603,7 @@ void SelectMain_m1x1(void)
     wr8(DP(0x90), inc8(rd8(DP(0x90))));
     wr8(ABS(0x198B), inc8(rd8(ABS(0x198B))));
     lda8(0x15);
-    wr8(ABS(0x1905), 0x15);
+    wr8(ABS(SH_TM), 0x15);
     wr8(ABS(0x198D), inc8(rd8(ABS(0x198D))));
     lda8(0x1E);
     wr8(ABS(0x198F), 0x1E);
@@ -613,7 +614,7 @@ void SelectMain_m1x1(void)
         lda8(ech);
         wr8(ABS(0x154F), ech);
         roster_note_choice(ch);
-        wr8(ABS(0x4200), 0);
+        wr8(ABS(NMITIMEN), 0);
         rep(0x20);
         for (int x = 0x3E; x >= 0; x -= 2) {
             wr16(ABS(0x1400 + x), 0);
@@ -636,8 +637,8 @@ void SelectMain_m1x1(void)
         }
         lda8(0x3F);
         push8(0x80); push16(0x8B0D); QueueSoundB_m1x1();
-        lda8(rd8(ABS(0x190E)));
-        wr8(ABS(0x4200), (u8)A);
+        lda8(rd8(ABS(SH_NMITIMEN)));
+        wr8(ABS(NMITIMEN), (u8)A);
     }
 tail:
     push16(0x8B16); SelectTimer_m1x1();
@@ -664,7 +665,7 @@ next_segment:
         cmp8((u8)X, 0x04);
         if (fz) {
             lda8(0x17);
-            wr8(DP(0x76), 0x17);
+            wr8(DP(GAME_MODE), 0x17);
             r816_call_pc(0x808F17);
             return;
         }
@@ -674,16 +675,16 @@ next_segment:
             wr8(DP(0x00), dec8(rd8(DP(0x00))));
         lda8(rd8(DP(0x00)));
         lda8(lsr8((u8)A));
-        wr8(DP(0x7C), (u8)A);
+        wr8(DP(COURSE_SLOT), (u8)A);
         lda8(rol8((u8)A));
         and8(0x01);
-        wr8(DP(0x7D), (u8)A);
+        wr8(DP(FINAL_RACE), (u8)A);
         if (!fz) {
             r816_call_pc(0x808F15);
             return;
         }
         lda8(0x18);
-        wr8(DP(0x76), 0x18);
+        wr8(DP(GAME_MODE), 0x18);
         r816_call_pc(0x808F17);
     }
 }

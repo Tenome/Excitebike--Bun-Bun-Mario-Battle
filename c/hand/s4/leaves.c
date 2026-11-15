@@ -2,6 +2,7 @@
  * Stadium 3-4 (Gen B): small leaf routines, hand-written.
  */
 #include "hand/hand.h"
+#include "ram.h"
 
 void VramQueueTiles20_m1x1(void);
 
@@ -40,7 +41,7 @@ void FadeApuVolume_m1x1(void)
         wr8(ABS(0x198A), (u8)A);
     }
     lda8(rd8(ABS(0x198A)));
-    wr8(ABS(0x2142), (u8)A);
+    wr8(ABS(APUIO2), (u8)A);
     ret();
 }
 
@@ -64,14 +65,14 @@ void ReadStreamByte_m1x0(void)
  * $01C6, then fraction $0914 += speed low $01BE with the carry into $0186. */
 void AddSpeedToX_m1x1(void)
 {
-    lda8(rd8(ABSX(0x01C6)));
-    wr8(ABSX(0x0186), (u8)A);
-    lda8(rd8(ABSX(0x01BE)));
+    lda8(rd8(ABSX(RIDER_SPEED_HI)));
+    wr8(ABSX(RIDER_STEP), (u8)A);
+    lda8(rd8(ABSX(RIDER_SPEED_LO)));
     fc = 0;
-    adc8(rd8(ABSX(0x0914)));
-    wr8(ABSX(0x0914), (u8)A);
+    adc8(rd8(ABSX(RIDER_X_FRAC)));
+    wr8(ABSX(RIDER_X_FRAC), (u8)A);
     if (fc)
-        wr8(ABSX(0x0186), inc8(rd8(ABSX(0x0186))));
+        wr8(ABSX(RIDER_STEP), inc8(rd8(ABSX(RIDER_STEP))));
     ret();
 }
 
@@ -95,14 +96,14 @@ void BlankQueueRowB_m1x1(void)
  * $031F down; at zero step the frame $030F and reload $00D0. */
 void StepAnimTimer_m1x1(void)
 {
-    X = rd8(ABS(0x03A3)); nz8((u8)X);
+    X = rd8(ABS(OBJ_CURRENT)); nz8((u8)X);
     rep(0x20);
-    u16 t = dec16(rd16(ABSX(0x031F)));
-    wr16(ABSX(0x031F), t);
+    u16 t = dec16(rd16(ABSX(OBJ_STEP)));
+    wr16(ABSX(OBJ_STEP), t);
     if (t == 0) {
-        wr16(ABSX(0x030F), inc16(rd16(ABSX(0x030F))));
+        wr16(ABSX(OBJ_STATE), inc16(rd16(ABSX(OBJ_STATE))));
         lda16(0x00D0);
-        wr16(ABSX(0x031F), 0x00D0);
+        wr16(ABSX(OBJ_STEP), 0x00D0);
     }
     sep(0x20);
     ret();
@@ -129,9 +130,9 @@ void ScrollByPlayerSpeed_m1x1(void)
 {
     lda8(rd8(DP(0x9A)));
     fc = 0;
-    adc8(rd8(ABS(0x0186)));
+    adc8(rd8(ABS(RIDER_STEP)));
     wr8(DP(0x9A), (u8)A);
-    wr8(DP(0x9C), (u8)A);
+    wr8(DP(SCROLL_X), (u8)A);
     if (fc) {
         lda8(rd8(DP(0x90)));
         eor8(0x01);
@@ -150,7 +151,7 @@ void EndAtBonusMinute_m1x1(void)
     if (!fz) cmp8((u8)A, 0x1F);
     if (!fz) { ret(); return; }
     lda8(0x15);
-    wr8(DP(0x76), 0x15);
+    wr8(DP(GAME_MODE), 0x15);
     lda8(pull8());
     lda8(pull8());
     r816_call_pc(0x808F17);
@@ -160,16 +161,16 @@ void EndAtBonusMinute_m1x1(void)
  * $090C -= $0186. */
 void ScrollJumpRider_m1x1(void)
 {
-    lda8(rd8(ABS(0x0186)));
+    lda8(rd8(ABS(RIDER_STEP)));
     fc = 0;
-    adc8(rd8(ABS(0x0196)));
+    adc8(rd8(ABS(RIDER_X)));
     if (fc)
-        wr8(ABS(0x019E), inc8(rd8(ABS(0x019E))));
-    wr8(ABS(0x0196), (u8)A);
-    lda8(rd8(ABS(0x090C)));
+        wr8(ABS(RIDER_PAGE), inc8(rd8(ABS(RIDER_PAGE))));
+    wr8(ABS(RIDER_X), (u8)A);
+    lda8(rd8(ABS(RIDER_RUNOUT)));
     fc = 1;
-    sbc8(rd8(ABS(0x0186)));
-    wr8(ABS(0x090C), (u8)A);
+    sbc8(rd8(ABS(RIDER_STEP)));
+    wr8(ABS(RIDER_RUNOUT), (u8)A);
     ret();
 }
 
@@ -228,17 +229,17 @@ void AddBcdDigits_m1x1(void)
  * set $034F to `wait` (STZ when it is zero). */
 static void object_advance_or(u8 delay, u8 next, u8 wait)
 {
-    X = rd8(ABS(0x03A3)); nz8((u8)X);
-    lda8(rd8(ABSX(0x037F)));
+    X = rd8(ABS(OBJ_CURRENT)); nz8((u8)X);
+    lda8(rd8(ABSX(OBJ_COUNTER)));
     if (!fz) {
         if (wait) lda8(wait);
-        wr8(ABSX(0x034F), wait);
+        wr8(ABSX(OBJ_FRAME), wait);
         return;
     }
-    lda8(delay); wr8(ABSX(0x036F), delay);
-    wr8(ABSX(0x031F), 0);
-    wr8(ABSX(0x030F), inc8(rd8(ABSX(0x030F))));
-    lda8(next); wr8(ABSX(0x034F), next);
+    lda8(delay); wr8(ABSX(OBJ_DELAY), delay);
+    wr8(ABSX(OBJ_STEP), 0);
+    wr8(ABSX(OBJ_STATE), inc8(rd8(ABSX(OBJ_STATE))));
+    lda8(next); wr8(ABSX(OBJ_FRAME), next);
 }
 
 static void object_advance(u8 delay, u8 next) { object_advance_or(delay, next, 0); }
@@ -293,7 +294,7 @@ void BsxReadHeader3_m1x1(void)
  * ($80:E76D by course $7C), once the frame count reaches $0708 set $CA. */
 void CheckCourseTime_m1x1(void)
 {
-    X = rd8(DP(0x7C)); nz8((u8)X);
+    X = rd8(DP(COURSE_SLOT)); nz8((u8)X);
     lda8(rd8(LONG(0x7FFFFF)));
     cmp8((u8)A, rd8(ABSX(0xE76D)));
     if (fz) {
@@ -313,17 +314,17 @@ void CheckCourseTime_m1x1(void)
  * are all zero: $CD = 1, $CF = $20, set bit 0 of $63, $01B6 = $B0. */
 void StopWhenStill_m1x1(void)
 {
-    lda8(rd8(ABS(0x01BE)));
-    ora8(rd8(ABS(0x01C6)));
-    ora8(rd8(ABS(0x01CE)));
+    lda8(rd8(ABS(RIDER_SPEED_LO)));
+    ora8(rd8(ABS(RIDER_SPEED_HI)));
+    ora8(rd8(ABS(RIDER_BUMPED)));
     if (fz) {
         lda8(0x01); wr8(DP(0xCD), 0x01);
         lda8(0x20); wr8(DP(0xCF), 0x20);
         lda8(0x01);
-        u8 m = rd8(DP(0x63));
+        u8 m = rd8(DP(FRAME_COUNT));
         fz = (m & 0x01) == 0;
-        wr8(DP(0x63), m | 0x01);
-        lda8(0xB0); wr8(ABS(0x01B6), 0xB0);
+        wr8(DP(FRAME_COUNT), m | 0x01);
+        lda8(0xB0); wr8(ABS(RIDER_Y), 0xB0);
     }
     ret();
 }
@@ -332,16 +333,16 @@ void StopWhenStill_m1x1(void)
  * $3B-$3D under it, clear $020E,X and $08BC,X. */
 void ClearOnBonusTiles_m1x1(void)
 {
-    lda8(rd8(ABSX(0x021E)));
+    lda8(rd8(ABSX(RIDER_TILE)));
     cmp8((u8)A, 0x1F);
     if (fz) {
-        lda8(rd8(ABSX(0x0216)));
+        lda8(rd8(ABSX(RIDER_TILE_Y)));
         cmp8((u8)A, 0x3B);
         if (!fz) cmp8((u8)A, 0x3C);
         if (!fz) cmp8((u8)A, 0x3D);
         if (fz) {
-            wr8(ABSX(0x020E), 0);
-            wr8(ABSX(0x08BC), 0);
+            wr8(ABSX(RIDER_JUMP), 0);
+            wr8(ABSX(RIDER_ON_RAMP), 0);
         }
     }
     retl();
@@ -418,10 +419,10 @@ void Hundreds_m0x1(void) { hundreds(); }
 void SetupJumpScreen_m1x1(void)
 {
     lda8(0x08); wr8(ABS(0x0450), 0x08);
-    lda8(0x02); wr8(ABS(0x1905), 0x02); wr8(ABS(0x1906), 0x02);
-    lda8(0x25); wr8(ABS(0x2105), 0x25);
-    lda8(0x01); wr8(DP(0x79), 0x01); wr8(DP(0x75), 0x01);
-    lda8(lsr8((u8)A)); wr8(DP(0x77), (u8)A);
+    lda8(0x02); wr8(ABS(SH_TM), 0x02); wr8(ABS(SH_TS), 0x02);
+    lda8(0x25); wr8(ABS(BGMODE), 0x25);
+    lda8(0x01); wr8(DP(0x79), 0x01); wr8(DP(MODE_ACTIVE), 0x01);
+    lda8(lsr8((u8)A)); wr8(DP(MODE_STEP), (u8)A);
     lda8(0x08); wr8(ABS(0x00A2), 0x08);
     ret();
 }
@@ -445,7 +446,7 @@ void RiderStartLane_m1x1(void)
         adc8(0x1C);
         wr8(DPX(0x3D), (u8)A);
     }
-    wr8(ABSX(0x01D6), inc8(rd8(ABSX(0x01D6))));
+    wr8(ABSX(RIDER_TIMER), inc8(rd8(ABSX(RIDER_TIMER))));
     ret();
 }
 
@@ -454,7 +455,7 @@ void RiderStartLane_m1x1(void)
  * wraps flip the half $91. */
 static void scroll_by_speed16(void)
 {
-    lda8(rd8(ABS(0x0186)));
+    lda8(rd8(ABS(RIDER_STEP)));
     lda8(asl8((u8)A));
     lda8(asl8((u8)A));
     lda8(asl8((u8)A));
@@ -478,7 +479,7 @@ void ScrollBySpeed16B_m1x1(void) { scroll_by_speed16(); }
 void SetBgTileBase_m1x1(void)
 {
     rep(0x20);
-    lda16(rd16(DP(0x63)));
+    lda16(rd16(DP(FRAME_COUNT)));
     and16(0x0030);
     lda16(asl16(A)); lda16(asl16(A)); lda16(asl16(A)); lda16(asl16(A)); lda16(asl16(A));
     fc = 0; adc16(0x2000);
@@ -496,10 +497,10 @@ void SetupCourseScreen_m1x1(void)
     lda8(lsr8((u8)A));
     lda8(lsr8((u8)A));
     wr8(ABS(0x09C2), (u8)A);
-    lda8(0x03); wr8(ABS(0x2107), 0x03); wr8(ABS(0x1900), 0x03);
-    lda8(0x43); wr8(ABS(0x2108), 0x43);
-    lda8(0x55); wr8(ABS(0x210B), 0x55);
-    lda8(0x30); wr8(ABS(0x01FE), 0x30);
+    lda8(0x03); wr8(ABS(BG1SC), 0x03); wr8(ABS(0x1900), 0x03);
+    lda8(0x43); wr8(ABS(BG2SC), 0x43);
+    lda8(0x55); wr8(ABS(BG12NBA), 0x55);
+    lda8(0x30); wr8(ABS(RIDER_HEIGHT), 0x30);
     wr8(ABS(0x1958), 0);
     ret();
 }
@@ -509,16 +510,16 @@ void SetupCourseScreen_m1x1(void)
  * delay from the tables at $81:B94D and $81:B955. */
 void StepObjectScript_m1x1(void)
 {
-    X = rd8(ABS(0x03A3)); nz8((u8)X);
-    lda8(rd8(ABSX(0x036F)));
+    X = rd8(ABS(OBJ_CURRENT)); nz8((u8)X);
+    lda8(rd8(ABSX(OBJ_DELAY)));
     if (!fz) { ret(); return; }
-    wr8(ABSX(0x031F), inc8(rd8(ABSX(0x031F))));
-    lda8(rd8(ABSX(0x031F)));
+    wr8(ABSX(OBJ_STEP), inc8(rd8(ABSX(OBJ_STEP))));
+    lda8(rd8(ABSX(OBJ_STEP)));
     cmp8((u8)A, 0x08);
-    if (fc) { wr8(ABSX(0x02EF), 0); ret(); return; }
+    if (fc) { wr8(ABSX(OBJ_ACTIVE), 0); ret(); return; }
     Y = (u8)A; nz8((u8)Y);
-    lda8(rd8(ABSY(0xB94D))); wr8(ABSX(0x034F), (u8)A);
-    lda8(rd8(ABSY(0xB955))); wr8(ABSX(0x036F), (u8)A);
+    lda8(rd8(ABSY(0xB94D))); wr8(ABSX(OBJ_FRAME), (u8)A);
+    lda8(rd8(ABSY(0xB955))); wr8(ABSX(OBJ_DELAY), (u8)A);
     ret();
 }
 

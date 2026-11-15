@@ -4,6 +4,7 @@
  * port/src/roster.c instead.
  */
 #include "roster.h"
+#include "ram.h"
 
 int roster_count(void) { return 5; }
 
@@ -76,7 +77,7 @@ u8 roster_engine_char(int ch) { return (u8)ch; }
 void roster_note_choice(int ch) { (void)ch; }
 
 int port_hide_clock(void) { return 0; }
-int port_race_is_final(void) { return rd8(DP(0x7D)) != 0; }
+int port_race_is_final(void) { return rd8(DP(FINAL_RACE)) != 0; }
 int port_rival_pace(void) { return 100; }
 void port_ws_rider_sprites(void) { }
 int port_ws_shadow_margin(void) { return 0; }

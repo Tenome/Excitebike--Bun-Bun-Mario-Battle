@@ -13,10 +13,11 @@
  * advance the state and start action `go`.
  */
 #include "hand/hand.h"
+#include "ram.h"
 
 static void wait_then_step(u8 next_timer, u8 go, int waiting_loads, u8 waiting)
 {
-    X = rd8(ABS(0x039D));
+    X = rd8(ABS(OBJ_CURRENT));
     nz8((u8)X);
     lda8(rd8(ABS(0x0379 + X)));
     if ((u8)A == 0) {
@@ -62,7 +63,7 @@ void Random_m1x1(void);
 
 static void wait_then_step_random(u16 jsl_ret, u8 next_timer, u8 go)
 {
-    X = rd8(ABS(0x039D));
+    X = rd8(ABS(OBJ_CURRENT));
     nz8((u8)X);
     lda8(rd8(ABS(0x0379 + X)));
     if ((u8)A != 0) {
@@ -105,7 +106,7 @@ void RivalWaitRandom_BCA1_m1x1(void) { wait_then_step_random(0xBCB1, 0x10, 1); }
  * stored right after each handler's code. */
 static void alternate(u16 jsl_ret, u16 timer_table, u16 action_table)
 {
-    X = rd8(ABS(0x039D));
+    X = rd8(ABS(OBJ_CURRENT));
     nz8((u8)X);
     lda8(rd8(ABS(0x0369 + X)));
     if ((u8)A != 0) { ret(); return; }
@@ -146,7 +147,7 @@ void RivalAlternate_BB70_m1x1(void) { alternate(0xBB8E, 0xBBA5, 0xBBA7); }
  * state ($0309,X) through a table of handler addresses. */
 static void dispatch_state(u16 table, u32 site)
 {
-    X = rd8(ABS(0x039D));
+    X = rd8(ABS(OBJ_CURRENT));
     lda8(rd8(ABS(0x0309 + X)));
     SET_A8(asl8((u8)A));
     X = (u8)A;
@@ -181,7 +182,7 @@ void RivalDispatch_BD52_m1x1(void) { dispatch_state(0xBD5D, 0x81BD5A); }
  */
 void RivalSequence_B67F_m1x1(void)
 {
-    X = rd8(ABS(0x039D));
+    X = rd8(ABS(OBJ_CURRENT));
     lda8(rd8(ABS(0x0369 + X)));
     if ((u8)A != 0) { ret(); return; }
     u8 step = inc8(rd8(ABS(0x0319 + X)));
@@ -206,7 +207,7 @@ void RivalSequence_B67F_m1x1(void)
  */
 void RivalSequence_BB05_m1x1(void)
 {
-    X = rd8(ABS(0x039D));
+    X = rd8(ABS(OBJ_CURRENT));
     lda8(rd8(ABS(0x0369 + X)));
     if ((u8)A != 0) { ret(); return; }
     u8 step = (u8)((rd8(ABS(0x0319 + X)) + 1) & 0x03);
@@ -277,8 +278,8 @@ void QueueSound_m1x1(void);
  */
 void RivalTumble_B64A_m1x1(void)
 {
-    X = rd8(ABS(0x039D));
-    lda8(rd8(DP(0x63)));
+    X = rd8(ABS(OBJ_CURRENT));
+    lda8(rd8(DP(FRAME_COUNT)));
     and8(0x03);
     if ((u8)A == 0) {
         lda8(rd8(ABS(0x0349 + X)));
@@ -309,7 +310,7 @@ void RivalTumble_B64A_m1x1(void)
  */
 void RivalPause_B94D_m1x1(void)
 {
-    X = rd8(ABS(0x039D));
+    X = rd8(ABS(OBJ_CURRENT));
     lda8(rd8(ABS(0x0379 + X)));
     if ((u8)A == 0) {
         lda8(0x16);
@@ -333,7 +334,7 @@ void RivalPause_B94D_m1x1(void)
  */
 void RivalSequence_BD23_m1x1(void)
 {
-    X = rd8(ABS(0x039D));
+    X = rd8(ABS(OBJ_CURRENT));
     lda8(rd8(ABS(0x0369 + X)));
     if ((u8)A != 0) { ret(); return; }
     u8 step = (u8)((rd8(ABS(0x0319 + X)) + 1) & 0x03);
@@ -358,7 +359,7 @@ void RivalSequence_BD23_m1x1(void)
  */
 void RivalWalkAway_BECE_m1x1(void)
 {
-    X = rd8(ABS(0x039D));
+    X = rd8(ABS(OBJ_CURRENT));
     lda8(rd8(ABS(0x0369 + X)));
     if ((u8)A == 0) {
         lda8((u8)((rd8(ABS(0x0319 + X)) + 1) & 0x03));
@@ -399,7 +400,7 @@ static u8 random_64_127(u16 jsl_ret)
  */
 void RivalSequence_B9D5_m1x1(void)
 {
-    X = rd8(ABS(0x039D));
+    X = rd8(ABS(OBJ_CURRENT));
     lda8(rd8(ABS(0x0369 + X)));
     if ((u8)A != 0) { ret(); return; }
     u8 step = inc8(rd8(ABS(0x0319 + X)));
@@ -427,7 +428,7 @@ void RivalSequence_B9D5_m1x1(void)
  */
 void RivalSequence_BAAD_m1x1(void)
 {
-    X = rd8(ABS(0x039D));
+    X = rd8(ABS(OBJ_CURRENT));
     lda8(rd8(ABS(0x0369 + X)));
     if ((u8)A != 0) { ret(); return; }
     u8 step = (u8)((rd8(ABS(0x0319 + X)) + 1) & 0x03);
@@ -452,7 +453,7 @@ void RivalSequence_BAAD_m1x1(void)
  */
 void RivalSequence_BC4B_m1x1(void)
 {
-    X = rd8(ABS(0x039D));
+    X = rd8(ABS(OBJ_CURRENT));
     lda8(rd8(ABS(0x0369 + X)));
     if ((u8)A != 0) { ret(); return; }
     u8 step = inc8(rd8(ABS(0x0319 + X)));
@@ -486,7 +487,7 @@ static void move_step(u16 timers, u16 actions)
  */
 void RivalSequence_B896_m1x1(void)
 {
-    X = rd8(ABS(0x039D));
+    X = rd8(ABS(OBJ_CURRENT));
     lda8(rd8(ABS(0x0369 + X)));
     if ((u8)A != 0) { ret(); return; }
     lda8(inc8(rd8(ABS(0x0319 + X))));
@@ -515,7 +516,7 @@ void RivalSequence_B896_m1x1(void)
  * state `next` with a random 64-127 frame wait. */
 static void cycle_repeat(u8 next, u16 jsl_ret, u16 timers, u16 actions)
 {
-    X = rd8(ABS(0x039D));
+    X = rd8(ABS(OBJ_CURRENT));
     lda8(rd8(ABS(0x0369 + X)));
     if ((u8)A != 0) { ret(); return; }
     lda8((u8)((rd8(ABS(0x0319 + X)) + 1) & 0x03));
@@ -548,7 +549,7 @@ void RivalCycle_B976_m1x1(void) { cycle_repeat(2, 0xB997, 0xB9AE, 0xB9B2); }
  */
 void RivalSequence_B836_m1x1(void)
 {
-    X = rd8(ABS(0x039D));
+    X = rd8(ABS(OBJ_CURRENT));
     lda8(rd8(ABS(0x0369 + X)));
     if ((u8)A != 0) { ret(); return; }
     lda8(inc8(rd8(ABS(0x0319 + X))));
@@ -575,7 +576,7 @@ void RivalSequence_B836_m1x1(void)
  */
 void RivalBlink_BBA9_m1x1(void)
 {
-    X = rd8(ABS(0x039D));
+    X = rd8(ABS(OBJ_CURRENT));
     lda8(rd8(ABS(0x0369 + X)));
     if ((u8)A == 0) {
         lda8(rd8(ABS(0x0349 + X)));

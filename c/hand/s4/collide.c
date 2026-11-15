@@ -2,6 +2,7 @@
  * Stadium 3-4 (Gen B): rider-to-rider collisions and coins, hand-written.
  */
 #include "hand/hand.h"
+#include "ram.h"
 #include "roster.h"
 
 void QueueSoundB_m1x1(void);
@@ -45,7 +46,7 @@ void CoinMilestone_m1x1(void)
         wr8(ABS(0x199A), 0x01);
         lda8(0x40);
         wr8(ABS(0x199B), 0x40);
-        lda8(rd8(ABS(0x01B6)));
+        lda8(rd8(ABS(RIDER_Y)));
         fc = 1;
         sbc8(0x10);
         wr8(ABS(0x199C), (u8)A);
@@ -96,7 +97,7 @@ void CollectCoin_m1x1(void)
     wr8(ABS(0x1530 + X), 0x01);
     rep(0x20);
     lda16(0x0038); wr16(ABS(0x1500 + X), 0x0038);
-    lda16(rd16(ABS(0x01B6)));
+    lda16(rd16(ABS(RIDER_Y)));
     fc = 0;
     adc16(0x0010);
     wr16(ABS(0x1508 + X), A);
@@ -243,12 +244,12 @@ meet:
         cmp8((u8)Y, 0x07);
         if (fz) { lda8(0x10); wr8(DP(0x5F), 0x10); }
     }
-    lda8(rd8(ABS(0x01CE)));
+    lda8(rd8(ABS(RIDER_BUMPED)));
     if (fz) {
         cmp8((u8)X, 0x00);
         if (fz) {
-            lda8(rd8(ABS(0x01BE)));
-            ora8(rd8(ABS(0x01C6)));
+            lda8(rd8(ABS(RIDER_SPEED_LO)));
+            ora8(rd8(ABS(RIDER_SPEED_HI)));
             if (!fz) {
                 wr8(ABS(0x0CDF), inc8(rd8(ABS(0x0CDF))));
                 sound80(0x29, 0xC85E);
@@ -265,7 +266,7 @@ meet:
                     wr8(ABS(0x0CE0), 0x01);
                     push8(0x80); push16(0xC885); QueueSoundB_m1x1();
                     lda8(0x20);
-                    wr8(ABS(0x0990), 0x20);
+                    wr8(ABS(ENGINE_HEAT), 0x20);
                 } else if (fc) {
                     lda8(0x06);
                     wr8(ABS(0x0CDF), 0x06);

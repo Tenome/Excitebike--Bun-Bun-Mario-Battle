@@ -6,6 +6,7 @@
  * tools/difftest816.py --apu-echo.
  */
 #include "hand/hand.h"
+#include "ram.h"
 
 /* Upload the stream at the long pointer $00-$02 with the driver's transfer
  * handshake (APUIO0-2), then clear the ports. */
@@ -22,7 +23,7 @@ static void upload_from_dp(void)
     lda16(0xBBAA);
     do {
         WAIT_TICK();
-        cmp16(A, rd16(ABS(0x2140)));
+        cmp16(A, rd16(ABS(APUIO0)));
     } while (!fz);
     sep(0x20);
     lda8(0xCC);
@@ -33,16 +34,16 @@ static void upload_from_dp(void)
         u16 len = rd16((src + Y) & 0xFFFFFF); Y += 2;
         X = len;
         u16 dest = rd16((src + Y) & 0xFFFFFF); Y += 2;
-        wr16(ABS(0x2142), dest);
+        wr16(ABS(APUIO2), dest);
         sep(0x20);
         cmp16(X, 0x0001);
         lda8(0x00);
         lda8(rol8((u8)A));
-        wr8(ABS(0x2141), (u8)A);
+        wr8(ABS(APUIO1), (u8)A);
         adc8(0x7F);
         lda8(pull8());
-        wr8(ABS(0x2140), (u8)A);
-        while (rd8(ABS(0x2140)) != (u8)A)
+        wr8(ABS(APUIO0), (u8)A);
+        while (rd8(ABS(APUIO0)) != (u8)A)
             WAIT_TICK();
         if (!fv)
             break;
@@ -52,7 +53,7 @@ static void upload_from_dp(void)
         lda8(0x00);
         for (;;) {
             rep(0x20);
-            wr16(ABS(0x2140), A);
+            wr16(ABS(APUIO0), A);
             sep(0x20);
             X--;
             if (X == 0) break;
@@ -60,20 +61,20 @@ static void upload_from_dp(void)
             lda8(rd8((ILDP(0x00) + Y) & 0xFFFFFF)); Y++;
             if (Y == 0x8000) { Y = 0; wr8(DP(0x02), inc8(rd8(DP(0x02)))); }
             A = (u16)((A << 8) | (A >> 8));
-            while (rd8(ABS(0x2140)) != (u8)A)
+            while (rd8(ABS(APUIO0)) != (u8)A)
                 WAIT_TICK();
             lda8(inc8((u8)A));
         }
         do {                                    /* CMP: carry set on the match */
             WAIT_TICK();
-            cmp8((u8)A, rd8(ABS(0x2140)));
+            cmp8((u8)A, rd8(ABS(APUIO0)));
         } while (!fz);
         do { adc8(0x03); } while (fz);
     }
-    wr8(ABS(0x2140), 0);
-    wr8(ABS(0x2141), 0);
-    wr8(ABS(0x2142), 0);
-    wr8(ABS(0x2143), 0);
+    wr8(ABS(APUIO0), 0);
+    wr8(ABS(APUIO1), 0);
+    wr8(ABS(APUIO2), 0);
+    wr8(ABS(APUIO3), 0);
     setP(pull8());
     DB = pull8(); nz8(DB);
 }
@@ -82,7 +83,7 @@ static void upload_from_dp(void)
 void SpcUpload_m1x1(void)
 {
     lda8(0xFF);
-    wr8(ABS(0x2140), 0xFF);
+    wr8(ABS(APUIO0), 0xFF);
     lda8(rd8(LONG(0x8088CE + X))); wr8(DP(0x00), (u8)A);
     lda8(rd8(LONG(0x8088D4 + X))); wr8(DP(0x01), (u8)A);
     lda8(rd8(LONG(0x8088DA + X))); wr8(DP(0x02), (u8)A);
@@ -99,38 +100,38 @@ void SpcUpload_m1x1(void)
  * cleared. */
 void StartCredits_m1x1(void)
 {
-    wr8(ABS(0x4200), 0);
+    wr8(ABS(NMITIMEN), 0);
     ldx8(0x05);
     push8(0x80); push16(0x9EB3); SpcUpload_m1x1();
-    lda8(rd8(ABS(0x190E))); wr8(ABS(0x4200), (u8)A);
-    wr8(DP(0x75), inc8(rd8(DP(0x75))));
-    lda8(0x32); wr8(ABS(0x2109), 0x32);
-    lda8(0x44); wr8(ABS(0x210B), 0x44);
-    lda8(0x01); wr8(ABS(0x210C), 0x01);
+    lda8(rd8(ABS(SH_NMITIMEN))); wr8(ABS(NMITIMEN), (u8)A);
+    wr8(DP(MODE_ACTIVE), inc8(rd8(DP(MODE_ACTIVE))));
+    lda8(0x32); wr8(ABS(BG3SC), 0x32);
+    lda8(0x44); wr8(ABS(BG12NBA), 0x44);
+    lda8(0x01); wr8(ABS(BG34NBA), 0x01);
     rep(0x20);
     lda16(0xFFFF); wr16(DP(0x9E), 0xFFFF);
-    lda16(0x0090); wr16(ABS(0x1C00), 0x0090);
+    lda16(0x0090); wr16(ABS(PALETTE_BUF), 0x0090);
     lda16(0x0020); wr16(ABS(0x1C01), 0x0020);
     sep(0x20);
-    wr8(ABS(0x1915), inc8(rd8(ABS(0x1915))));
-    lda8(0x10); wr8(ABS(0x2140), 0x10);
-    lda8(0x00); wr8(ABS(0x4370), 0);
-    lda8(0x00); wr8(ABS(0x4371), 0);
-    lda8(0x55); wr8(ABS(0x4372), 0x55);
-    lda8(0x04); wr8(ABS(0x4373), 0x04);
-    lda8(0x00); wr8(ABS(0x4374), 0);
-    lda8(0x00); wr8(ABS(0x4377), 0);
+    wr8(ABS(PALETTE_DIRTY), inc8(rd8(ABS(PALETTE_DIRTY))));
+    lda8(0x10); wr8(ABS(APUIO0), 0x10);
+    lda8(0x00); wr8(ABS(DMAP7), 0);
+    lda8(0x00); wr8(ABS(BBAD7), 0);
+    lda8(0x55); wr8(ABS(A1T7L), 0x55);
+    lda8(0x04); wr8(ABS(A1T7H), 0x04);
+    lda8(0x00); wr8(ABS(A1B7), 0);
+    lda8(0x00); wr8(ABS(DASB7), 0);
     ldx8(0x40);
     do {
         lda8(rd8(ABSX(0x9F27))); wr8(ABSX(0x0455), (u8)A);
         X = dec8((u8)X);
     } while (!fn);
-    lda8(0x80); wr8(ABS(0x190F), 0x80);
-    lda8(0x04); wr8(ABS(0x1905), 0x04);
+    lda8(0x80); wr8(ABS(SH_HDMAEN), 0x80);
+    lda8(0x04); wr8(ABS(SH_TM), 0x04);
         wr8(ABS(0x087E), 0);
     wr8(ABS(0x0880), 0);
     wr8(ABS(0x0882), 0);
-    wr8(DP(0x88), 0);
+    wr8(DP(MODE_TIMER), 0);
     ret();
 }
 
@@ -149,7 +150,7 @@ static void select_rider1(int shift, u16 back_upload, u16 back_sound)
     if (shift == 4) and8(0x30);
     for (int k = 0; k < shift; k++) lda8(lsr8((u8)A));
     wr8(ABS(0x1542), (u8)A);
-    wr8(ABS(0x4200), 0);
+    wr8(ABS(NMITIMEN), 0);
     rep(0x20);
     ldx8(0x3E);
     do {
@@ -166,7 +167,7 @@ static void select_rider1(int shift, u16 back_upload, u16 back_sound)
     lda8(0x3F);
     push8(0x80); push16(back_sound); QueueSound_m1x1();
     lda8(0x60); wr8(ABS(0x1554), 0x60);
-    lda8(rd8(ABS(0x190E))); wr8(ABS(0x4200), (u8)A);
+    lda8(rd8(ABS(SH_NMITIMEN))); wr8(ABS(NMITIMEN), (u8)A);
 }
 
 /* $80:8D2F / $80:8DE6 (RTS): one frame of a rider select screen: after a
@@ -182,12 +183,12 @@ static void rider_select1(int second, u16 base)
     if (!fz) {
         cmp8((u8)A, 0x01);
         if (fz) {
-            wr8(DP(0x20), 0);
+            wr8(DP(P1_HELD_HI), 0);
             push8(0x80); push16(base + 0x18); DrawSelectWheels_m1x1();
             SegmentNext_m1x1();
             return;
         }
-        wr8(DP(0x20), 0);
+        wr8(DP(P1_HELD_HI), 0);
         if (second) {
             wr8(ABS(0x1554), dec8(rd8(ABS(0x1554))));
             push8(0x80); push16(base + 0x11); DrawSelectWheels_m1x1();
@@ -199,25 +200,25 @@ static void rider_select1(int second, u16 base)
         return;
     }
     rep(0x20);
-    lda16(rd16(ABS(0x0088)));
+    lda16(rd16(ABS(MODE_TIMER)));
     cmp16(A, 0x0001);
     sep(0x20);
-    if (fz) wr8(DP(0x20), 0);
+    if (fz) wr8(DP(P1_HELD_HI), 0);
     lda8(rd8(ABS(0x1E8B))); wr8(DP(0x1F), (u8)A);
     push8(0x80); push16(base + 0x32); TurnSelectWheels_m1x1();
     push8(0x80); push16(base + 0x36); DrawSelectWheels_m1x1();
     rep(0x20);
-    wr16(ABS(0x0088), dec16(rd16(ABS(0x0088))));
+    wr16(ABS(MODE_TIMER), dec16(rd16(ABS(MODE_TIMER))));
     sep(0x20);
     int choose = 0;
     if (fz) {
         lda8(rd8(ABS(0x1701)));
         cmp8((u8)A, 0xF0);
         if (!fz) choose = 1;
-        else { lda8(0x01); wr8(ABS(0x0088), 0x01); }
+        else { lda8(0x01); wr8(ABS(MODE_TIMER), 0x01); }
     } else {
         if (second) wr8(ABS(0x1542), 0);
-        lda8(rd8(DP(0x24)));
+        lda8(rd8(DP(P1_HELD_LO)));
         and8(0x80);
         if (!fz) {
             lda8(rd8(ABS(0x154B)));

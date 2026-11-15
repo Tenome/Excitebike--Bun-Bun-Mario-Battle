@@ -2,6 +2,7 @@
  * Stadium 1 race setup, hand-written.
  */
 #include "hand/hand.h"
+#include "ram.h"
 
 void QueueSound_m1x1(void);
 
@@ -67,7 +68,7 @@ static void set_list(u16 vram, u16 list)
  */
 void DrawRacerName_m1x1(void)
 {
-    lda8(rd8(DP(0x7D)));
+    lda8(rd8(DP(FINAL_RACE)));
     if ((u8)A != 0) {
         set_list(0x185B, 0xA5F4);
         push16(0xA5CB);
@@ -77,11 +78,11 @@ void DrawRacerName_m1x1(void)
     A = 0x1851; wr16(DP(0x00), 0x1851);
     sep(0x20);
     lda8(rd8(ABS(0x1542)));
-    wr8(ABS(0x4202), (u8)A);                           /* WRMPYA = character */
+    wr8(ABS(WRMPYA), (u8)A);                           /* WRMPYA = character */
     lda8(0x1D);
-    wr8(ABS(0x4203), 0x1D);                            /* WRMPYB = 29 */
+    wr8(ABS(WRMPYB), 0x1D);                            /* WRMPYB = 29 */
     rep(0x20);
-    A = rd16(ABS(0x4216));                             /* RDMPY */
+    A = rd16(ABS(RDMPYL));                             /* RDMPY */
     fc = 0;
     adc16(0xA5F9);
     wr16(DP(0x02), A);
@@ -175,7 +176,7 @@ void RaceSetup_m1x1(void)
         push16(0x924F);
         DrawRacerName_m1x1();
     }
-    lda8(rd8(DP(0x7D)));
+    lda8(rd8(DP(FINAL_RACE)));
     SET_A8(asl8(asl8(asl8((u8)A))));
     for (int x = 7; x >= 0; x--) {
         wr8(ABS(0x086E + x), (u8)A);
@@ -208,14 +209,14 @@ void RaceSetup_m1x1(void)
  */
 void UpdatePlayerPlace_m1x1(void)
 {
-    if (rd8(ABS(0x086E)) == 0 || rd8(DP(0x84)) != 0 || rd8(DP(0x8E)) == 0) {
+    if (rd8(ABS(0x086E)) == 0 || rd8(DP(0x84)) != 0 || rd8(DP(RACE_STARTED)) == 0) {
         ret();
         return;
     }
     rep(0x20);
     A = 0x0008;
     wr16(ABS(0x086E), 0x0008);
-    u16 me = rd16(ABS(0x085E));
+    u16 me = rd16(ABS(RIDER_DIST));
     A = me;
     for (u8 y = 0x0E; y != 0; y -= 2) {
         Y = y;
@@ -322,7 +323,7 @@ void PlayerOverheatWarn_m1x1(void)
     ora8(rd8(ABS(0x0CE0)));
     if (!fz) { ret(); return; }
     lda8(0x08);
-    wr8(ABS(0x0990), 0x08);
+    wr8(ABS(ENGINE_HEAT), 0x08);
     cmp8((u8)X, 0x00);
     if (!fz) { ret(); return; }
     lda8(rd8(ABS(0x1979)));
@@ -475,7 +476,7 @@ void AddScore_m1x1(void)
  */
 void AccelerateRider_m1x1(void)
 {
-    cmp8((u8)X, rd8(DP(0x7F)));
+    cmp8((u8)X, rd8(DP(RIDER_TURN)));
     if (!fz) { ret(); return; }
     lda8(rd8(ABS(0xB851 + Y)));
     fc = 0;

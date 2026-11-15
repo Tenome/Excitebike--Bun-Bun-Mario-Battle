@@ -141,7 +141,13 @@ The rest of the 1 MB is graphics, tracks, music and other data.
 2. Use the same approach as the NES Excitebike port: test each routine
    against the recompiled or interpreted original. Compare RAM and the order
    of hardware register writes.
-3. Turn raw RAM into named structs: riders, track, camera, items.
+3. Turn raw RAM into named structs: riders, track, camera, items. Started
+   (2026-11-15): `c/hand/<ver>/ram.h` names the hardware registers
+   (`c/hand/snes_regs.h`), the game-flow globals, the PPU shadows and 37
+   rider fields (35 in Gen A) for all four dumps; `tools/ramname.py` writes them into the
+   address operands (about 2,700 in S1 and S4) and `tools/port_hand.py` turns
+   them back into hex before it translates a routine. Next: the object slots,
+   the track buffers and the HUD.
 
 ### Phase 5: merge the Stadiums
 0. ✅ Found that each build already holds two Stadiums behind `$81:800C`; the

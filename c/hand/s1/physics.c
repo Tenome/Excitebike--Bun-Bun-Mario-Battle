@@ -3,6 +3,7 @@
  * through the machine model so carries chain exactly as in the original.
  */
 #include "hand/hand.h"
+#include "ram.h"
 
 /*
  * $80:BF74 RiderShadowY (RTS): $0979,X = ($090C,X - $0190,X - 8) * 2
@@ -32,9 +33,9 @@ void ScrollByPlayerSpeed_m1x1(void)
 {
     lda8(rd8(DP(0x92)));
     fc = 0;
-    adc8(rd8(ABS(0x0180)));
+    adc8(rd8(ABS(RIDER_STEP)));
     wr8(DP(0x92), (u8)A);
-    wr8(DP(0x94), (u8)A);
+    wr8(DP(SCROLL_X), (u8)A);
     if (!fc) { ret(); return; }
     lda8(rd8(DP(0x8C)));
     eor8(0x01);
@@ -70,7 +71,7 @@ void Add32_m1x1(void)
  */
 void ScrollFarLayer_m1x1(void)
 {
-    lda8(rd8(ABS(0x0180)));
+    lda8(rd8(ABS(RIDER_STEP)));
     for (int i = 0; i < 4; i++)
         lda8(asl8((u8)A));
     adc8(rd8(ABS(0x0994)));
@@ -157,13 +158,13 @@ void ScrollRivalsRelative_m1x1(void)
             if (fc)
                 wr8(ABS(0x0198 + X), inc8(rd8(ABS(0x0198 + X))));
             fc = 1;
-            sbc8(rd8(ABS(0x0180)));
+            sbc8(rd8(ABS(RIDER_STEP)));
             wr8(ABS(0x0190 + X), (u8)A);
             if (!fc)
                 wr8(ABS(0x0198 + X), dec8(rd8(ABS(0x0198 + X))));
             lda8(rd8(ABS(0x090C + X)));
             fc = 1;
-            sbc8(rd8(ABS(0x0180)));
+            sbc8(rd8(ABS(RIDER_STEP)));
             wr8(ABS(0x090C + X), (u8)A);
         }
         X = dec8((u8)X);

@@ -19,6 +19,10 @@ import argparse
 import json
 import os
 import re
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import ramname  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -204,9 +208,13 @@ def main():
             dst_hand.add(t[4])
             dst_pcs.add(t[0].upper())
     srcs, defines, oneliners, globals_ = {}, [], {}, {}
+    ram_src = ramname.load(a.src)       # named RAM operands go back to hex first
+    ram_dst = ramname.load(a.dst)
     for fn in sorted(os.listdir(os.path.join(ROOT, 'c', 'hand', a.src))):
         if fn.endswith('.c') and fn not in ('roster_rom.c', 'port_rom.c'):   # the target has its own
             text = open(os.path.join(ROOT, 'c', 'hand', a.src, fn), encoding='utf-8').read()
+            if ram_src:
+                text = ramname.expand(text, ram_src)
             srcs.update(extract_functions(text))
             for m in re.finditer(r'^(?:static )?(?:const )?(?:unsigned|int|u8|u16|u32|uint\w+|s8|s16)\s+\*?(\w+)(?:\[[^\]]*\])*\s*(?:=\s*(?:\{(?:.|\n)*?\}|[^;{]*))?;', text, re.M):
                 globals_.setdefault(m.group(1), m.group(0))
@@ -391,13 +399,21 @@ def main():
     for inc in ('roster.h', 'port.h'):          # the target's own hook headers
         if os.path.exists(os.path.join(ROOT, 'c', 'hand', a.dst, inc)):
             head.append('#include "%s"' % inc)
+    if ram_dst:
+        head.append('#include "ram.h"')
     head.append('')
     used = '\n'.join(out_funcs + [srcs[h][0] for h in helpers])
     inl = [l for n, l in oneliners.items() if re.search(r'\b%s\(' % n, used)]
     gl = [g for n, g in globals_.items() if re.search(r'\b%s\b' % n, every)]
+    if ram_dst:   # the target's ram.h names these: drop enums and defines that clash
+        defines = [d for d in defines
+                   if not set(re.findall(r'\b([A-Z_][A-Z0-9_]*)\s*=', d) + re.findall(r'^#define\s+(\w+)', d)) & set(ram_dst)]
     body = head + defines + [''] + gl + [''] + inl + [''] + protos + [''] + helper_text + [''] + out_funcs
     outp = a.out or os.path.join(ROOT, 'c', 'hand', a.dst, 'from_%s.c' % a.src)
-    open(outp, 'w', encoding='utf-8', newline='\n').write('\n'.join(body) + '\n')
+    text = '\n'.join(body) + '\n'
+    if ram_dst:
+        text = ramname.name_text(text, ram_dst)
+    open(outp, 'w', encoding='utf-8', newline='\n').write(text)
     print('wrote %s: %d routines' % (outp, len(out_funcs)))
     for rel, new in ((os.path.join('c', 'hand', a.dst, 'hand.txt'), lines_hand),
                      (os.path.join('config', a.dst, 'names.txt'), lines_names)):
