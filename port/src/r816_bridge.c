@@ -26,7 +26,23 @@ extern uint16_t A, X, Y, S, D;
 extern uint8_t DB, PB;
 extern uint8_t fn, fz, fc, fv, fd, fi, fm, fx;
 
-uint8_t r816_bus_read(uint32_t a) { return cpu_read8(&g_cpu, (uint8)(a >> 16), (uint16)a); }
+/* Native mode (port/src/native_driver.c): the hand-written C is the CPU and
+ * every access it makes charges the clock and may yield to the driver. */
+int r816_native;
+#ifdef BUNBUN_GENB
+void r816_native_tick(uint32_t a);
+int r816_native_call(uint32_t pc24);
+#else
+static void r816_native_tick(uint32_t a) { (void)a; }
+static int r816_native_call(uint32_t pc24) { (void)pc24; return 0; }
+#endif
+
+uint8_t r816_bus_read(uint32_t a)
+{
+    if (r816_native)
+        r816_native_tick(a);
+    return cpu_read8(&g_cpu, (uint8)(a >> 16), (uint16)a);
+}
 
 /* Optional DMA catalogue (BUNBUN_DMALOG=<file>): every distinct DMA started
  * by hand code (all of the game's uploads go through DmaKick,
@@ -89,6 +105,8 @@ static void dma_catalogue(uint8 enable)
 
 void r816_bus_write(uint32_t a, uint8_t v)
 {
+    if (r816_native)
+        r816_native_tick(a);
     if (((a >> 16) & 0x40) == 0) {
         uint16 r = (uint16)a;
         if (r == 0x420B && v)
@@ -133,6 +151,8 @@ static void to_cpu(CpuState *cpu, uint32 cycles)
  * the frame scheduler (see the note at the end of this file). */
 int r816_call_native(uint32_t pc24, int frame)
 {
+    if (r816_native)
+        return r816_native_call(pc24);
     to_cpu(&g_cpu, 0);
     uint32 ret_pc = 0;
     cpu_dispatch_call_pc_pushed(&g_cpu, pc24, pc24, (uint8)frame, &ret_pc);
@@ -147,6 +167,8 @@ static RecompReturn g_tail_result;
 
 int r816_call_pc(uint32_t pc24)
 {
+    if (r816_native)
+        return r816_native_call(pc24);
     to_cpu(&g_cpu, 0);
     g_tail_result = cpu_dispatch_pc_from(&g_cpu, 0x800000u | pc24, g_cpu.S, pc24);
     g_tail_pending = 1;          /* the hand routine returns right after this */
@@ -1512,8 +1534,13 @@ static void spc_set_dp(uint32_t stream)
     cpu_write8(&g_cpu, 0x00, (uint16_t)(d + 1), (uint8_t)(stream >> 8));
     cpu_write8(&g_cpu, 0x00, (uint16_t)(d + 2), (uint8_t)(stream >> 16));
 }
+void SpcUploadB_hand_m1x1(void);       /* c/hand/s4/spc.c, built under this name */
 void SpcUploadB_m1x1(void)
 {
+    if (r816_native) {                  /* time runs: the handshake itself works */
+        SpcUploadB_hand_m1x1();
+        return;
+    }
     uint8_t x = (uint8_t)X;
     uint32_t stream = cpu_read8(&g_cpu, 0x82, (uint16_t)(0x857E + x)) |
                       cpu_read8(&g_cpu, 0x82, (uint16_t)(0x8585 + x)) << 8 |

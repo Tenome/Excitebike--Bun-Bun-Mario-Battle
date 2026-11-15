@@ -31,6 +31,7 @@ What the port adds:
 
 | Feature | |
 |---|---|
+| **Native engine** | Launcher Game > Engine > Native: the Stadium 3–4 game runs entirely from the hand-written C of the decompilation (no recompiled code), over the port's PPU, APU and DMA |
 | **Expanded roster** | Mario, Yoshi, Kinopio, Wario, Peach and Luigi in one player select (Luigi's rider set and voice come from the Stadium 3 dump) |
 | **Every character races** | The characters not in a race's lineup ride in place of Koopa riders, so all six race together (drawn by the port's renderer with their own sprites and colours) |
 | **CPU rivals in every race** | The original runs the free runs alone and meets the seven rivals only in the final; the port fills every race (the engine's eight rider slots) |

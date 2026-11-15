@@ -116,7 +116,10 @@ static inline void sep(u8 v) { setP(getP() | v); }
 
 /* ---- stack ----------------------------------------------------------------- */
 static inline void push8(u8 v) { wr8(S, v); S--; }
-static inline u8 pull8(void) { S++; return rd8(S); }
+/* read before S moves: an interrupt the port's native mode takes during the
+ * access then pushes below the byte, as the CPU's one-instruction pull keeps
+ * it (port/src/native_driver.c) */
+static inline u8 pull8(void) { u8 v = rd8((u16)(S + 1)); S++; return v; }
 static inline void push16(u16 v) { push8((u8)(v >> 8)); push8((u8)v); }
 static inline u16 pull16(void) { u8 lo = pull8(); return (u16)(lo | pull8() << 8); }
 

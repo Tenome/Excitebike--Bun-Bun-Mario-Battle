@@ -131,6 +131,12 @@ The rest of the 1 MB is graphics, tracks, music and other data.
    the $A7 landing, and the IRQ handler nine bytes higher). Everything is
    difftested on the S1 / S4 snapshots; the differences between the
    Stadiums are now written down routine by routine.
+0e. ✅ The game runs from the decompiled C alone (Gen B, 2026-11-14): native
+   mode (`BUNBUN_NATIVE=1`, launcher Game > Engine) runs the hand-written
+   Reset / NMI / IRQ handlers on fibers over the port's PPU, APU and DMA,
+   with every bus access charging the clock (`port/src/native_driver.c`,
+   docs/NOTES.md). Boot to the final with every character verified; the
+   recompiled mode's regressions are unchanged.
 1. Hand-lift routines to readable C, kept in `c/`. `c/s1_core.c` is the start.
 2. Use the same approach as the NES Excitebike port: test each routine
    against the recompiled or interpreted original. Compare RAM and the order

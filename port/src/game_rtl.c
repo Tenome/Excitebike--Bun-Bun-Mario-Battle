@@ -226,8 +226,29 @@ static void ForceCharAfterFrame(void)
 void RivalsAfterFrame(void);   /* src/roster.c */
 #endif
 
+#ifdef BUNBUN_GENB
+/* Native mode (src/native_driver.c): the hand-written C is the CPU. */
+void BunbunNativeRunFrame(void);
+extern int r816_native;
+static int NativeEngine(void)
+{
+    static int v = -1;
+    if (v < 0) {
+        const char *e = getenv("BUNBUN_NATIVE");
+        v = (e && *e) ? atoi(e) != 0 : strcmp(bunbun_setting("game.engine", "recompiled"), "native") == 0;
+        r816_native = v;
+    }
+    return v && r816_native;
+}
+#endif
+
 void GameRunOneFrame(void)
 {
+#ifdef BUNBUN_GENB
+    if (NativeEngine())
+        BunbunNativeRunFrame();
+    else
+#endif
     snes_beam_frame_driver_run_frame();
 #ifdef BUNBUN_GENB
     RivalsAfterFrame();

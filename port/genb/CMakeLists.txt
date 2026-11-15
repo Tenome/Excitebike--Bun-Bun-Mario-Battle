@@ -15,3 +15,17 @@ target_sources(BunbunS4SNESRecomp PRIVATE ${_bunbun_hand_b} ${CMAKE_SOURCE_DIR}/
 set_source_files_properties(${_bunbun_hand_b} PROPERTIES
     COMPILE_DEFINITIONS R816_EXTERNAL_BUS=1
     INCLUDE_DIRECTORIES "${BUNBUN_C};${BUNBUN_C}/hand/s4")
+
+# Native mode (src/native_driver.c): the whole game from the hand-written C,
+# with the Reset handler (c/hand/s4/reset.c), the sound uploads through their
+# own handshake (c/hand/s4/spc.c, renamed so the bridge's native-transfer
+# versions stay the default) and the address -> routine table.
+set(_bunbun_native_b ${BUNBUN_C}/hand/s4/reset.c ${BUNBUN_C}/hand/s4/spc.c)
+target_sources(BunbunS4SNESRecomp PRIVATE ${_bunbun_native_b}
+    ${CMAKE_SOURCE_DIR}/src/native_driver.c ${CMAKE_SOURCE_DIR}/src/hand_table_s4.c)
+set_source_files_properties(${BUNBUN_C}/hand/s4/reset.c PROPERTIES
+    COMPILE_DEFINITIONS R816_EXTERNAL_BUS=1
+    INCLUDE_DIRECTORIES "${BUNBUN_C};${BUNBUN_C}/hand/s4")
+set_source_files_properties(${BUNBUN_C}/hand/s4/spc.c PROPERTIES
+    COMPILE_DEFINITIONS "R816_EXTERNAL_BUS=1;SpcUploadB_m1x1=SpcUploadB_hand_m1x1;SpcUploadFrom=SpcUploadFrom_hand"
+    INCLUDE_DIRECTORIES "${BUNBUN_C};${BUNBUN_C}/hand/s4")

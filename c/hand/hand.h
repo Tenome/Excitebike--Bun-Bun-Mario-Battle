@@ -29,7 +29,9 @@ extern long r816_ticks, r816_limit;
  * the recompiled program (port/src/r816_bridge.c). frame = 2 (JSR) or 3 (JSL). */
 #ifdef R816_EXTERNAL_BUS
 int r816_call_native(u32 pc24, int frame);
-#define CALL(fn, pc24, frame) ((void)r816_call_native((pc24), (frame)))
+/* in the port's native mode (port/src/native_driver.c) everything is hand C */
+extern int r816_native;
+#define CALL(fn, pc24, frame) ((void)(r816_native ? (fn(), 1) : r816_call_native((pc24), (frame))))
 #else
 #define CALL(fn, pc24, frame) fn()
 #endif

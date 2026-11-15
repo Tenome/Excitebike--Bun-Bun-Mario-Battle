@@ -450,3 +450,35 @@ per-character race sets ($82:857E stream table, X = character + 1) add
 instruments $20-$24 and their samples from $C360 up; the echo buffer is
 $EF00-$FEFF (ESA $EF, EDL 2). Sound ids $1B-$1F are songs, pointed at by
 the word table at $5CFF + 2 * id.
+
+## Native mode: the game from the decompiled C (Gen B)
+
+With every routine hand-written, the Gen B exe can run without the
+recompiled program (`BUNBUN_NATIVE=1`, launcher Game > Engine > Native,
+`port/src/native_driver.c`). The hand-written Reset handler
+(`c/hand/s4/reset.c`: the boot, then a main loop frame after each NMI) runs
+on a fiber; the NMI and IRQ handlers run on fibers stacked above it when the
+hardware raises them. Every bus access the C makes (`r816_bus_read/write`)
+charges the CPU clock (6 master clocks for FastROM, 8 otherwise) and syncs the
+beam before a hardware register is touched, so code that waits on hardware
+works: the sound CPU's IPL and driver handshakes (`c/hand/s4/spc.c`, used
+as written), the NMI flag the main loop polls. At the slice deadline the
+running fiber yields to the driver, which runs the field like the
+framework's beam driver: NMI at V=225, raster IRQs at the beam position
+they latch at, the field drawn from the raster journal. Computed transfers
+(jump tables) find their routine in a table made from `hand.txt`
+(`tools/hand_table.py`), and `CALL()` calls the C directly.
+
+An interrupt preempts the C between bus accesses. That is between two
+instructions of the original, with one exception that showed up at once:
+`pull8` incremented S before reading, so an interrupt inside the read pushed
+its frame over the byte being pulled (ConfettiAll's slot index came back as
+a return-address byte and its state table was indexed out of range). It now
+reads first (`c/runtime816.h`), as the CPU's one-instruction pull behaves.
+
+Verified: boot, intro, practice, player select (Luigi), course preview,
+free run, results board and the final with every character, all from the C;
+pictures match the recompiled build frame for frame apart from a 23-27
+frame offset (the boot's sound uploads finish sooner). Not available in
+native mode: save states and rewind (the fibers' C stacks are not in a
+snapshot), Windows only (fibers).
