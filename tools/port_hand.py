@@ -110,7 +110,7 @@ def extract_functions(src):
     out = {}
     # only a comment directly above the function goes with it (not one that
     # runs on into the file's #include lines)
-    pat = re.compile(r'^((?:/\*(?:(?!\*/)(?:.|\n))*\*/\n)?)((?:static )?(?:inline )?(?:void|u8|u16|u32|int) (\w+)\([^)]*\)\n\{\n(?:.|\n)*?\n\})', re.M)
+    pat = re.compile(r'^((?:/\*(?:(?!\*/)(?:.|\n))*\*/\n)?)((?:R816_EXPORT )?(?:static )?(?:inline )?(?:void|u8|u16|u32|int) (\w+)\([^)]*\)\n\{\n(?:.|\n)*?\n\})', re.M)
     for m in pat.finditer(src):
         out[m.group(3)] = (m.group(1) + m.group(2), m.group(2))
     # one-line definitions: void Name_m1x1(void) { helper(0x1234); }
@@ -382,7 +382,7 @@ def main():
     every = '\n'.join(out_funcs + helper_text)
     protos = sorted({'void %s(void);' % c for c in re.findall(r'\b(\w+_m\dx\d)\b', every)})
     for h in helpers:
-        m = re.match(r'((?:static )?(?:inline )?\w+ \*?\w+\([^)]*\))', srcs[h][1])
+        m = re.match(r'((?:R816_EXPORT )?(?:static )?(?:inline )?\w+ \*?\w+\([^)]*\))', srcs[h][1])
         if m:
             protos.append(m.group(1) + ';')
     head = ['/*', ' * Routines identical (instruction for instruction) to %s\'s hand-written' % a.src.upper(),
@@ -401,6 +401,40 @@ def main():
         old = [l for l in open(path, encoding='utf-8').read().splitlines() if mark not in l]
         open(path, 'w', encoding='utf-8', newline='\n').write('\n'.join(old + new) + '\n')
         print('updated %s (%d lines from %s)' % (rel, len(new), a.src))
+    # fragments of never-returning code (c/hand/<ver>/fragments.txt) whose
+    # exported functions came along: their start and end addresses moved
+    fsrc = os.path.join(ROOT, 'c', 'hand', a.src, 'fragments.txt')
+    if os.path.exists(fsrc):
+        out = ['# Fragments of routines that never return, checked by difftest816.py:',
+               '# START  END    m x  compare  symbol (carried from %s by tools/port_hand.py)' % a.src]
+        for line in open(fsrc):
+            t = line.split('#')[0].split()
+            if len(t) < 6 or not re.search(r'\b%s\(' % t[5], every):
+                continue
+            ins_s = {int(k, 16): v for k, v in code_src['insn'].items()}
+            ins_d = {int(k, 16): v for k, v in code_dst['insn'].items()}
+
+            def where(x):
+                """the fragment address in dst: the instruction map, else the
+                same address when the same instruction is there (code outside
+                any routine pair, such as the boot after Reset)"""
+                if x in PCMAP:
+                    return PCMAP[x]
+                if x in ins_s and x in ins_d and ins_s[x][0] == ins_d[x][0]:
+                    return x
+                return None
+            st, en = where(int(t[0], 16)), where(int(t[1], 16))
+            if st is None or en is None:
+                print('fragment %s: no address for %s / %s' % (t[5], t[0], t[1]))
+                continue
+            rest = line[line.index(t[2], len(t[0]) + len(t[1])):].rstrip()
+            out.append('%06X  %06X  %s' % (st, en, rest))
+        fdst = os.path.join(ROOT, 'c', 'hand', a.dst, 'fragments.txt')
+        if os.path.exists(fdst):              # keep the target's own fragments (# <file>.c)
+            out += [l.rstrip() for l in open(fdst)
+                    if not l.startswith('#') and re.search(r'#\s*\w+\.c\b', l)]
+        open(fdst, 'w', newline='\n').write('\n'.join(out) + '\n')
+        print('wrote c/hand/%s/fragments.txt (%d fragments)' % (a.dst, len(out) - 2))
 
 
 if __name__ == '__main__':

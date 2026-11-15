@@ -22,6 +22,15 @@
 808000 Reset
 808256 Nmi
 80B898 Irq
+8099EE EndScreenCode         # s3.c
+809A61 EntryMenuStep         # s3.c
+80B7F5 CourseSelectStep      # s3.c
+80B7FA JumpRunStepsMode      # s3.c
+80F01A StopWhenStill         # s3.c
+809D82 ModeCountdown         # s3.c
+80865A TitleScrollStep       # s3.c
+80EBD9 ReadBonusTrack        # s3.c
+80FFA9 IrqVector             # s3.c
 828965 RiderGfxCycle         # from s4 828965
 8287FD RiderSpriteSets       # from s4 8287FD
 82899B LoadRiderPalettes     # from s4 82899B
@@ -550,3 +559,4 @@
 80FFA0 EmptyVector           # from s4 80FFA0
 80B91B ScaleByScroll         # from s4 80B912
 80FFA1 NmiVector             # from s4 80FFA1
+80FFA5 ResetVector           # from s4 80FFA5

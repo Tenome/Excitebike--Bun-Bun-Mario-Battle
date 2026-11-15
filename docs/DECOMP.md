@@ -425,7 +425,7 @@ One row per hand-written variant (some routines have one per register width).
 
 ## s2
 
-406 functions in the static map; 401 hand-written (98.8%) (this dump is not a port build: the S1 / S4 builds carry its Stadium).
+406 functions in the static map; 406 hand-written (100.0%) (this dump is not a port build: the S1 / S4 builds carry its Stadium).
 One row per hand-written variant (some routines have one per register width).
 
 | Address | Routine | Compare | File |
@@ -473,6 +473,7 @@ One row per hand-written variant (some routines have one per register width).
 | `$80:92A0` | RaceResultsSetup | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$80:95AE` | DrawText95C4 | `mem+Y,V` | `from_s1.c` |
 | `$80:9698` | Mode04_FreeRunSchedule | `mem+A,X,Y,C,V` | `from_s1.c` |
+| `$80:973F` | BroadcastTotals | `mem+A,X,Y,C,V` | `s2.c` |
 | `$80:97FC` | SaveBestRecords | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$80:98AF` | QueueTimeDigits | `mem+X,Y,C,V` | `from_s1.c` |
 | `$80:993F` | QueueFiveDigits | `mem+X,Y,C,V` | `from_s1.c` |
@@ -482,12 +483,15 @@ One row per hand-written variant (some routines have one per register width).
 | `$80:99E2` | EndScreenTimes | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$80:9A4D` | EndScreenScore | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$80:9A82` | EndScreenRecord | `mem+A,X,Y,C,V` | `from_s1.c` |
+| `$80:9AF4` | EndScreenCode | `mem+A,X,Y,C,V` | `s2.c` |
+| `$80:9B67` | EndScreenChoice | `mem+A,X,Y,C,V` | `s2.c` |
 | `$80:9BD3` | EndScreenScrollIn | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$80:9C18` | EntryNumberEditor | `mem+X,Y,C,V` | `from_s1.c` |
 | `$80:9D12` | EndScreenPrompt | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$80:9D4E` | DrawEntryScreen | `mem+X,Y,C,V` | `from_s1.c` |
 | `$80:9DEB` | EndScreenStart | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$80:9E28` | BeginFadeInBg3 | `mem+X,Y,C,V` | `from_s1.c` |
+| `$80:9E50` | Mode10_Ending | `mem+X,Y,C,V` | `s2.c` |
 | `$80:9E72` | BeginFadeIn | `mem+X,Y,C,V` | `from_s1.c` |
 | `$80:9E89` | Mode11 | `mem+X,Y,C,V` | `from_s1.c` |
 | `$80:9EA6` | StartCredits | `mem+X,Y,C,V` | `from_s1.c` |
@@ -730,6 +734,7 @@ One row per hand-written variant (some routines have one per register width).
 | `$80:EE61` | QueueScoreDigits | `mem+X,Y,C,V` | `from_s1.c` |
 | `$80:FFA0` | EmptyVector | `full` | `from_s1.c` |
 | `$80:FFA1` | NmiVector | `full` | `from_s1.c` |
+| `$80:FFA5` | ResetVector | `full` | `s2.c` |
 | `$80:FFA9` | IrqVector | `full` | `from_s1.c` |
 | `$81:8A42` | RaceRowList | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$81:8A4D` | LoadRaceColumn | `mem+A,X,Y,C,V` | `from_s1.c` |
@@ -835,7 +840,7 @@ One row per hand-written variant (some routines have one per register width).
 
 ## s3
 
-532 functions in the static map; 522 hand-written (98.1%) (this dump is not a port build: the S1 / S4 builds carry its Stadium).
+532 functions in the static map; 532 hand-written (100.0%) (this dump is not a port build: the S1 / S4 builds carry its Stadium).
 One row per hand-written variant (some routines have one per register width).
 
 | Address | Routine | Compare | File |
@@ -847,6 +852,7 @@ One row per hand-written variant (some routines have one per register width).
 | `$80:85A9` | RunGameModeScript | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:8603` | Mode00_IntroWait | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:862A` | StartIntroMode | `mem+X,Y,C,V` | `from_s4.c` |
+| `$80:865A` | TitleScrollStep | `mem+X,Y,C,V` | `s3.c` |
 | `$80:86DF` | ModeStepNext | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:86E2` | Mode0E_TitleWait | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:86F6` | StartEndScreen | `mem+X,Y,C,V` | `from_s4.c` |
@@ -887,6 +893,8 @@ One row per hand-written variant (some routines have one per register width).
 | `$80:98DC` | EndScreenTimes | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:9947` | EndScreenScore | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:997C` | EndScreenRecord | `mem+A,X,Y,C,V` | `from_s4.c` |
+| `$80:99EE` | EndScreenCode | `mem+A,X,Y,C,V` | `s3.c` |
+| `$80:9A61` | EntryMenuStep | `mem+X,Y,C,V` | `s3.c` |
 | `$80:9ACD` | EntryIntroStep | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:9B1B` | EnterNumberStep | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:9C22` | EntryConfirmStep | `mem+X,Y,C,V` | `from_s4.c` |
@@ -895,6 +903,7 @@ One row per hand-written variant (some routines have one per register width).
 | `$80:9CDF` | EndScreenStart | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:9D1C` | LoadEntryScreenStep | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:9D45` | StartPracticeMode | `mem+X,Y,C,V` | `from_s4.c` |
+| `$80:9D82` | ModeCountdown | `mem+X,Y,C,V` | `s3.c` |
 | `$80:9DAF` | BeginFadeIn | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:9DC6` | Mode11 | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:9DE3` | StartCredits | `mem+X,Y,C,V` | `from_s4.c` |
@@ -962,6 +971,8 @@ One row per hand-written variant (some routines have one per register width).
 | `$80:B73F` | EndJumpMode | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:B773` | StartJumpMode | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:B7A9` | Mode17_BonusIntro | `mem+X,Y,C,V` | `from_s4.c` |
+| `$80:B7F5` | CourseSelectStep | `mem+X,Y,C,V` | `s3.c` |
+| `$80:B7FA` | JumpRunStepsMode | `mem+A,X,Y,C,V` | `s3.c` |
 | `$80:B91B` | ScaleByScroll | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:B91B` | ScaleByScroll | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:B927` | ParallaxLines | `mem+A,X,Y,C,V` | `from_s4.c` |
@@ -1101,6 +1112,7 @@ One row per hand-written variant (some routines have one per register width).
 | `$80:EA71` | JumpResultBoard | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:EB8C` | DrawCountdownLights | `mem+X,Y,V` | `from_s4.c` |
 | `$80:EBC5` | DispatchBy85B | `mem+X,Y,V` | `from_s4.c` |
+| `$80:EBD9` | ReadBonusTrack | `mem+X,Y,V` | `s3.c` |
 | `$80:ECAA` | ScrollBySpeed16B | `mem+X,Y,V` | `from_s4.c` |
 | `$80:ECC6` | JumpRunUp | `mem+X,Y,V` | `from_s4.c` |
 | `$80:ECEF` | BuildBonusColumn | `mem+A,X,Y,C,V` | `from_s4.c` |
@@ -1115,6 +1127,7 @@ One row per hand-written variant (some routines have one per register width).
 | `$80:EFFF` | DemoStepDispatch | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:F00C` | EmptyF03A | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:F00D` | ScrollDelta | `mem+A,X,Y,C,V` | `from_s4.c` |
+| `$80:F01A` | StopWhenStill | `mem+X,Y,V` | `s3.c` |
 | `$80:F04B` | ShowLastDistance | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:F064` | BonusSignStep | `mem+X,Y,V` | `from_s4.c` |
 | `$80:F0D4` | JumpHudNumbers | `mem+A,X,Y,C,V` | `from_s4.c` |
@@ -1189,6 +1202,8 @@ One row per hand-written variant (some routines have one per register width).
 | `$80:FED9` | QueueBonusDigits | `mem+V` | `from_s4.c` |
 | `$80:FFA0` | EmptyVector | `full` | `from_s4.c` |
 | `$80:FFA1` | NmiVector | `full` | `from_s4.c` |
+| `$80:FFA5` | ResetVector | `full` | `from_s4.c` |
+| `$80:FFA9` | IrqVector | `full` | `s3.c` |
 | `$81:8A42` | RaceRowList | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$81:8A4D` | LoadRaceColumn | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$81:8BEB` | FillLaneColumn | `mem+A,X,Y,C,V` | `from_s4.c` |

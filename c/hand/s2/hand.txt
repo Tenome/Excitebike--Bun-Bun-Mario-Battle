@@ -1,3 +1,8 @@
+80FFA5  1 1  full           ResetVector            # s2.c: never returns, see fragments.txt
+80973F  1 1  mem+A,X,Y,C,V  BroadcastTotals        # s2.c
+809E50  1 1  mem+X,Y,C,V    Mode10_Ending          # s2.c
+809AF4  1 1  mem+A,X,Y,C,V  EndScreenCode          # s2.c
+809B67  1 1  mem+A,X,Y,C,V  EndScreenChoice        # s2.c
 80CF08  1 1  mem+A,X,Y,C,V  TemperatureGauge       # s2.c
 80D80C  1 1  mem+A,X,Y,C,V  SetupJumpContest       # s2.c
 819852  1 1  mem+A,X,Y,C,V  ResultsBonusCount      # s2.c

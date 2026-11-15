@@ -1,3 +1,12 @@
+80FFA9  1 1  full           IrqVector              # s3.c
+80EBD9  1 1  mem+X,Y,V      ReadBonusTrack         # s3.c
+80865A  1 1  mem+X,Y,C,V    TitleScrollStep        # s3.c
+80B7F5  1 1  mem+X,Y,C,V    CourseSelectStep       # s3.c
+80B7FA  1 1  mem+A,X,Y,C,V  JumpRunStepsMode       # s3.c
+80F01A  1 1  mem+X,Y,V      StopWhenStill          # s3.c
+809D82  1 1  mem+X,Y,C,V    ModeCountdown          # s3.c
+8099EE  1 1  mem+A,X,Y,C,V  EndScreenCode          # s3.c
+809A61  1 1  mem+X,Y,C,V    EntryMenuStep          # s3.c
 828965  1 1  mem+X,Y,C,V    RiderGfxCycle          # from s4 828965
 8287FD  1 1  mem+X,Y,C,V    RiderSpriteSets        # from s4 8287FD
 82899B  1 1  mem+X,Y,C,V    LoadRiderPalettes      # from s4 82899B
@@ -526,3 +535,4 @@
 80FFA0  1 1  full           EmptyVector            # from s4 80FFA0
 80B91B  0 1  mem+A,X,Y,C,V  ScaleByScroll          # from s4 80B912
 80FFA1  1 1  full           NmiVector              # from s4 80FFA1
+80FFA5  1 1  full           ResetVector            # from s4 80FFA5

@@ -1,0 +1,6 @@
+# Fragments of routines that never return, checked by difftest816.py:
+# START  END    m x  compare  symbol (carried from s1 by tools/port_hand.py)
+808000  808072  1 1  full     ResetBoot1          # s2.c
+808072  808078  1 1  mem+X,Y,C,V  ResetBoot1Spc  # s2.c: A is dead (SpcUpload leaves it)
+808089  8080FE  1 1  full     ResetBoot2          # s2.c
+808103  8080FE  1 1  full     MainLoopFrame1      # s2.c

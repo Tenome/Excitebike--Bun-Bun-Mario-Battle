@@ -35,6 +35,26 @@ constants (for example `$80:9E46` timer `$0708` → `$0E10`). The episodes diffe
 in data, not in engine. Gen B (S3/S4) is a substantial rewrite with a third
 code bank.
 
+Every real code difference, found while decompiling the S2 and S3 dumps
+(`c/hand/s2/s2.c`, `c/hand/s3/s3.c`; everything else is the same code at moved
+addresses, carried over by `tools/port_hand.py`):
+
+| Dump | Routine | Difference from S1 / S4 |
+|---|---|---|
+| S2 | EndScreenCode / EndScreenChoice | A advances the step by two and redraws the box, sound $34 at the code choice (S1: step $0A, sound $43, no redraw) |
+| S2 | BroadcastTotals | leaves $190D as it is |
+| S2 | Mode10_Ending (`$80:9E50`) | sets $9E = $0100 with $0708 frames left; ends in mode $11 (S1: mode $0F) |
+| S2 | TemperatureGauge | no `LDA #$01` before the warning flag $A2 (it takes A as the sound call left it) |
+| S2 | ResultsBonusCount | the bonus count is queued with attribute $08 ($28) |
+| S2 | SetupJumpContest, DrawRacerNameLow | tables moved inside shared code |
+| S2 | Reset | the APU wait loop repeats the NMITIMEN write (as Gen B does) |
+| S3 | EndScreenCode / EntryMenuStep | S2's versions (S4 has S1's) |
+| S3 | ModeCountdown (`$80:9D82`) | $A4 (and in the S4 half $A6) = $0100 with $0A8C frames left; ends in mode $11 (S4: mode $0F, $88 = $20) |
+| S3 | StopWhenStill | does not set the rider height $01B6 = $B0 |
+| S3 | ReadBonusTrack | no landing on tile $A7 |
+| S3 | TitleScrollStep | the debug start (Select) goes to a race, mode $03 (S4: the jump contest, course 1) |
+| S3 | IRQ handler | the same code nine bytes higher ($80:B898) |
+
 ## Satellaview (BS-X) usage
 * The only receiver library is `$81:F80C-$81:FAB2`. It uses `$2188-$2197`.
 * `$81:FA68` `BsxDetect` → `$7FFFE1` (1 = no receiver).
