@@ -9,7 +9,7 @@ per ROM bank with the bytes that are not code. The source is ca65 assembly
 that rebuilds the dump byte for byte, so every item is 100 % once
 tools/build.py reports a match; the report is not written otherwise.
 
-C (--c): progress of the decompilation into C (s1, s4): a routine is
+C (--c): progress of the decompilation into C (s1-s4): a routine is
   100 %  hand-written readable C (c/hand/<ver>/hand.txt), checked by
          tools/difftest816.py against the original on everything its callers
          can observe;

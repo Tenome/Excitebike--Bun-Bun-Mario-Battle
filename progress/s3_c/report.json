@@ -1,0 +1,4382 @@
+{
+ "measures": {
+  "fuzzy_match_percent": 100.0,
+  "total_code": "36926",
+  "matched_code": "36926",
+  "matched_code_percent": 100.0,
+  "total_data": "0",
+  "matched_data": "0",
+  "matched_data_percent": 0.0,
+  "total_functions": 532,
+  "matched_functions": 532,
+  "matched_functions_percent": 100.0,
+  "complete_code": "36926",
+  "complete_code_percent": 100.0,
+  "complete_data": "0",
+  "complete_data_percent": 0.0,
+  "total_units": 3,
+  "complete_units": 3
+ },
+ "units": [
+  {
+   "name": "main/bank80",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": "24667",
+    "matched_code": "24667",
+    "matched_code_percent": 100.0,
+    "total_data": "0",
+    "matched_data": "0",
+    "matched_data_percent": 0.0,
+    "total_functions": 357,
+    "matched_functions": 357,
+    "matched_functions_percent": 100.0,
+    "complete_code": "24667",
+    "complete_code_percent": 100.0,
+    "complete_data": "0",
+    "complete_data_percent": 0.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".text",
+     "size": "24667",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [
+    {
+     "name": "DrawClockB",
+     "size": "165",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8421801"
+     }
+    },
+    {
+     "name": "DmaKick",
+     "size": "388",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8421966"
+     }
+    },
+    {
+     "name": "NmiVramUpload",
+     "size": "355",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8422354"
+     }
+    },
+    {
+     "name": "NmiFlushVramQueue",
+     "size": "116",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8422709"
+     }
+    },
+    {
+     "name": "RunGameModeScript",
+     "size": "90",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8422825"
+     }
+    },
+    {
+     "name": "Mode00_IntroWait",
+     "size": "39",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8422915"
+     }
+    },
+    {
+     "name": "StartIntroMode",
+     "size": "48",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8422954"
+     }
+    },
+    {
+     "name": "TitleScrollStep",
+     "size": "133",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8423002"
+     }
+    },
+    {
+     "name": "ModeStepNext",
+     "size": "3",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8423135"
+     }
+    },
+    {
+     "name": "Mode0E_TitleWait",
+     "size": "20",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8423138"
+     }
+    },
+    {
+     "name": "StartEndScreen",
+     "size": "165",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8423158"
+     }
+    },
+    {
+     "name": "Mode02_SegmentCard",
+     "size": "20",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8423577"
+     }
+    },
+    {
+     "name": "StartRandomCourse",
+     "size": "235",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8423613"
+     }
+    },
+    {
+     "name": "StartModeWithSound",
+     "size": "20",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8423858"
+     }
+    },
+    {
+     "name": "FinishModeSetup",
+     "size": "15",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8423878"
+     }
+    },
+    {
+     "name": "SelectMain",
+     "size": "328",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8423893"
+     }
+    },
+    {
+     "name": "SelectTimer",
+     "size": "79",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8424228"
+     }
+    },
+    {
+     "name": "SelectRotate",
+     "size": "53",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8424307"
+     }
+    },
+    {
+     "name": "SelectDraw",
+     "size": "314",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8424364"
+     }
+    },
+    {
+     "name": "SelectHideRest",
+     "size": "16",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8424742"
+     }
+    },
+    {
+     "name": "SelectSlideY",
+     "size": "50",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8424758"
+     }
+    },
+    {
+     "name": "SelectTransition",
+     "size": "78",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8424810"
+     }
+    },
+    {
+     "name": "SelectName",
+     "size": "194",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8424888"
+     }
+    },
+    {
+     "name": "ChangeModeLong",
+     "size": "4",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8425230"
+     }
+    },
+    {
+     "name": "NextMode",
+     "size": "2",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8425235"
+     }
+    },
+    {
+     "name": "ChangeMode",
+     "size": "15",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8425237"
+     }
+    },
+    {
+     "name": "StartPlayerSelect",
+     "size": "62",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8425252"
+     }
+    },
+    {
+     "name": "StartSession",
+     "size": "38",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8425319"
+     }
+    },
+    {
+     "name": "SetupHdmaFlag",
+     "size": "9",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8425371"
+     }
+    },
+    {
+     "name": "ClearRaceState",
+     "size": "75",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8425380"
+     }
+    },
+    {
+     "name": "ShowStadium1Row",
+     "size": "19",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8425455"
+     }
+    },
+    {
+     "name": "ShowCoinRank",
+     "size": "168",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8425474"
+     }
+    },
+    {
+     "name": "StartRaceBoard",
+     "size": "8",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8425970"
+     }
+    },
+    {
+     "name": "ResetRaceBoard",
+     "size": "80",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8425978"
+     }
+    },
+    {
+     "name": "RaceResultsSetup",
+     "size": "490",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8426058"
+     }
+    },
+    {
+     "name": "ShowItemPoints",
+     "size": "221",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8426607"
+     }
+    },
+    {
+     "name": "AddBcdDigits",
+     "size": "25",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8426828"
+     }
+    },
+    {
+     "name": "ShowDigitDifference",
+     "size": "59",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8426853"
+     }
+    },
+    {
+     "name": "BroadcastEndScreens",
+     "size": "102",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8426912"
+     }
+    },
+    {
+     "name": "ResultsPlacePoints",
+     "size": "203",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8427014"
+     }
+    },
+    {
+     "name": "ResultsJumpPoints",
+     "size": "197",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8427230"
+     }
+    },
+    {
+     "name": "BroadcastTotals",
+     "size": "192",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8427447"
+     }
+    },
+    {
+     "name": "BsxReadHeader3",
+     "size": "31",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8427639"
+     }
+    },
+    {
+     "name": "BsxReadSerialByte",
+     "size": "26",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8427670"
+     }
+    },
+    {
+     "name": "Mode0F_EndScreen",
+     "size": "21",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8427696"
+     }
+    },
+    {
+     "name": "EndScreenTimes",
+     "size": "97",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8427740"
+     }
+    },
+    {
+     "name": "EndScreenScore",
+     "size": "53",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8427847"
+     }
+    },
+    {
+     "name": "EndScreenRecord",
+     "size": "114",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8427900"
+     }
+    },
+    {
+     "name": "EndScreenCode",
+     "size": "115",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8428014"
+     }
+    },
+    {
+     "name": "EntryMenuStep",
+     "size": "108",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8428129"
+     }
+    },
+    {
+     "name": "EntryIntroStep",
+     "size": "78",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8428237"
+     }
+    },
+    {
+     "name": "EnterNumberStep",
+     "size": "259",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8428315"
+     }
+    },
+    {
+     "name": "EntryConfirmStep",
+     "size": "68",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8428578"
+     }
+    },
+    {
+     "name": "SetupJumpScreen",
+     "size": "33",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8428646"
+     }
+    },
+    {
+     "name": "EntryScreenFill",
+     "size": "86",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8428679"
+     }
+    },
+    {
+     "name": "EndScreenStart",
+     "size": "61",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8428767"
+     }
+    },
+    {
+     "name": "LoadEntryScreenStep",
+     "size": "41",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8428828"
+     }
+    },
+    {
+     "name": "StartPracticeMode",
+     "size": "61",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8428869"
+     }
+    },
+    {
+     "name": "ModeCountdown",
+     "size": "45",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8428930"
+     }
+    },
+    {
+     "name": "BeginFadeIn",
+     "size": "23",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8428975"
+     }
+    },
+    {
+     "name": "Mode11",
+     "size": "29",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8428998"
+     }
+    },
+    {
+     "name": "StartCredits",
+     "size": "132",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8429027"
+     }
+    },
+    {
+     "name": "Mode12_AfterEnd",
+     "size": "215",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8429224"
+     }
+    },
+    {
+     "name": "GrowBar087E",
+     "size": "33",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8429439"
+     }
+    },
+    {
+     "name": "StepColourCycle",
+     "size": "43",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8429503"
+     }
+    },
+    {
+     "name": "BsxEndIfFlagged",
+     "size": "18",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8429546"
+     }
+    },
+    {
+     "name": "ShowEntryCode",
+     "size": "125",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8429564"
+     }
+    },
+    {
+     "name": "LoadPackNumber",
+     "size": "163",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8429689"
+     }
+    },
+    {
+     "name": "Add32",
+     "size": "22",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8429852"
+     }
+    },
+    {
+     "name": "ReadBroadcastDate",
+     "size": "85",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8429874"
+     }
+    },
+    {
+     "name": "StoreEntryNumber",
+     "size": "129",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8429959"
+     }
+    },
+    {
+     "name": "MergeBsxFlags",
+     "size": "49",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8430452"
+     }
+    },
+    {
+     "name": "CountCourseBits",
+     "size": "38",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8430501"
+     }
+    },
+    {
+     "name": "ShowCourseRecord",
+     "size": "120",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8430688"
+     }
+    },
+    {
+     "name": "DrawRaceHud",
+     "size": "154",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8430819"
+     }
+    },
+    {
+     "name": "QueueStadiumLabel",
+     "size": "17",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8431159"
+     }
+    },
+    {
+     "name": "QueueResultsRow",
+     "size": "22",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8431193"
+     }
+    },
+    {
+     "name": "DrawCoinPickup",
+     "size": "218",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8431224"
+     }
+    },
+    {
+     "name": "DrawBonusPickup",
+     "size": "192",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8431477"
+     }
+    },
+    {
+     "name": "RacePlaceRiders",
+     "size": "344",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8431714"
+     }
+    },
+    {
+     "name": "Mode03_Race",
+     "size": "200",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8432074"
+     }
+    },
+    {
+     "name": "DrawCountdownSign",
+     "size": "52",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8432285"
+     }
+    },
+    {
+     "name": "SendSpeedToApu",
+     "size": "18",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8432445"
+     }
+    },
+    {
+     "name": "BallOrGauge",
+     "size": "19",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8432463"
+     }
+    },
+    {
+     "name": "RaceFinishStep",
+     "size": "110",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8432482"
+     }
+    },
+    {
+     "name": "ThrottleAll",
+     "size": "6",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8432592"
+     }
+    },
+    {
+     "name": "RidersThrottle",
+     "size": "55",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8432598"
+     }
+    },
+    {
+     "name": "RiderThrottleLong",
+     "size": "10",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8432653"
+     }
+    },
+    {
+     "name": "RiderThrottle",
+     "size": "200",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8432663"
+     }
+    },
+    {
+     "name": "RiderOnRamp",
+     "size": "93",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8432863"
+     }
+    },
+    {
+     "name": "AccelerateRider",
+     "size": "96",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8433212"
+     }
+    },
+    {
+     "name": "BrakeOnTurn",
+     "size": "4",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8433308"
+     }
+    },
+    {
+     "name": "BrakeRider",
+     "size": "168",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8433312"
+     }
+    },
+    {
+     "name": "CpuRidersStep",
+     "size": "72",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8433480"
+     }
+    },
+    {
+     "name": "CpuLaneDecision",
+     "size": "98",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8433552"
+     }
+    },
+    {
+     "name": "CpuSteerUp",
+     "size": "53",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8433650"
+     }
+    },
+    {
+     "name": "CpuSteerDown",
+     "size": "48",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8433703"
+     }
+    },
+    {
+     "name": "RiderOnFlat",
+     "size": "3",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8433751"
+     }
+    },
+    {
+     "name": "IsPieceFlat",
+     "size": "8",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8433754"
+     }
+    },
+    {
+     "name": "RiderAhead",
+     "size": "55",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8433762"
+     }
+    },
+    {
+     "name": "CpuThrottle",
+     "size": "20",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8433817"
+     }
+    },
+    {
+     "name": "CpuReleaseButtons",
+     "size": "9",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8433837"
+     }
+    },
+    {
+     "name": "CpuReleaseDpad",
+     "size": "9",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8433846"
+     }
+    },
+    {
+     "name": "CpuSteer",
+     "size": "26",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8433855"
+     }
+    },
+    {
+     "name": "RetargetRival",
+     "size": "26",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8433881"
+     }
+    },
+    {
+     "name": "CpuAvoidHurdle",
+     "size": "142",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8433907"
+     }
+    },
+    {
+     "name": "LaneFromY",
+     "size": "28",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8434049"
+     }
+    },
+    {
+     "name": "ReadRiderPieces",
+     "size": "52",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8434077"
+     }
+    },
+    {
+     "name": "RaceFrameStep",
+     "size": "35",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8434193"
+     }
+    },
+    {
+     "name": "DrawBigSprite",
+     "size": "107",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8434228"
+     }
+    },
+    {
+     "name": "ScreenOff",
+     "size": "9",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8434390"
+     }
+    },
+    {
+     "name": "VramQueueTilesLong",
+     "size": "4",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8434399"
+     }
+    },
+    {
+     "name": "VramQueueTiles20",
+     "size": "4",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8434403"
+     }
+    },
+    {
+     "name": "VramQueueTiles",
+     "size": "169",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8434407"
+     }
+    },
+    {
+     "name": "QueueTileBlockLong",
+     "size": "4",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8434576"
+     }
+    },
+    {
+     "name": "QueueTileBlock",
+     "size": "166",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8434580"
+     }
+    },
+    {
+     "name": "QueueTileRowsLong",
+     "size": "4",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8434746"
+     }
+    },
+    {
+     "name": "QueueTileRows",
+     "size": "153",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8434750"
+     }
+    },
+    {
+     "name": "StepLfsr",
+     "size": "43",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8434903"
+     }
+    },
+    {
+     "name": "ModeNop",
+     "size": "2",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8435046"
+     }
+    },
+    {
+     "name": "StartBonusMode",
+     "size": "51",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8435148"
+     }
+    },
+    {
+     "name": "Mode09_BonusIntro",
+     "size": "99",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8435201"
+     }
+    },
+    {
+     "name": "StartBonusResult",
+     "size": "219",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8435300"
+     }
+    },
+    {
+     "name": "EndJumpMode",
+     "size": "52",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8435519"
+     }
+    },
+    {
+     "name": "StartJumpMode",
+     "size": "54",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8435571"
+     }
+    },
+    {
+     "name": "Mode17_BonusIntro",
+     "size": "76",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8435625"
+     }
+    },
+    {
+     "name": "CourseSelectStep",
+     "size": "5",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8435701"
+     }
+    },
+    {
+     "name": "JumpRunStepsMode",
+     "size": "136",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8435706"
+     }
+    },
+    {
+     "name": "ScaleByScroll",
+     "size": "12",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8435995"
+     }
+    },
+    {
+     "name": "ParallaxLines",
+     "size": "112",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8436007"
+     }
+    },
+    {
+     "name": "Mul16",
+     "size": "108",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8436119"
+     }
+    },
+    {
+     "name": "Mul16b",
+     "size": "108",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8436227"
+     }
+    },
+    {
+     "name": "Nop_BD39",
+     "size": "9",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8436335"
+     }
+    },
+    {
+     "name": "RiderStepAll",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8436547"
+     }
+    },
+    {
+     "name": "EmptyBB45",
+     "size": "1",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8436558"
+     }
+    },
+    {
+     "name": "RiderStateStep",
+     "size": "16",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8436559"
+     }
+    },
+    {
+     "name": "RiderRunOut",
+     "size": "44",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8436575"
+     }
+    },
+    {
+     "name": "WalkToStartLane",
+     "size": "77",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8436619"
+     }
+    },
+    {
+     "name": "RiderAtFinish",
+     "size": "114",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8436696"
+     }
+    },
+    {
+     "name": "RiderStartLane",
+     "size": "26",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8436810"
+     }
+    },
+    {
+     "name": "RiderAtStart",
+     "size": "78",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8436836"
+     }
+    },
+    {
+     "name": "RiderShadowY",
+     "size": "20",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8436914"
+     }
+    },
+    {
+     "name": "RaceMoveStep",
+     "size": "30",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8436934"
+     }
+    },
+    {
+     "name": "AddSpeedToXLong",
+     "size": "4",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8436984"
+     }
+    },
+    {
+     "name": "AddSpeedToX",
+     "size": "22",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8436988"
+     }
+    },
+    {
+     "name": "ScrollByPlayerSpeedLong",
+     "size": "4",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8437010"
+     }
+    },
+    {
+     "name": "ScrollByPlayerSpeed",
+     "size": "21",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8437014"
+     }
+    },
+    {
+     "name": "ScrollRivalsRelative",
+     "size": "45",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8437035"
+     }
+    },
+    {
+     "name": "SpawnRivals",
+     "size": "57",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8437080"
+     }
+    },
+    {
+     "name": "UpdateRiderDistances",
+     "size": "84",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8437137"
+     }
+    },
+    {
+     "name": "PlaceRival",
+     "size": "138",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8437221"
+     }
+    },
+    {
+     "name": "RivalTarget",
+     "size": "84",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8437359"
+     }
+    },
+    {
+     "name": "LaunchBall",
+     "size": "89",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8437516"
+     }
+    },
+    {
+     "name": "RiderLanding",
+     "size": "218",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8437605"
+     }
+    },
+    {
+     "name": "GroundHeightAbove",
+     "size": "3",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8437839"
+     }
+    },
+    {
+     "name": "HeightAbove",
+     "size": "14",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8437842"
+     }
+    },
+    {
+     "name": "SetRiderLean",
+     "size": "72",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8437856"
+     }
+    },
+    {
+     "name": "Tick08CC",
+     "size": "21",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8437928"
+     }
+    },
+    {
+     "name": "RiderLandCheck",
+     "size": "47",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8437949"
+     }
+    },
+    {
+     "name": "CrashLand",
+     "size": "78",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8437996"
+     }
+    },
+    {
+     "name": "StartCrash",
+     "size": "66",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8438074"
+     }
+    },
+    {
+     "name": "RiderHeightStep",
+     "size": "40",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8438140"
+     }
+    },
+    {
+     "name": "OverheatStep",
+     "size": "88",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8438180"
+     }
+    },
+    {
+     "name": "CrashRecovery",
+     "size": "157",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8438268"
+     }
+    },
+    {
+     "name": "RaceStartLights",
+     "size": "43",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8438425"
+     }
+    },
+    {
+     "name": "DrawStartFlags",
+     "size": "208",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8438468"
+     }
+    },
+    {
+     "name": "FlagRidersAtLine",
+     "size": "6",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8438676"
+     }
+    },
+    {
+     "name": "SpeedGauge",
+     "size": "80",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8438682"
+     }
+    },
+    {
+     "name": "RaceTimer",
+     "size": "135",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8438762"
+     }
+    },
+    {
+     "name": "RaceClockStep",
+     "size": "15",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8439175"
+     }
+    },
+    {
+     "name": "TickRaceClock",
+     "size": "35",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8439190"
+     }
+    },
+    {
+     "name": "QueueRaceTime",
+     "size": "105",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8439225"
+     }
+    },
+    {
+     "name": "QueueBestTimeLong",
+     "size": "10",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8439330"
+     }
+    },
+    {
+     "name": "QueueBestTime",
+     "size": "106",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8439340"
+     }
+    },
+    {
+     "name": "ShowCourseBest",
+     "size": "5",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8439446"
+     }
+    },
+    {
+     "name": "RecordCourseTime",
+     "size": "143",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8439451"
+     }
+    },
+    {
+     "name": "DivideAX",
+     "size": "14",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8439626"
+     }
+    },
+    {
+     "name": "RiderLaneBand",
+     "size": "39",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8439640"
+     }
+    },
+    {
+     "name": "RiderCollisions",
+     "size": "371",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8439679"
+     }
+    },
+    {
+     "name": "Reach20",
+     "size": "7",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8440210"
+     }
+    },
+    {
+     "name": "Reach2",
+     "size": "7",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8440217"
+     }
+    },
+    {
+     "name": "BallHit",
+     "size": "85",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8440224"
+     }
+    },
+    {
+     "name": "DrawAllRidersLong",
+     "size": "10",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8440466"
+     }
+    },
+    {
+     "name": "SortAndDrawRiders",
+     "size": "5",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8440476"
+     }
+    },
+    {
+     "name": "DrawAllRiders",
+     "size": "77",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8440481"
+     }
+    },
+    {
+     "name": "DrawRider",
+     "size": "115",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8440558"
+     }
+    },
+    {
+     "name": "RiderPose",
+     "size": "114",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8440705"
+     }
+    },
+    {
+     "name": "DrawRiderShadow",
+     "size": "116",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8440865"
+     }
+    },
+    {
+     "name": "DrawRiderShadowPairLong",
+     "size": "4",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8441107"
+     }
+    },
+    {
+     "name": "DrawRiderShadowPair",
+     "size": "38",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8441111"
+     }
+    },
+    {
+     "name": "TurboMeter",
+     "size": "227",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8441149"
+     }
+    },
+    {
+     "name": "SortRidersByPosition",
+     "size": "62",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8441384"
+     }
+    },
+    {
+     "name": "PlaceAllRiderShadows",
+     "size": "47",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8441446"
+     }
+    },
+    {
+     "name": "PlaceRiderShadowLong",
+     "size": "10",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8441493"
+     }
+    },
+    {
+     "name": "PlaceRiderShadow",
+     "size": "151",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8441503"
+     }
+    },
+    {
+     "name": "RankPlayer",
+     "size": "43",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8441659"
+     }
+    },
+    {
+     "name": "ComputePlaces",
+     "size": "46",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8441702"
+     }
+    },
+    {
+     "name": "QueuePlaceBadgeHud",
+     "size": "18",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8441748"
+     }
+    },
+    {
+     "name": "QueuePlaceBadge",
+     "size": "69",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8441766"
+     }
+    },
+    {
+     "name": "MirrorJumpRider",
+     "size": "119",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8441884"
+     }
+    },
+    {
+     "name": "CollectCoin",
+     "size": "147",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8442003"
+     }
+    },
+    {
+     "name": "MarkerObjects",
+     "size": "26",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8442164"
+     }
+    },
+    {
+     "name": "MarkerObjectStep",
+     "size": "36",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8442190"
+     }
+    },
+    {
+     "name": "StepObjectX8",
+     "size": "5",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8442226"
+     }
+    },
+    {
+     "name": "StepObjectX",
+     "size": "68",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8442231"
+     }
+    },
+    {
+     "name": "DrawRiderMarker",
+     "size": "50",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8442351"
+     }
+    },
+    {
+     "name": "ResetCoinCounts",
+     "size": "12",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8442405"
+     }
+    },
+    {
+     "name": "ClearWords1530",
+     "size": "12",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8442417"
+     }
+    },
+    {
+     "name": "SetupBonusScreen",
+     "size": "36",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8443362"
+     }
+    },
+    {
+     "name": "SetupSpriteRow15",
+     "size": "44",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8443398"
+     }
+    },
+    {
+     "name": "StartBonusCourse",
+     "size": "300",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8443487"
+     }
+    },
+    {
+     "name": "StartBonusCount",
+     "size": "14",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8443814"
+     }
+    },
+    {
+     "name": "QueueBonusCount",
+     "size": "112",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8443828"
+     }
+    },
+    {
+     "name": "BonusCourseFrame",
+     "size": "212",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8443940"
+     }
+    },
+    {
+     "name": "CheckBonusTime",
+     "size": "33",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8444152"
+     }
+    },
+    {
+     "name": "DrawCountdownSignB",
+     "size": "52",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8444189"
+     }
+    },
+    {
+     "name": "DispatchBy85",
+     "size": "20",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8444273"
+     }
+    },
+    {
+     "name": "ReadJumpTrack",
+     "size": "146",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8444293"
+     }
+    },
+    {
+     "name": "ScrollBySpeed16",
+     "size": "28",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8444439"
+     }
+    },
+    {
+     "name": "BonusScrollStep",
+     "size": "43",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8444467"
+     }
+    },
+    {
+     "name": "BonusTimerStep",
+     "size": "34",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8444510"
+     }
+    },
+    {
+     "name": "BuildCourseColumn",
+     "size": "260",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8444544"
+     }
+    },
+    {
+     "name": "CourseColumn",
+     "size": "75",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8444804"
+     }
+    },
+    {
+     "name": "BlankQueueRow",
+     "size": "18",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8444879"
+     }
+    },
+    {
+     "name": "CopyPieceColumnPal2",
+     "size": "25",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8444897"
+     }
+    },
+    {
+     "name": "CourseRowList",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8444922"
+     }
+    },
+    {
+     "name": "PlayerCrashStep",
+     "size": "116",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8444933"
+     }
+    },
+    {
+     "name": "PlayerColumnCheck",
+     "size": "37",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8445049"
+     }
+    },
+    {
+     "name": "PlayerStop",
+     "size": "8",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8445086"
+     }
+    },
+    {
+     "name": "PlayerHalt",
+     "size": "73",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8445094"
+     }
+    },
+    {
+     "name": "AddBonusPoints",
+     "size": "69",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8445167"
+     }
+    },
+    {
+     "name": "StartBonusTry",
+     "size": "26",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8445236"
+     }
+    },
+    {
+     "name": "Mode0A",
+     "size": "26",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8445262"
+     }
+    },
+    {
+     "name": "ShowResultsBanner",
+     "size": "49",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8445296"
+     }
+    },
+    {
+     "name": "QueueResultsCount",
+     "size": "65",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8445367"
+     }
+    },
+    {
+     "name": "BonusCountUp",
+     "size": "78",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8445432"
+     }
+    },
+    {
+     "name": "QueueNameplate",
+     "size": "18",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8445510"
+     }
+    },
+    {
+     "name": "BonusResultStep",
+     "size": "200",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8445543"
+     }
+    },
+    {
+     "name": "ResultsWait",
+     "size": "36",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8445754"
+     }
+    },
+    {
+     "name": "SetBgTileBase",
+     "size": "26",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8445790"
+     }
+    },
+    {
+     "name": "EndAtBonusMinute",
+     "size": "22",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8445890"
+     }
+    },
+    {
+     "name": "SetupCourseScreen",
+     "size": "34",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8447154"
+     }
+    },
+    {
+     "name": "ShowJumpResult",
+     "size": "185",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8447188"
+     }
+    },
+    {
+     "name": "SetupJumpContest",
+     "size": "251",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8447417"
+     }
+    },
+    {
+     "name": "FillBonusColumns",
+     "size": "39",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8447668"
+     }
+    },
+    {
+     "name": "JumpContestMode",
+     "size": "103",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8447707"
+     }
+    },
+    {
+     "name": "CheckCourseTime",
+     "size": "32",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8447830"
+     }
+    },
+    {
+     "name": "DrawJumpRank",
+     "size": "74",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8447866"
+     }
+    },
+    {
+     "name": "DrawJumpRiderSprites",
+     "size": "116",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8447946"
+     }
+    },
+    {
+     "name": "SetJumpRiderSprites",
+     "size": "38",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448062"
+     }
+    },
+    {
+     "name": "JumpContestFrame",
+     "size": "138",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448100"
+     }
+    },
+    {
+     "name": "JumpResultTally",
+     "size": "74",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448238"
+     }
+    },
+    {
+     "name": "JumpDistanceStepNear",
+     "size": "5",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448316"
+     }
+    },
+    {
+     "name": "ShowJumpCountLong",
+     "size": "4",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448321"
+     }
+    },
+    {
+     "name": "JumpResultCount",
+     "size": "26",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448325"
+     }
+    },
+    {
+     "name": "ShowJumpCount",
+     "size": "51",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448351"
+     }
+    },
+    {
+     "name": "ShowBonusPointsLong",
+     "size": "4",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448413"
+     }
+    },
+    {
+     "name": "JumpResultBonus",
+     "size": "26",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448417"
+     }
+    },
+    {
+     "name": "ShowBonusPoints",
+     "size": "53",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448443"
+     }
+    },
+    {
+     "name": "JumpTotalStep",
+     "size": "5",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448517"
+     }
+    },
+    {
+     "name": "JumpResultBoardStep",
+     "size": "61",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448522"
+     }
+    },
+    {
+     "name": "JumpResultWait",
+     "size": "42",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448583"
+     }
+    },
+    {
+     "name": "JumpResultBoard",
+     "size": "283",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448625"
+     }
+    },
+    {
+     "name": "DrawCountdownLights",
+     "size": "51",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448908"
+     }
+    },
+    {
+     "name": "DispatchBy85B",
+     "size": "20",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448965"
+     }
+    },
+    {
+     "name": "ReadBonusTrack",
+     "size": "209",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8448985"
+     }
+    },
+    {
+     "name": "ScrollBySpeed16B",
+     "size": "28",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8449194"
+     }
+    },
+    {
+     "name": "JumpRunUp",
+     "size": "41",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8449222"
+     }
+    },
+    {
+     "name": "BuildBonusColumn",
+     "size": "291",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8449263"
+     }
+    },
+    {
+     "name": "CourseColumnB",
+     "size": "75",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8449554"
+     }
+    },
+    {
+     "name": "BlankQueueRowB",
+     "size": "18",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8449629"
+     }
+    },
+    {
+     "name": "CopyPieceColumn",
+     "size": "19",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8449647"
+     }
+    },
+    {
+     "name": "BonusRowList",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8449666"
+     }
+    },
+    {
+     "name": "PlayerCrashStepB",
+     "size": "124",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8449677"
+     }
+    },
+    {
+     "name": "PlayerColumnCheckB",
+     "size": "37",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8449801"
+     }
+    },
+    {
+     "name": "PlayerStopB",
+     "size": "8",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8449838"
+     }
+    },
+    {
+     "name": "PlayerHaltB",
+     "size": "73",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8449846"
+     }
+    },
+    {
+     "name": "DemoStepDispatch",
+     "size": "7",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8450047"
+     }
+    },
+    {
+     "name": "EmptyF03A",
+     "size": "1",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8450060"
+     }
+    },
+    {
+     "name": "ScrollDelta",
+     "size": "13",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8450061"
+     }
+    },
+    {
+     "name": "StopWhenStill",
+     "size": "24",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8450074"
+     }
+    },
+    {
+     "name": "ShowLastDistance",
+     "size": "25",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8450123"
+     }
+    },
+    {
+     "name": "BonusSignStep",
+     "size": "90",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8450148"
+     }
+    },
+    {
+     "name": "JumpHudNumbers",
+     "size": "78",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8450260"
+     }
+    },
+    {
+     "name": "BuildScoreDigitsLong",
+     "size": "4",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8450344"
+     }
+    },
+    {
+     "name": "BuildScoreDigits",
+     "size": "119",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8450348"
+     }
+    },
+    {
+     "name": "SetJumpScroll",
+     "size": "61",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8450467"
+     }
+    },
+    {
+     "name": "ResetDemoCourse",
+     "size": "14",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8450586"
+     }
+    },
+    {
+     "name": "SetRaceBgMode",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8450600"
+     }
+    },
+    {
+     "name": "StartDemoRace",
+     "size": "108",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8450611"
+     }
+    },
+    {
+     "name": "Mode0C",
+     "size": "91",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8450719"
+     }
+    },
+    {
+     "name": "TurboMeterJmp",
+     "size": "3",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8450810"
+     }
+    },
+    {
+     "name": "DemoInputStep",
+     "size": "114",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8450813"
+     }
+    },
+    {
+     "name": "DemoExitBoost",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8450927"
+     }
+    },
+    {
+     "name": "PlaceLastRival",
+     "size": "13",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8450938"
+     }
+    },
+    {
+     "name": "DemoExitSkip40",
+     "size": "4",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8450951"
+     }
+    },
+    {
+     "name": "DemoExitSkip35",
+     "size": "9",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8450955"
+     }
+    },
+    {
+     "name": "StartMode01",
+     "size": "22",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8450964"
+     }
+    },
+    {
+     "name": "DemoPadDisplay",
+     "size": "210",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8450986"
+     }
+    },
+    {
+     "name": "TitlePushStart",
+     "size": "69",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8451221"
+     }
+    },
+    {
+     "name": "SpinAllWheels",
+     "size": "2",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8451874"
+     }
+    },
+    {
+     "name": "SpinWheels",
+     "size": "47",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8451876"
+     }
+    },
+    {
+     "name": "RunAllRiderPieces",
+     "size": "8",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8451923"
+     }
+    },
+    {
+     "name": "RunRiderPieces",
+     "size": "194",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8451931"
+     }
+    },
+    {
+     "name": "PieceAction",
+     "size": "133",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8452125"
+     }
+    },
+    {
+     "name": "RiderLanePieceAt",
+     "size": "4",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8452256"
+     }
+    },
+    {
+     "name": "RiderPieceAt",
+     "size": "5",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8452259"
+     }
+    },
+    {
+     "name": "LanePieceAt",
+     "size": "28",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8452264"
+     }
+    },
+    {
+     "name": "LanePieceTablesLong",
+     "size": "10",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8452292"
+     }
+    },
+    {
+     "name": "LanePieceTables",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8452302"
+     }
+    },
+    {
+     "name": "MarkFastRider",
+     "size": "35",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8452313"
+     }
+    },
+    {
+     "name": "RiderGroundHeights",
+     "size": "2",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8452348"
+     }
+    },
+    {
+     "name": "RiderGroundHeightsFrom",
+     "size": "15",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8452350"
+     }
+    },
+    {
+     "name": "PairHeight5",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8452365"
+     }
+    },
+    {
+     "name": "SetJumpBase",
+     "size": "7",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8452376"
+     }
+    },
+    {
+     "name": "PairHeight2",
+     "size": "9",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8452383"
+     }
+    },
+    {
+     "name": "PairJump6",
+     "size": "14",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8452392"
+     }
+    },
+    {
+     "name": "RiderPairHeight",
+     "size": "5",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8452406"
+     }
+    },
+    {
+     "name": "HeightBelow",
+     "size": "12",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8452411"
+     }
+    },
+    {
+     "name": "PlayerSpeedBoost",
+     "size": "43",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8452423"
+     }
+    },
+    {
+     "name": "RiderJumpBase",
+     "size": "29",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8452466"
+     }
+    },
+    {
+     "name": "SetRiderPair",
+     "size": "14",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8452495"
+     }
+    },
+    {
+     "name": "RiderDropStep",
+     "size": "37",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8452509"
+     }
+    },
+    {
+     "name": "ClearJumpFlags",
+     "size": "9",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8452546"
+     }
+    },
+    {
+     "name": "SetJumpKind",
+     "size": "16",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8452555"
+     }
+    },
+    {
+     "name": "FlattenPlayerPiece",
+     "size": "43",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8452571"
+     }
+    },
+    {
+     "name": "UseArrowPiece",
+     "size": "105",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8452621"
+     }
+    },
+    {
+     "name": "CollectPickupPiece",
+     "size": "103",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8452740"
+     }
+    },
+    {
+     "name": "StartWheelie",
+     "size": "46",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8452850"
+     }
+    },
+    {
+     "name": "SetJumpState1",
+     "size": "5",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8452896"
+     }
+    },
+    {
+     "name": "RiderBumpCrash",
+     "size": "8",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8452901"
+     }
+    },
+    {
+     "name": "BoostOnTile",
+     "size": "58",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8452909"
+     }
+    },
+    {
+     "name": "StartJumpBase30",
+     "size": "10",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8452967"
+     }
+    },
+    {
+     "name": "JumpBase30",
+     "size": "5",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8452977"
+     }
+    },
+    {
+     "name": "JumpBase10",
+     "size": "5",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8452982"
+     }
+    },
+    {
+     "name": "OffTrackBrake",
+     "size": "71",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8452987"
+     }
+    },
+    {
+     "name": "RunPieceActions",
+     "size": "14",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8453058"
+     }
+    },
+    {
+     "name": "SlowTileCheck",
+     "size": "50",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8453072"
+     }
+    },
+    {
+     "name": "LandingStep",
+     "size": "12",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8453122"
+     }
+    },
+    {
+     "name": "LandFlat",
+     "size": "18",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8453134"
+     }
+    },
+    {
+     "name": "ClearRiderAction",
+     "size": "12",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8453152"
+     }
+    },
+    {
+     "name": "UpdateLanes",
+     "size": "287",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8453164"
+     }
+    },
+    {
+     "name": "DrawShadowsAndMarkers",
+     "size": "96",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8453451"
+     }
+    },
+    {
+     "name": "CrossFinish",
+     "size": "92",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8453547"
+     }
+    },
+    {
+     "name": "ItemFlashState",
+     "size": "28",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8453639"
+     }
+    },
+    {
+     "name": "NextColumnLong",
+     "size": "4",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8453667"
+     }
+    },
+    {
+     "name": "NextColumn",
+     "size": "10",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8453671"
+     }
+    },
+    {
+     "name": "AddScoreLong",
+     "size": "4",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8453681"
+     }
+    },
+    {
+     "name": "AddScore",
+     "size": "43",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8453685"
+     }
+    },
+    {
+     "name": "TrackRiderPace",
+     "size": "105",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8453728"
+     }
+    },
+    {
+     "name": "QueueBonusDigitsLong",
+     "size": "4",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8453833"
+     }
+    },
+    {
+     "name": "QueueBonusDigitsAt",
+     "size": "12",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8453837"
+     }
+    },
+    {
+     "name": "QueueBonusDigits",
+     "size": "50",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8453849"
+     }
+    },
+    {
+     "name": "EmptyVector",
+     "size": "1",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8454048"
+     }
+    },
+    {
+     "name": "NmiVector",
+     "size": "4",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8454049"
+     }
+    },
+    {
+     "name": "ResetVector",
+     "size": "4",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8454053"
+     }
+    },
+    {
+     "name": "IrqVector",
+     "size": "4",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8454057"
+     }
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "source_path": "c/hand/s3"
+   }
+  },
+  {
+   "name": "main/bank81",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": "8429",
+    "matched_code": "8429",
+    "matched_code_percent": 100.0,
+    "total_data": "0",
+    "matched_data": "0",
+    "matched_data_percent": 0.0,
+    "total_functions": 137,
+    "matched_functions": 137,
+    "matched_functions_percent": 100.0,
+    "complete_code": "8429",
+    "complete_code_percent": 100.0,
+    "complete_data": "0",
+    "complete_data_percent": 0.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".text",
+     "size": "8429",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [
+    {
+     "name": "RaceRowList",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8489538"
+     }
+    },
+    {
+     "name": "LoadRaceColumn",
+     "size": "414",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8489549"
+     }
+    },
+    {
+     "name": "FillLaneColumn",
+     "size": "63",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8489963"
+     }
+    },
+    {
+     "name": "BlankQueueRowPal2",
+     "size": "18",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8490026"
+     }
+    },
+    {
+     "name": "CopyTrackColumn",
+     "size": "38",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8490044"
+     }
+    },
+    {
+     "name": "SpawnPlayerSpark",
+     "size": "56",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8492030"
+     }
+    },
+    {
+     "name": "SpawnDustPuff",
+     "size": "64",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8492086"
+     }
+    },
+    {
+     "name": "SpawnExhaust",
+     "size": "98",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8492214"
+     }
+    },
+    {
+     "name": "ConfettiAll",
+     "size": "20",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8492344"
+     }
+    },
+    {
+     "name": "EmptyStep9554",
+     "size": "1",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8492372"
+     }
+    },
+    {
+     "name": "StepFallingSprite",
+     "size": "61",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8492373"
+     }
+    },
+    {
+     "name": "DrawDustPair",
+     "size": "98",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8492434"
+     }
+    },
+    {
+     "name": "ObjectStepDispatch",
+     "size": "8",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8492532"
+     }
+    },
+    {
+     "name": "ConfettiStep",
+     "size": "107",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8492548"
+     }
+    },
+    {
+     "name": "DrawStar",
+     "size": "72",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8492663"
+     }
+    },
+    {
+     "name": "StepSpark",
+     "size": "53",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8492738"
+     }
+    },
+    {
+     "name": "DrawSpark",
+     "size": "72",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8492791"
+     }
+    },
+    {
+     "name": "MoveObjectX8",
+     "size": "5",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8492863"
+     }
+    },
+    {
+     "name": "MoveObjectX",
+     "size": "68",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8492868"
+     }
+    },
+    {
+     "name": "SpawnObject",
+     "size": "96",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8492936"
+     }
+    },
+    {
+     "name": "UpdateObjects",
+     "size": "64",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8493032"
+     }
+    },
+    {
+     "name": "EmptyStep9828",
+     "size": "1",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8493096"
+     }
+    },
+    {
+     "name": "FindObjectSlot",
+     "size": "12",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8493097"
+     }
+    },
+    {
+     "name": "ObjectState9835",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8493109"
+     }
+    },
+    {
+     "name": "ObjectFollowPath",
+     "size": "84",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8493132"
+     }
+    },
+    {
+     "name": "StepAnimTimer",
+     "size": "22",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8493216"
+     }
+    },
+    {
+     "name": "SkyFadeStep",
+     "size": "73",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8493238"
+     }
+    },
+    {
+     "name": "FadeObjectStep",
+     "size": "39",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8493311"
+     }
+    },
+    {
+     "name": "ResultsBonusCount",
+     "size": "224",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8493350"
+     }
+    },
+    {
+     "name": "Empty9A26",
+     "size": "1",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8493606"
+     }
+    },
+    {
+     "name": "FadeSkyColours",
+     "size": "116",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8493607"
+     }
+    },
+    {
+     "name": "FadePalette",
+     "size": "122",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8493723"
+     }
+    },
+    {
+     "name": "QueueMapTile",
+     "size": "66",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8493917"
+     }
+    },
+    {
+     "name": "VelocityDirection",
+     "size": "111",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8494449"
+     }
+    },
+    {
+     "name": "DrawBigBall",
+     "size": "187",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8494564"
+     }
+    },
+    {
+     "name": "DrawObjectPieces",
+     "size": "155",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8494751"
+     }
+    },
+    {
+     "name": "SteerObjectStep",
+     "size": "148",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8494906"
+     }
+    },
+    {
+     "name": "ObjectFacing",
+     "size": "41",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8495054"
+     }
+    },
+    {
+     "name": "ApplyVelocityX",
+     "size": "46",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8495095"
+     }
+    },
+    {
+     "name": "ApplyVelocity",
+     "size": "46",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8495141"
+     }
+    },
+    {
+     "name": "AimVelocity",
+     "size": "18",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8495187"
+     }
+    },
+    {
+     "name": "AimRatio",
+     "size": "143",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8495205"
+     }
+    },
+    {
+     "name": "LoadCourse",
+     "size": "212",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8495348"
+     }
+    },
+    {
+     "name": "RivalEngineSound",
+     "size": "131",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8495560"
+     }
+    },
+    {
+     "name": "CarouselPos",
+     "size": "81",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8495691"
+     }
+    },
+    {
+     "name": "SinCos",
+     "size": "104",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8495772"
+     }
+    },
+    {
+     "name": "RandomB",
+     "size": "35",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8495876"
+     }
+    },
+    {
+     "name": "LoadHdmaScene",
+     "size": "203",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8496967"
+     }
+    },
+    {
+     "name": "EmptyHook",
+     "size": "1",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8498187"
+     }
+    },
+    {
+     "name": "ObjectStateB8E3",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8501475"
+     }
+    },
+    {
+     "name": "FallingObjectStep",
+     "size": "52",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8501492"
+     }
+    },
+    {
+     "name": "EmptyB928",
+     "size": "1",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8501544"
+     }
+    },
+    {
+     "name": "StepObjectScript",
+     "size": "36",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8501545"
+     }
+    },
+    {
+     "name": "ObjectStateB95D",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8501597"
+     }
+    },
+    {
+     "name": "DriftUpObject",
+     "size": "111",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8501612"
+     }
+    },
+    {
+     "name": "ReleaseBalloons",
+     "size": "113",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8501723"
+     }
+    },
+    {
+     "name": "ObjectStateBA4C",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8501836"
+     }
+    },
+    {
+     "name": "ObjectAdvanceRandom20",
+     "size": "39",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8501859"
+     }
+    },
+    {
+     "name": "ObjectBlinkA",
+     "size": "53",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8501898"
+     }
+    },
+    {
+     "name": "ObjectAdvance8",
+     "size": "29",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8501955"
+     }
+    },
+    {
+     "name": "ObjectRun6",
+     "size": "55",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8501984"
+     }
+    },
+    {
+     "name": "ObjectAdvance20",
+     "size": "29",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502051"
+     }
+    },
+    {
+     "name": "ObjectLoop5",
+     "size": "54",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502080"
+     }
+    },
+    {
+     "name": "ObjectStateBB80",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502144"
+     }
+    },
+    {
+     "name": "ObjectAdvanceRandom10",
+     "size": "39",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502167"
+     }
+    },
+    {
+     "name": "ObjectBlinkB",
+     "size": "53",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502206"
+     }
+    },
+    {
+     "name": "ObjectAdvanceRandom16",
+     "size": "41",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502263"
+     }
+    },
+    {
+     "name": "ObjectRepeat4B",
+     "size": "56",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502304"
+     }
+    },
+    {
+     "name": "ObjectAdvanceOr4",
+     "size": "31",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502368"
+     }
+    },
+    {
+     "name": "ObjectLoop7",
+     "size": "52",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502399"
+     }
+    },
+    {
+     "name": "ObjectStateBCC1",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502465"
+     }
+    },
+    {
+     "name": "ObjectAdvanceRandom0A",
+     "size": "39",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502488"
+     }
+    },
+    {
+     "name": "ObjectBlinkC",
+     "size": "53",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502527"
+     }
+    },
+    {
+     "name": "ObjectAdvanceOr5",
+     "size": "31",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502584"
+     }
+    },
+    {
+     "name": "ObjectRun4",
+     "size": "51",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502615"
+     }
+    },
+    {
+     "name": "ObjectAdvance80",
+     "size": "29",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502674"
+     }
+    },
+    {
+     "name": "ObjectCycleA",
+     "size": "37",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502703"
+     }
+    },
+    {
+     "name": "ObjectStateBDDC",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502748"
+     }
+    },
+    {
+     "name": "ObjectAdvanceRandom09",
+     "size": "39",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502771"
+     }
+    },
+    {
+     "name": "ObjectBlinkD",
+     "size": "53",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502810"
+     }
+    },
+    {
+     "name": "ObjectFlicker",
+     "size": "59",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502867"
+     }
+    },
+    {
+     "name": "ObjectRepeat4Rest",
+     "size": "66",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8502926"
+     }
+    },
+    {
+     "name": "ObjectAdvance9",
+     "size": "29",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8503000"
+     }
+    },
+    {
+     "name": "ObjectRunOnce6",
+     "size": "51",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8503029"
+     }
+    },
+    {
+     "name": "ObjectStateBF34",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8503092"
+     }
+    },
+    {
+     "name": "ObjectAdvanceRandom10B",
+     "size": "39",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8503115"
+     }
+    },
+    {
+     "name": "ObjectRepeat4A",
+     "size": "54",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8503154"
+     }
+    },
+    {
+     "name": "ObjectAdvanceC0",
+     "size": "29",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8503216"
+     }
+    },
+    {
+     "name": "ObjectCycleB",
+     "size": "39",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8503245"
+     }
+    },
+    {
+     "name": "ObjectStateBFFC",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8503292"
+     }
+    },
+    {
+     "name": "ClearObjectFrame",
+     "size": "7",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8503313"
+     }
+    },
+    {
+     "name": "FrameSequenceA",
+     "size": "101",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8503320"
+     }
+    },
+    {
+     "name": "FrameSequenceB",
+     "size": "101",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8503429"
+     }
+    },
+    {
+     "name": "WinnerFigure",
+     "size": "96",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8503542"
+     }
+    },
+    {
+     "name": "ObjectWalkCycle",
+     "size": "50",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8503672"
+     }
+    },
+    {
+     "name": "CourseSelectPreview",
+     "size": "236",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8503726"
+     }
+    },
+    {
+     "name": "JumpRunSteps",
+     "size": "39",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8503962"
+     }
+    },
+    {
+     "name": "JumpRunStart",
+     "size": "60",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8504025"
+     }
+    },
+    {
+     "name": "JumpRun",
+     "size": "98",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8504113"
+     }
+    },
+    {
+     "name": "JumpPitchStep",
+     "size": "14",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8504211"
+     }
+    },
+    {
+     "name": "CourseMinuteCheck",
+     "size": "12",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8504229"
+     }
+    },
+    {
+     "name": "LeaveJumpContest",
+     "size": "9",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8504241"
+     }
+    },
+    {
+     "name": "DrawJumpCrowd",
+     "size": "167",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8504250"
+     }
+    },
+    {
+     "name": "JumpRiderStep",
+     "size": "235",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8504451"
+     }
+    },
+    {
+     "name": "ParkJumpRider",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8504686"
+     }
+    },
+    {
+     "name": "SpinWheels8",
+     "size": "49",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8504697"
+     }
+    },
+    {
+     "name": "MoveAndScroll",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8504746"
+     }
+    },
+    {
+     "name": "ScrollJumpRider",
+     "size": "26",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8504757"
+     }
+    },
+    {
+     "name": "SlotRiderShadow",
+     "size": "39",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8504791"
+     }
+    },
+    {
+     "name": "DispatchByDistance",
+     "size": "23",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8504840"
+     }
+    },
+    {
+     "name": "PitchUp4",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8504875"
+     }
+    },
+    {
+     "name": "PitchUp8",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8504886"
+     }
+    },
+    {
+     "name": "PitchHold",
+     "size": "2",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8504897"
+     }
+    },
+    {
+     "name": "PitchDown8",
+     "size": "11",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8504899"
+     }
+    },
+    {
+     "name": "FadeApuVolume",
+     "size": "18",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8504910"
+     }
+    },
+    {
+     "name": "QueueBlinkBanner",
+     "size": "69",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8505012"
+     }
+    },
+    {
+     "name": "CoinMilestone",
+     "size": "43",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8505081"
+     }
+    },
+    {
+     "name": "StepJumpBanner",
+     "size": "31",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8505124"
+     }
+    },
+    {
+     "name": "SetJumpBanner",
+     "size": "27",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8505155"
+     }
+    },
+    {
+     "name": "CheckLaneTile",
+     "size": "101",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8505182"
+     }
+    },
+    {
+     "name": "ClearOnBonusTiles",
+     "size": "29",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8505283"
+     }
+    },
+    {
+     "name": "JumpDistanceStep",
+     "size": "15",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8505312"
+     }
+    },
+    {
+     "name": "JumpResultDistance",
+     "size": "64",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8505327"
+     }
+    },
+    {
+     "name": "JumpResultTotal",
+     "size": "52",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8505423"
+     }
+    },
+    {
+     "name": "QueueResultsTiles",
+     "size": "50",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8505475"
+     }
+    },
+    {
+     "name": "QueueHalfUnits",
+     "size": "117",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8505569"
+     }
+    },
+    {
+     "name": "JumpResultSkip",
+     "size": "66",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8505686"
+     }
+    },
+    {
+     "name": "BuildJumpScore",
+     "size": "94",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8505767"
+     }
+    },
+    {
+     "name": "Hundreds",
+     "size": "27",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8505861"
+     }
+    },
+    {
+     "name": "ScaleJumpCount",
+     "size": "23",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8505888"
+     }
+    },
+    {
+     "name": "QueueStadiumBadge",
+     "size": "89",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8505911"
+     }
+    },
+    {
+     "name": "BsxOpenTimeChannel",
+     "size": "72",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8517644"
+     }
+    },
+    {
+     "name": "BsxPollStream",
+     "size": "222",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8517819"
+     }
+    },
+    {
+     "name": "ResetMinuteFrame",
+     "size": "16",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8518041"
+     }
+    },
+    {
+     "name": "BsxFindFile",
+     "size": "160",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8518088"
+     }
+    },
+    {
+     "name": "BsxDetect",
+     "size": "25",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8518248"
+     }
+    },
+    {
+     "name": "BsxProbeReceiver",
+     "size": "50",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8518273"
+     }
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "source_path": "c/hand/s3"
+   }
+  },
+  {
+   "name": "main/bank82",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": "3830",
+    "matched_code": "3830",
+    "matched_code_percent": 100.0,
+    "total_data": "0",
+    "matched_data": "0",
+    "matched_data_percent": 0.0,
+    "total_functions": 38,
+    "matched_functions": 38,
+    "matched_functions_percent": 100.0,
+    "complete_code": "3830",
+    "complete_code_percent": 100.0,
+    "complete_data": "0",
+    "complete_data_percent": 0.0,
+    "total_units": 1,
+    "complete_units": 1
+   },
+   "sections": [
+    {
+     "name": ".text",
+     "size": "3830",
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "functions": [
+    {
+     "name": "ReadJoypads",
+     "size": "95",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8552448"
+     }
+    },
+    {
+     "name": "InitPpuRegisters",
+     "size": "190",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8552543"
+     }
+    },
+    {
+     "name": "SetupHdmaChannels",
+     "size": "61",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8552733"
+     }
+    },
+    {
+     "name": "ForceBlank",
+     "size": "15",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8552832"
+     }
+    },
+    {
+     "name": "ClearTilemaps",
+     "size": "130",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8552847"
+     }
+    },
+    {
+     "name": "DmaFillZero",
+     "size": "39",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8553010"
+     }
+    },
+    {
+     "name": "QueueTimeDigits",
+     "size": "145",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8553049"
+     }
+    },
+    {
+     "name": "QueueFontTime",
+     "size": "183",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8553194"
+     }
+    },
+    {
+     "name": "QueueFiveDigits",
+     "size": "65",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8553377"
+     }
+    },
+    {
+     "name": "QueueDigitsAt",
+     "size": "66",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8553442"
+     }
+    },
+    {
+     "name": "QueueFontDigits",
+     "size": "71",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8553508"
+     }
+    },
+    {
+     "name": "QueueEntryDigits",
+     "size": "71",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8553579"
+     }
+    },
+    {
+     "name": "ByteTable84BA",
+     "size": "8",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8553650"
+     }
+    },
+    {
+     "name": "ResetSoundState",
+     "size": "41",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8553669"
+     }
+    },
+    {
+     "name": "QueuePlayerMarkers",
+     "size": "42",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8553710"
+     }
+    },
+    {
+     "name": "PackSpriteSizes",
+     "size": "89",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8553765"
+     }
+    },
+    {
+     "name": "SpcUploadB",
+     "size": "153",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8553875"
+     }
+    },
+    {
+     "name": "QueueSoundB",
+     "size": "27",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8554028"
+     }
+    },
+    {
+     "name": "StepFade",
+     "size": "83",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8554136"
+     }
+    },
+    {
+     "name": "TickTimers",
+     "size": "22",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8554219"
+     }
+    },
+    {
+     "name": "PlaceMinuteMarker",
+     "size": "114",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8554241"
+     }
+    },
+    {
+     "name": "HideAllSprites",
+     "size": "123",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8554370"
+     }
+    },
+    {
+     "name": "RiderSpriteSets",
+     "size": "203",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8554493"
+     }
+    },
+    {
+     "name": "RiderGfxCycle",
+     "size": "54",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8554853"
+     }
+    },
+    {
+     "name": "LoadRiderPalettes",
+     "size": "109",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8554907"
+     }
+    },
+    {
+     "name": "LoadStadiumPalette",
+     "size": "36",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8555444"
+     }
+    },
+    {
+     "name": "UnpackToLowRam",
+     "size": "38",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8555480"
+     }
+    },
+    {
+     "name": "UnpackToWram",
+     "size": "199",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8555518"
+     }
+    },
+    {
+     "name": "ReadStreamByte",
+     "size": "15",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8555717"
+     }
+    },
+    {
+     "name": "ReadStreamWord",
+     "size": "28",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8555732"
+     }
+    },
+    {
+     "name": "SpeedReadout",
+     "size": "215",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8555760"
+     }
+    },
+    {
+     "name": "BestTimeBlink",
+     "size": "184",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8555975"
+     }
+    },
+    {
+     "name": "SaveHeaderCheck",
+     "size": "153",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8556174"
+     }
+    },
+    {
+     "name": "SaveChecksum",
+     "size": "72",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8556327"
+     }
+    },
+    {
+     "name": "SaveBestRecords",
+     "size": "177",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8556399"
+     }
+    },
+    {
+     "name": "StadiumBonusBanner",
+     "size": "205",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8556584"
+     }
+    },
+    {
+     "name": "AddStadiumBonus",
+     "size": "41",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8556889"
+     }
+    },
+    {
+     "name": "LoadScene",
+     "size": "268",
+     "fuzzy_match_percent": 100.0,
+     "metadata": {
+      "virtual_address": "8556930"
+     }
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "source_path": "c/hand/s3"
+   }
+  }
+ ],
+ "version": 2,
+ "categories": []
+}
