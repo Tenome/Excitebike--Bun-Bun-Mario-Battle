@@ -15,7 +15,7 @@
 void RiderGfxCycle_m1x1(void)
 {
     rep(0x20);
-    lda16(rd16(ABS(0x1E0C)));
+    lda16(rd16(ABS(ANIM_UPLOAD_ON)));
     if (!fz) {
         wr16(ABS(0x1E10), 0);
         wr16(ABS(0x1E0E), inc16(rd16(ABS(0x1E0E))));
@@ -77,7 +77,7 @@ void RiderSpriteSets_m1x1(void)
     rep(0x20);
     ldx8(0x06);
     ldy8(0x03);
-    u8 ch = rd8(ABS(0x154F)), var = rd8(ABS(0x1E91));
+    u8 ch = rd8(ABS(PLAYER_CHAR)), var = rd8(ABS(RACE_VARIANT));
     do {
         lda16(rd16(ABS(0x1961 + Y)));
         wr16(DP(0x0E), A);
@@ -104,7 +104,7 @@ void RiderSpriteSets_m1x1(void)
         adc16(rd16(DP(0x0C)));
         X = (u8)A; nz8((u8)X);
         u8 slotx = (u8)(X - (ch << 3));               /* byte index in the record: slot * 2 */
-        lda16(rd16(ABS(0x1E91)) & 0x00FF);
+        lda16(rd16(ABS(RACE_VARIANT)) & 0x00FF);
         lda16(roster_rider_offset(ch, var, slotx));
         wr16(DP(0x1E), A);
         lda16(rd16(DP(0x0E)));
@@ -122,11 +122,11 @@ void RiderSpriteSets_m1x1(void)
         Y = dec8((u8)Y);
     } while (!fn);
     sep(0x20);
-    lda8(rd8(ABS(0x154F)));
+    lda8(rd8(ABS(PLAYER_CHAR)));
     lda8(asl8((u8)A));
     lda8(asl8((u8)A));
     X = (u8)A; nz8((u8)X);
-    lda8(rd8(ABS(0x1E91)));
+    lda8(rd8(ABS(RACE_VARIANT)));
     for (int s = 0; s < 4; s++) {
         lda8(roster_rider_bank(ch, var, s));
         wr8(ABS(0x1550 + s), (u8)A);
@@ -148,8 +148,8 @@ void LoadRiderPalettes_m1x1(void)
     push8(0x82);
     DB = pull8(); nz8(DB);
     int st = rd8(LONG(STADIUM_SELECT)) != 0;
-    int var = rd8(ABS(0x1E91)) != 0;
-    u8 ch = rd8(ABS(0x154F));
+    int var = rd8(ABS(RACE_VARIANT)) != 0;
+    u8 ch = rd8(ABS(PLAYER_CHAR));
     /* $00 = st * 100 + var * 50 + ch * 10 (8-bit), as the original leaves it */
     wr8(DP(0x00), (u8)((st ? 100 : 0) + (var ? 50 : 0) + ch * 10));
     wr8(DP(0x01), 0);

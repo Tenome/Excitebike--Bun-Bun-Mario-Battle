@@ -149,7 +149,7 @@ static void select_rider1(int shift, u16 back_upload, u16 back_sound)
 {
     if (shift == 4) and8(0x30);
     for (int k = 0; k < shift; k++) lda8(lsr8((u8)A));
-    wr8(ABS(0x1542), (u8)A);
+    wr8(ABS(PLAYER_CHAR), (u8)A);
     wr8(ABS(NMITIMEN), 0);
     rep(0x20);
     ldx8(0x3E);
@@ -161,7 +161,7 @@ static void select_rider1(int shift, u16 back_upload, u16 back_sound)
     sep(0x20);
     static const u8 wheel[12] = { 0x69, 0x65, 0x6D, 0x6A, 0x66, 0x6E, 0x6B, 0x67, 0x6F, 0x6C, 0x68, 0x70 };
     for (int k = 0; k < 12; k++) wr8(DP(wheel[k]), 0);
-    X = rd8(ABS(0x1542)); nz8((u8)X);
+    X = rd8(ABS(PLAYER_CHAR)); nz8((u8)X);
     X = inc8((u8)X);
     push8(0x80); push16(back_upload); SpcUpload_m1x1();
     lda8(0x3F);
@@ -217,7 +217,7 @@ static void rider_select1(int second, u16 base)
         if (!fz) choose = 1;
         else { lda8(0x01); wr8(ABS(MODE_TIMER), 0x01); }
     } else {
-        if (second) wr8(ABS(0x1542), 0);
+        if (second) wr8(ABS(PLAYER_CHAR), 0);
         lda8(rd8(DP(P1_HELD_LO)));
         and8(0x80);
         if (!fz) {

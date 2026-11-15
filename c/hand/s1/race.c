@@ -77,7 +77,7 @@ void DrawRacerName_m1x1(void)
     rep(0x20);
     A = 0x1851; wr16(DP(0x00), 0x1851);
     sep(0x20);
-    lda8(rd8(ABS(0x1542)));
+    lda8(rd8(ABS(PLAYER_CHAR)));
     wr8(ABS(WRMPYA), (u8)A);                           /* WRMPYA = character */
     lda8(0x1D);
     wr8(ABS(WRMPYB), 0x1D);                            /* WRMPYB = 29 */
@@ -270,7 +270,7 @@ void ComputePlaces_m1x1(void)
  */
 void DrawCoinIcons_m1x1(void)
 {
-    u8 x = (u8)(rd8(ABS(0x1540)) << 1);
+    u8 x = (u8)(rd8(ABS(COIN_COMBO)) << 1);
     for (; x != 0; x -= 2) {
         X = x;
         u8 y = (u8)(x << 1);

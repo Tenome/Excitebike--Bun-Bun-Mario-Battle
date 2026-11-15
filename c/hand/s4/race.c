@@ -49,7 +49,7 @@ void DrawRaceHud_m1x1(void)
     rep(0x20);
     lda16(0x1852); wr16(DP(0x00), 0x1852);
     sep(0x20);
-    u8 ch = rd8(ABS(0x154F));
+    u8 ch = rd8(ABS(PLAYER_CHAR));
     lda8(ch);
     wr8(ABS(WRMPYA), ch);                           /* WRMPYA: ch * 15 */
     lda8(0x0F);
@@ -114,7 +114,7 @@ void WinnerFigure_m1x1(void)
             lda8(lsr8((u8)A));
             wr8(DP(0x00), (u8)A);
             u8 rider = (u8)A;
-            u8 ch = rd8(ABS(0x154F));
+            u8 ch = rd8(ABS(PLAYER_CHAR));
             lda8((u8)(ch << 3));
             fc = 0;
             adc8(rd8(DP(0x00)));

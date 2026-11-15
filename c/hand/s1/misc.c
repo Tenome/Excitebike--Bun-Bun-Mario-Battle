@@ -190,7 +190,7 @@ void FadeStep_m1x1(void)
         for (int a = 0x92; a <= 0x95; a++)
             wr8(DP(a), 0);
         wr8(ABS(SPRITES_FROZEN), 0);
-        wr8(ABS(0x1E0C), 0);
+        wr8(ABS(ANIM_UPLOAD_ON), 0);
         lda8(0x80);
         push8(0x80); push16(0x8348); QueueSound_m1x1();
         lda8(0x01);

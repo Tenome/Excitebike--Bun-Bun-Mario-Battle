@@ -275,7 +275,7 @@ void SpawnDustPuff_m1x1(void)
     do {
         lda8(rd8(ABSX(0x0110)));
         if (fz) {
-            Y = rd8(ABS(0x1961)); nz8((u8)Y);
+            Y = rd8(ABS(SPRITE_FRAME)); nz8((u8)Y);
             lda8(rd8(ABSY(0x93A2)));
             if (!fn) {
                 fc = 1; sbc8(0x03);
@@ -452,7 +452,7 @@ void SpawnExhaust_m1x1(void)
     push8((u8)X);
     lda8(rd8(ABS(TURBO_ON)));
     if (fz) goto out;
-    Y = rd8(ABS(0x1961)); nz8((u8)Y);
+    Y = rd8(ABS(SPRITE_FRAME)); nz8((u8)Y);
     lda8(rd8(ABSY(0x9444)));
     if (fz) goto out;
     lda8(rd8(DP(FRAME_COUNT)));

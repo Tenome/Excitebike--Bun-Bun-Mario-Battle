@@ -32,7 +32,7 @@ void Reach2_m1x1(void)
  */
 void CoinMilestone_m1x1(void)
 {
-    lda8(rd8(ABS(0x1542)));
+    lda8(rd8(ABS(COIN_TOTAL)));
     cmp8((u8)A, 0x64);
     int hit = fz;
     if (!hit) {
@@ -87,7 +87,7 @@ void CollectCoin_m1x1(void)
         cmp8((u8)X, 0x08);
         if (fc) {
             ldx8(rd8(DP(0x02)));
-            wr8(ABS(0x1541), inc8(rd8(ABS(0x1541))));
+            wr8(ABS(MARKER_COUNT), inc8(rd8(ABS(MARKER_COUNT))));
             break;
         }
     }
@@ -106,15 +106,15 @@ void CollectCoin_m1x1(void)
     wr16(ABS(0x1520 + X), 0);
     wr16(ABS(0x1528 + X), 0);
     sep(0x20);
-    wr8(ABS(0x1542), inc8(rd8(ABS(0x1542))));
+    wr8(ABS(COIN_TOTAL), inc8(rd8(ABS(COIN_TOTAL))));
     push8(0x80); push16(0xD0EC); CoinMilestone_m1x1();
-    lda8(rd8(ABS(0x1540)));
+    lda8(rd8(ABS(COIN_COMBO)));
     cmp8((u8)A, 0x05);
     if (fc) {
         ldy8(0x05);
     } else {
-        wr8(ABS(0x1540), inc8(rd8(ABS(0x1540))));
-        ldy8(rd8(ABS(0x1540)));
+        wr8(ABS(COIN_COMBO), inc8(rd8(ABS(COIN_COMBO))));
+        ldy8(rd8(ABS(COIN_COMBO)));
     }
     lda8(rd8(ABS(0xD11D + Y)));
     fc = 0;
@@ -279,7 +279,7 @@ meet:
     push8((u8)Y);
     u8 rider = (u8)Y;
     wr8(ABS(0x000F), (u8)Y);
-    lda8(rd8(ABS(0x154F)));
+    lda8(rd8(ABS(PLAYER_CHAR)));
     lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A));
     fc = 0;
     adc8(rd8(DP(0x0F)));
@@ -291,14 +291,14 @@ meet:
         adc8(rd8(DP(0x0F)));
         wr8(DP(0x0F), (u8)A);
     }
-    lda8(rd8(ABS(0x1E91)));
+    lda8(rd8(ABS(RACE_VARIANT)));
     if (!fz) lda8(0x28);
     fc = 0;
     adc8(rd8(DP(0x0F)));
     Y = (u8)A; nz8((u8)Y);
     /* crash voice $80:C8E9,Y (the roster's for an added character's race) */
-    lda8(roster_crash_voice(rd8(LONG(STADIUM_SELECT)) != 0, rd8(ABS(0x1E91)) != 0,
-                            rd8(ABS(0x154F)), rider));
+    lda8(roster_crash_voice(rd8(LONG(STADIUM_SELECT)) != 0, rd8(ABS(RACE_VARIANT)) != 0,
+                            rd8(ABS(PLAYER_CHAR)), rider));
     if (!fz) {
         push8(0x80); push16(0xC8BF); QueueSoundB_m1x1();
     }

@@ -170,6 +170,13 @@
 #define DEMO_TIME       0x0CE3  /* frames left on the demo input entry ($F8 or more ends the demo) */
 #define ENTRY_CODE      0x0850  /* the end screen entry code (packed digits, flags and check bytes up to $085B) */
 
+/* ---- $15xx-$1Exx globals ---- */
+#define SPRITE_FRAME    0x1961  /* X = rider sprite slot (0-3): the animation frame it shows */
+#define PLAYER_CHAR     0x1542  /* the player's character (roster index) */
+#define ANIM_UPLOAD_ON  0x1E0C  /* the NMI uploads the animation strip at $1E0A */
+#define COIN_COMBO      0x1540  /* coins in a row (up to 5): adds the combo bonus */
+#define MARKER_COUNT    0x1541  /* coin markers started (up to 5) */
+
 /* ---- sprites ---- */
 #define OAM_BUF         0x1600  /* $0200 bytes: the OAM low table image */
 #define OAM_SIZE_BUF    0x1820  /* 128 size bytes, packed into the high table */

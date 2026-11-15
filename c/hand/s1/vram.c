@@ -280,7 +280,7 @@ void NmiFixedUploads_m1x1(void)
         SET_A8(1);  wr8(ABS(MDMAEN), 0x01);
         wr8(ABS(PALETTE_DIRTY), 0);
     }
-    if (rd8(ABS(0x1E0C)) != 0) {
+    if (rd8(ABS(ANIM_UPLOAD_ON)) != 0) {
         rep(0x20);
         sep(0x10);
         if (rd16(ABS(0x1E10)) != 0) {

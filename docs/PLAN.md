@@ -165,6 +165,10 @@ The rest of the 1 MB is graphics, tracks, music and other data.
    CLOCK_HIDE, COIN_TAKEN, WAVE_FRAME on the direct page and
    RIDER_PIECE_LEAN, RIDER_LANDED, PLAYER_GROUND, COURSE_ENDED,
    BUILD_COLUMN, the demo script position and timer and ENTRY_CODE.
+   In $15xx-$1Exx: the rider sprite frames, the player's character (Gen A
+   $1542, Gen B $154F), the race variant, the animation upload switch, the
+   coin counts, the entry digits, the player select's transition state, the
+   bonus end and the jump run's step and frame count.
    Still unnamed because each has several uses: DP $3C, $54, $56, $79,
    $94, $5E; $0904, $09C7, $09C9 and the per-course time tables.
 

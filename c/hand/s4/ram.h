@@ -187,6 +187,22 @@
 #define DEMO_TIME       0x0CE3  /* frames left on the demo input entry ($F8 or more ends the demo) */
 #define ENTRY_CODE      0x0850  /* the end screen entry code (packed digits, flags and check bytes up to $085B) */
 
+/* ---- $15xx-$1Exx globals ---- */
+#define SPRITE_FRAME    0x1961  /* X = rider sprite slot (0-3): the animation frame it shows */
+#define PLAYER_CHAR     0x154F  /* the player's character (roster index) */
+#define RACE_VARIANT    0x1E91  /* the race variant picked at random on the player select (rider sets, palettes) */
+#define ANIM_UPLOAD_ON  0x1E0C  /* the NMI uploads the animation strip at $1E0A */
+#define COIN_COMBO      0x1540  /* coins in a row (up to 5): adds the combo bonus */
+#define MARKER_COUNT    0x1541  /* coin markers started (up to 5) */
+#define COIN_TOTAL      0x1542  /* coins collected (the 100 and 200 milestones) */
+#define ENTRY_DIGITS    0x1570  /* 3 bytes: the three digits entered on the end screen */
+#define SELECT_CHOSEN   0x198B  /* player select: the choice is made */
+#define SELECT_SLIDING  0x198D  /* player select: the portrait transition is running */
+#define SELECT_ROW      0x198E  /* player select: the row the front portrait slides to */
+#define BONUS_END       0x1990  /* the bonus course ended (1 the track's end, 2 the time ran out) */
+#define JUMP_RUN_STEP   0x197F  /* jump contest: the run's step (2 = riding) */
+#define JUMP_RUN_FRAMES 0x1981  /* word: jump contest: frames into the run (picks the pose and the band) */
+
 /* ---- sprites ---- */
 #define OAM_BUF         0x1600  /* $0200 bytes: the OAM low table image */
 #define OAM_SIZE_BUF    0x1820  /* 128 size bytes, packed into the high table */

@@ -180,7 +180,7 @@ void DispatchByDistance_m1x1(void)
 {
     rep(0x20);
     ldx8(0x00);
-    lda16(rd16(ABS(0x1981)));
+    lda16(rd16(ABS(JUMP_RUN_FRAMES)));
     do {
         cmp16(A, rd16(ABSX(0xC5FE)));
         if (!fc) break;
