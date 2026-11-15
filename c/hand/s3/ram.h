@@ -206,6 +206,19 @@
 #define JUMP_RUN_STEP   0x197F  /* jump contest: the run's step (2 = riding) */
 #define JUMP_RUN_FRAMES 0x1981  /* word: jump contest: frames into the run (picks the pose and the band) */
 
+/* ---- effect slots (sparks, dust, confetti; Y = slot 0/2/4/6) and the race clock ---- */
+#define EFFECT_X        0x0106  /* Y = slot: X position */
+#define EFFECT_Y        0x010E  /* Y = slot: Y position */
+#define EFFECT_KIND     0x0116  /* Y = slot: kind or step (0 = free) */
+#define EFFECT_FRAME    0x011E  /* Y = slot: animation frame or tile */
+#define EFFECT_TIMER    0x0126  /* Y = slot: frames until the next step */
+#define RACE_MIN        0x03AE  /* the race clock: minutes */
+#define RACE_SEC        0x03AF  /* seconds */
+#define RACE_FRAMES     0x03B0  /* frames (shown as hundredths) */
+#define FINISH_CROSSED  0x03AC  /* the player crossed the finish (once per lap) */
+#define COURSE_NUM      0x027D  /* the course being built (picks its pointer tables) */
+#define PLAYER_BUF_COL  0x027B  /* the player's column in TRACK_BUF */
+
 /* ---- sprites ---- */
 #define OAM_BUF         0x1600  /* $0200 bytes: the OAM low table image */
 #define OAM_SIZE_BUF    0x1820  /* 128 size bytes, packed into the high table */

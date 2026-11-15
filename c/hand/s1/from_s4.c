@@ -28,7 +28,9 @@ static void fade_field(u16 m, u16 target, u16 u)
     else { fc = 0; adc16(u); }
     wr16(ABSX(0x1C38), A);
 }
-/* $80:B0AF: AND A into rider X's input $017E. */
+/* $80:B0AF: AND A into rider X's input $017E. The address is Gen B's
+ * RIDER_INPUT; Gen A's is $0178, so in Stadium 1 this lands six bytes off
+ * (the original code does the same). */
 static void input_and_a(void)
 {
     and8(rd8(ABSX(0x017E)));
@@ -144,12 +146,12 @@ void StepFallingSprite_m1x1(void)
     lda8(rd8(DP(FRAME_COUNT)));
     and8(0x03);
     if (fz) {
-        wr8(ABSX(0x0100), dec8(rd8(ABSX(0x0100))));
-        wr8(ABSX(0x0108), dec8(rd8(ABSX(0x0108))));
-        wr8(ABSX(0x0118), dec8(rd8(ABSX(0x0118))));
-        lda8(rd8(ABSX(0x0118)));
+        wr8(ABSX(EFFECT_X), dec8(rd8(ABSX(EFFECT_X))));
+        wr8(ABSX(EFFECT_Y), dec8(rd8(ABSX(EFFECT_Y))));
+        wr8(ABSX(EFFECT_FRAME), dec8(rd8(ABSX(EFFECT_FRAME))));
+        lda8(rd8(ABSX(EFFECT_FRAME)));
         cmp8((u8)A, 0x9F);
-        if (fz) { wr8(ABSX(0x0110), 0); ret(); return; }
+        if (fz) { wr8(ABSX(EFFECT_KIND), 0); ret(); return; }
     }
     lda8(rd8(ABS(RIDER_BUMPED)));
     ora8(rd8(DP(RACE_END)));
@@ -157,9 +159,9 @@ void StepFallingSprite_m1x1(void)
         lda8((u8)X);
         lda8(asl8((u8)A));
         Y = (u8)A; nz8((u8)Y);
-        lda8(rd8(ABSX(0x0100))); wr8(ABSY(0x1610), (u8)A);
-        lda8(rd8(ABSX(0x0108))); wr8(ABSY(0x1611), (u8)A);
-        lda8(rd8(ABSX(0x0118))); wr8(ABSY(0x1612), (u8)A);
+        lda8(rd8(ABSX(EFFECT_X))); wr8(ABSY(0x1610), (u8)A);
+        lda8(rd8(ABSX(EFFECT_Y))); wr8(ABSY(0x1611), (u8)A);
+        lda8(rd8(ABSX(EFFECT_FRAME))); wr8(ABSY(0x1612), (u8)A);
         lda8(0x2D); wr8(ABSY(0x1613), 0x2D);
     }
     ret();
@@ -235,12 +237,12 @@ void SetRiderLean_m1x1(void)
 void DrawSpark_m1x1(void)
 {
     X = Y; nz8((u8)X);
-    lda8(rd8(ABSX(0x0100))); wr8(ABSY(0x1610), (u8)A);
-    lda8(rd8(ABSX(0x0108))); wr8(ABSY(0x1611), (u8)A);
+    lda8(rd8(ABSX(EFFECT_X))); wr8(ABSY(0x1610), (u8)A);
+    lda8(rd8(ABSX(EFFECT_Y))); wr8(ABSY(0x1611), (u8)A);
     lda8(rd8(ABSX(0x0140)));
     cmp8((u8)A, 0xF0);
     if (fc) lda8(0x00);
-    else lda8(rd8(ABSX(0x0118)));
+    else lda8(rd8(ABSX(EFFECT_FRAME)));
     push8((u8)X);
     X = (u8)A; nz8((u8)X);
     lda8(rd8(LONGX(0x81959B))); wr8(ABSY(0x1612), (u8)A);
@@ -251,12 +253,12 @@ void DrawSpark_m1x1(void)
     lda8(lsr8((u8)A));
     Y = (u8)A; nz8((u8)Y);
     lda8(0x02); wr8(ABSY(0x1824), 0x02);
-    u8 t = dec8(rd8(ABSX(0x0120)));
-    wr8(ABSX(0x0120), t);
+    u8 t = dec8(rd8(ABSX(EFFECT_TIMER)));
+    wr8(ABSX(EFFECT_TIMER), t);
     if (fz) {
         lda8(0x01); wr8(ABSX(0x0128), 0x01);
-        lda8(0x04); wr8(ABSX(0x0120), 0x04);
-        wr8(ABSX(0x0118), 0);
+        lda8(0x04); wr8(ABSX(EFFECT_TIMER), 0x04);
+        wr8(ABSX(EFFECT_FRAME), 0);
     }
     ret();
 }
@@ -273,20 +275,20 @@ void SpawnDustPuff_m1x1(void)
     push8((u8)X);
     ldx8(0x06);
     do {
-        lda8(rd8(ABSX(0x0110)));
+        lda8(rd8(ABSX(EFFECT_KIND)));
         if (fz) {
             Y = rd8(ABS(SPRITE_FRAME)); nz8((u8)Y);
             lda8(rd8(ABSY(0x93A2)));
             if (!fn) {
                 fc = 1; sbc8(0x03);
                 fc = 0; adc8(rd8(ABS(RIDER_X)));
-                wr8(ABSX(0x0100), (u8)A);
+                wr8(ABSX(EFFECT_X), (u8)A);
                 lda8(rd8(ABSY(0x93C2)));
                 fc = 1; sbc8(0x03);
                 fc = 0; adc8(rd8(ABS(RIDER_Y)));
-                wr8(ABSX(0x0108), (u8)A);
-                lda8(0xA7); wr8(ABSX(0x0118), 0xA7);
-                lda8(0x01); wr8(ABSX(0x0110), 0x01);
+                wr8(ABSX(EFFECT_Y), (u8)A);
+                lda8(0xA7); wr8(ABSX(EFFECT_FRAME), 0xA7);
+                lda8(0x01); wr8(ABSX(EFFECT_KIND), 0x01);
             }
             X = pull8(); nz8((u8)X);
             DB = pull8(); nz8(DB);
@@ -325,9 +327,9 @@ void MoveObjectX_m1x1(void)
     lda8(rol8((u8)A));
     push8((u8)A);
     lda8(ror8((u8)A));
-    lda8(rd8(ABSX(0x0100)));
+    lda8(rd8(ABSX(EFFECT_X)));
     adc8(rd8(DP(0x00)));
-    wr8(ABSX(0x0100), (u8)A);
+    wr8(ABSX(EFFECT_X), (u8)A);
     lda8(rd8(ABSX(0x0101)));
     adc8(rd8(DP(0x02)));
     wr8(ABSX(0x0101), (u8)A);
@@ -343,19 +345,19 @@ void MoveObjectX_m1x1(void)
 void DrawDustPair_m1x1(void)
 {
     X = Y; nz8((u8)X);
-    lda8(rd8(ABSX(0x0100)));
+    lda8(rd8(ABSX(EFFECT_X)));
     fc = 1; sbc8(rd8(ABS(RIDER_STEP)));
-    wr8(ABSX(0x0100), (u8)A);
+    wr8(ABSX(EFFECT_X), (u8)A);
     lda8(rd8(ABSX(0x0128)));
     fc = 1; sbc8(rd8(ABS(RIDER_STEP)));
     wr8(ABSX(0x0128), (u8)A);
     lda8(rd8(DP(FRAME_COUNT)));
     and8(0x03);
     if (fz) {
-        wr8(ABSX(0x0118), dec8(rd8(ABSX(0x0118))));
-        lda8(rd8(ABSX(0x0118)));
+        wr8(ABSX(EFFECT_FRAME), dec8(rd8(ABSX(EFFECT_FRAME))));
+        lda8(rd8(ABSX(EFFECT_FRAME)));
         cmp8((u8)A, 0xAF);
-        if (fz) { wr8(ABSX(0x0110), 0); ret(); return; }
+        if (fz) { wr8(ABSX(EFFECT_KIND), 0); ret(); return; }
     }
     lda8(rd8(ABS(RIDER_BUMPED)));
     ora8(rd8(DP(RACE_END)));
@@ -363,13 +365,13 @@ void DrawDustPair_m1x1(void)
         lda8((u8)X);
         lda8(asl8((u8)A));
         Y = (u8)A; nz8((u8)Y);
-        lda8(rd8(ABSX(0x0100))); wr8(ABSY(0x1610), (u8)A);
-        lda8(rd8(ABSX(0x0108))); wr8(ABSY(0x1611), (u8)A);
-        lda8(rd8(ABSX(0x0118))); wr8(ABSY(0x1612), (u8)A);
+        lda8(rd8(ABSX(EFFECT_X))); wr8(ABSY(0x1610), (u8)A);
+        lda8(rd8(ABSX(EFFECT_Y))); wr8(ABSY(0x1611), (u8)A);
+        lda8(rd8(ABSX(EFFECT_FRAME))); wr8(ABSY(0x1612), (u8)A);
         lda8(0x2D); wr8(ABSY(0x1613), 0x2D);
         lda8(rd8(ABSX(0x0128))); wr8(ABSY(0x17E0), (u8)A);
         lda8(rd8(ABSX(0x0130))); wr8(ABSY(0x17E1), (u8)A);
-        lda8(rd8(ABSX(0x0118))); wr8(ABSY(0x17E2), (u8)A);
+        lda8(rd8(ABSX(EFFECT_FRAME))); wr8(ABSY(0x17E2), (u8)A);
         lda8(0x2D); wr8(ABSY(0x17E3), 0x2D);
     }
     ret();
@@ -460,18 +462,18 @@ void SpawnExhaust_m1x1(void)
     if (!fz) goto out;
     ldx8(0x06);
     do {
-        lda8(rd8(ABSX(0x0110)));
+        lda8(rd8(ABSX(EFFECT_KIND)));
         if (fz) {
             lda8(rd8(DP(RANDOM_LFSR))); and8(0x07); fc = 0; adc8(0x38);
-            wr8(ABSX(0x0100), (u8)A);
+            wr8(ABSX(EFFECT_X), (u8)A);
             lda8(rd8(DP(0x2D))); and8(0x0F); fc = 0; adc8(rd8(ABS(RIDER_Y))); sbc8(0x02);
-            wr8(ABSX(0x0108), (u8)A);
+            wr8(ABSX(EFFECT_Y), (u8)A);
             lda8(rd8(DP(0x2E))); and8(0x07); fc = 0; adc8(0x3C);
             wr8(ABSX(0x0128), (u8)A);
             lda8(rd8(DP(0x2F))); and8(0x0F); fc = 0; adc8(rd8(ABS(RIDER_Y))); sbc8(0x02);
             wr8(ABSX(0x0130), (u8)A);
-            lda8(0xB2); wr8(ABSX(0x0118), 0xB2);
-            lda8(0x02); wr8(ABSX(0x0110), 0x02);
+            lda8(0xB2); wr8(ABSX(EFFECT_FRAME), 0xB2);
+            lda8(0x02); wr8(ABSX(EFFECT_KIND), 0x02);
             goto out;
         }
         X = dec8((u8)X);
@@ -954,6 +956,8 @@ void EmptyStep9554_m1x1(void)
     ret();
 }
 /* $80:C5FE (RTS): riders 7-1 on screen page 1 ($019E odd) at X $30-$3F
+ * (Gen B's RIDER_PAGE / RIDER_X; Gen A keeps them at $0198 / $0190, so the
+ * original Stadium 1 code reads other fields here)
  * flag $092D (cleared elsewhere on that page); Y is left $40 or $80. */
 void FlagRidersAtLine_m1x1(void)
 {

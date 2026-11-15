@@ -180,6 +180,19 @@
 #define COIN_COMBO      0x1540  /* coins in a row (up to 5): adds the combo bonus */
 #define MARKER_COUNT    0x1541  /* coin markers started (up to 5) */
 
+/* ---- effect slots (sparks, dust, confetti; Y = slot 0/2/4/6) and the race clock ---- */
+#define EFFECT_X        0x0100  /* Y = slot: X position */
+#define EFFECT_Y        0x0108  /* Y = slot: Y position */
+#define EFFECT_KIND     0x0110  /* Y = slot: kind or step (0 = free) */
+#define EFFECT_FRAME    0x0118  /* Y = slot: animation frame or tile */
+#define EFFECT_TIMER    0x0120  /* Y = slot: frames until the next step */
+#define RACE_MIN        0x03B1  /* the race clock: minutes */
+#define RACE_SEC        0x03B2  /* seconds */
+#define RACE_FRAMES     0x03B3  /* frames (shown as hundredths) */
+#define FINISH_CROSSED  0x03AF  /* the player crossed the finish (once per lap) */
+#define COURSE_NUM      0x0277  /* the course being built (picks its pointer tables) */
+#define PLAYER_BUF_COL  0x0275  /* the player's column in TRACK_BUF */
+
 /* ---- sprites ---- */
 #define OAM_BUF         0x1600  /* $0200 bytes: the OAM low table image */
 #define OAM_SIZE_BUF    0x1820  /* 128 size bytes, packed into the high table */

@@ -95,6 +95,10 @@ addresses, carried over by `tools/port_hand.py`):
   `$71`. The NMI sends a channel's next command to `APUIO<n>` once the port
   echoes the last one. Only channel 0 is ever queued. Same in both
   generations.
+* Two Gen A routines carry Gen B's rider addresses: `$80:B0AF` ANDs into
+  `$017E,X` and FlagRidersAtLine (`$80:C5FE`) reads `$019E,X` / `$0196,X`.
+  Gen A's fields sit 6 bytes lower, so Stadium 1 reads other bytes there.
+  The hand C keeps the original addresses.
 * The IRQ's parallax code (ParallaxLines, ScaleByScroll, Mul16b) runs with
   D = `$1B00`, so its `$60-$6E` are `$1B60-$1B6E`, not the sound indexes.
 
