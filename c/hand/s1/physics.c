@@ -181,17 +181,17 @@ void ScrollRivalsRelative_m1x1(void)
  */
 void RiderHeightStep_m1x1(void)
 {
-    lda8(rd8(ABS(0x08E4 + X)));
-    adc8(rd8(ABS(0x08FC + X)));
-    wr8(ABS(0x08E4 + X), (u8)A);
-    lda8(rd8(ABS(0x08EC + X)));
+    lda8(rd8(ABS(RIDER_HEIGHT_LO + X)));
+    adc8(rd8(ABS(RIDER_FALL_SPEED + X)));
+    wr8(ABS(RIDER_HEIGHT_LO + X), (u8)A);
+    lda8(rd8(ABS(RIDER_HEIGHT_HI + X)));
     adc8(0x00);
-    wr8(ABS(0x08EC + X), (u8)A);
+    wr8(ABS(RIDER_HEIGHT_HI + X), (u8)A);
     adc8(rd8(DP(0x01)));
     if (fc)
         wr8(ABS(0x0904 + X), lsr8(rd8(ABS(0x0904 + X))));
     fc = 1;
-    sbc8(rd8(ABS(0x08DC + X)));
+    sbc8(rd8(ABS(RIDER_BOUNCE_HI + X)));
     wr8(DP(0x01), (u8)A);
     if (!fc) {
         lda8(0x01);

@@ -179,9 +179,9 @@ void SortRidersByPosition_m1x1(void)
         wr8(DPX(0x00), (u8)A);
         X = dec8((u8)X);
     } while (!fn);
-    lda8(rd8(ABS(0x08C7)));
+    lda8(rd8(ABS(BALL_OUT)));
     if (!fz) {
-        lda8(rd8(ABS(0x097C)));
+        lda8(rd8(ABS(BALL_LANE)));
         wr8(DP(0x03), (u8)A);
     }
     ldx8(0x07);

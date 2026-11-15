@@ -231,6 +231,20 @@
 #define EFFECT_VX       0x013E  /* [+$8] Y = slot: horizontal speed */
 #define EFFECT_VY       0x0146  /* [+$8] Y = slot: vertical speed */
 
+/* ---- riders' height motion, crash and ball ---- */
+#define RIDER_COUNTDOWN 0x08CC  /* [+$8] X = rider: a timer counted down every frame (bounce, overheat end) */
+#define RIDER_HEIGHT_LO 0x08E4  /* [+$8] X = rider: height motion, fraction ($08EC:$08E4 += RIDER_FALL_SPEED) */
+#define RIDER_HEIGHT_HI 0x08EC  /* [+$8] X = rider: height motion, whole part */
+#define RIDER_FALL_SPEED 0x08FC  /* [+$8] X = rider: the height step added every frame */
+#define RIDER_BOUNCE_LO 0x08D4  /* [+$8] X = rider: the crash bounce speed, fraction (copied to RIDER_HEIGHT_LO) */
+#define RIDER_BOUNCE_HI 0x08DC  /* [+$8] X = rider: the crash bounce speed, whole part */
+#define CRASH_PHASE     0x0998  /* crash recovery runs every 4 frames on this countdown */
+#define TURBO_WARN      0x00AA  /* the overheat warning sound is playing */
+#define COLOUR_TIMER    0x0882  /* frames to the colour cycle's next step (14) */
+#define BAR_LENGTH      0x087E  /* the credits bar's length (to 15) */
+#define BALL_LANE       0x097C  /* the ball's lane position (the player uses it when BALL_OUT) */
+#define BALL_OUT        0x08C7  /* the ball is out on the track */
+
 /* ---- sprites ---- */
 #define OAM_BUF         0x1600  /* [+$200] $0200 bytes: the OAM low table image */
 #define OAM_SIZE_BUF    0x1820  /* [+$80] 128 size bytes, packed into the high table */

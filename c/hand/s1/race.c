@@ -333,7 +333,7 @@ void PlayerOverheatWarn_m1x1(void)
     push8(0x80); push16(0xEAF5); QueueSound_m1x1();
     lda8(0x2D);
     push8(0x80); push16(0xEAFB); QueueSound_m1x1();
-    wr8(DP(0xA2), 0);
+    wr8(DP(TURBO_WARN), 0);
     ret();
 }
 

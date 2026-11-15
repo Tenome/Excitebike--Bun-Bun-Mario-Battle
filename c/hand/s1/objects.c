@@ -353,8 +353,8 @@ void PlayerColumnCheck_m1x1(void)
         } else stop = !fc;
         if (stop) { push16(0xDDD2); PlayerStop_m1x1(); }
         push16(0xDDD5); CrashLand_m1x1();
-        lda8(rd8(ABS(0x08D4))); wr8(ABS(0x08E4), (u8)A);
-        lda8(rd8(ABS(0x08DC))); wr8(ABS(0x08EC), (u8)A);
+        lda8(rd8(ABS(RIDER_BOUNCE_LO))); wr8(ABS(RIDER_HEIGHT_LO), (u8)A);
+        lda8(rd8(ABS(RIDER_BOUNCE_HI))); wr8(ABS(RIDER_HEIGHT_HI), (u8)A);
         ret();
         return;
     }
@@ -1031,20 +1031,20 @@ void EndScreenCode_m1x1(void)
 void StartJump_m1x1(void)
 {
     lda8(0x02); wr8(ABSX(RIDER_AIR), 0x02);
-    lda8(0x0F); wr8(ABSX(0x08E4), 0x0F);
+    lda8(0x0F); wr8(ABSX(RIDER_HEIGHT_LO), 0x0F);
     lda8(rd8(ABSX(RIDER_SPEED_LO)));
     fc = 0; adc8(0xAF);
-    wr8(ABSX(0x08D4), (u8)A);
+    wr8(ABSX(RIDER_BOUNCE_LO), (u8)A);
     lda8(rd8(ABSX(RIDER_SPEED_HI)));
     adc8(0x00);
-    wr8(ABSX(0x08DC), (u8)A);
+    wr8(ABSX(RIDER_BOUNCE_HI), (u8)A);
     lda8(rd8(ABSX(RIDER_SLOW)));
     cmp8((u8)A, 0x02);
     if (fz) {
-        u8 hi = rd8(ABSX(0x08DC));
-        fc = hi & 1; hi >>= 1; wr8(ABSX(0x08DC), hi); nz8(hi);
-        u8 lo = rd8(ABSX(0x08D4));
-        u8 c = fc; fc = lo & 1; lo = (u8)((lo >> 1) | (c << 7)); wr8(ABSX(0x08D4), lo); nz8(lo);
+        u8 hi = rd8(ABSX(RIDER_BOUNCE_HI));
+        fc = hi & 1; hi >>= 1; wr8(ABSX(RIDER_BOUNCE_HI), hi); nz8(hi);
+        u8 lo = rd8(ABSX(RIDER_BOUNCE_LO));
+        u8 c = fc; fc = lo & 1; lo = (u8)((lo >> 1) | (c << 7)); wr8(ABSX(RIDER_BOUNCE_LO), lo); nz8(lo);
     }
     lda8((u8)X);
     if (!fz) { ret(); return; }
@@ -1131,14 +1131,14 @@ void BallHit_m1x1(void)
     lda8(rd8(ABS(RIDER_PAGE + 0x03)));
     lda8(lsr8((u8)A));
     if (!fc) { ret(); return; }
-    lda8(rd8(ABS(0x08C7)));
+    lda8(rd8(ABS(BALL_OUT)));
     if (fz) { ret(); return; }
     lda8(rd8(ABS(RIDER_LANE)));
     fc = 1; sbc8(0x03);
-    cmp8((u8)A, rd8(ABS(0x097C)));
+    cmp8((u8)A, rd8(ABS(BALL_LANE)));
     if (fc) { ret(); return; }
     adc8(0x07);
-    cmp8((u8)A, rd8(ABS(0x097C)));
+    cmp8((u8)A, rd8(ABS(BALL_LANE)));
     if (!fc) { ret(); return; }
     lda8(rd8(ABS(RIDER_X)));
     cmp8((u8)A, rd8(ABS(RIDER_RUNOUT + 0x03)));
@@ -1263,7 +1263,7 @@ static void crash_tail1(void)
     and8(0x03);
     Y = (u8)A; nz8((u8)Y);
     lda8(rd8(ABSY(0xBD42)));
-    wr8(ABSX(0x08FC), (u8)A);
+    wr8(ABSX(RIDER_FALL_SPEED), (u8)A);
     lda8(rd8(ABSX(RIDER_Y)));
     wr8(DP(0x01), (u8)A);
     push16(0xC3A4); RiderHeightStep_m1x1();
@@ -1276,7 +1276,7 @@ static void crash_tail1(void)
  * then the steps. */
 static void crash_from1(void)
 {
-    wr8(ABSX(0x08EC), (u8)A);
+    wr8(ABSX(RIDER_HEIGHT_HI), (u8)A);
     push16(0xC383); StartJump_m1x1();
     crash_tail1();
 }
@@ -2245,7 +2245,7 @@ void RiderLanding_m1x1(void)
                 lda8(rd8(ABSX(RIDER_POSE)));
                 ora8(rd8(ABSX(RIDER_PIECE_ACTION)));
                 if (fz) {
-                    lda8(0x04); wr8(ABSX(0x08CC), 0x04);
+                    lda8(0x04); wr8(ABSX(RIDER_COUNTDOWN), 0x04);
                     lda8(lsr8((u8)A)); wr8(ABSX(RIDER_SLOW), (u8)A);
                     lda8(lsr8((u8)A)); wr8(ABSX(RIDER_AIR), (u8)A);
                 }
@@ -2847,7 +2847,7 @@ arrived:
     wr8(ABSX(RIDER_TIMER), inc8(rd8(ABSX(RIDER_TIMER))));
     lda8(0x00); wr8(ABSX(0x099E), 0x00);
     cmp8((u8)X, 0x07);
-    if (fz) { wr8(ABS(0x092C), 0); wr8(ABS(0x08C7), 0); }
+    if (fz) { wr8(ABS(0x092C), 0); wr8(ABS(BALL_OUT), 0); }
     ret();
 }
 
@@ -3323,12 +3323,12 @@ void CrashRecovery_m1x1(void)
 {
     lda8(rd8(DP(FRAME_COUNT)));
     and8(0x03);
-    cmp8((u8)A, rd8(ABS(0x0998)));
+    cmp8((u8)A, rd8(ABS(CRASH_PHASE)));
     if (!fz) { ret(); return; }
-    wr8(ABS(0x0998), dec8(rd8(ABS(0x0998))));
-    lda8(rd8(ABS(0x0998)));
+    wr8(ABS(CRASH_PHASE), dec8(rd8(ABS(CRASH_PHASE))));
+    lda8(rd8(ABS(CRASH_PHASE)));
     and8(0x03);
-    wr8(ABS(0x0998), (u8)A);
+    wr8(ABS(CRASH_PHASE), (u8)A);
     crash_loop1(0);
 }
 
@@ -3382,8 +3382,8 @@ void PlayerCrashStep_m1x1(void)
     if (!fz) { ret(); return; }
     push16(0xDD7E); player_halt1();
     push16(0xDDD5); CrashLand_m1x1();
-    lda8(rd8(ABS(0x08D4))); wr8(ABS(0x08E4), (u8)A);
-    lda8(rd8(ABS(0x08DC))); wr8(ABS(0x08EC), (u8)A);
+    lda8(rd8(ABS(RIDER_BOUNCE_LO))); wr8(ABS(RIDER_HEIGHT_LO), (u8)A);
+    lda8(rd8(ABS(RIDER_BOUNCE_HI))); wr8(ABS(RIDER_HEIGHT_HI), (u8)A);
     ret();
     return;
 slide:
@@ -3865,7 +3865,7 @@ void FinishStep_m1x1(void)
         lda8(0x00); wr8(ABS(OVERHEAT_LOCK), 0x00);
         lda8(0x2D);
         push8(0x80); push16(0xC461); QueueSound_m1x1();
-        lda8(0x05); wr8(ABS(ENGINE_HEAT), 0x05); wr8(ABS(0x08CC), 0x05);
+        lda8(0x05); wr8(ABS(ENGINE_HEAT), 0x05); wr8(ABS(RIDER_COUNTDOWN), 0x05);
         Y = rd8(ABS(RIDER_TIMER)); nz8((u8)Y);
         if (fz) wr8(ABS(RIDER_TIMER), (u8)A);
         ret();
@@ -4704,17 +4704,17 @@ void TemperatureGauge_m1x1(void)
     int warn = 0;
     if (fc) { Y = dec8((u8)Y); warn = fz; }
     if (warn) {
-        lda8(rd8(DP(0xA2)));
+        lda8(rd8(DP(TURBO_WARN)));
         if (fz) {
             lda8(rd8(ABS(TURBO_ON)));
             if (fz) { lda8(0x2C); push8(0x80); push16(0xCF9A); QueueSound_m1x1(); }
-            lda8(0x01); wr8(DP(0xA2), 0x01);
+            lda8(0x01); wr8(DP(TURBO_WARN), 0x01);
         }
     } else {
-        lda8(rd8(DP(0xA2)));
+        lda8(rd8(DP(TURBO_WARN)));
         if (!fz) {
             lda8(0x2D); push8(0x80); push16(0xCFAA); QueueSound_m1x1();
-            wr8(DP(0xA2), 0);
+            wr8(DP(TURBO_WARN), 0);
         }
     }
 off:
@@ -6877,7 +6877,7 @@ void RiderThrottle_m1x1(void)
     and8(0x03);
     wr8(DP(0x0A), (u8)A);
     ldy8(0x00);
-    lda8(rd8(ABSX(0x08CC)));
+    lda8(rd8(ABSX(RIDER_COUNTDOWN)));
     ora8(rd8(ABSX(RIDER_BUMPED)));
     if (!fz) goto brake;
     lda8(rd8(ABSX(RIDER_TIMER)));

@@ -337,7 +337,7 @@ void OverheatStep_m1x1(void)
         push8(0x80); push16(0xC1DF); QueueSoundB_m1x1();
         lda8(0x05);
         wr8(ABS(ENGINE_HEAT), 0x05);
-        wr8(ABS(0x08CC), 0x05);
+        wr8(ABS(RIDER_COUNTDOWN), 0x05);
         Y = rd8(ABS(RIDER_TIMER)); nz8((u8)Y);
         if (fz) wr8(ABS(RIDER_TIMER), (u8)A);
         ret();

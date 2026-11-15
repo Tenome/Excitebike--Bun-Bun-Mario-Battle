@@ -347,14 +347,14 @@ void AddSpeedFraction_m1x1(void)
  * cancelled (zeroed) while any of bits 6-7 of $0178,X are set. */
 void Tick08CC_m1x1(void)
 {
-    lda8(rd8(ABS(0x08CC + X)));
+    lda8(rd8(ABS(RIDER_COUNTDOWN + X)));
     if (fz) { ret(); return; }
-    wr8(ABS(0x08CC + X), dec8(rd8(ABS(0x08CC + X))));
+    wr8(ABS(RIDER_COUNTDOWN + X), dec8(rd8(ABS(RIDER_COUNTDOWN + X))));
     lda8(rd8(ABS(RIDER_INPUT + X)));
     and8(0xC0);
     if (fz) { ret(); return; }
     lda8(0x00);
-    wr8(ABS(0x08CC + X), 0x00);
+    wr8(ABS(RIDER_COUNTDOWN + X), 0x00);
     ret();
 }
 
@@ -576,10 +576,10 @@ void BsxReadSerialByte_m1x1(void)
  * out both ways from $0455+$1D/$0455+$21. */
 void GrowBar087E_m1x1(void)
 {
-    lda8(rd8(ABS(0x087E)));
+    lda8(rd8(ABS(BAR_LENGTH)));
     cmp8((u8)A, 0x0F);
     if (fz) { ret(); return; }
-    wr8(ABS(0x087E), inc8(rd8(ABS(0x087E))));
+    wr8(ABS(BAR_LENGTH), inc8(rd8(ABS(BAR_LENGTH))));
     wr8(ABS(0x0474), (u8)A);
     ldx8(0x1D);
     ldy8(0x21);
@@ -603,7 +603,7 @@ void StepColourCycle_m1x1(void)
     lda8(rd8(ABS(COLOUR_CYCLE)));
     lda8(inc8((u8)A));
     if (!fz) {
-        lda8(rd8(ABS(0x0882)));
+        lda8(rd8(ABS(COLOUR_TIMER)));
         if (fz) {
             X = rd8(ABS(COLOUR_CYCLE));
             rep(0x20);
@@ -614,10 +614,10 @@ void StepColourCycle_m1x1(void)
             wr8(ABS(COLOUR_CYCLE), inc8(rd8(ABS(COLOUR_CYCLE))));
             wr8(ABS(COLOUR_CYCLE), inc8(rd8(ABS(COLOUR_CYCLE))));
             lda8(0x0E);
-            wr8(ABS(0x0882), 0x0E);
+            wr8(ABS(COLOUR_TIMER), 0x0E);
         }
     }
-    wr8(ABS(0x0882), dec8(rd8(ABS(0x0882))));
+    wr8(ABS(COLOUR_TIMER), dec8(rd8(ABS(COLOUR_TIMER))));
     ret();
 }
 
