@@ -71,9 +71,9 @@ void Mode02_Setup_m1x1(void)
     lda8(t);
     for (int row = 0; row < 4; row++) {
         if (row) { fc = 0; adc8(0x0F); }
-        wr8(ABS(0x03D3 + row * 2), (u8)A);
+        wr8(ABS(DIGIT_ROW + row * 2), (u8)A);
         SET_A8(inc8((u8)A));
-        wr8(ABS(0x03D4 + row * 2), (u8)A);
+        wr8(ABS(DIGIT_ROW + 0x01 + row * 2), (u8)A);
     }
     lda8(rd8(DP(0x7D)));
     and8(0x01);

@@ -237,12 +237,12 @@ void SelectName_m1x1(void)
 {
     lda8(0x68);
     for (int k = 0; k < 6; k++) {
-        wr8(ABS(0x1700 + k * 4), (u8)A);
+        wr8(ABS(OAM_BUF + 0x100 + k * 4), (u8)A);
         if (k < 5) { fc = 0; adc8(0x08); }
     }
     lda8(0x84);
     for (int k = 0; k < 6; k++)
-        wr8(ABS(0x1701 + k * 4), 0x84);
+        wr8(ABS(OAM_BUF + 0x101 + k * 4), 0x84);
     lda8((u8)X);
     cmp8((u8)X, 0x03);
     int st = rd8(LONG(STADIUM_SELECT)) != 0;
@@ -260,14 +260,14 @@ void SelectName_m1x1(void)
     fc = 0;
     adc8(0x06);
     for (int k = 0; k < 6; k++) {
-        wr8(ABS(0x1702 + k * 4), (u8)A);
+        wr8(ABS(OAM_BUF + 0x102 + k * 4), (u8)A);
         if (k < 5) lda8(inc8((u8)A));
     }
     lda8(0x21);
     for (int k = 0; k < 6; k++)
-        wr8(ABS(0x1703 + k * 4), 0x21);
+        wr8(ABS(OAM_BUF + 0x103 + k * 4), 0x21);
     for (int k = 0; k < 6; k++)
-        wr8(ABS(0x1860 + k), 0);
+        wr8(ABS(OAM_SIZE_BUF + 0x40 + k), 0);
     retl();
 }
 
@@ -287,16 +287,16 @@ static void draw_portrait(int i, u8 cursor, int st)
     push8((u8)i);
     lda8(rd8(DP(0x04)));
     for (int c = 0; c < 3; c++) {
-        wr8(ABS(0x1600 + Y + c * 4), (u8)A);
-        wr8(ABS(0x160C + Y + c * 4), (u8)A);
-        wr8(ABS(0x1618 + Y + c * 4), (u8)A);
+        wr8(ABS(OAM_BUF + Y + c * 4), (u8)A);
+        wr8(ABS(OAM_BUF + 0x0C + Y + c * 4), (u8)A);
+        wr8(ABS(OAM_BUF + 0x18 + Y + c * 4), (u8)A);
         if (c < 2) { fc = 0; adc8(0x10); }
     }
     lda8(rd8(DP(0x00)));
     for (int r = 0; r < 3; r++) {
-        wr8(ABS(0x1601 + Y + r * 12), (u8)A);
-        wr8(ABS(0x1605 + Y + r * 12), (u8)A);
-        wr8(ABS(0x1609 + Y + r * 12), (u8)A);
+        wr8(ABS(OAM_BUF + 0x01 + Y + r * 12), (u8)A);
+        wr8(ABS(OAM_BUF + 0x05 + Y + r * 12), (u8)A);
+        wr8(ABS(OAM_BUF + 0x09 + Y + r * 12), (u8)A);
         if (r < 2) { fc = 0; adc8(0x10); }
     }
     u8 tile, nt, selpal;
@@ -304,7 +304,7 @@ static void draw_portrait(int i, u8 cursor, int st)
     lda8(tile);
     for (int r = 0; r < 3; r++) {
         for (int c = 0; c < 3; c++) {
-            wr8(ABS(0x1602 + Y + r * 12 + c * 4), (u8)A);
+            wr8(ABS(OAM_BUF + 0x02 + Y + r * 12 + c * 4), (u8)A);
             if (c < 2) { lda8(inc8((u8)A)); lda8(inc8((u8)A)); }
         }
         if (r < 2) { fc = 0; adc8(0x1C); }
@@ -329,14 +329,14 @@ static void draw_portrait(int i, u8 cursor, int st)
         attr = (u8)A;
     }
     for (int k = 0; k < 9; k++)
-        wr8(ABS(0x1603 + Y + k * 4), attr);
+        wr8(ABS(OAM_BUF + 0x03 + Y + k * 4), attr);
     lda8((u8)Y);
     lda8(lsr8((u8)A));
     lda8(lsr8((u8)A));
     Y = (u8)A; nz8((u8)Y);
     lda8(0x02);
     for (int k = 0; k < 9; k++)
-        wr8(ABS(0x1820 + Y + k), 0x02);
+        wr8(ABS(OAM_SIZE_BUF + Y + k), 0x02);
     X = pull8();
 }
 
@@ -373,7 +373,7 @@ void SelectHideRest_m1x1(void)
     lda8(0xF0);
     u8 end = (u8)(1 + 36 * roster_count());          /* $B5 for five portraits */
     do {
-        wr8(ABS(0x1600 + X), 0xF0);
+        wr8(ABS(OAM_BUF + X), 0xF0);
         X = (u8)(X + 4);
         cmp8((u8)X, end);
     } while (!fz);
@@ -387,9 +387,9 @@ void SelectSlideY_m1x1(void)
     ldx8(0x00);
     lda8(rd8(ABS(SELECT_ROW)));
     do {
-        wr8(ABS(0x1601 + X), (u8)A);
-        wr8(ABS(0x1605 + X), (u8)A);
-        wr8(ABS(0x1609 + X), (u8)A);
+        wr8(ABS(OAM_BUF + 0x01 + X), (u8)A);
+        wr8(ABS(OAM_BUF + 0x05 + X), (u8)A);
+        wr8(ABS(OAM_BUF + 0x09 + X), (u8)A);
         fc = 0;
         adc8(0x10);
         push8((u8)A);
@@ -401,7 +401,7 @@ void SelectSlideY_m1x1(void)
     fc = 0;
     adc8(0x04);
     for (int k = 0; k < 6; k++)
-        wr8(ABS(0x1701 + k * 4), (u8)A);
+        wr8(ABS(OAM_BUF + 0x101 + k * 4), (u8)A);
     ret();
 }
 

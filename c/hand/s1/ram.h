@@ -197,6 +197,10 @@
 #define FINISH_POSE     0x091C  /* the player's walk or wave pose at the finish (0, 1, 3, 4) */
 #define SELECT_TURN     0x154B  /* player select: the carousel's turn step (+2 / -2, 0 still) */
 
+/* ---- more effect and rider fields ---- */
+#define EFFECT_VX       0x0138  /* [+$8] Y = slot: horizontal speed */
+#define EFFECT_VY       0x0140  /* [+$8] Y = slot: vertical speed */
+
 /* ---- sprites ---- */
 #define OAM_BUF         0x1600  /* [+$200] $0200 bytes: the OAM low table image */
 #define OAM_SIZE_BUF    0x1820  /* [+$80] 128 size bytes, packed into the high table */

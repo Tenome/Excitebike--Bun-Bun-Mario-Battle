@@ -38,7 +38,7 @@ void ClearOamBuffer_m1x1(void)
     do {
         for (int quarter = 0; quarter < 4; quarter++)
             for (int k = 0; k < 8; k++)
-                wr8(ABS(0x1601 + quarter * 0x80 + k * 4 + x), 0xF0);
+                wr8(ABS(OAM_BUF + 0x01 + quarter * 0x80 + k * 4 + x), 0xF0);
         SET_A8(x); fc = 0;
         adc8(0x20);                                /* next 8 sprites per quarter */
         x = (u8)A;
@@ -46,7 +46,7 @@ void ClearOamBuffer_m1x1(void)
     } while (!(x & 0x80));
     lda8(0);
     for (u8 y = 0x7F; y != 0; y--)
-        wr8(ABS(0x1820 + y), 0);
+        wr8(ABS(OAM_SIZE_BUF + y), 0);
     ldy8(0);
     ret();
 }

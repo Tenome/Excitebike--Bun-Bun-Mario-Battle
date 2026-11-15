@@ -88,23 +88,23 @@ void DrawRaceHud_m1x1(void)
 void WinnerFigure_m1x1(void)
 {
     X = rd8(ABS(OBJ_CURRENT));
-    lda8(rd8(ABS(0x036F + X)));
+    lda8(rd8(ABS(OBJ_DELAY + X)));
     if (fz) {
-        lda8(rd8(ABS(0x031F + X)));
+        lda8(rd8(ABS(OBJ_STEP + X)));
         eor8(0x01);
-        wr8(ABS(0x031F + X), (u8)A);
+        wr8(ABS(OBJ_STEP + X), (u8)A);
         lda8(0x08);
-        wr8(ABS(0x036F + X), 0x08);
-        wr8(ABS(0x027F + X), dec8(rd8(ABS(0x027F + X))));
+        wr8(ABS(OBJ_DELAY + X), 0x08);
+        wr8(ABS(OBJ_X + X), dec8(rd8(ABS(OBJ_X + X))));
         lda8(rd8(ABS(OBJ_TYPE + 0x0A)));
         cmp8((u8)A, 0x04);
         u8 limit = fz ? 0x95 : 0x90;
-        lda8(rd8(ABS(0x027F + X)));
+        lda8(rd8(ABS(OBJ_X + X)));
         cmp8((u8)A, limit);
         if (!fc) {
             ldy8(0x0E);
             for (;;) {
-                lda8(dec8(rd8(ABS(0x086E + Y))));
+                lda8(dec8(rd8(ABS(PLAYER_PLACE + Y))));
                 if (fz) break;
                 Y = dec8((u8)Y);
                 Y = dec8((u8)Y);
@@ -121,13 +121,13 @@ void WinnerFigure_m1x1(void)
             wr8(DP(0x00), (u8)A);
             Y = (u8)A; nz8((u8)Y);
             lda8(roster_winner_pose(ch, rider));
-            wr8(ABS(0x030F + X), (u8)A);
+            wr8(ABS(OBJ_STATE + X), (u8)A);
             lda8(0x40);
-            wr8(ABS(0x036F + X), 0x40);
+            wr8(ABS(OBJ_DELAY + X), 0x40);
         }
     }
-    ldy8(rd8(ABS(0x031F + X)));
+    ldy8(rd8(ABS(OBJ_STEP + X)));
     lda8(rd8(ABS(0xC156 + Y)));
-    wr8(ABS(0x034F + X), (u8)A);
+    wr8(ABS(OBJ_FRAME + X), (u8)A);
     ret();
 }

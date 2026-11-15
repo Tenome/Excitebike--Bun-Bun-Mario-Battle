@@ -90,11 +90,11 @@ static void pace_target(void)
     if (pct == 100)
         return;
     u16 a = (u16)(X & 0xFF);
-    unsigned v = (unsigned)(rd8(ABS(0x0236 + a)) << 8 | rd8(ABS(0x022E + a)));
+    unsigned v = (unsigned)(rd8(ABS(RIDER_TARGET_HI + a)) << 8 | rd8(ABS(RIDER_TARGET_LO + a)));
     v = v * (unsigned)pct / 100u;
     if (v > 0xFFFF) v = 0xFFFF;
-    wr8(ABS(0x0236 + a), (u8)(v >> 8));
-    wr8(ABS(0x022E + a), (u8)v);
+    wr8(ABS(RIDER_TARGET_HI + a), (u8)(v >> 8));
+    wr8(ABS(RIDER_TARGET_LO + a), (u8)v);
 }
 
 /* $80:BE66 RivalTarget (RTS, Y = the rider's lane state $019E): CPU rider

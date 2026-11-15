@@ -168,61 +168,61 @@ void RiderCollisions_m1x1(void)
     ldx8(0x00);
     ldy8(0x01);
 next_x_check:
-    lda8(rd8(ABS(0x01DE + X)));
+    lda8(rd8(ABS(RIDER_ACTIVE + X)));
     if (fz) goto next_x;
 pair:
-    lda8(rd8(ABS(0x01DE + Y)));
+    lda8(rd8(ABS(RIDER_ACTIVE + Y)));
     if (fz) goto next_y;
-    lda8(rd8(ABS(0x019E + X))); cmp8((u8)A, 0x01);
+    lda8(rd8(ABS(RIDER_PAGE + X))); cmp8((u8)A, 0x01);
     if (!fz) goto next_x;
-    lda8(rd8(ABS(0x019E + Y))); cmp8((u8)A, 0x01);
+    lda8(rd8(ABS(RIDER_PAGE + Y))); cmp8((u8)A, 0x01);
     if (!fz) goto next_y;
-    lda8(rd8(ABS(0x0958 + X)));
+    lda8(rd8(ABS(RIDER_BAND + X)));
     if (fz) goto next_x;
-    cmp8((u8)A, rd8(ABS(0x0958 + Y)));
+    cmp8((u8)A, rd8(ABS(RIDER_BAND + Y)));
     if (!fz) goto next_y;
-    lda8(rd8(ABS(0x01CE + X)));
-    ora8(rd8(ABS(0x0940 + X)));
+    lda8(rd8(ABS(RIDER_BUMPED + X)));
+    ora8(rd8(ABS(OVERHEAT_LOCK + X)));
     if (!fz) goto next_x;
-    lda8(rd8(ABS(0x01CE + Y)));
+    lda8(rd8(ABS(RIDER_BUMPED + Y)));
     if (!fz) goto next_y;
-    lda8(rd8(ABS(0x01EE + X)));
+    lda8(rd8(ABS(RIDER_AIR + X)));
     if (fz) {
-        lda8(rd8(ABS(0x01EE + Y)));
+        lda8(rd8(ABS(RIDER_AIR + Y)));
         if (fz) goto side;
     }
-    lda8(rd8(ABS(0x01B6 + X)));
-    cmp8((u8)A, rd8(ABS(0x01B6 + Y)));
+    lda8(rd8(ABS(RIDER_Y + X)));
+    cmp8((u8)A, rd8(ABS(RIDER_Y + Y)));
     if (!fc) {
         push16(0xC7C0); Reach20_m1x1();
-        cmp8((u8)A, rd8(ABS(0x01B6 + Y)));
+        cmp8((u8)A, rd8(ABS(RIDER_Y + Y)));
         if (fc) goto side;
         goto next_y;
     }
-    lda8(rd8(ABS(0x01B6 + Y)));
+    lda8(rd8(ABS(RIDER_Y + Y)));
     push16(0xC7CE); Reach20_m1x1();
-    cmp8((u8)A, rd8(ABS(0x01B6 + X)));
+    cmp8((u8)A, rd8(ABS(RIDER_Y + X)));
     if (!fc) goto next_y;
 side:
-    lda8(rd8(ABS(0x0196 + X)));
-    cmp8((u8)A, rd8(ABS(0x0196 + Y)));
+    lda8(rd8(ABS(RIDER_X + X)));
+    cmp8((u8)A, rd8(ABS(RIDER_X + Y)));
     if (!fc) {
         push16(0xC7DE); Reach2_m1x1();
-        cmp8((u8)A, rd8(ABS(0x0196 + Y)));
+        cmp8((u8)A, rd8(ABS(RIDER_X + Y)));
         if (fc) goto bump_both;
-        lda8(rd8(ABS(0x0196 + X)));
+        lda8(rd8(ABS(RIDER_X + X)));
         push16(0xC7E9); Reach20_m1x1();
-        cmp8((u8)A, rd8(ABS(0x0196 + Y)));
+        cmp8((u8)A, rd8(ABS(RIDER_X + Y)));
         if (fc) goto rear_bump;
         goto next_y;
     }
-    lda8(rd8(ABS(0x0196 + Y)));
+    lda8(rd8(ABS(RIDER_X + Y)));
     push16(0xC7F6); Reach2_m1x1();
-    cmp8((u8)A, rd8(ABS(0x0196 + X)));
+    cmp8((u8)A, rd8(ABS(RIDER_X + X)));
     if (fc) goto bump_both;
-    lda8(rd8(ABS(0x0196 + Y)));
+    lda8(rd8(ABS(RIDER_X + Y)));
     push16(0xC801); Reach20_m1x1();
-    cmp8((u8)A, rd8(ABS(0x0196 + X)));
+    cmp8((u8)A, rd8(ABS(RIDER_X + X)));
     if (fc) goto meet;
     goto next_y;
 
@@ -231,13 +231,13 @@ rear_bump:
     cmp8((u8)X, 0x00);
     if (fz) sound80(0x3D, 0xC81F);
     lda8(0xFF);
-    wr8(ABS(0x01CE + X), 0xFF);
+    wr8(ABS(RIDER_BUMPED + X), 0xFF);
     goto after_bump;
 
 bump_both:
     crash_sound((u8)X, 0xC833);
     lda8(0xFF);
-    wr8(ABS(0x01CE + X), 0xFF);
+    wr8(ABS(RIDER_BUMPED + X), 0xFF);
 meet:
     cmp8((u8)X, 0x00);
     if (fz) {
@@ -275,7 +275,7 @@ meet:
         }
     }
     lda8(0xFF);
-    wr8(ABS(0x01CE + Y), 0xFF);
+    wr8(ABS(RIDER_BUMPED + Y), 0xFF);
     push8((u8)Y);
     u8 rider = (u8)Y;
     wr8(ABS(0x000F), (u8)Y);

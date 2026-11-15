@@ -19,19 +19,19 @@ static void wait_then_step(u8 next_timer, u8 go, int waiting_loads, u8 waiting)
 {
     X = rd8(ABS(OBJ_CURRENT));
     nz8((u8)X);
-    lda8(rd8(ABS(0x0379 + X)));
+    lda8(rd8(ABS(OBJ_COUNTER + X)));
     if ((u8)A == 0) {
         lda8(next_timer);
-        wr8(ABS(0x0369 + X), next_timer);
-        wr8(ABS(0x0319 + X), 0);
-        wr8(ABS(0x0309 + X), inc8(rd8(ABS(0x0309 + X))));
+        wr8(ABS(OBJ_DELAY + X), next_timer);
+        wr8(ABS(OBJ_STEP + X), 0);
+        wr8(ABS(OBJ_STATE + X), inc8(rd8(ABS(OBJ_STATE + X))));
         lda8(go);
-        wr8(ABS(0x0349 + X), go);
+        wr8(ABS(OBJ_FRAME + X), go);
     } else if (waiting_loads) {
         lda8(waiting);
-        wr8(ABS(0x0349 + X), waiting);
+        wr8(ABS(OBJ_FRAME + X), waiting);
     } else {
-        wr8(ABS(0x0349 + X), 0);
+        wr8(ABS(OBJ_FRAME + X), 0);
     }
     ret();
 }
@@ -65,22 +65,22 @@ static void wait_then_step_random(u16 jsl_ret, u8 next_timer, u8 go)
 {
     X = rd8(ABS(OBJ_CURRENT));
     nz8((u8)X);
-    lda8(rd8(ABS(0x0379 + X)));
+    lda8(rd8(ABS(OBJ_COUNTER + X)));
     if ((u8)A != 0) {
-        wr8(ABS(0x0349 + X), 0);
+        wr8(ABS(OBJ_FRAME + X), 0);
         ret();
         return;
     }
     lda8(next_timer);
-    wr8(ABS(0x0369 + X), next_timer);
+    wr8(ABS(OBJ_DELAY + X), next_timer);
     push8(0x81); push16(jsl_ret); Random_m1x1();
     and8(0x03);
     SET_A8(inc8((u8)A));
-    wr8(ABS(0x0329 + X), (u8)A);
-    wr8(ABS(0x0319 + X), 0);
-    wr8(ABS(0x0309 + X), inc8(rd8(ABS(0x0309 + X))));
+    wr8(ABS(OBJ_RANDOM + X), (u8)A);
+    wr8(ABS(OBJ_STEP + X), 0);
+    wr8(ABS(OBJ_STATE + X), inc8(rd8(ABS(OBJ_STATE + X))));
     lda8(go);
-    wr8(ABS(0x0349 + X), go);
+    wr8(ABS(OBJ_FRAME + X), go);
     ret();
 }
 
@@ -108,30 +108,30 @@ static void alternate(u16 jsl_ret, u16 timer_table, u16 action_table)
 {
     X = rd8(ABS(OBJ_CURRENT));
     nz8((u8)X);
-    lda8(rd8(ABS(0x0369 + X)));
+    lda8(rd8(ABS(OBJ_DELAY + X)));
     if ((u8)A != 0) { ret(); return; }
-    u8 step = (u8)(rd8(ABS(0x0319 + X)) ^ 0x01);
+    u8 step = (u8)(rd8(ABS(OBJ_STEP + X)) ^ 0x01);
     lda8(step);
-    wr8(ABS(0x0319 + X), step);
+    wr8(ABS(OBJ_STEP + X), step);
     Y = step;
     if (step == 0) {
-        u8 left = dec8(rd8(ABS(0x0329 + X)));
-        wr8(ABS(0x0329 + X), left);
+        u8 left = dec8(rd8(ABS(OBJ_RANDOM + X)));
+        wr8(ABS(OBJ_RANDOM + X), left);
         if (left == 0) {
-            wr8(ABS(0x0309 + X), 0);
+            wr8(ABS(OBJ_STATE + X), 0);
             push8(0x81); push16(jsl_ret); Random_m1x1();
             and8(0x3F);
             fc = 0;
             adc8(0x40);
-            wr8(ABS(0x0379 + X), (u8)A);
+            wr8(ABS(OBJ_COUNTER + X), (u8)A);
             ret();
             return;
         }
     }
     lda8(rd8(ABS(timer_table + Y)));
-    wr8(ABS(0x0369 + X), (u8)A);
+    wr8(ABS(OBJ_DELAY + X), (u8)A);
     lda8(rd8(ABS(action_table + Y)));
-    wr8(ABS(0x0349 + X), (u8)A);
+    wr8(ABS(OBJ_FRAME + X), (u8)A);
     ret();
 }
 
@@ -148,7 +148,7 @@ void RivalAlternate_BB70_m1x1(void) { alternate(0xBB8E, 0xBBA5, 0xBBA7); }
 static void dispatch_state(u16 table, u32 site)
 {
     X = rd8(ABS(OBJ_CURRENT));
-    lda8(rd8(ABS(0x0309 + X)));
+    lda8(rd8(ABS(OBJ_STATE + X)));
     SET_A8(asl8((u8)A));
     X = (u8)A;
     u16 handler = rd16(0x810000u | (u16)(table + X));
@@ -183,20 +183,20 @@ void RivalDispatch_BD52_m1x1(void) { dispatch_state(0xBD5D, 0x81BD5A); }
 void RivalSequence_B67F_m1x1(void)
 {
     X = rd8(ABS(OBJ_CURRENT));
-    lda8(rd8(ABS(0x0369 + X)));
+    lda8(rd8(ABS(OBJ_DELAY + X)));
     if ((u8)A != 0) { ret(); return; }
-    u8 step = inc8(rd8(ABS(0x0319 + X)));
-    wr8(ABS(0x0319 + X), step);
+    u8 step = inc8(rd8(ABS(OBJ_STEP + X)));
+    wr8(ABS(OBJ_STEP + X), step);
     lda8(step);
     cmp8(step, 0x08);
     if (fc) {
-        wr8(ABS(0x02E9 + X), 0);                   /* sequence over */
+        wr8(ABS(OBJ_ACTIVE + X), 0);                   /* sequence over */
         ret();
         return;
     }
     Y = step;
-    lda8(rd8(ABS(0xB6A3 + Y))); wr8(ABS(0x0349 + X), (u8)A);
-    lda8(rd8(ABS(0xB6AB + Y))); wr8(ABS(0x0369 + X), (u8)A);
+    lda8(rd8(ABS(0xB6A3 + Y))); wr8(ABS(OBJ_FRAME + X), (u8)A);
+    lda8(rd8(ABS(0xB6AB + Y))); wr8(ABS(OBJ_DELAY + X), (u8)A);
     ret();
 }
 
@@ -208,19 +208,19 @@ void RivalSequence_B67F_m1x1(void)
 void RivalSequence_BB05_m1x1(void)
 {
     X = rd8(ABS(OBJ_CURRENT));
-    lda8(rd8(ABS(0x0369 + X)));
+    lda8(rd8(ABS(OBJ_DELAY + X)));
     if ((u8)A != 0) { ret(); return; }
-    u8 step = (u8)((rd8(ABS(0x0319 + X)) + 1) & 0x03);
+    u8 step = (u8)((rd8(ABS(OBJ_STEP + X)) + 1) & 0x03);
     lda8(step);
-    wr8(ABS(0x0319 + X), step);
+    wr8(ABS(OBJ_STEP + X), step);
     if (step == 0) {
         step = 1;
         lda8(1);
-        wr8(ABS(0x0319 + X), 1);
+        wr8(ABS(OBJ_STEP + X), 1);
     }
     Y = step;
-    lda8(rd8(ABS(0xBB2A + Y))); wr8(ABS(0x0369 + X), (u8)A);
-    lda8(rd8(ABS(0xBB2E + Y))); wr8(ABS(0x0349 + X), (u8)A);
+    lda8(rd8(ABS(0xBB2A + Y))); wr8(ABS(OBJ_DELAY + X), (u8)A);
+    lda8(rd8(ABS(0xBB2E + Y))); wr8(ABS(OBJ_FRAME + X), (u8)A);
     ret();
 }
 
@@ -282,22 +282,22 @@ void RivalTumble_B64A_m1x1(void)
     lda8(rd8(DP(FRAME_COUNT)));
     and8(0x03);
     if ((u8)A == 0) {
-        lda8(rd8(ABS(0x0349 + X)));
+        lda8(rd8(ABS(OBJ_FRAME + X)));
         lda8(inc8((u8)A));
         and8(0x01);
-        wr8(ABS(0x0349 + X), (u8)A);
+        wr8(ABS(OBJ_FRAME + X), (u8)A);
     }
     push8(0x81); push16(0xB65F); ApplyVelocity_m1x1();
-    u8 sp = inc8(rd8(ABS(0x02A9 + X)));
-    wr8(ABS(0x02A9 + X), sp);
+    u8 sp = inc8(rd8(ABS(OBJ_VY + X)));
+    wr8(ABS(OBJ_VY + X), sp);
     lda8(sp);
     if (sp != 0) { ret(); return; }
-    wr8(ABS(0x0309 + X), inc8(rd8(ABS(0x0309 + X))));
+    wr8(ABS(OBJ_STATE + X), inc8(rd8(ABS(OBJ_STATE + X))));
     lda8(0x02);
-    wr8(ABS(0x0349 + X), 0x02);
-    wr8(ABS(0x0319 + X), 0);
+    wr8(ABS(OBJ_FRAME + X), 0x02);
+    wr8(ABS(OBJ_STEP + X), 0);
     lda8(0x04);
-    wr8(ABS(0x0369 + X), 0x04);
+    wr8(ABS(OBJ_DELAY + X), 0x04);
     lda8(0x49);
     push8(0x81); push16(0xB67D); QueueSound_m1x1();
     ret();
@@ -311,19 +311,19 @@ void RivalTumble_B64A_m1x1(void)
 void RivalPause_B94D_m1x1(void)
 {
     X = rd8(ABS(OBJ_CURRENT));
-    lda8(rd8(ABS(0x0379 + X)));
+    lda8(rd8(ABS(OBJ_COUNTER + X)));
     if ((u8)A == 0) {
         lda8(0x16);
-        wr8(ABS(0x0369 + X), 0x16);
+        wr8(ABS(OBJ_DELAY + X), 0x16);
         push8(0x81); push16(0xB95D); Random_m1x1();
         and8(0x03);
         lda8(inc8((u8)A));
-        wr8(ABS(0x0329 + X), (u8)A);
-        wr8(ABS(0x0319 + X), 0);
-        wr8(ABS(0x0309 + X), inc8(rd8(ABS(0x0309 + X))));
+        wr8(ABS(OBJ_RANDOM + X), (u8)A);
+        wr8(ABS(OBJ_STEP + X), 0);
+        wr8(ABS(OBJ_STATE + X), inc8(rd8(ABS(OBJ_STATE + X))));
     }
     lda8(0x09);
-    wr8(ABS(0x0349 + X), 0x09);
+    wr8(ABS(OBJ_FRAME + X), 0x09);
     ret();
 }
 
@@ -335,20 +335,20 @@ void RivalPause_B94D_m1x1(void)
 void RivalSequence_BD23_m1x1(void)
 {
     X = rd8(ABS(OBJ_CURRENT));
-    lda8(rd8(ABS(0x0369 + X)));
+    lda8(rd8(ABS(OBJ_DELAY + X)));
     if ((u8)A != 0) { ret(); return; }
-    u8 step = (u8)((rd8(ABS(0x0319 + X)) + 1) & 0x03);
+    u8 step = (u8)((rd8(ABS(OBJ_STEP + X)) + 1) & 0x03);
     lda8(step);
-    wr8(ABS(0x0319 + X), step);
+    wr8(ABS(OBJ_STEP + X), step);
     Y = step; nz8(step);
     if (step == 0) {
         step = 2;
         lda8(2);
-        wr8(ABS(0x0319 + X), 2);
+        wr8(ABS(OBJ_STEP + X), 2);
         Y = 2;
     }
-    lda8(rd8(ABS(0xBD4A + Y))); wr8(ABS(0x0369 + X), (u8)A);
-    lda8(rd8(ABS(0xBD4E + Y))); wr8(ABS(0x0349 + X), (u8)A);
+    lda8(rd8(ABS(0xBD4A + Y))); wr8(ABS(OBJ_DELAY + X), (u8)A);
+    lda8(rd8(ABS(0xBD4E + Y))); wr8(ABS(OBJ_FRAME + X), (u8)A);
     ret();
 }
 
@@ -360,25 +360,25 @@ void RivalSequence_BD23_m1x1(void)
 void RivalWalkAway_BECE_m1x1(void)
 {
     X = rd8(ABS(OBJ_CURRENT));
-    lda8(rd8(ABS(0x0369 + X)));
+    lda8(rd8(ABS(OBJ_DELAY + X)));
     if ((u8)A == 0) {
-        lda8((u8)((rd8(ABS(0x0319 + X)) + 1) & 0x03));
-        wr8(ABS(0x0319 + X), (u8)A);
+        lda8((u8)((rd8(ABS(OBJ_STEP + X)) + 1) & 0x03));
+        wr8(ABS(OBJ_STEP + X), (u8)A);
         lda8(0x04);
-        wr8(ABS(0x0369 + X), 0x04);
-        u8 x = inc8(rd8(ABS(0x0279 + X)));
-        wr8(ABS(0x0279 + X), x);
+        wr8(ABS(OBJ_DELAY + X), 0x04);
+        u8 x = inc8(rd8(ABS(OBJ_X + X)));
+        wr8(ABS(OBJ_X + X), x);
         lda8(x);
         cmp8(x, 0xA0);
         if (fc) {
-            wr8(ABS(0x0309 + X), 0);
+            wr8(ABS(OBJ_STATE + X), 0);
             lda8(0x40);
-            wr8(ABS(0x0369 + X), 0x40);
+            wr8(ABS(OBJ_DELAY + X), 0x40);
         }
     }
-    ldy8(rd8(ABS(0x0319 + X)));
+    ldy8(rd8(ABS(OBJ_STEP + X)));
     lda8(rd8(ABS(0xBF00 + Y)));
-    wr8(ABS(0x0349 + X), (u8)A);
+    wr8(ABS(OBJ_FRAME + X), (u8)A);
     ret();
 }
 
@@ -401,23 +401,23 @@ static u8 random_64_127(u16 jsl_ret)
 void RivalSequence_B9D5_m1x1(void)
 {
     X = rd8(ABS(OBJ_CURRENT));
-    lda8(rd8(ABS(0x0369 + X)));
+    lda8(rd8(ABS(OBJ_DELAY + X)));
     if ((u8)A != 0) { ret(); return; }
-    u8 step = inc8(rd8(ABS(0x0319 + X)));
+    u8 step = inc8(rd8(ABS(OBJ_STEP + X)));
     lda8(step);
     Y = step;
-    wr8(ABS(0x0319 + X), step);
+    wr8(ABS(OBJ_STEP + X), step);
     cmp8(step, 0x07);
     if (fc) {
         Y = 0;
-        wr8(ABS(0x0319 + X), 0);
-        wr8(ABS(0x0369 + X), random_64_127(0xB9F1));
+        wr8(ABS(OBJ_STEP + X), 0);
+        wr8(ABS(OBJ_DELAY + X), random_64_127(0xB9F1));
     } else {
         lda8(rd8(ABS(0xBA09 + Y)));
-        wr8(ABS(0x0369 + X), (u8)A);
+        wr8(ABS(OBJ_DELAY + X), (u8)A);
     }
     lda8(rd8(ABS(0xBA10 + Y)));
-    wr8(ABS(0x0349 + X), (u8)A);
+    wr8(ABS(OBJ_FRAME + X), (u8)A);
     ret();
 }
 
@@ -429,21 +429,21 @@ void RivalSequence_B9D5_m1x1(void)
 void RivalSequence_BAAD_m1x1(void)
 {
     X = rd8(ABS(OBJ_CURRENT));
-    lda8(rd8(ABS(0x0369 + X)));
+    lda8(rd8(ABS(OBJ_DELAY + X)));
     if ((u8)A != 0) { ret(); return; }
-    u8 step = (u8)((rd8(ABS(0x0319 + X)) + 1) & 0x03);
+    u8 step = (u8)((rd8(ABS(OBJ_STEP + X)) + 1) & 0x03);
     lda8(step);
-    wr8(ABS(0x0319 + X), step);
+    wr8(ABS(OBJ_STEP + X), step);
     Y = step; nz8(step);
     if (step == 0) {
         lda8(0x02);
-        wr8(ABS(0x0309 + X), 0x02);
-        wr8(ABS(0x0379 + X), random_64_127(0xBAC9));
+        wr8(ABS(OBJ_STATE + X), 0x02);
+        wr8(ABS(OBJ_COUNTER + X), random_64_127(0xBAC9));
         ret();
         return;
     }
-    lda8(rd8(ABS(0xBAE0 + Y))); wr8(ABS(0x0369 + X), (u8)A);
-    lda8(rd8(ABS(0xBAE4 + Y))); wr8(ABS(0x0349 + X), (u8)A);
+    lda8(rd8(ABS(0xBAE0 + Y))); wr8(ABS(OBJ_DELAY + X), (u8)A);
+    lda8(rd8(ABS(0xBAE4 + Y))); wr8(ABS(OBJ_FRAME + X), (u8)A);
     ret();
 }
 
@@ -454,22 +454,22 @@ void RivalSequence_BAAD_m1x1(void)
 void RivalSequence_BC4B_m1x1(void)
 {
     X = rd8(ABS(OBJ_CURRENT));
-    lda8(rd8(ABS(0x0369 + X)));
+    lda8(rd8(ABS(OBJ_DELAY + X)));
     if ((u8)A != 0) { ret(); return; }
-    u8 step = inc8(rd8(ABS(0x0319 + X)));
+    u8 step = inc8(rd8(ABS(OBJ_STEP + X)));
     lda8(step);
-    wr8(ABS(0x0319 + X), step);
+    wr8(ABS(OBJ_STEP + X), step);
     Y = step;
     cmp8(step, 0x06);
     if (fc) {
         lda8(0x04);
-        wr8(ABS(0x0309 + X), 0x04);
-        wr8(ABS(0x0379 + X), random_64_127(0xBC67));
+        wr8(ABS(OBJ_STATE + X), 0x04);
+        wr8(ABS(OBJ_COUNTER + X), random_64_127(0xBC67));
         ret();
         return;
     }
-    lda8(rd8(ABS(0xBC7E + Y))); wr8(ABS(0x0369 + X), (u8)A);
-    lda8(rd8(ABS(0xBC84 + Y))); wr8(ABS(0x0349 + X), (u8)A);
+    lda8(rd8(ABS(0xBC7E + Y))); wr8(ABS(OBJ_DELAY + X), (u8)A);
+    lda8(rd8(ABS(0xBC84 + Y))); wr8(ABS(OBJ_FRAME + X), (u8)A);
     ret();
 }
 
@@ -477,8 +477,8 @@ void RivalSequence_BC4B_m1x1(void)
  * for the current object X, step Y. */
 static void move_step(u16 timers, u16 actions)
 {
-    lda8(rd8(ABS(timers + Y))); wr8(ABS(0x0369 + X), (u8)A);
-    lda8(rd8(ABS(actions + Y))); wr8(ABS(0x0349 + X), (u8)A);
+    lda8(rd8(ABS(timers + Y))); wr8(ABS(OBJ_DELAY + X), (u8)A);
+    lda8(rd8(ABS(actions + Y))); wr8(ABS(OBJ_FRAME + X), (u8)A);
 }
 
 /*
@@ -488,27 +488,27 @@ static void move_step(u16 timers, u16 actions)
 void RivalSequence_B896_m1x1(void)
 {
     X = rd8(ABS(OBJ_CURRENT));
-    lda8(rd8(ABS(0x0369 + X)));
+    lda8(rd8(ABS(OBJ_DELAY + X)));
     if ((u8)A != 0) { ret(); return; }
-    lda8(inc8(rd8(ABS(0x0319 + X))));
+    lda8(inc8(rd8(ABS(OBJ_STEP + X))));
     cmp8((u8)A, 0x05);
     if (fc) {
         lda8(0x01);
-        wr8(ABS(0x0319 + X), 0x01);
+        wr8(ABS(OBJ_STEP + X), 0x01);
         Y = 1; nz8(1);
         push8(0x81); push16(0xB8AF); Random_m1x1();
         and8(0x3F);
         fc = 0;
         adc8(rd8(ABS(0xB8CC + Y)));
-        wr8(ABS(0x0369 + X), (u8)A);
+        wr8(ABS(OBJ_DELAY + X), (u8)A);
     } else {
-        wr8(ABS(0x0319 + X), (u8)A);
+        wr8(ABS(OBJ_STEP + X), (u8)A);
         Y = (u8)A; nz8((u8)Y);
         lda8(rd8(ABS(0xB8CC + Y)));
-        wr8(ABS(0x0369 + X), (u8)A);
+        wr8(ABS(OBJ_DELAY + X), (u8)A);
     }
     lda8(rd8(ABS(0xB8D1 + Y)));
-    wr8(ABS(0x0349 + X), (u8)A);
+    wr8(ABS(OBJ_FRAME + X), (u8)A);
     ret();
 }
 
@@ -517,18 +517,18 @@ void RivalSequence_B896_m1x1(void)
 static void cycle_repeat(u8 next, u16 jsl_ret, u16 timers, u16 actions)
 {
     X = rd8(ABS(OBJ_CURRENT));
-    lda8(rd8(ABS(0x0369 + X)));
+    lda8(rd8(ABS(OBJ_DELAY + X)));
     if ((u8)A != 0) { ret(); return; }
-    lda8((u8)((rd8(ABS(0x0319 + X)) + 1) & 0x03));
-    wr8(ABS(0x0319 + X), (u8)A);
+    lda8((u8)((rd8(ABS(OBJ_STEP + X)) + 1) & 0x03));
+    wr8(ABS(OBJ_STEP + X), (u8)A);
     Y = (u8)A; nz8((u8)Y);
     if (Y == 0) {
-        u8 n = dec8(rd8(ABS(0x0329 + X)));
-        wr8(ABS(0x0329 + X), n);
+        u8 n = dec8(rd8(ABS(OBJ_RANDOM + X)));
+        wr8(ABS(OBJ_RANDOM + X), n);
         if (n == 0) {
-            if (next) { lda8(next); wr8(ABS(0x0309 + X), next); }
-            else wr8(ABS(0x0309 + X), 0);
-            wr8(ABS(0x0379 + X), random_64_127(jsl_ret));
+            if (next) { lda8(next); wr8(ABS(OBJ_STATE + X), next); }
+            else wr8(ABS(OBJ_STATE + X), 0);
+            wr8(ABS(OBJ_COUNTER + X), random_64_127(jsl_ret));
             ret();
             return;
         }
@@ -550,18 +550,18 @@ void RivalCycle_B976_m1x1(void) { cycle_repeat(2, 0xB997, 0xB9AE, 0xB9B2); }
 void RivalSequence_B836_m1x1(void)
 {
     X = rd8(ABS(OBJ_CURRENT));
-    lda8(rd8(ABS(0x0369 + X)));
+    lda8(rd8(ABS(OBJ_DELAY + X)));
     if ((u8)A != 0) { ret(); return; }
-    lda8(inc8(rd8(ABS(0x0319 + X))));
+    lda8(inc8(rd8(ABS(OBJ_STEP + X))));
     cmp8((u8)A, 0x06);
     if (fc)
         lda8(0x00);
-    wr8(ABS(0x0319 + X), (u8)A);
+    wr8(ABS(OBJ_STEP + X), (u8)A);
     Y = (u8)A; nz8((u8)Y);
     if (Y == 0) {
         lda8(0x02);
-        wr8(ABS(0x0309 + X), 0x02);
-        wr8(ABS(0x0379 + X), random_64_127(0xB856));
+        wr8(ABS(OBJ_STATE + X), 0x02);
+        wr8(ABS(OBJ_COUNTER + X), random_64_127(0xB856));
         ret();
         return;
     }
@@ -577,25 +577,25 @@ void RivalSequence_B836_m1x1(void)
 void RivalBlink_BBA9_m1x1(void)
 {
     X = rd8(ABS(OBJ_CURRENT));
-    lda8(rd8(ABS(0x0369 + X)));
+    lda8(rd8(ABS(OBJ_DELAY + X)));
     if ((u8)A == 0) {
-        lda8(rd8(ABS(0x0349 + X)));
+        lda8(rd8(ABS(OBJ_FRAME + X)));
         eor8(0x01);
-        wr8(ABS(0x0349 + X), (u8)A);
+        wr8(ABS(OBJ_FRAME + X), (u8)A);
         lda8(0x0A);
-        wr8(ABS(0x0369 + X), 0x0A);
+        wr8(ABS(OBJ_DELAY + X), 0x0A);
     }
-    lda8(rd8(ABS(0x0379 + X)));
+    lda8(rd8(ABS(OBJ_COUNTER + X)));
     if ((u8)A != 0) { ret(); return; }
-    lda8(0x0A); wr8(ABS(0x0369 + X), 0x0A);
-    lda8(0x09); wr8(ABS(0x0369 + X), 0x09);
+    lda8(0x0A); wr8(ABS(OBJ_DELAY + X), 0x0A);
+    lda8(0x09); wr8(ABS(OBJ_DELAY + X), 0x09);
     push8(0x81); push16(0xBBD0); Random_m1x1();
     and8(0x03);
     lda8(inc8((u8)A));
-    wr8(ABS(0x0329 + X), (u8)A);
-    wr8(ABS(0x0319 + X), 0);
-    wr8(ABS(0x0309 + X), inc8(rd8(ABS(0x0309 + X))));
+    wr8(ABS(OBJ_RANDOM + X), (u8)A);
+    wr8(ABS(OBJ_STEP + X), 0);
+    wr8(ABS(OBJ_STATE + X), inc8(rd8(ABS(OBJ_STATE + X))));
     lda8(0x08);
-    wr8(ABS(0x0349 + X), 0x08);
+    wr8(ABS(OBJ_FRAME + X), 0x08);
     ret();
 }

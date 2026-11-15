@@ -32,6 +32,7 @@ OPER = re.compile(r'\b(ABS|ABSX|ABSY|DP|DPX|DPY|LONG|LONGX)\((0x[0-9A-Fa-f]+|[A-
 INDEXED = ('ABSX', 'ABSY', 'DPX', 'DPY', 'LONGX')
 DEF_INDEXED = re.compile(r'/\*\s*\[X\]')   # "/* [X] ..." : indexed operands only
 DEF_SPAN = re.compile(r'\[\+\$([0-9A-Fa-f]+)\]')   # "[+$200]": a buffer of that size
+COMP_OPER = re.compile(r'\b(ABS|ABSX|ABSY|DP|DPX|DPY|LONG|LONGX)\((0x[0-9A-Fa-f]+) \+ ')
 SPAN_OPER = re.compile(r'\b(ABS|ABSX|ABSY|LONG|LONGX)\(([A-Z_][A-Z0-9_]*) \+ 0x([0-9A-Fa-f]+)\)')
 DP_MIN = 0x20
 
@@ -118,22 +119,31 @@ def name_text(text, names):
         abs_ok = not far_bank(c)     # DB = $7F: absolute operands are bank $7F
         dp_ok = not moves_dp(c)
 
+        def lookup(mode, a, indexed):
+            if mode.startswith('DP'):
+                if not dp_ok or a < DP_MIN or a > 0xFF:
+                    return None
+            elif mode.startswith('ABS'):
+                if not abs_ok:
+                    return None
+            n = (by_idx if indexed else by_plain).get(a)
+            if n is None and not mode.startswith('DP'):
+                n = in_span(a)
+            return n
+
         def one(m):
             mode, val = m.group(1), m.group(2)
             if not val.startswith('0x'):
                 return m.group(0)
-            a = int(val, 16)
-            if mode.startswith('DP'):
-                if not dp_ok or a < DP_MIN or a > 0xFF:
-                    return m.group(0)
-            elif mode.startswith('ABS'):
-                if not abs_ok:
-                    return m.group(0)
-            n = (by_idx if mode in INDEXED else by_plain).get(a)
-            if n is None and not mode.startswith('DP'):
-                n = in_span(a)
+            n = lookup(mode, int(val, 16), mode in INDEXED)
             return '%s(%s)' % (mode, n) if n else m.group(0)
-        out.append(OPER.sub(one, c))
+
+        def comp(m):     # ABS(0x01F6 + X): a base with a computed index
+            mode, val = m.group(1), m.group(2)
+            n = lookup(mode, int(val, 16), True)
+            return '%s(%s + ' % (mode, n) if n else m.group(0)
+        c = OPER.sub(one, c)
+        out.append(COMP_OPER.sub(comp, c))
     return ''.join(out)
 
 

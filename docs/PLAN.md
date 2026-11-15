@@ -141,36 +141,21 @@ The rest of the 1 MB is graphics, tracks, music and other data.
 2. Use the same approach as the NES Excitebike port: test each routine
    against the recompiled or interpreted original. Compare RAM and the order
    of hardware register writes.
-3. Turn raw RAM into named structs: riders, track, camera, items. Started
-   (2026-11-15): `c/hand/<ver>/ram.h` names the hardware registers
-   (`c/hand/snes_regs.h`), the game-flow globals, the PPU shadows and 37
-   rider fields (35 in Gen A) for all four dumps; `tools/ramname.py` writes them into the
-   address operands (about 2,700 in S1 and S4) and `tools/port_hand.py` turns
-   them back into hex before it translates a routine. Also named: the object
-   slots, the timers and scrolling, the track column's VRAM position, the
-   number staging buffer, the coin turbo, the jump contest's scores and the
-   sprite buffers. The long addresses all four dumps share are in
-   `c/hand/long_ram.h`: the VRAM upload queue and its record fields
-   (`$7F:0000`), the track buffer, the broadcast clock, the save block and
-   the two ROM switches (`$81:800C` Stadium, `$81:800E` debug). The sound
-   command rings (`SND_RING` `$1400`, indexes `$65-$70`) are named; only
-   channel 0 is ever queued. Fifteen more direct-page globals in Gen B
-   (five in Gen A): the random shift register, the per-rider lean timer,
-   the race-over flag, the sub-step, the NMI animation source, the IRQ's
-   zoom and parallax switches, the zoom, the bonus clock and the jump
-   result board step. Twelve race globals that sit at the same address in
-   both generations: LAP, ATTRACT_DEMO, OVERHEAT_LOCK, GAUGE_ON,
-   TOTAL_TIME, BONUS_RESULT, TRACK_ROWS, TURBO_HEAT_FRAC, the pace counters,
-   GROUND_LINE and COLOUR_CYCLE; then RIDER_HOLD, PIC_SCROLL, PLACE_BONUS,
-   CLOCK_HIDE, COIN_TAKEN, WAVE_FRAME on the direct page and
-   RIDER_PIECE_LEAN, RIDER_LANDED, PLAYER_GROUND, COURSE_ENDED,
-   BUILD_COLUMN, the demo script position and timer and ENTRY_CODE.
-   In $15xx-$1Exx: the rider sprite frames, the player's character (Gen A
-   $1542, Gen B $154F), the race variant, the animation upload switch, the
-   coin counts, the entry digits, the player select's transition state, the
-   bonus end and the jump run's step and frame count.
-   Still unnamed because each has several uses: DP $3C, $54, $56, $79,
-   $94, $5E; $0904, $09C7, $09C9 and the per-course time tables.
+3. ✅ Named RAM (2026-11-15): `c/hand/<ver>/ram.h` (per engine),
+   `c/hand/long_ram.h` (the long addresses all dumps share: VRAM queue,
+   track buffer, broadcast clock, save block, ROM switches) and
+   `c/hand/snes_regs.h`. `tools/ramname.py <ver>` writes the names into the
+   address operands, including record fields on indexed operands only
+   (`[X]`), addresses inside named buffers and arrays as `NAME + offset`
+   (`[+$N]`) and computed operands (`ABS(RIDER_X + X)`);
+   `tools/port_hand.py` turns them back into hex before it translates a
+   routine. Riders, objects, effect slots, game flow, timers, scrolling,
+   HUD, coins, jump contest, sound rings, player select, demo script and
+   the race globals are named: about 85% of the RAM operands in S1 and S4.
+   Gen A's rider, object and effect arrays sit 6 bytes below Gen B's; most
+   $08xx-$0Cxx globals are at the same address in both. Still unnamed
+   because each has several uses: DP $3C, $54, $56, $79, $94, $5E; $0904,
+   $09C7, $09C9 and the per-course time tables.
 
 ### Phase 5: merge the Stadiums
 0. ✅ Found that each build already holds two Stadiums behind `$81:800C`; the
@@ -185,8 +170,12 @@ The rest of the 1 MB is graphics, tracks, music and other data.
    terrain-code mapping is not yet checked tile by tile. Without the override
    the replacement builds a track buffer identical to the original (checked
    against the interpreter-only build: 353 bytes, 0 differences).
-1. Match routines across versions by instruction signature, ignoring
-   addresses. This gives the exact code differences A↔A, B↔B and A↔B.
+1. ✅ Match routines across versions. A↔A and B↔B: `tools/xmatch.py` and the
+   S2 / S3 decompilation (docs/NOTES.md). A↔B: `tools/abdiff.py` compares the
+   hand-written C of S1 and S4 with the RAM named and ROM addresses masked
+   (docs/ENGINES.md): 129 routines the same, 204 changed, 74 only in Gen A
+   (mostly the rival scripts, the EEPROM password and the Gen A HUD), 199
+   only in Gen B.
 2. Use the Gen B engine (Stadium 4) as the base. Load each Stadium's data
    (tracks, characters, graphics, rules) as a content pack.
 3. Add a Stadium select and a character roster that combines all of them

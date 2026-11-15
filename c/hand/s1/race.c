@@ -179,7 +179,7 @@ void RaceSetup_m1x1(void)
     lda8(rd8(DP(FINAL_RACE)));
     SET_A8(asl8(asl8(asl8((u8)A))));
     for (int x = 7; x >= 0; x--) {
-        wr8(ABS(0x086E + x), (u8)A);
+        wr8(ABS(PLAYER_PLACE + x), (u8)A);
         wr8(ABS(0x086F + x), 0);
     }
     X = 0xFF;
@@ -187,7 +187,7 @@ void RaceSetup_m1x1(void)
     lda8(0x3B);
     for (int x = 0x7F; x >= 0; x--)
         for (int t = 0; t < 6; t++)
-            wr8(ABS(0x09D3 + t * 0x80 + x), 0x3B);
+            wr8(ABS(TRACK_ROWS + t * 0x80 + x), 0x3B);
     X = 0xFF;
     lda8(0xBF); wr8(ABS(OAM_BUF + 0x01), 0xBF);
     lda8(0xF7); wr8(ABS(OAM_BUF), 0xF7);
@@ -220,7 +220,7 @@ void UpdatePlayerPlace_m1x1(void)
     A = me;
     for (u8 y = 0x0E; y != 0; y -= 2) {
         Y = y;
-        u16 other = rd16(ABS(0x085E + y));
+        u16 other = rd16(ABS(RIDER_DIST + y));
         cmp16(me, other);
         if (me > other)
             wr16(ABS(PLAYER_PLACE), dec16(rd16(ABS(PLAYER_PLACE))));
@@ -243,18 +243,18 @@ void ComputePlaces_m1x1(void)
         X = (u16)x;
         wr8(DP(0x00), (u8)x);
         A = 0x0008;
-        wr16(ABS(0x086E + x), 0x0008);
+        wr16(ABS(PLAYER_PLACE + x), 0x0008);
         for (int y = 0x0E; y >= 0; y -= 2) {
             Y = (u16)y;
             if ((u8)y == rd8(DP(0x00)))
                 continue;
-            u16 mine = rd16(ABS(0x085E + x)), theirs = rd16(ABS(0x085E + y));
+            u16 mine = rd16(ABS(RIDER_DIST + x)), theirs = rd16(ABS(RIDER_DIST + y));
             A = mine;
             if (mine < theirs)
                 continue;
             if (mine == theirs && (u8)y >= rd8(DP(0x00)))
                 continue;
-            wr16(ABS(0x086E + x), dec16(rd16(ABS(0x086E + x))));
+            wr16(ABS(PLAYER_PLACE + x), dec16(rd16(ABS(PLAYER_PLACE + x))));
         }
     }
     X = 0xFE;
@@ -277,13 +277,13 @@ void DrawCoinIcons_m1x1(void)
         Y = y;
         rep(0x20);
         A = rd16(ABS(0xD3B5 + x));
-        wr16(ABS(0x1704 + y), A);                 /* X, Y position */
+        wr16(ABS(OAM_BUF + 0x104 + y), A);                 /* X, Y position */
         A = 0x2D88;
-        wr16(ABS(0x1706 + y), 0x2D88);            /* tile $88, attribute $2D */
+        wr16(ABS(OAM_BUF + 0x106 + y), 0x2D88);            /* tile $88, attribute $2D */
         sep(0x20);
         Y = (u8)(x >> 1);
         lda8(0x02);
-        wr8(ABS(0x1861 + Y), 0x02);               /* large */
+        wr8(ABS(OAM_SIZE_BUF + 0x41 + Y), 0x02);               /* large */
     }
     X = 0;
     fc = 1; fz = 1; fn = 0;                       /* the loop's CPX #0 at exit */
@@ -297,13 +297,13 @@ void DrawCoinIcons_m1x1(void)
  */
 void DrawRiderShadowPair_m1x1(void)
 {
-    fc = 0; adc8(0xF9); wr8(ABS(0x16C0 + Y), (u8)A);
-    fc = 0; adc8(0xF8); wr8(ABS(0x16C4 + Y), (u8)A);
-    lda8(rd8(ABS(0x01B0 + X)));
-    fc = 0; adc8(0x08); wr8(ABS(0x16C5 + Y), (u8)A);
-    fc = 0; adc8(0x08); wr8(ABS(0x16C1 + Y), (u8)A);
-    lda8(0xE0); wr8(ABS(0x16C2 + Y), 0xE0);
-    lda8(0xF0); wr8(ABS(0x16C6 + Y), 0xF0);
+    fc = 0; adc8(0xF9); wr8(ABS(OAM_BUF + 0xC0 + Y), (u8)A);
+    fc = 0; adc8(0xF8); wr8(ABS(OAM_BUF + 0xC4 + Y), (u8)A);
+    lda8(rd8(ABS(RIDER_Y + X)));
+    fc = 0; adc8(0x08); wr8(ABS(OAM_BUF + 0xC5 + Y), (u8)A);
+    fc = 0; adc8(0x08); wr8(ABS(OAM_BUF + 0xC1 + Y), (u8)A);
+    lda8(0xE0); wr8(ABS(OAM_BUF + 0xC2 + Y), 0xE0);
+    lda8(0xF0); wr8(ABS(OAM_BUF + 0xC6 + Y), 0xF0);
     ret();
 }
 
@@ -319,7 +319,7 @@ void PlayerOverheatWarn_m1x1(void)
     lda8((u8)X);
     ora8(rd8(ABS(OVERHEAT_LOCK)));
     ora8(rd8(DP(OVERHEATED)));
-    ora8(rd8(ABS(0x01E8 + X)));
+    ora8(rd8(ABS(RIDER_AIR + X)));
     ora8(rd8(ABS(TURBO_ON)));
     if (!fz) { ret(); return; }
     lda8(0x08);
@@ -346,9 +346,9 @@ void PlayerOverheatWarn_m1x1(void)
 void RiderLaneBand_m1x1(void)
 {
     ldy8(0x00);
-    lda8(rd8(ABS(0x01D0 + X)));
+    lda8(rd8(ABS(RIDER_TIMER + X)));
     if (fz) {
-        lda8(rd8(ABS(0x01F0 + X)));
+        lda8(rd8(ABS(RIDER_LANE + X)));
         for (;;) {
             cmp8((u8)A, rd8(ABS(0xBE1D + Y)));
             if (fn) break;
@@ -359,7 +359,7 @@ void RiderLaneBand_m1x1(void)
         lda8((u8)Y);
         if (!fz) {
             lda8(0x01);
-            cmp8(0x01, rd8(ABS(0x0208 + X)));
+            cmp8(0x01, rd8(ABS(RIDER_JUMP + X)));
             if (fz) {
                 Y = inc8((u8)Y);
                 Y = inc8((u8)Y);
@@ -367,7 +367,7 @@ void RiderLaneBand_m1x1(void)
         }
     }
     lda8((u8)Y);
-    wr8(ABS(0x0958 + X), (u8)A);
+    wr8(ABS(RIDER_BAND + X), (u8)A);
     ret();
 }
 
@@ -379,25 +379,25 @@ void RiderLaneBand_m1x1(void)
 void AnimateWheels_m1x1(void)
 {
     do {
-        lda8(rd8(ABS(0x0180 + X)));
+        lda8(rd8(ABS(RIDER_STEP + X)));
         if (!fz) {
-            lda8(rd8(ABS(0x0188 + X)));
+            lda8(rd8(ABS(RIDER_WHEEL + X)));
             fc = 1;
-            sbc8(rd8(ABS(0x0180 + X)));
+            sbc8(rd8(ABS(RIDER_STEP + X)));
             if (!fz && !fn) {
-                wr8(ABS(0x0188 + X), (u8)A);
+                wr8(ABS(RIDER_WHEEL + X), (u8)A);
             } else {
                 fc = 0;
                 adc8(0x08);
-                wr8(ABS(0x0188 + X), (u8)A);
-                wr8(ABS(0x0260 + X), inc8(rd8(ABS(0x0260 + X))));
-                lda8(rd8(ABS(0x0260 + X)));
+                wr8(ABS(RIDER_WHEEL + X), (u8)A);
+                wr8(ABS(RIDER_COLUMN + X), inc8(rd8(ABS(RIDER_COLUMN + X))));
+                lda8(rd8(ABS(RIDER_COLUMN + X)));
                 and8(0x3F);
-                wr8(ABS(0x0260 + X), (u8)A);
+                wr8(ABS(RIDER_COLUMN + X), (u8)A);
             }
         }
         lda8(0x00);
-        wr8(ABS(0x0240 + X), 0x00);
+        wr8(ABS(RIDER_SLOW_AT + X), 0x00);
         X = dec8((u8)X);
     } while (!fn);
     ret();
@@ -414,24 +414,24 @@ void RiderStartCheck_m1x1(void)
     lda8(rd8(DPX(RIDER_HOLD)));
     if (!fz) { ret(); return; }
     lda8((u8)X);
-    if (!fz) { lda8(0x01); wr8(ABS(0x01A8 + X), 0x01); }
-    lda8(rd8(ABS(0x01C0 + X)));
-    ora8(rd8(ABS(0x01A8 + X)));
+    if (!fz) { lda8(0x01); wr8(ABS(RIDER_STEER + X), 0x01); }
+    lda8(rd8(ABS(RIDER_SPEED_HI + X)));
+    ora8(rd8(ABS(RIDER_STEER + X)));
     if (fz) {
-        lda8(rd8(ABS(0x01F0 + X)));
+        lda8(rd8(ABS(RIDER_LANE + X)));
         cmp8((u8)A, rd8(ABS(0xBDA2 + X)));
         if (fz) { ret(); return; }
     }
     lda8(0x01);
-    wr8(ABS(0x01A8 + X), 0x01);
+    wr8(ABS(RIDER_STEER + X), 0x01);
     lda8((u8)X);
     if (!fz) {
-        lda8(rd8(ABS(0x01F0 + X)));
+        lda8(rd8(ABS(RIDER_LANE + X)));
         cmp8((u8)A, 0x08);
         if (!fc) { ret(); return; }
     }
     lda8(0x00);
-    wr8(ABS(0x01D0 + X), 0x00);
+    wr8(ABS(RIDER_TIMER + X), 0x00);
     ret();
 }
 
@@ -480,24 +480,24 @@ void AccelerateRider_m1x1(void)
     if (!fz) { ret(); return; }
     lda8(rd8(ABS(0xB851 + Y)));
     fc = 0;
-    adc8(rd8(ABS(0x01B8 + X)));
-    wr8(ABS(0x01B8 + X), (u8)A);
+    adc8(rd8(ABS(RIDER_SPEED_LO + X)));
+    wr8(ABS(RIDER_SPEED_LO + X), (u8)A);
     if (fc)
-        wr8(ABS(0x01C0 + X), inc8(rd8(ABS(0x01C0 + X))));
+        wr8(ABS(RIDER_SPEED_HI + X), inc8(rd8(ABS(RIDER_SPEED_HI + X))));
     lda8((u8)X);
     if (!fz) { ret(); return; }
-    lda8(rd8(ABS(0x01C0 + X)));
+    lda8(rd8(ABS(RIDER_SPEED_HI + X)));
     cmp8((u8)A, rd8(ABS(0xB86A + Y)));
     if (fz) {
-        lda8(rd8(ABS(0x01B8 + X)));
+        lda8(rd8(ABS(RIDER_SPEED_LO + X)));
         cmp8((u8)A, rd8(ABS(0xB867 + Y)));
         if (!fc) { ret(); return; }
     } else if (!fc) {
         ret();
         return;
     }
-    lda8(rd8(ABS(0xB867 + Y))); wr8(ABS(0x01B8 + X), (u8)A);
-    lda8(rd8(ABS(0xB86A + Y))); wr8(ABS(0x01C0 + X), (u8)A);
+    lda8(rd8(ABS(0xB867 + Y))); wr8(ABS(RIDER_SPEED_LO + X), (u8)A);
+    lda8(rd8(ABS(0xB86A + Y))); wr8(ABS(RIDER_SPEED_HI + X), (u8)A);
     ret();
 }
 
@@ -527,15 +527,15 @@ void ClearMidScreenRiders_m1x1(void)
     ldy8(0x07);
     do {
         wr8(DP(0x05), (u8)Y);
-        lda8(rd8(ABS(0x0950 + Y)));
+        lda8(rd8(ABS(RANK_ORDER + Y)));
         if (!fz) {
             X = (u8)A; nz8((u8)X);
             lda8(rd8(ABS(0xBD9A + Y)));
             wr8(DP(0x07), (u8)A);
-            lda8(rd8(ABS(0x0198 + X)));
+            lda8(rd8(ABS(RIDER_PAGE + X)));
             lda8(lsr8((u8)A));
             if (!fc) {
-                lda8(rd8(ABS(0x0190 + X)));
+                lda8(rd8(ABS(RIDER_X + X)));
                 cmp8((u8)A, 0x70);
                 if (fc) {
                     cmp8((u8)A, 0x90);

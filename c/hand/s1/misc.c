@@ -251,7 +251,7 @@ void BroadcastEventInject_m1x1(void)
         u16 col = (u16)(rd16(ABS(PLAYER_BUF_COL)) + 3);
         u8 v;
         for (;;) {
-            v = rd8(LONG(0x7F4000 + col));
+            v = rd8(LONG(TRACK_BUF + col));
             if (v == 0x09)
                 col = 0;                         /* goal: wrap to the start */
             col++;
@@ -313,7 +313,7 @@ void SumBytes0850_m1x1(void)
     lda8(0x00);
     for (;;) {
         fc = 0;
-        adc8(rd8(ABS(0x0850 + X)));
+        adc8(rd8(ABS(ENTRY_CODE + X)));
         X = dec8((u8)X);
         if (fn) break;
     }
@@ -332,14 +332,14 @@ void Nop_BD39_m1x1(void)
  * the low speed byte $01B8,X to the fraction $0914,X carries. */
 void AddSpeedFraction_m1x1(void)
 {
-    lda8(rd8(ABS(0x01C0 + X)));
-    wr8(ABS(0x0180 + X), (u8)A);
-    lda8(rd8(ABS(0x01B8 + X)));
+    lda8(rd8(ABS(RIDER_SPEED_HI + X)));
+    wr8(ABS(RIDER_STEP + X), (u8)A);
+    lda8(rd8(ABS(RIDER_SPEED_LO + X)));
     fc = 0;
     adc8(rd8(ABS(0x0914 + X)));
     wr8(ABS(0x0914 + X), (u8)A);
     if (fc)
-        wr8(ABS(0x0180 + X), inc8(rd8(ABS(0x0180 + X))));
+        wr8(ABS(RIDER_STEP + X), inc8(rd8(ABS(RIDER_STEP + X))));
     ret();
 }
 
@@ -350,7 +350,7 @@ void Tick08CC_m1x1(void)
     lda8(rd8(ABS(0x08CC + X)));
     if (fz) { ret(); return; }
     wr8(ABS(0x08CC + X), dec8(rd8(ABS(0x08CC + X))));
-    lda8(rd8(ABS(0x0178 + X)));
+    lda8(rd8(ABS(RIDER_INPUT + X)));
     and8(0xC0);
     if (fz) { ret(); return; }
     lda8(0x00);
@@ -411,12 +411,12 @@ void RivalCountdown_97CC_m1x1(void)
 {
     X = rd8(ABS(OBJ_CURRENT));
     rep(0x20);
-    u16 t = dec16(rd16(ABS(0x0319 + X)));
-    wr16(ABS(0x0319 + X), t);
+    u16 t = dec16(rd16(ABS(OBJ_STEP + X)));
+    wr16(ABS(OBJ_STEP + X), t);
     if (t == 0) {
-        wr16(ABS(0x0309 + X), inc16(rd16(ABS(0x0309 + X))));
+        wr16(ABS(OBJ_STATE + X), inc16(rd16(ABS(OBJ_STATE + X))));
         lda16(0x00D0);
-        wr16(ABS(0x0319 + X), 0x00D0);
+        wr16(ABS(OBJ_STEP + X), 0x00D0);
     }
     sep(0x20);
     ret();

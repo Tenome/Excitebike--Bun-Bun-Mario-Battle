@@ -224,6 +224,10 @@
 #define SELECT_TURN     0x1559  /* player select: the carousel's turn step (+2 / -2, 0 still) */
 #define SCORE_COPY      0x1549  /* [+$6] 6 digits: the race score kept for the results subtraction */
 
+/* ---- more effect and rider fields ---- */
+#define EFFECT_VX       0x013E  /* [+$8] Y = slot: horizontal speed */
+#define EFFECT_VY       0x0146  /* [+$8] Y = slot: vertical speed */
+
 /* ---- sprites ---- */
 #define OAM_BUF         0x1600  /* [+$200] $0200 bytes: the OAM low table image */
 #define OAM_SIZE_BUF    0x1820  /* [+$80] 128 size bytes, packed into the high table */

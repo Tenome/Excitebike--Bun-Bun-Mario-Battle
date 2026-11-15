@@ -152,7 +152,7 @@ void LoadCourse_m1x1(void)
     }
     rep(0x30);
     for (int i = 0x0FFE; i >= 0; i -= 2)
-        wr16(LONG(0x7F4000 + i), 0);
+        wr16(LONG(TRACK_BUF + i), 0);
 
     /* index = (Stadium * 4 + course) * 2, or Stadium * 2 + $10 for the
      * special course; done with the original's ASL/ADC so C and V match. */

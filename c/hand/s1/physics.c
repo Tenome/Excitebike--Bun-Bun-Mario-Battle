@@ -12,13 +12,13 @@
  */
 void RiderShadowY_m1x1(void)
 {
-    lda8(rd8(ABS(0x090C + X)));
+    lda8(rd8(ABS(RIDER_RUNOUT + X)));
     fc = 1;
-    sbc8(rd8(ABS(0x0190 + X)));
+    sbc8(rd8(ABS(RIDER_X + X)));
     sbc8(0x08);
     lda8(asl8((u8)A));
     fc = 0;
-    adc8(rd8(ABS(0x01F0 + X)));
+    adc8(rd8(ABS(RIDER_LANE + X)));
     adc8(0x04);
     wr8(ABS(0x0979 + X), (u8)A);
     ret();
@@ -95,7 +95,7 @@ void LaneFromY_m1x1(void)
     ldx8(0x07);
     do {
         ldy8(0x05);
-        lda8(rd8(ABS(0x01F0 + X)));
+        lda8(rd8(ABS(RIDER_LANE + X)));
         fc = 1;
         sbc8(0x10);
         if (!fn) {
@@ -108,7 +108,7 @@ void LaneFromY_m1x1(void)
             }
         }
         lda8((u8)Y);
-        wr8(ABS(0x08A4 + X), (u8)A);
+        wr8(ABS(RIDER_LANE_NUM + X), (u8)A);
         X = dec8((u8)X);
     } while (!fn);
     ret();
@@ -121,22 +121,22 @@ void LaneFromY_m1x1(void)
  */
 void MarkFastRider_m1x1(void)
 {
-    lda8(rd8(ABS(0x01E8 + X)));
+    lda8(rd8(ABS(RIDER_AIR + X)));
     if (!fz) { ret(); return; }
-    lda8(rd8(ABS(0x01E0 + X)));
+    lda8(rd8(ABS(RIDER_LEAN + X)));
     cmp8((u8)A, 0x07);
     if (!fn) { ret(); return; }
-    lda8(rd8(ABS(0x01C0 + X)));
+    lda8(rd8(ABS(RIDER_SPEED_HI + X)));
     cmp8((u8)A, 0x03);
     if (!fc) {
         cmp8((u8)A, 0x02);
         if (!fz) { ret(); return; }
-        lda8(rd8(ABS(0x01B8 + X)));
+        lda8(rd8(ABS(RIDER_SPEED_LO + X)));
         lda8(asl8((u8)A));
         if (!fc) { ret(); return; }
     }
     lda8(0xFF);
-    wr8(ABS(0x01C8 + X), 0xFF);
+    wr8(ABS(RIDER_BUMPED + X), 0xFF);
     ret();
 }
 
@@ -150,22 +150,22 @@ void ScrollRivalsRelative_m1x1(void)
 {
     ldx8(0x07);
     do {
-        lda8(rd8(ABS(0x01D8 + X)));
+        lda8(rd8(ABS(RIDER_ACTIVE + X)));
         if (!fz) {
-            lda8(rd8(ABS(0x0180 + X)));
+            lda8(rd8(ABS(RIDER_STEP + X)));
             fc = 0;
-            adc8(rd8(ABS(0x0190 + X)));
+            adc8(rd8(ABS(RIDER_X + X)));
             if (fc)
-                wr8(ABS(0x0198 + X), inc8(rd8(ABS(0x0198 + X))));
+                wr8(ABS(RIDER_PAGE + X), inc8(rd8(ABS(RIDER_PAGE + X))));
             fc = 1;
             sbc8(rd8(ABS(RIDER_STEP)));
-            wr8(ABS(0x0190 + X), (u8)A);
+            wr8(ABS(RIDER_X + X), (u8)A);
             if (!fc)
-                wr8(ABS(0x0198 + X), dec8(rd8(ABS(0x0198 + X))));
-            lda8(rd8(ABS(0x090C + X)));
+                wr8(ABS(RIDER_PAGE + X), dec8(rd8(ABS(RIDER_PAGE + X))));
+            lda8(rd8(ABS(RIDER_RUNOUT + X)));
             fc = 1;
             sbc8(rd8(ABS(RIDER_STEP)));
-            wr8(ABS(0x090C + X), (u8)A);
+            wr8(ABS(RIDER_RUNOUT + X), (u8)A);
         }
         X = dec8((u8)X);
     } while (!fz);

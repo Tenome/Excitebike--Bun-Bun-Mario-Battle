@@ -239,7 +239,7 @@ void DrawSpark_m1x1(void)
     X = Y; nz8((u8)X);
     lda8(rd8(ABSX(EFFECT_X))); wr8(ABSY(OAM_BUF + 0x10), (u8)A);
     lda8(rd8(ABSX(EFFECT_Y))); wr8(ABSY(OAM_BUF + 0x11), (u8)A);
-    lda8(rd8(ABSX(0x0140)));
+    lda8(rd8(ABSX(EFFECT_VY)));
     cmp8((u8)A, 0xF0);
     if (fc) lda8(0x00);
     else lda8(rd8(ABSX(EFFECT_FRAME)));
@@ -307,10 +307,10 @@ void SpawnDustPuff_m1x1(void)
  * position $014E/$0106-$0107. Returns A = carry + whole step. */
 void MoveObjectX_m1x1(void)
 {
-    lda8(rd8(ABSX(0x0138)));
+    lda8(rd8(ABSX(EFFECT_VX)));
     lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A));
     wr8(DP(0x01), (u8)A);
-    lda8(rd8(ABSX(0x0138)));
+    lda8(rd8(ABSX(EFFECT_VX)));
     lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
     cmp8((u8)A, 0x08);
     if (fc) ora8(0xF0);

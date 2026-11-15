@@ -79,13 +79,13 @@ void RiderSpriteSets_m1x1(void)
     ldy8(0x03);
     u8 ch = rd8(ABS(PLAYER_CHAR)), var = rd8(ABS(RACE_VARIANT));
     do {
-        lda16(rd16(ABS(0x1961 + Y)));
+        lda16(rd16(ABS(SPRITE_FRAME + Y)));
         wr16(DP(0x0E), A);
         if (Y == 0) {
             and16(0x00FF);
             cmp16(A, 0x0015);
             if (fz) {
-                lda16(rd16(ABS(0x091C + Y)));
+                lda16(rd16(ABS(FINISH_POSE + Y)));
                 push8((u8)X);
                 X = (u8)A;
                 lda16(rd16(LONG(0x828960 + X)));
@@ -165,7 +165,7 @@ void LoadRiderPalettes_m1x1(void)
         X = (u16)(i * 32);
         for (int k = 0; k < 32; k += 2) {
             lda16(rd16(LONG(pal + k)));
-            wr16(ABS(0x1D20 + X), A);
+            wr16(ABS(PALETTE_BUF + 0x120 + X), A);
             X += 2;
         }
         wr16(DP(0x04), 0);
