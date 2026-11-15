@@ -90,7 +90,7 @@ void r816_native_tick(uint32_t a)
     g_cpu.master_cycles += (bank >= 0x80 && off >= 0x8000) ? 6 : 8;
     if (!(bank & 0x40) && (off >> 8 == 0x21 || off >> 8 == 0x42 || off >> 8 == 0x43))
         snes_sync_master_clock(g_snes, g_cpu.master_cycles);
-    if (g_cpu.master_cycles >= s_deadline && GetCurrentFiber() != s_driver)
+    if (r816_native == 2 && g_cpu.master_cycles >= s_deadline && GetCurrentFiber() != s_driver)
         SwitchToFiber(s_driver);
 }
 
@@ -163,7 +163,7 @@ static int in_irq(void)
     return 0;
 }
 
-void BunbunNativeRunFrame(void)
+static void fiber_run_frame(void)
 {
     const int booting = !s_booted;
     int slices = 0;
@@ -233,9 +233,105 @@ void BunbunNativeRunFrame(void)
     }
 }
 
+/* ---- the frame loop (r816_native == 1, the default) ---------------------------
+ * No fibers: once per field the NMI handler, then one turn of the main loop
+ * (a frame of game logic if the NMI flagged one), then the rest of the field
+ * with each raster IRQ's handler where the beam latches it. The C still
+ * charges the clock, so the sound handshakes and the boot's waits work, but
+ * nothing preempts it: an IRQ the beam raises while the main loop runs is
+ * taken when the turn is over. Between fields no C is running, so the
+ * machine registers are kept in g_cpu, and save states and rewind work. */
+void ResetBootAll(void);
+void MainLoopTurn(void);
+static int s_loop_booted;
+
+static void regs_from_cpu(void)
+{
+    cpu_mirrors_to_p(&g_cpu);
+    A = g_cpu.A; X = g_cpu.X; Y = g_cpu.Y; S = g_cpu.S; D = g_cpu.D; DB = g_cpu.DB; PB = g_cpu.PB;
+    uint8_t p = g_cpu.P;
+    fc = p & 1; fz = (p >> 1) & 1; fi = (p >> 2) & 1; fd = (p >> 3) & 1;
+    fx = (p >> 4) & 1; fm = (p >> 5) & 1; fv = (p >> 6) & 1; fn = p >> 7;
+}
+
+static void regs_to_cpu(void)
+{
+    g_cpu.A = A; g_cpu.X = X; g_cpu.Y = Y; g_cpu.S = S; g_cpu.D = D; g_cpu.DB = DB; g_cpu.PB = PB;
+    g_cpu.P = (uint8_t)(fc | fz << 1 | fi << 2 | fd << 3 | fx << 4 | fm << 5 | fv << 6 | fn << 7);
+    cpu_p_to_mirrors(&g_cpu);
+}
+
+static void loop_run_frame(void)
+{
+    int slices = 0;
+    uint32_t to_vblank = snes_master_clocks_until_line(g_snes, VBLANK_LINE);
+    uint64_t frame_end = g_snes->beamMasterLast + (to_vblank ? to_vblank : FIELD_CYCLES);
+    if (s_loop_booted) {
+        ppu_checkOverscan(g_ppu);
+        ppu_handleVblank(g_ppu);
+    }
+    snes_set_hdma_beam_enabled(g_snes, false);
+    snes_set_raster_irq_beam_enabled(true);
+    ppu_rasterBegin(g_ppu);
+
+    if (!s_loop_booted) {
+        fprintf(stderr, "[native] running the hand-written C (no recompiled code)\n");
+        ResetBootAll();
+        s_loop_booted = 1;
+    } else {
+        regs_from_cpu();
+        if (g_snes->nmiEnabled) {
+            g_snes->inNmi = true;
+            interrupt_frame();
+            NmiVector_m1x1();
+            g_snes->inNmi = false;
+        }
+        MainLoopTurn();
+    }
+    while (g_cpu.master_cycles < frame_end && slices++ < MAX_SLICES) {
+        if (!fi && g_snes->inIrq) {
+            interrupt_frame();
+            IrqVector_m1x1();
+            continue;
+        }
+        uint32_t to_irq = snes_master_clocks_until_irq(g_snes);
+        if (to_irq)
+            to_irq += 1;
+        if (to_irq == 0 || to_irq > LINE_CYCLES)
+            to_irq = LINE_CYCLES;
+        uint64_t next = g_cpu.master_cycles + to_irq;
+        if (next > frame_end)
+            next = frame_end;
+        park(next);
+    }
+    {
+        int walk = 0;
+        if (g_cpu.master_cycles < frame_end)
+            park(frame_end);
+        while (g_snes->beamMasterLast < frame_end && walk++ < 1200) {
+            uint64_t before = g_snes->beamMasterLast;
+            uint64_t want = frame_end - before;
+            snes_advance_master_cycles(g_snes, want > UINT32_MAX ? UINT32_MAX : (uint32_t)want);
+            if (g_snes->beamMasterLast == before)
+                break;
+        }
+        cart_sync_coprocessors(g_snes->cart, g_cpu.master_cycles);
+    }
+    regs_to_cpu();
+}
+
+void BunbunNativeRunFrame(void)
+{
+    if (r816_native == 2)
+        fiber_run_frame();
+    else
+        loop_run_frame();
+}
+
 /* A console reset (the credits' exit): start the C over from Reset. */
 void BunbunNativeReset(void)
 {
+    s_loop_booted = 0;
     if (!s_booted)
         return;
     for (int i = 0; i < 3; i++)

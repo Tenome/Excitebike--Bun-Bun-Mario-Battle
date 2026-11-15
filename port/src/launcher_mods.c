@@ -73,7 +73,7 @@ static const Choice kEngine[] = {
     { "native", "Native: the decompiled C runs the whole game" },
 };
 static const Opt kGameOpts[] = {
-    { "engine", "Engine", "Native runs the game entirely from the hand-written C of the decompilation instead of the recompiled program. Save states and rewind are not available there. Takes effect when the game restarts.", "game.engine", "recompiled", RECOMP_MOD_OPTION_CHOICE, kEngine, 2 },
+    { "engine", "Engine", "Native runs the game entirely from the hand-written C of the decompilation instead of the recompiled program. Takes effect when the game restarts.", "game.engine", "recompiled", RECOMP_MOD_OPTION_CHOICE, kEngine, 2 },
     { "flow", "Game flow", "Without the clock the port moves on as soon as a screen is done; the original waits for the satellite broadcast's schedule.", "game.flow", "menu", RECOMP_MOD_OPTION_CHOICE, kFlow, 2 },
     { "stadium", "Stadium", "Which Stadium's rules, schedule and end screen to play.", "game.stadium", "4", RECOMP_MOD_OPTION_CHOICE, kStadium, 2 },
     { "courses", "Courses", "Play the Stadium 1 or 2 courses in this engine.", "game.courses", "own", RECOMP_MOD_OPTION_CHOICE, kCourses, 3 },
@@ -98,7 +98,7 @@ static const Choice kEngine[] = {
     { "native", "Native: the decompiled C runs the whole game" },
 };
 static const Opt kGameOpts[] = {
-    { "engine", "Engine", "Native runs the game entirely from the hand-written C of the decompilation instead of the recompiled program. Save states and rewind are not available there. Takes effect when the game restarts.", "game.engine", "recompiled", RECOMP_MOD_OPTION_CHOICE, kEngine, 2 },
+    { "engine", "Engine", "Native runs the game entirely from the hand-written C of the decompilation instead of the recompiled program. Takes effect when the game restarts.", "game.engine", "recompiled", RECOMP_MOD_OPTION_CHOICE, kEngine, 2 },
     { "flow", "Game flow", "Without the clock the port moves on as soon as a screen is done; the original waits for the satellite broadcast's schedule.", "game.flow", "menu", RECOMP_MOD_OPTION_CHOICE, kFlow, 2 },
     { "stadium", "Stadium", "Which Stadium's courses and rules to play.", "game.stadium", "1", RECOMP_MOD_OPTION_CHOICE, kStadium, 2 },
 };

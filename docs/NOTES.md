@@ -493,3 +493,16 @@ restarts the broadcast hour, the credits' Start resets the console
 (`BunbunNativeReset` starts the fibers over), and LoadCourse applies custom
 and Stadium 1-2 courses. Verified in native mode: Gen A boot, player select,
 course card and free run; Gen B also the jump contest.
+
+Two drivers (`BUNBUN_NATIVE`): 1, the default for game.engine = native, is a
+frame loop without fibers: per field the NMI handler, then one turn of the
+main loop (`MainLoopTurn` in reset.c: a frame if the NMI flagged one), then
+the rest of the field with each raster IRQ's handler where the beam latches
+it. Nothing preempts the C (an IRQ raised during the main loop's turn is
+taken after it), and no C runs between fields, so the machine registers live
+in `g_cpu` there and save states and rewind work: a state saved in a race and
+reloaded replays the same 300 frames with identical WRAM, VRAM, CGRAM and
+OAM. 2 is the fiber driver above (interrupts mid-routine, no save states).
+The frame loop's boot finishes inside the first host frame, so its intro
+starts sooner than the other modes' (scripts that poke the minute early see
+the whole intro).

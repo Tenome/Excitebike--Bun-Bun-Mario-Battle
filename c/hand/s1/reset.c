@@ -195,12 +195,27 @@ tail:
 
 /* $80:FFA5 -> $80:8000 Reset: the boot, then a main loop frame after each
  * NMI. */
-void ResetVector_m1x1(void)
+/* The boot alone, and one turn of the main loop (a frame if the NMI has
+ * flagged 081A): the port's frame-loop native mode calls these once and
+ * once per frame instead of the endless loop (port/src/native_driver.c). */
+R816_EXPORT void ResetBootAll(void)
 {
     ResetBoot1();
     ResetBoot1Spc();
     wait_apu_idle1();
     ResetBoot2();
+}
+
+R816_EXPORT void MainLoopTurn(void)
+{
+    lda8(rd8(ABS(0x081A)));
+    if (!fz)
+        MainLoopFrame1();
+}
+
+void ResetVector_m1x1(void)
+{
+    ResetBootAll();
     for (;;) {
         do lda8(rd8(ABS(0x081A))); while (fz);
         MainLoopFrame1();

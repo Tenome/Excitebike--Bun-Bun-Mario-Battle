@@ -235,7 +235,9 @@ static int NativeEngine(void)
     static int v = -1;
     if (v < 0) {
         const char *e = getenv("BUNBUN_NATIVE");
-        v = (e && *e) ? atoi(e) != 0 : strcmp(bunbun_setting("game.engine", "recompiled"), "native") == 0;
+        /* 1 = frame loop (save states, rewind), 2 = fibers (interrupts
+         * taken mid-routine, as the hardware does) */
+        v = (e && *e) ? atoi(e) : strcmp(bunbun_setting("game.engine", "recompiled"), "native") == 0;
         r816_native = v;
     }
     return v && r816_native;
