@@ -27,7 +27,7 @@ def load_map(f, reverse=False):
     m = {}
     for line in open(f):
         t = line.split()
-        if len(t) >= 3 and t[0] != '------' and t[1] != '------':
+        if len(t) >= 3 and t[0] != '------' and t[1] != '------' and not line.startswith('#'):
             if reverse:
                 m[t[1]] = t[0]
             else:
@@ -63,7 +63,12 @@ def same_target(pa, va, pb, vb, oa, fmap):
     a, b = full(pa, va), full(pb, vb)
     if b - a == pb - pa:
         return True
-    return fmap is not None and fmap.get('%06X' % a) == '%06X' % b
+    if fmap is not None and fmap.get('%06X' % a) == '%06X' % b:
+        return True
+    return PCMAP.get(a) == b
+
+
+PCMAP = {}       # old instruction address -> new, from aligned routines (main)
 
 
 def operand_map(src_ins, dst_ins, fmap=None):
@@ -79,8 +84,8 @@ def operand_map(src_ins, dst_ins, fmap=None):
             return None
         if va == vb:
             continue
-        if oa in ('abs', 'absx', 'absy', 'long', 'longx') and isinstance(va, int) and isinstance(vb, int):
-            if ma in ('JSR', 'JSL', 'JMP', 'JML'):
+        if oa in ('abs', 'absx', 'absy', 'long', 'longx', 'iabsx', 'iabs') and isinstance(va, int) and isinstance(vb, int):
+            if ma in ('JSR', 'JSL', 'JMP', 'JML') and oa not in ('iabsx', 'iabs'):
                 if oa in ('abs', 'long') and same_target(pa, va, pb, vb, oa, fmap):
                     continue
                 return None                  # calls elsewhere: not a plain data move
@@ -123,6 +128,7 @@ def main():
     ap.add_argument('--out')
     ap.add_argument('--operands', action='store_true', help='also routines that differ only in data addresses')
     ap.add_argument('--skip', nargs='*', default=[], help='routines to leave out (e.g. ones difftest cannot run)')
+    ap.add_argument('--emit', nargs='*', default=[], help='print these routines (and their helpers) translated to dst, write nothing: a start for hand-written versions of routines that differ')
     a = ap.parse_args()
     order = ['s1', 's2', 's3', 's4']        # build/xm maps join neighbours
     i, j = order.index(a.src), order.index(a.dst)
@@ -141,6 +147,49 @@ def main():
                 break
         if d:
             fmap[k.upper()] = d.upper()
+    # routines the map leaves unpaired: try the address its nearest mapped
+    # neighbour's shift gives, and keep it when the instructions line up
+    code_src = json.load(open(os.path.join(ROOT, 'build', a.src, 'code.json')))
+    code_dst = json.load(open(os.path.join(ROOT, 'build', a.dst, 'code.json')))
+    dst_funcs = {k.upper() for k in code_dst['funcs']}
+    taken = set(fmap.values())
+    mapped = sorted((int(k, 16), int(v, 16)) for k, v in fmap.items())
+    for k in sorted(code_src['funcs']):
+        if k.upper() in fmap:
+            continue
+        pc = int(k, 16)
+        prev = [(s_, d_) for s_, d_ in mapped if s_ < pc and s_ >> 16 == pc >> 16]
+        if not prev:
+            continue
+        cand = '%06X' % (pc + prev[-1][1] - prev[-1][0])
+        if cand not in dst_funcs or cand in taken:
+            continue
+        try:
+            xi, yi = routine_insns(a.src, pc), routine_insns(a.dst, int(cand, 16))
+        except (ValueError, KeyError):
+            continue
+        if len(xi) == len(yi) and all(p[1] == q[1] and p[2] == q[2] for p, q in zip(xi, yi)):
+            fmap[k.upper()] = cand
+            taken.add(cand)
+            maps[0][k.upper()] = cand if len(maps) == 1 else maps[0].get(k.upper())
+    pcmap, retmap = PCMAP, {}
+    for k in code_src['funcs']:
+        d = fmap.get(k.upper())
+        if not d:
+            continue
+        try:
+            xi, yi = routine_insns(a.src, int(k, 16)), routine_insns(a.dst, int(d, 16))
+        except (ValueError, KeyError):
+            continue
+        if len(xi) != len(yi) or any(p[1] != q[1] for p, q in zip(xi, yi)):
+            continue
+        for p, q in zip(xi, yi):
+            pcmap[p[0]] = q[0]
+            if p[1] in ('JSR', 'JSL'):           # return address: the call's last byte
+                retmap[p[0] + (2 if p[1] == 'JSR' else 3)] = q[0] + (2 if q[1] == 'JSR' else 3)
+        if xi:
+            pcmap[xi[-1][0] + 4] = yi[-1][0] + 4      # rough end: rarely used
+    gmap, gbad = {}, set()
     hand = []
     for line in open(os.path.join(ROOT, 'c', 'hand', a.src, 'hand.txt')):
         t = line.split('#')[0].split()
@@ -156,7 +205,7 @@ def main():
             dst_pcs.add(t[0].upper())
     srcs, defines, oneliners, globals_ = {}, [], {}, {}
     for fn in sorted(os.listdir(os.path.join(ROOT, 'c', 'hand', a.src))):
-        if fn.endswith('.c'):
+        if fn.endswith('.c') and fn != 'roster_rom.c':   # the target has its own
             text = open(os.path.join(ROOT, 'c', 'hand', a.src, fn), encoding='utf-8').read()
             srcs.update(extract_functions(text))
             for m in re.finditer(r'^(?:static )?(?:const )?(?:unsigned|int|u8|u16|u32|uint\w+|s8|s16)\s+\*?(\w+)(?:\[[^\]]*\])*\s*(?:=\s*(?:\{(?:.|\n)*?\}|[^;{]*))?;', text, re.M):
@@ -195,24 +244,6 @@ def main():
     # Address translation for return addresses (push16 constants) and data
     # operands, from every function pair the map aligns instruction for
     # instruction: helpers shared between routines are translated too.
-    pcmap, gmap, gbad, retmap = {}, {}, set(), {}
-    code_src = json.load(open(os.path.join(ROOT, 'build', a.src, 'code.json')))
-    for k in code_src['funcs']:
-        d = fmap.get(k.upper())
-        if not d:
-            continue
-        try:
-            xi, yi = routine_insns(a.src, int(k, 16)), routine_insns(a.dst, int(d, 16))
-        except (ValueError, KeyError):
-            continue
-        if len(xi) != len(yi) or any(p[1] != q[1] for p, q in zip(xi, yi)):
-            continue
-        for p, q in zip(xi, yi):
-            pcmap[p[0]] = q[0]
-            if p[1] in ('JSR', 'JSL'):           # return address: the call's last byte
-                retmap[p[0] + (2 if p[1] == 'JSR' else 3)] = q[0] + (2 if q[1] == 'JSR' else 3)
-        if xi:
-            pcmap[xi[-1][0] + 4] = yi[-1][0] + 4      # rough end: rarely used
     for t, d, om in picked:
         for o, n in om.items():
             if o < 0:
@@ -258,13 +289,43 @@ def main():
                 n = gmap.get((bank, v))
             if n is not None:
                 return pre + '0x%0*X' % (6 if v > 0xFFFF else 4, n)
+            if len(hexs) == 6:
+                # a 24-bit address whose operand was 16-bit (LONGX(0x80DE1B)
+                # for JMP ($DE1B,X)): look up its low half in its own bank
+                lo16, b24 = v & 0xFFFF, v >> 16
+                n = own.get(lo16) if own and b24 == bank else None
+                if n is None:
+                    n = gmap.get((b24, lo16))
+                if n is not None and n <= 0xFFFF:
+                    return pre + '0x%06X' % ((v & 0xFF0000) | n)
             return m.group(0)
         return re.sub(r'((?:CALL\(\w+, |r816_call_pc\(|r816_call_native\(|push16\()?)0x0*([0-9A-Fa-f]{4,6})\b', one, text)
 
-    def static_callees(body):
-        return [h for h in re.findall(r'\b(\w+)\(', body)
-                if h in srcs and (srcs[h][1].startswith('static') or not re.search(r'_m\dx\d$', h))]
+    src_names = {t[4] for t in hand}
+    # the target has its own roster tables (c/hand/<dst>/roster_rom.c): the
+    # roster users come along and include roster.h
+    has_roster = os.path.exists(os.path.join(ROOT, 'c', 'hand', a.dst, 'roster_rom.c'))
 
+    def static_callees(body):
+        """Helpers a body needs: static functions, functions without a
+        routine suffix, and internal entry points (Name_mNxN that are not a
+        routine of their own in hand.txt)."""
+        return [h for h in re.findall(r'\b(\w+)\(', body)
+                if h in srcs and (srcs[h][1].startswith('static') or not re.search(r'_m\dx\d$', h)
+                                  or re.sub(r'_m\dx\d$', '', h) not in src_names)]
+
+    if a.emit:
+        for name in a.emit:
+            t = next(t for t in hand if t[4] == name)
+            d = fmap.get(t[0].upper(), t[0].upper())
+            fname = name + '_m%sx%s' % (t[1], t[2])
+            bank, lo = int(t[0], 16) >> 16, int(t[0], 16) & 0xFFFF
+            delta = int(d, 16) - int(t[0], 16)
+            text = translate(srcs[fname][0], bank, delta, lo, lo + 0x400)
+            print(text.replace('$%s:%s' % (t[0][:2], t[0][2:]), '$%s:%s' % (d[:2], d[2:])))
+            for h in static_callees(srcs[fname][1]):
+                print(translate(srcs[h][0], bank, delta, lo, lo + 0x400))
+        return
     out_funcs, helpers, lines_hand, lines_names = [], [], [], []
     helper_bank = {}
     # What each picked routine needs; drop routines whose callees are not
@@ -285,10 +346,11 @@ def main():
                 closure.append(h)
                 todo += static_callees(srcs[h][1])
         uses = body + ''.join(srcs[h][1] for h in closure)
-        if re.search(r'\b(?:roster|port)_\w+\(', uses):
+        if re.search(r'\b(?:roster|port)_\w+\(', uses) and not has_roster:
             why[name] = 'uses the Gen B roster or port hooks'
             continue
-        info[name] = (closure, set(re.findall(r'\b(\w+)_m\dx\d\b', uses)) - {name})
+        inner = {re.sub(r'_m\dx\d$', '', h) for h in closure}
+        info[name] = (closure, set(re.findall(r'\b(\w+)_m\dx\d\b', uses)) - {name} - inner)
     while True:
         ok = dst_hand | set(info)
         bad = {n: c for n, (_, c) in info.items() if any(x not in ok for x in c)}
@@ -325,7 +387,7 @@ def main():
             protos.append(m.group(1) + ';')
     head = ['/*', ' * Routines identical (instruction for instruction) to %s\'s hand-written' % a.src.upper(),
             ' * ones, carried over by tools/port_hand.py with their return addresses', ' * moved. Checked by tools/difftest816.py on %s.' % a.dst, ' */',
-            '#include "hand/hand.h"', '']
+            '#include "hand/hand.h"'] + (['#include "roster.h"'] if has_roster else []) + ['']
     used = '\n'.join(out_funcs + [srcs[h][0] for h in helpers])
     inl = [l for n, l in oneliners.items() if re.search(r'\b%s\(' % n, used)]
     gl = [g for n, g in globals_.items() if re.search(r'\b%s\b' % n, every)]

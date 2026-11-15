@@ -1,3 +1,7 @@
+80CF08  1 1  mem+A,X,Y,C,V  TemperatureGauge       # s2.c
+80D80C  1 1  mem+A,X,Y,C,V  SetupJumpContest       # s2.c
+819852  1 1  mem+A,X,Y,C,V  ResultsBonusCount      # s2.c
+80A5A7  1 1  mem+X,Y,C,V    DrawRacerNameLow       # s2.c
 808539  0 1  mem+X,Y,C,V    DmaKick                # from s1 808539
 808541  0 1  mem+V          DmaCopyToWram          # from s1 808541
 808562  0 1  mem+C,V        DmaFillZero            # from s1 808562
@@ -33,8 +37,13 @@
 80915A  1 1  mem+X,Y,C,V    SegmentNext            # from s1 80915A
 809201  1 1  mem+X,Y,C,V    EnableHudSplit         # from s1 809201
 809206  1 1  mem+X,Y,C,V    ClearRaceState         # from s1 809206
+80A5B2  1 1  mem+X,Y,C,V    DrawRacerName          # from s1 80A5B7
+80A668  1 1  mem+X,Y,C,V    DrawHudLabelA          # from s1 80A66D
+80A68A  1 1  mem+X,Y,C,V    DrawHudLabelB          # from s1 80A68F
 80D10C  1 1  mem+X,Y,C,V    DrawPlace              # from s1 80D113
 80D144  1 1  mem+X,Y,C,V    DrawLap                # from s1 80D14B
+809236  1 1  mem+X,Y,C,V    RaceHudInit            # from s1 809236
+809248  1 1  mem+X,Y,C,V    RaceSetup              # from s1 809248
 80D062  1 1  mem+X,C,V      ClipRiderSprite        # from s1 80D069
 80D343  1 1  mem+X,Y,V      StepObjectX            # from s1 80D34A
 80D3BA  1 1  mem+X,Y,V      DrawSmallObject        # from s1 80D3C1
@@ -173,6 +182,7 @@
 80E8AD  1 1  mem+A,X,Y,C,V  RiderPieceAt           # from s1 80E8B4
 80E8CE  1 1  mem+A,X,Y,C,V  LanePieceTablesLong    # from s1 80E8D5
 8099B8  1 1  mem+A,X,Y,C,V  Mode0F_EndScreen       # from s1 8099BB
+80DE00  1 1  mem+X,Y,C,V    Mode0A                 # from s1 80DE07
 80C800  1 1  mem+X,Y,C,V    ShowRaceClock          # from s1 80C805
 80C7E6  1 1  mem+X,Y,C,V    TickRaceClock          # from s1 80C7EB
 80AF9A  1 1  mem+A,X,Y,C,V  RiderAhead             # from s1 80AF9F
@@ -197,8 +207,10 @@
 80C046  1 1  mem+A,X,Y,C,V  UpdateRiderDistances   # from s1 80C04B
 80C376  1 1  mem+A,X,Y,C,V  CrashLand              # from s1 80C37B
 80C347  1 1  mem+A,X,Y,C,V  RiderLandCheck         # from s1 80C34C
+80EB05  1 1  mem+A,X,Y,C,V  SpeedBumpCrash         # from s1 80EB0C
 80AB25  1 1  mem+A,X,Y,C,V  BallOrGauge            # from s1 80AB2A
 808EF7  1 1  mem+A,X,Y,C,V  TurnSelectWheels       # from s1 808EF7
+80EB87  1 1  mem+A,X,Y,C,V  SlowPieceStep          # from s1 80EB8E
 81B6C2  1 1  mem+A,X,Y,C,V  DriftUpObject          # from s1 81B6C2
 808EA0  1 1  mem+X,Y,C,V    SelectTimerDigits      # from s1 808EA0
 80E052  1 1  mem+X,Y,C,V    ShowBonusBest          # from s1 80E059
@@ -245,6 +257,7 @@
 80D8FF  1 1  mem+X,Y,C,V    ShowBonusLabel         # from s1 80D906
 80CD4F  1 1  mem+A,X,Y,C,V  RiderPose              # from s1 80CD54
 80C470  1 1  mem+A,X,Y,C,V  CrashRecovery          # from s1 80C475
+80DD07  1 1  mem+A,X,Y,C,V  PlayerCrashStep        # from s1 80DD0E
 80DB68  1 1  mem+X,Y,C,V    BonusTimerStep         # from s1 80DB6F
 80CCDC  1 1  mem+A,X,Y,C,V  DrawRider              # from s1 80CCE1
 80C5FF  1 1  mem+A,X,Y,C,V  SpeedGauge             # from s1 80C604
@@ -314,6 +327,7 @@
 80EE51  1 1  mem+X,Y,C,V    QueueScoreDigitsLong   # from s1 80EE58
 80DCFC  1 1  mem+A,X,Y,C,V  CourseRowList          # from s1 80DD03
 80DB82  1 1  mem+A,X,Y,C,V  BuildCourseColumn      # from s1 80DB89
+809698  1 1  mem+A,X,Y,C,V  Mode04_FreeRunSchedule # from s1 809698
 80C8E4  1 1  mem+X,Y,C,V    ShowCourseBest         # from s1 80C8E9
 80CC33  1 1  mem+A,X,Y,C,V  SortAndDrawRiders      # from s1 80CC38
 80A897  1 1  mem+A,X,Y,C,V  RacePlaceRiders        # from s1 80A89C
@@ -329,6 +343,10 @@
 80E76C  1 1  mem+A,X,Y,C,V  AnimateAllWheels       # from s1 80E773
 80E79D  1 1  mem+A,X,Y,C,V  RunAllRiderPieces      # from s1 80E7A4
 80EB79  1 1  mem+A,X,Y,C,V  RunPieceActions        # from s1 80EB80
+80E36D  1 1  mem+A,X,Y,C,V  TemperatureGaugeJmp    # from s1 80E374
+80A9B5  1 1  mem+A,X,Y,C,V  Mode03_Race            # from s1 80A9BA
+80E312  1 1  mem+X,Y,C,V    Mode0C                 # from s1 80E319
+8092A0  1 1  mem+A,X,Y,C,V  RaceResultsSetup       # from s1 8092A0
 80B86E  1 1  mem+X,Y,C,V    LoadScene              # from s1 80B873
 80A3A7  1 0  full           DigitsToNumber         # from s1 80A3AC
 809DEB  1 1  mem+A,X,Y,C,V  EndScreenStart         # from s1 809DE0
@@ -376,7 +394,9 @@
 80E3E7  1 1  mem+X,Y,C,V    DemoExitSkip40         # from s1 80E3EE
 80E3EB  1 1  mem+X,Y,C,V    DemoExitSkip35         # from s1 80E3F2
 80EAF8  1 1  mem+A,X,Y,C,V  SetJumpState1          # from s1 80EAFF
+80EAFD  1 1  mem+A,X,Y,C,V  RiderBumpCrash         # from s1 80EB04
 80EBAE  1 1  mem+A,X,Y,C,V  LandingStep            # from s1 80EBB5
 80E82D  1 1  mem+A,X,Y,C,V  PieceAction            # from s1 80E834
 80FFA0  1 1  full           EmptyVector            # from s1 80FFA0
+80FFA9  1 1  full           IrqVector              # from s1 80FFA9
 80FFA1  1 1  full           NmiVector              # from s1 80FFA1

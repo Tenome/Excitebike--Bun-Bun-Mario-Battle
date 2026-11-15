@@ -31,6 +31,10 @@
 81F8BB BsxPollStream    # from config/s1/names.txt (same)
 81FA68 BsxDetect    # from config/s1/names.txt (same)
 81FA81 BsxProbeReceiver    # from config/s1/names.txt (same)
+80A5A7 DrawRacerNameLow      # s2.c
+80D80C SetupJumpContest      # s2.c
+819852 ResultsBonusCount     # s2.c
+80CF08 TemperatureGauge      # s2.c
 808539 DmaKick               # from s1 808539
 808541 DmaCopyToWram         # from s1 808541
 808562 DmaFillZero           # from s1 808562
@@ -66,8 +70,13 @@
 80915A SegmentNext           # from s1 80915A
 809201 EnableHudSplit        # from s1 809201
 809206 ClearRaceState        # from s1 809206
+80A5B2 DrawRacerName         # from s1 80A5B7
+80A668 DrawHudLabelA         # from s1 80A66D
+80A68A DrawHudLabelB         # from s1 80A68F
 80D10C DrawPlace             # from s1 80D113
 80D144 DrawLap               # from s1 80D14B
+809236 RaceHudInit           # from s1 809236
+809248 RaceSetup             # from s1 809248
 80D062 ClipRiderSprite       # from s1 80D069
 80D343 StepObjectX           # from s1 80D34A
 80D3BA DrawSmallObject       # from s1 80D3C1
@@ -206,6 +215,7 @@
 80E8AD RiderPieceAt          # from s1 80E8B4
 80E8CE LanePieceTablesLong   # from s1 80E8D5
 8099B8 Mode0F_EndScreen      # from s1 8099BB
+80DE00 Mode0A                # from s1 80DE07
 80C800 ShowRaceClock         # from s1 80C805
 80C7E6 TickRaceClock         # from s1 80C7EB
 80AF9A RiderAhead            # from s1 80AF9F
@@ -230,8 +240,10 @@
 80C046 UpdateRiderDistances  # from s1 80C04B
 80C376 CrashLand             # from s1 80C37B
 80C347 RiderLandCheck        # from s1 80C34C
+80EB05 SpeedBumpCrash        # from s1 80EB0C
 80AB25 BallOrGauge           # from s1 80AB2A
 808EF7 TurnSelectWheels      # from s1 808EF7
+80EB87 SlowPieceStep         # from s1 80EB8E
 81B6C2 DriftUpObject         # from s1 81B6C2
 808EA0 SelectTimerDigits     # from s1 808EA0
 80E052 ShowBonusBest         # from s1 80E059
@@ -278,6 +290,7 @@
 80D8FF ShowBonusLabel        # from s1 80D906
 80CD4F RiderPose             # from s1 80CD54
 80C470 CrashRecovery         # from s1 80C475
+80DD07 PlayerCrashStep       # from s1 80DD0E
 80DB68 BonusTimerStep        # from s1 80DB6F
 80CCDC DrawRider             # from s1 80CCE1
 80C5FF SpeedGauge            # from s1 80C604
@@ -347,6 +360,7 @@
 80EE51 QueueScoreDigitsLong  # from s1 80EE58
 80DCFC CourseRowList         # from s1 80DD03
 80DB82 BuildCourseColumn     # from s1 80DB89
+809698 Mode04_FreeRunSchedule # from s1 809698
 80C8E4 ShowCourseBest        # from s1 80C8E9
 80CC33 SortAndDrawRiders     # from s1 80CC38
 80A897 RacePlaceRiders       # from s1 80A89C
@@ -362,6 +376,10 @@
 80E76C AnimateAllWheels      # from s1 80E773
 80E79D RunAllRiderPieces     # from s1 80E7A4
 80EB79 RunPieceActions       # from s1 80EB80
+80E36D TemperatureGaugeJmp   # from s1 80E374
+80A9B5 Mode03_Race           # from s1 80A9BA
+80E312 Mode0C                # from s1 80E319
+8092A0 RaceResultsSetup      # from s1 8092A0
 80B86E LoadScene             # from s1 80B873
 80A3A7 DigitsToNumber        # from s1 80A3AC
 809DEB EndScreenStart        # from s1 809DE0
@@ -409,7 +427,9 @@
 80E3E7 DemoExitSkip40        # from s1 80E3EE
 80E3EB DemoExitSkip35        # from s1 80E3F2
 80EAF8 SetJumpState1         # from s1 80EAFF
+80EAFD RiderBumpCrash        # from s1 80EB04
 80EBAE LandingStep           # from s1 80EBB5
 80E82D PieceAction           # from s1 80E834
 80FFA0 EmptyVector           # from s1 80FFA0
+80FFA9 IrqVector             # from s1 80FFA9
 80FFA1 NmiVector             # from s1 80FFA1

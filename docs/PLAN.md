@@ -112,16 +112,20 @@ The rest of the 1 MB is graphics, tracks, music and other data.
    verified by play-through to a race and an identical track buffer.
 0d. ✅ Every routine of the S1 and S4 static maps is hand-written C (both
    100%, docs/DECOMP.md). The S2 and S3 dumps (separate, older builds of the
-   same engines) take that C over with `tools/port_hand.py s1 s2` / `s4 s3`:
-   it follows the cross-version function map, accepts routines whose
-   instructions match apart from moved code and data addresses and changed
-   16-bit immediates, and translates return addresses (push16, return-address
-   tables and arguments, addresses built from a routine's start), CALL()
-   targets and data operands per code bank. S2: 382 routines, S3: 468, all
-   passing the difftest on the S1 / S4 snapshots except PieceAction's
-   out-of-range jump table (which fails the same way on S1). Left: the
-   routines that really differ (S2 24, S3 64, among them the Gen B roster
-   users).
+   same engines) take that C over with `tools/port_hand.py s1 s2` / `s4 s3`
+   (S2 401 / 406, S3 522 / 532): it follows the cross-version function map
+   (pairing unmapped routines by their neighbour's shift), accepts routines
+   whose instructions match apart from moved code and data addresses, jump
+   tables and changed 16-bit immediates, and translates return addresses
+   (push16, return-address tables and arguments, addresses built from a
+   routine's start), CALL() targets and data operands per code bank. S3 gets
+   its own roster tables (`c/hand/s3/roster_rom.c`). Routines that really
+   differ are written by hand in `c/hand/s2/s2.c` (starting from
+   `port_hand.py --emit NAME`): DrawRacerNameLow (its fall-through tail's
+   table moved), SetupJumpContest, ResultsBonusCount (attribute $08) and
+   TemperatureGauge (no LDA #$01 before the warning flag). Left: S2's end
+   screen pair and BroadcastTotals, S3's title scroll, end screen, entry
+   menu, bonus track reader and a few more.
 1. Hand-lift routines to readable C, kept in `c/`. `c/s1_core.c` is the start.
 2. Use the same approach as the NES Excitebike port: test each routine
    against the recompiled or interpreted original. Compare RAM and the order

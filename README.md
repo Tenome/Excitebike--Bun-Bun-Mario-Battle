@@ -70,7 +70,7 @@ drop it in `mods/<name>/courses/`) and the game plays it.
 | | Stadium 1 | Stadium 2 | Stadium 3 | Stadium 4 |
 |---|---|---|---|---|
 | Disassembly (rebuilds byte for byte) | 407 / 407 routines | 406 / 406 | 532 / 532 | 532 / 532 |
-| Hand-written C (tested against the original) | 407 / 407 | 381 / 406 | 462 / 532 | 532 / 532 |
+| Hand-written C (tested against the original) | 407 / 407 | 401 / 406 | 522 / 532 | 532 / 532 |
 
 The disassembly reassembles into identical dumps. Decompiled routines are
 checked by `tools/difftest816.py`, which runs each one against the original

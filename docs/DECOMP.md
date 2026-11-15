@@ -425,7 +425,7 @@ One row per hand-written variant (some routines have one per register width).
 
 ## s2
 
-406 functions in the static map; 381 hand-written (93.8%) (this dump is not a port build: the S1 / S4 builds carry its Stadium).
+406 functions in the static map; 401 hand-written (98.8%) (this dump is not a port build: the S1 / S4 builds carry its Stadium).
 One row per hand-written variant (some routines have one per register width).
 
 | Address | Routine | Compare | File |
@@ -468,7 +468,11 @@ One row per hand-written variant (some routines have one per register width).
 | `$80:91CD` | StartSession | `mem+X,C,V` | `from_s1.c` |
 | `$80:9201` | EnableHudSplit | `mem+X,Y,C,V` | `from_s1.c` |
 | `$80:9206` | ClearRaceState | `mem+X,Y,C,V` | `from_s1.c` |
+| `$80:9236` | RaceHudInit | `mem+X,Y,C,V` | `from_s1.c` |
+| `$80:9248` | RaceSetup | `mem+X,Y,C,V` | `from_s1.c` |
+| `$80:92A0` | RaceResultsSetup | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$80:95AE` | DrawText95C4 | `mem+Y,V` | `from_s1.c` |
+| `$80:9698` | Mode04_FreeRunSchedule | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$80:97FC` | SaveBestRecords | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$80:98AF` | QueueTimeDigits | `mem+X,Y,C,V` | `from_s1.c` |
 | `$80:993F` | QueueFiveDigits | `mem+X,Y,C,V` | `from_s1.c` |
@@ -503,9 +507,14 @@ One row per hand-written variant (some routines have one per register width).
 | `$80:A417` | MergeBsxFlags | `mem+Y` | `from_s1.c` |
 | `$80:A453` | SumBytes0850 | `mem+Y` | `from_s1.c` |
 | `$80:A4F9` | FinalSchedule | `mem+A,X,Y,C,V` | `from_s1.c` |
+| `$80:A5A7` | DrawRacerNameLow | `mem+X,Y,C,V` | `s2.c` |
+| `$80:A5B2` | DrawRacerName | `mem+X,Y,C,V` | `from_s1.c` |
+| `$80:A668` | DrawHudLabelA | `mem+X,Y,C,V` | `from_s1.c` |
+| `$80:A68A` | DrawHudLabelB | `mem+X,Y,C,V` | `from_s1.c` |
 | `$80:A6AD` | EraseCollectedCoin | `mem+X,Y,C,V` | `from_s1.c` |
 | `$80:A7AA` | RedrawUsedItem | `mem+X,Y,C,V` | `from_s1.c` |
 | `$80:A897` | RacePlaceRiders | `mem+A,X,Y,C,V` | `from_s1.c` |
+| `$80:A9B5` | Mode03_Race | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$80:AA73` | RaceBannerSprites | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$80:AB13` | SendSpeedToApu | `mem+X,Y,C,V` | `from_s1.c` |
 | `$80:AB25` | BallOrGauge | `mem+A,X,Y,C,V` | `from_s1.c` |
@@ -606,6 +615,7 @@ One row per hand-written variant (some routines have one per register width).
 | `$80:CD4F` | RiderPose | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$80:CDF1` | WheelSpark | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$80:CEE2` | DrawRiderShadowPair | `mem+X,Y,V` | `from_s1.c` |
+| `$80:CF08` | TemperatureGauge | `mem+A,X,Y,C,V` | `s2.c` |
 | `$80:CFF3` | SortRidersByPosition | `mem` | `from_s1.c` |
 | `$80:D031` | ClearMidScreenRiders | `mem+X,Y,C,V` | `from_s1.c` |
 | `$80:D062` | ClipRiderSprite | `mem+X,C,V` | `from_s1.c` |
@@ -625,6 +635,7 @@ One row per hand-written variant (some routines have one per register width).
 | `$80:D3F6` | ClearWords1530 | `mem+C,V` | `from_s1.c` |
 | `$80:D7AB` | SetBonusRow | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$80:D7B3` | SetupSpriteRow15 | `mem+X,Y,C,V` | `from_s1.c` |
+| `$80:D80C` | SetupJumpContest | `mem+A,X,Y,C,V` | `s2.c` |
 | `$80:D8F4` | StartBonusLabel | `mem+X,Y,C,V` | `from_s1.c` |
 | `$80:D8FF` | ShowBonusLabel | `mem+X,Y,C,V` | `from_s1.c` |
 | `$80:D977` | Mode09 | `mem+A,X,Y,C,V` | `from_s1.c` |
@@ -639,11 +650,13 @@ One row per hand-written variant (some routines have one per register width).
 | `$80:DCD1` | BlankQueueRow | `mem+Y` | `from_s1.c` |
 | `$80:DCE3` | CourseRowTiles | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$80:DCFC` | CourseRowList | `mem+A,X,Y,C,V` | `from_s1.c` |
+| `$80:DD07` | PlayerCrashStep | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$80:DD7B` | PlayerColumnCheck | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$80:DDA0` | PlayerStop | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$80:DDA8` | PlayerHalt | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$80:DDF1` | EmptyDDF8 | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$80:DDF2` | StartDemoHdma | `mem+X,Y,C,V` | `from_s1.c` |
+| `$80:DE00` | Mode0A | `mem+X,Y,C,V` | `from_s1.c` |
 | `$80:DE1C` | BonusResultStart | `mem+X,Y,C,V` | `from_s1.c` |
 | `$80:DEAC` | BonusCountUp | `mem+X,Y,C,V` | `from_s1.c` |
 | `$80:DEFA` | BonusResultStep | `mem+A,X,Y,C,V` | `from_s1.c` |
@@ -653,6 +666,8 @@ One row per hand-written variant (some routines have one per register width).
 | `$80:E296` | ResetDemoCourse | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$80:E2A4` | SetRaceBgMode | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$80:E2AF` | StartDemo | `mem+X,Y,C,V` | `from_s1.c` |
+| `$80:E312` | Mode0C | `mem+X,Y,C,V` | `from_s1.c` |
+| `$80:E36D` | TemperatureGaugeJmp | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$80:E370` | DemoInputStep | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$80:E3CD` | DemoExitBoost | `mem+X,Y,C,V` | `from_s1.c` |
 | `$80:E3D8` | PlaceLastRival | `mem+A,X,Y,C,V` | `from_s1.c` |
@@ -690,11 +705,14 @@ One row per hand-written variant (some routines have one per register width).
 | `$80:EA63` | CollectPickupPiece | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$80:EACA` | PlayerOverheatWarn | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$80:EAF8` | SetJumpState1 | `mem+A,X,Y,C,V` | `from_s1.c` |
+| `$80:EAFD` | RiderBumpCrash | `mem+A,X,Y,C,V` | `from_s1.c` |
+| `$80:EB05` | SpeedBumpCrash | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$80:EB1E` | StartJumpBase30 | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$80:EB28` | JumpBase30 | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$80:EB2D` | JumpBase10 | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$80:EB32` | SlowPieceBrake | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$80:EB79` | RunPieceActions | `mem+A,X,Y,C,V` | `from_s1.c` |
+| `$80:EB87` | SlowPieceStep | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$80:EBAE` | LandingStep | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$80:EBBA` | ResetAndLand | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$80:EBCC` | ClearRiderAction | `mem+A,X,Y,C,V` | `from_s1.c` |
@@ -712,6 +730,7 @@ One row per hand-written variant (some routines have one per register width).
 | `$80:EE61` | QueueScoreDigits | `mem+X,Y,C,V` | `from_s1.c` |
 | `$80:FFA0` | EmptyVector | `full` | `from_s1.c` |
 | `$80:FFA1` | NmiVector | `full` | `from_s1.c` |
+| `$80:FFA9` | IrqVector | `full` | `from_s1.c` |
 | `$81:8A42` | RaceRowList | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$81:8A4D` | LoadRaceColumn | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$81:8BE2` | FillLaneColumn | `mem+A,X,Y,C,V` | `from_s1.c` |
@@ -740,6 +759,7 @@ One row per hand-written variant (some routines have one per register width).
 | `$81:97CC` | RivalCountdown_97CC | `mem+V` | `from_s1.c` |
 | `$81:97E2` | SkyFadeObject | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$81:982B` | FadeInObject | `mem+A,X,Y,C,V` | `from_s1.c` |
+| `$81:9852` | ResultsBonusCount | `mem+A,X,Y,C,V` | `s2.c` |
 | `$81:9956` | Empty9956 | `mem+A,X,Y,C,V` | `from_s1.c` |
 | `$81:9957` | FadeSkyColours | `mem+V` | `from_s1.c` |
 | `$81:99CB` | FadePaletteStep | `mem+A,X,Y,C,V` | `from_s1.c` |
@@ -815,11 +835,12 @@ One row per hand-written variant (some routines have one per register width).
 
 ## s3
 
-532 functions in the static map; 462 hand-written (86.8%) (this dump is not a port build: the S1 / S4 builds carry its Stadium).
+532 functions in the static map; 522 hand-written (98.1%) (this dump is not a port build: the S1 / S4 builds carry its Stadium).
 One row per hand-written variant (some routines have one per register width).
 
 | Address | Routine | Compare | File |
 |---|---|---|---|
+| `$80:81A9` | DrawClockB | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:824E` | DmaKick | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:83D2` | NmiVramUpload | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:8535` | NmiFlushVramQueue | `mem` | `from_s4.c` |
@@ -829,17 +850,30 @@ One row per hand-written variant (some routines have one per register width).
 | `$80:86DF` | ModeStepNext | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:86E2` | Mode0E_TitleWait | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:86F6` | StartEndScreen | `mem+X,Y,C,V` | `from_s4.c` |
+| `$80:8899` | Mode02_SegmentCard | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:88BD` | StartRandomCourse | `mem+C,V` | `from_s4.c` |
 | `$80:89B2` | StartModeWithSound | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:89C6` | FinishModeSetup | `mem+X,Y,C,V` | `from_s4.c` |
+| `$80:89D5` | SelectMain | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:8B24` | SelectTimer | `mem+A,X,Y,C,V` | `from_s4.c` |
+| `$80:8B73` | SelectRotate | `mem+X,Y,C,V` | `from_s4.c` |
+| `$80:8BAC` | SelectDraw | `mem+A,X,Y,C,V` | `from_s4.c` |
+| `$80:8D26` | SelectHideRest | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:8D36` | SelectSlideY | `mem+A,X,Y,C,V` | `from_s4.c` |
+| `$80:8D6A` | SelectTransition | `mem+A,X,Y,C,V` | `from_s4.c` |
+| `$80:8DB8` | SelectName | `mem+X,Y,V` | `from_s4.c` |
+| `$80:8F0E` | ChangeModeLong | `mem+A,X,Y,C,V` | `from_s4.c` |
+| `$80:8F13` | NextMode | `mem+X,Y,C,V` | `from_s4.c` |
+| `$80:8F15` | ChangeMode | `mem+X,Y,C,V` | `from_s4.c` |
+| `$80:8F24` | StartPlayerSelect | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:8F67` | StartSession | `mem+X,C,V` | `from_s4.c` |
 | `$80:8F9B` | SetupHdmaFlag | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:8FA4` | ClearRaceState | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:8FEF` | ShowStadium1Row | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:9002` | ShowCoinRank | `mem+X,Y,C,V` | `from_s4.c` |
+| `$80:91F2` | StartRaceBoard | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:91FA` | ResetRaceBoard | `mem+X,Y,C,V` | `from_s4.c` |
+| `$80:924A` | RaceResultsSetup | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:946F` | ShowItemPoints | `mem+X,Y,V` | `from_s4.c` |
 | `$80:954C` | AddBcdDigits | `mem+Y,V` | `from_s4.c` |
 | `$80:9565` | ShowDigitDifference | `mem+A,X,Y,C,V` | `from_s4.c` |
@@ -876,13 +910,17 @@ One row per hand-written variant (some routines have one per register width).
 | `$80:A374` | MergeBsxFlags | `mem+Y` | `from_s4.c` |
 | `$80:A3A5` | CountCourseBits | `mem+Y` | `from_s4.c` |
 | `$80:A460` | ShowCourseRecord | `mem+X,Y,C,V` | `from_s4.c` |
+| `$80:A4E3` | DrawRaceHud | `mem+Y,V` | `from_s4.c` |
 | `$80:A637` | QueueStadiumLabel | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:A659` | QueueResultsRow | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:A678` | DrawCoinPickup | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:A775` | DrawBonusPickup | `mem+X,Y,C,V` | `from_s4.c` |
+| `$80:A862` | RacePlaceRiders | `mem+X,Y,C,V` | `from_s4.c` |
+| `$80:A9CA` | Mode03_Race | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:AA9D` | DrawCountdownSign | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:AB3D` | SendSpeedToApu | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:AB4F` | BallOrGauge | `mem+A,X,Y,C,V` | `from_s4.c` |
+| `$80:AB62` | RaceFinishStep | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:ABD0` | ThrottleAll | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:ABD6` | RidersThrottle | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:AC0D` | RiderThrottleLong | `mem+A,X,Y,C,V` | `from_s4.c` |
@@ -891,6 +929,7 @@ One row per hand-written variant (some routines have one per register width).
 | `$80:AE3C` | AccelerateRider | `mem+X,Y,V` | `from_s4.c` |
 | `$80:AE9C` | BrakeOnTurn | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:AEA0` | BrakeRider | `mem+X,V` | `from_s4.c` |
+| `$80:AF48` | CpuRidersStep | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:AF90` | CpuLaneDecision | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:AFF2` | CpuSteerUp | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:B027` | CpuSteerDown | `mem+A,X,Y,C,V` | `from_s4.c` |
@@ -901,6 +940,7 @@ One row per hand-written variant (some routines have one per register width).
 | `$80:B0AD` | CpuReleaseButtons | `mem+X,Y,V` | `from_s4.c` |
 | `$80:B0B6` | CpuReleaseDpad | `mem+X,V` | `from_s4.c` |
 | `$80:B0BF` | CpuSteer | `mem+X,Y,V` | `from_s4.c` |
+| `$80:B0D9` | RetargetRival | `mem+X,Y,V` | `from_s4.c` |
 | `$80:B0F3` | CpuAvoidHurdle | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:B181` | LaneFromY | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:B19D` | ReadRiderPieces | `mem+A,X,Y,C,V` | `from_s4.c` |
@@ -919,6 +959,7 @@ One row per hand-written variant (some routines have one per register width).
 | `$80:B5CC` | StartBonusMode | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:B601` | Mode09_BonusIntro | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:B664` | StartBonusResult | `mem+X,Y,C,V` | `from_s4.c` |
+| `$80:B73F` | EndJumpMode | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:B773` | StartJumpMode | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:B7A9` | Mode17_BonusIntro | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:B91B` | ScaleByScroll | `mem+A,X,Y,C,V` | `from_s4.c` |
@@ -943,7 +984,11 @@ One row per hand-written variant (some routines have one per register width).
 | `$80:BD12` | ScrollByPlayerSpeedLong | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:BD16` | ScrollByPlayerSpeed | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:BD2B` | ScrollRivalsRelative | `mem+X,Y` | `from_s4.c` |
+| `$80:BD58` | SpawnRivals | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:BD91` | UpdateRiderDistances | `mem+C,V` | `from_s4.c` |
+| `$80:BDE5` | PlaceRival | `mem+A,X,Y,C,V` | `from_s4.c` |
+| `$80:BE6F` | RivalTarget | `mem+A,X,Y,C,V` | `from_s4.c` |
+| `$80:BF0C` | LaunchBall | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:BF65` | RiderLanding | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:C04F` | GroundHeightAbove | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:C052` | HeightAbove | `mem+A,X,Y,C,V` | `from_s4.c` |
@@ -969,6 +1014,7 @@ One row per hand-written variant (some routines have one per register width).
 | `$80:C69B` | RecordCourseTime | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:C74A` | DivideAX | `mem+X,V` | `from_s4.c` |
 | `$80:C758` | RiderLaneBand | `mem+X,Y,C,V` | `from_s4.c` |
+| `$80:C77F` | RiderCollisions | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:C992` | Reach20 | `mem+A,X,Y,V` | `from_s4.c` |
 | `$80:C999` | Reach2 | `mem+A,X,Y,V` | `from_s4.c` |
 | `$80:C9A0` | BallHit | `mem+A,X,Y,C,V` | `from_s4.c` |
@@ -977,10 +1023,14 @@ One row per hand-written variant (some routines have one per register width).
 | `$80:CAA1` | DrawAllRiders | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:CAEE` | DrawRider | `mem+X,Y,V` | `from_s4.c` |
 | `$80:CB81` | RiderPose | `mem+A,X,V` | `from_s4.c` |
+| `$80:CC21` | DrawRiderShadow | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:CD13` | DrawRiderShadowPairLong | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:CD17` | DrawRiderShadowPair | `mem+X,Y,V` | `from_s4.c` |
 | `$80:CD3D` | TurboMeter | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:CE28` | SortRidersByPosition | `mem` | `from_s4.c` |
+| `$80:CE66` | PlaceAllRiderShadows | `mem+X,Y,C,V` | `from_s4.c` |
+| `$80:CE95` | PlaceRiderShadowLong | `mem+A,X,Y,C,V` | `from_s4.c` |
+| `$80:CE9F` | PlaceRiderShadow | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:CF3B` | RankPlayer | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:CF66` | ComputePlaces | `mem+X` | `from_s4.c` |
 | `$80:CF94` | QueuePlaceBadgeHud | `mem+X,Y,C,V` | `from_s4.c` |
@@ -996,8 +1046,10 @@ One row per hand-written variant (some routines have one per register width).
 | `$80:D231` | ClearWords1530 | `mem+C,V` | `from_s4.c` |
 | `$80:D5E2` | SetupBonusScreen | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:D606` | SetupSpriteRow15 | `mem+X,Y,C,V` | `from_s4.c` |
+| `$80:D65F` | StartBonusCourse | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:D7A6` | StartBonusCount | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:D7B4` | QueueBonusCount | `mem+V` | `from_s4.c` |
+| `$80:D824` | BonusCourseFrame | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:D8F8` | CheckBonusTime | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:D91D` | DrawCountdownSignB | `mem+X,Y,V` | `from_s4.c` |
 | `$80:D971` | DispatchBy85 | `mem+V` | `from_s4.c` |
@@ -1016,19 +1068,25 @@ One row per hand-written variant (some routines have one per register width).
 | `$80:DCA6` | PlayerHalt | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:DCEF` | AddBonusPoints | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:DD34` | StartBonusTry | `mem+X,Y,C,V` | `from_s4.c` |
+| `$80:DD4E` | Mode0A | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:DD70` | ShowResultsBanner | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:DDB7` | QueueResultsCount | `mem+X,Y,V` | `from_s4.c` |
 | `$80:DDF8` | BonusCountUp | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:DE46` | QueueNameplate | `mem+X,Y,V` | `from_s4.c` |
 | `$80:DE67` | BonusResultStep | `mem+X,Y,C,V` | `from_s4.c` |
+| `$80:DF3A` | ResultsWait | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:DF5E` | SetBgTileBase | `mem+X,Y,C,V` | `from_s4.c` |
+| `$80:DFC2` | EndAtBonusMinute | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:E4B2` | SetupCourseScreen | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:E4D4` | ShowJumpResult | `mem+X,Y,C,V` | `from_s4.c` |
+| `$80:E5B9` | SetupJumpContest | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:E6B4` | FillBonusColumns | `mem+X,Y,C,V` | `from_s4.c` |
+| `$80:E6DB` | JumpContestMode | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:E756` | CheckCourseTime | `mem+X,Y,V` | `from_s4.c` |
 | `$80:E77A` | DrawJumpRank | `mem+X,Y,V` | `from_s4.c` |
 | `$80:E7CA` | DrawJumpRiderSprites | `mem+X,Y,V` | `from_s4.c` |
 | `$80:E83E` | SetJumpRiderSprites | `mem+X,Y,V` | `from_s4.c` |
+| `$80:E864` | JumpContestFrame | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:E8EE` | JumpResultTally | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:E93C` | JumpDistanceStepNear | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:E941` | ShowJumpCountLong | `mem+A,X,Y,C,V` | `from_s4.c` |
@@ -1039,6 +1097,7 @@ One row per hand-written variant (some routines have one per register width).
 | `$80:E9BB` | ShowBonusPoints | `mem+X,Y,V` | `from_s4.c` |
 | `$80:EA05` | JumpTotalStep | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:EA0A` | JumpResultBoardStep | `mem+A,X,Y,C,V` | `from_s4.c` |
+| `$80:EA47` | JumpResultWait | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:EA71` | JumpResultBoard | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:EB8C` | DrawCountdownLights | `mem+X,Y,V` | `from_s4.c` |
 | `$80:EBC5` | DispatchBy85B | `mem+X,Y,V` | `from_s4.c` |
@@ -1049,9 +1108,11 @@ One row per hand-written variant (some routines have one per register width).
 | `$80:EE5D` | BlankQueueRowB | `mem+Y` | `from_s4.c` |
 | `$80:EE6F` | CopyPieceColumn | `mem+X,Y` | `from_s4.c` |
 | `$80:EE82` | BonusRowList | `mem+A,X,Y,C,V` | `from_s4.c` |
+| `$80:EE8D` | PlayerCrashStepB | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:EF09` | PlayerColumnCheckB | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:EF2E` | PlayerStopB | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:EF36` | PlayerHaltB | `mem+A,X,Y,C,V` | `from_s4.c` |
+| `$80:EFFF` | DemoStepDispatch | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:F00C` | EmptyF03A | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:F00D` | ScrollDelta | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:F04B` | ShowLastDistance | `mem+A,X,Y,C,V` | `from_s4.c` |
@@ -1063,9 +1124,11 @@ One row per hand-written variant (some routines have one per register width).
 | `$80:F21A` | ResetDemoCourse | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:F228` | SetRaceBgMode | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:F233` | StartDemoRace | `mem+X,Y,C,V` | `from_s4.c` |
+| `$80:F29F` | Mode0C | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:F2FA` | TurboMeterJmp | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:F2FD` | DemoInputStep | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:F36F` | DemoExitBoost | `mem+X,Y,C,V` | `from_s4.c` |
+| `$80:F37A` | PlaceLastRival | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:F387` | DemoExitSkip40 | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:F38B` | DemoExitSkip35 | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:F394` | StartMode01 | `mem+X,Y,C,V` | `from_s4.c` |
@@ -1101,15 +1164,19 @@ One row per hand-written variant (some routines have one per register width).
 | `$80:FA84` | CollectPickupPiece | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:FAF2` | StartWheelie | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:FB20` | SetJumpState1 | `mem+A,X,Y,C,V` | `from_s4.c` |
+| `$80:FB25` | RiderBumpCrash | `mem+A,X,Y,C,V` | `from_s4.c` |
+| `$80:FB2D` | BoostOnTile | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:FB67` | StartJumpBase30 | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:FB71` | JumpBase30 | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:FB76` | JumpBase10 | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:FB7B` | OffTrackBrake | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:FBC2` | RunPieceActions | `mem+A,X,Y,C,V` | `from_s4.c` |
+| `$80:FBD0` | SlowTileCheck | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:FC02` | LandingStep | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:FC0E` | LandFlat | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:FC20` | ClearRiderAction | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:FC2C` | UpdateLanes | `mem+X,Y,C,V` | `from_s4.c` |
+| `$80:FD4B` | DrawShadowsAndMarkers | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:FDAB` | CrossFinish | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$80:FE07` | ItemFlashState | `mem+X,Y,C,V` | `from_s4.c` |
 | `$80:FE23` | NextColumnLong | `mem+A,X,Y,C,V` | `from_s4.c` |
@@ -1166,6 +1233,7 @@ One row per hand-written variant (some routines have one per register width).
 | `$81:A065` | AimRatio | `mem+X,V` | `from_s4.c` |
 | `$81:A0F4` | LoadCourse | `mem+X,Y,C,V` | `from_s4.c` |
 | `$81:A1C8` | RivalEngineSound | `mem+X,Y,C,V` | `from_s4.c` |
+| `$81:A24B` | CarouselPos | `mem+X,Y,C,V` | `from_s4.c` |
 | `$81:A29C` | SinCos | `mem+Y` | `from_s4.c` |
 | `$81:A304` | RandomB | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$81:A304` | RandomB | `mem+A,X,Y,C,V` | `from_s4.c` |
@@ -1215,12 +1283,22 @@ One row per hand-written variant (some routines have one per register width).
 | `$81:C011` | ClearObjectFrame | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$81:C018` | FrameSequenceA | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$81:C085` | FrameSequenceB | `mem+A,X,Y,C,V` | `from_s4.c` |
+| `$81:C0F6` | WinnerFigure | `mem+V` | `from_s4.c` |
 | `$81:C178` | ObjectWalkCycle | `mem+V` | `from_s4.c` |
+| `$81:C1AE` | CourseSelectPreview | `mem+X,Y,C,V` | `from_s4.c` |
+| `$81:C29A` | JumpRunSteps | `mem+A,X,Y,C,V` | `from_s4.c` |
+| `$81:C2D9` | JumpRunStart | `mem+A,X,Y,C,V` | `from_s4.c` |
+| `$81:C331` | JumpRun | `mem+A,X,Y,C,V` | `from_s4.c` |
+| `$81:C393` | JumpPitchStep | `mem+X,Y,C,V` | `from_s4.c` |
+| `$81:C3A5` | CourseMinuteCheck | `mem+X,Y,C,V` | `from_s4.c` |
+| `$81:C3B1` | LeaveJumpContest | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$81:C3BA` | DrawJumpCrowd | `mem+X,Y,C,V` | `from_s4.c` |
+| `$81:C483` | JumpRiderStep | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$81:C56E` | ParkJumpRider | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$81:C579` | SpinWheels8 | `mem+X,Y,C,V` | `from_s4.c` |
 | `$81:C5AA` | MoveAndScroll | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$81:C5B5` | ScrollJumpRider | `mem+V` | `from_s4.c` |
+| `$81:C5D7` | SlotRiderShadow | `mem+A,X,Y,C,V` | `from_s4.c` |
 | `$81:C608` | DispatchByDistance | `mem+X,Y,C,V` | `from_s4.c` |
 | `$81:C62B` | PitchUp4 | `mem+X,Y,C,V` | `from_s4.c` |
 | `$81:C636` | PitchUp8 | `mem+X,Y,C,V` | `from_s4.c` |
@@ -1274,7 +1352,9 @@ One row per hand-written variant (some routines have one per register width).
 | `$82:86EB` | TickTimers | `mem+X,Y,C,V` | `from_s4.c` |
 | `$82:8701` | PlaceMinuteMarker | `mem+X,Y,C,V` | `from_s4.c` |
 | `$82:8782` | HideAllSprites | `mem+X,Y,C,V` | `from_s4.c` |
+| `$82:87FD` | RiderSpriteSets | `mem+X,Y,C,V` | `from_s4.c` |
 | `$82:8965` | RiderGfxCycle | `mem+X,Y,C,V` | `from_s4.c` |
+| `$82:899B` | LoadRiderPalettes | `mem+X,Y,C,V` | `from_s4.c` |
 | `$82:8BB4` | LoadStadiumPalette | `mem+Y` | `from_s4.c` |
 | `$82:8BD8` | UnpackToLowRam | `mem+V` | `from_s4.c` |
 | `$82:8BFE` | UnpackToWram | `mem+V` | `from_s4.c` |
