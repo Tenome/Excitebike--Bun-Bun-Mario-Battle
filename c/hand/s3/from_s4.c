@@ -2455,6 +2455,8 @@ static void vram_fill_half4(u16 vram, int wide_stz, u16 bytes)
  * routines' exits). */
 static void bsx_exit4(u32 site)
 {
+    if (port_bsx_exit(site))            /* the port's exit instead (roster.h) */
+        return;
     fi = 1;
     wr8(ABS(0x4200), 0);
     lda8(0x00);
@@ -15953,6 +15955,8 @@ void NmiVramUpload_m1x1(void)
  * BIOS. */
 void EndScreenStart_m1x1(void)
 {
+    if (port_end_screen_start())        /* the port restarts the hour (roster.h) */
+        return;
     lda8(rd8(DP(0x21)));
     and8(0x10);
     if (fz) { ret(); return; }
@@ -16765,6 +16769,8 @@ void LoadCourse_m1x1(void)
         wr16(DP(0x00), dec16(rd16(DP(0x00))));
         sep(0x20);
     } while (!fz);
+    /* the port's custom and Stadium 1-2 courses (roster.h; DB is $7F here) */
+    port_course_override(rd16(LONG(0x7E0CD7)) ? 8 : rd8(LONG(0x81800C)) * 4 + rd8(DP(0x7C)));
     lda8(rd8(DP(0x76)));
     cmp8((u8)A, 0x03);
     if (fz) {

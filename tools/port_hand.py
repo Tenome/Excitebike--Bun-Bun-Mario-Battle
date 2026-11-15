@@ -205,7 +205,7 @@ def main():
             dst_pcs.add(t[0].upper())
     srcs, defines, oneliners, globals_ = {}, [], {}, {}
     for fn in sorted(os.listdir(os.path.join(ROOT, 'c', 'hand', a.src))):
-        if fn.endswith('.c') and fn != 'roster_rom.c':   # the target has its own
+        if fn.endswith('.c') and fn not in ('roster_rom.c', 'port_rom.c'):   # the target has its own
             text = open(os.path.join(ROOT, 'c', 'hand', a.src, fn), encoding='utf-8').read()
             srcs.update(extract_functions(text))
             for m in re.finditer(r'^(?:static )?(?:const )?(?:unsigned|int|u8|u16|u32|uint\w+|s8|s16)\s+\*?(\w+)(?:\[[^\]]*\])*\s*(?:=\s*(?:\{(?:.|\n)*?\}|[^;{]*))?;', text, re.M):
@@ -304,7 +304,7 @@ def main():
     src_names = {t[4] for t in hand}
     # the target has its own roster tables (c/hand/<dst>/roster_rom.c): the
     # roster users come along and include roster.h
-    has_roster = os.path.exists(os.path.join(ROOT, 'c', 'hand', a.dst, 'roster_rom.c'))
+    has_roster = any(os.path.exists(os.path.join(ROOT, 'c', 'hand', a.dst, f)) for f in ('roster_rom.c', 'port_rom.c'))
 
     def static_callees(body):
         """Helpers a body needs: static functions, functions without a
@@ -387,7 +387,11 @@ def main():
             protos.append(m.group(1) + ';')
     head = ['/*', ' * Routines identical (instruction for instruction) to %s\'s hand-written' % a.src.upper(),
             ' * ones, carried over by tools/port_hand.py with their return addresses', ' * moved. Checked by tools/difftest816.py on %s.' % a.dst, ' */',
-            '#include "hand/hand.h"'] + (['#include "roster.h"'] if has_roster else []) + ['']
+            '#include "hand/hand.h"']
+    for inc in ('roster.h', 'port.h'):          # the target's own hook headers
+        if os.path.exists(os.path.join(ROOT, 'c', 'hand', a.dst, inc)):
+            head.append('#include "%s"' % inc)
+    head.append('')
     used = '\n'.join(out_funcs + [srcs[h][0] for h in helpers])
     inl = [l for n, l in oneliners.items() if re.search(r'\b%s\(' % n, used)]
     gl = [g for n, g in globals_.items() if re.search(r'\b%s\b' % n, every)]

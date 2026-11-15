@@ -226,9 +226,9 @@ static void ForceCharAfterFrame(void)
 void RivalsAfterFrame(void);   /* src/roster.c */
 #endif
 
-#ifdef BUNBUN_GENB
 /* Native mode (src/native_driver.c): the hand-written C is the CPU. */
 void BunbunNativeRunFrame(void);
+void BunbunNativeReset(void);
 extern int r816_native;
 static int NativeEngine(void)
 {
@@ -240,16 +240,13 @@ static int NativeEngine(void)
     }
     return v && r816_native;
 }
-#endif
 
 void GameRunOneFrame(void)
 {
-#ifdef BUNBUN_GENB
     if (NativeEngine())
         BunbunNativeRunFrame();
     else
-#endif
-    snes_beam_frame_driver_run_frame();
+        snes_beam_frame_driver_run_frame();
 #ifdef BUNBUN_GENB
     RivalsAfterFrame();
 #endif
@@ -259,6 +256,8 @@ void GameRunOneFrame(void)
         SkipWaitAfterFrame();
     if (g_port_reset_request) {
         g_port_reset_request = 0;
+        if (r816_native)
+            BunbunNativeReset();
         RtlReset(1);
         snes_beam_frame_driver_reset();
     }

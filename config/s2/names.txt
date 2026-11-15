@@ -39,6 +39,7 @@
 809B67 EndScreenChoice       # s2.c
 80973F BroadcastTotals       # s2.c
 809E50 Mode10_Ending         # s2.c
+80FFA5 ResetVector           # s2.c
 808539 DmaKick               # from s1 808539
 808541 DmaCopyToWram         # from s1 808541
 808562 DmaFillZero           # from s1 808562
@@ -437,4 +438,3 @@
 80FFA0 EmptyVector           # from s1 80FFA0
 80FFA9 IrqVector             # from s1 80FFA9
 80FFA1 NmiVector             # from s1 80FFA1
-80FFA5 ResetVector           # s2.c

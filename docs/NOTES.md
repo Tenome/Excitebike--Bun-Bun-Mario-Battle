@@ -451,7 +451,7 @@ instruments $20-$24 and their samples from $C360 up; the echo buffer is
 $EF00-$FEFF (ESA $EF, EDL 2). Sound ids $1B-$1F are songs, pointed at by
 the word table at $5CFF + 2 * id.
 
-## Native mode: the game from the decompiled C (Gen B)
+## Native mode: the game from the decompiled C (both engines)
 
 With every routine hand-written, the Gen B exe can run without the
 recompiled program (`BUNBUN_NATIVE=1`, launcher Game > Engine > Native,
@@ -482,3 +482,14 @@ pictures match the recompiled build frame for frame apart from a 23-27
 frame offset (the boot's sound uploads finish sooner). Not available in
 native mode: save states and rewind (the fibers' C stacks are not in a
 snapshot), Windows only (fibers).
+
+Both executables have it now (Gen A: `c/hand/s1/reset.c`, the game-mode
+script `modes.c` and the sound uploads `spc.c` join the build; table
+`port/src/hand_table_s1.c`). The port's own changes that the recompiled
+mode makes in hle_funcs are hooks in the hand-written C (`c/hand/s1/port.h`,
+the `port_*` functions in `c/hand/s4/roster.h`; the difftest links
+`port_rom.c` / `roster_rom.c`, which do nothing): the end screen's Start
+restarts the broadcast hour, the credits' Start resets the console
+(`BunbunNativeReset` starts the fibers over), and LoadCourse applies custom
+and Stadium 1-2 courses. Verified in native mode: Gen A boot, player select,
+course card and free run; Gen B also the jump contest.

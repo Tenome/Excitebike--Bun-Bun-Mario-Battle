@@ -93,7 +93,12 @@ static const Res kSprites[] = {
 };
 #else
 static const Choice kStadium[] = { { "1", "Stadium 1" }, { "2", "Stadium 2" } };
+static const Choice kEngine[] = {
+    { "recompiled", "Recompiled (the original program, recompiled)" },
+    { "native", "Native: the decompiled C runs the whole game" },
+};
 static const Opt kGameOpts[] = {
+    { "engine", "Engine", "Native runs the game entirely from the hand-written C of the decompilation instead of the recompiled program. Save states and rewind are not available there. Takes effect when the game restarts.", "game.engine", "recompiled", RECOMP_MOD_OPTION_CHOICE, kEngine, 2 },
     { "flow", "Game flow", "Without the clock the port moves on as soon as a screen is done; the original waits for the satellite broadcast's schedule.", "game.flow", "menu", RECOMP_MOD_OPTION_CHOICE, kFlow, 2 },
     { "stadium", "Stadium", "Which Stadium's courses and rules to play.", "game.stadium", "1", RECOMP_MOD_OPTION_CHOICE, kStadium, 2 },
 };

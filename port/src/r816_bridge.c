@@ -29,13 +29,8 @@ extern uint8_t fn, fz, fc, fv, fd, fi, fm, fx;
 /* Native mode (port/src/native_driver.c): the hand-written C is the CPU and
  * every access it makes charges the clock and may yield to the driver. */
 int r816_native;
-#ifdef BUNBUN_GENB
 void r816_native_tick(uint32_t a);
 int r816_native_call(uint32_t pc24);
-#else
-static void r816_native_tick(uint32_t a) { (void)a; }
-static int r816_native_call(uint32_t pc24) { (void)pc24; return 0; }
-#endif
 
 uint8_t r816_bus_read(uint32_t a)
 {

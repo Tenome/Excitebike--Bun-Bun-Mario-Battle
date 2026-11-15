@@ -2,6 +2,7 @@
  * Stadium 1 riders and small objects: movement and sprites, hand-written.
  */
 #include "hand/hand.h"
+#include "port.h"
 
 /*
  * $80:D069 ClipRiderSprite (RTS). Rider X's 2x2 sprite sits at OAM offset
@@ -8021,6 +8022,8 @@ void VramQueueCopy_m1x1(void);
  * routines' exits). */
 static void bsx_exit1(u32 site)
 {
+    if (port_bsx_exit(site))            /* the port's exit instead (port.h) */
+        return;
     fi = 1;
     wr8(ABS(0x4200), 0);
     lda8(0x00);
@@ -8039,6 +8042,8 @@ static void bsx_exit1(u32 site)
  * BIOS. */
 void EndScreenStart_m1x1(void)
 {
+    if (port_end_screen_start())        /* the port restarts the hour (port.h) */
+        return;
     lda8(rd8(DP(0x21)));
     and8(0x10);
     if (fz) { ret(); return; }

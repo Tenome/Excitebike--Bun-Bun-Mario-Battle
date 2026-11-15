@@ -180,3 +180,48 @@ RecompReturn HleCourseLoad(CpuState *cpu)
     cpu->master_cycles += (uint64_t)(40 + 30 * len) * 8;
     return cpu_dispatch_pc_from(cpu, 0x81A18Bu, cpu->S, 0x81A130u);
 }
+
+/* Native mode (src/native_driver.c): the hand-written LoadCourse has expanded
+ * course idx into $7F:4000; replace it as HleCourseLoad would: the Stadium 1
+ * or 2 course when the merge override is on, then a custom course. */
+void BunbunCourseOverride(int idx)
+{
+    extern uint8_t g_ram[];
+    uint8_t *track = &g_ram[0x14000];                           /* $7F:4000 */
+    if (g_gena && g_gena_set >= 0 && idx >= 0 && idx < 8) {
+        unsigned c = (unsigned)g_gena_set * 4 + (idx & 3);
+        const uint8_t *src = g_gena + g_gena_off[c];
+        int32_t n = (int32_t)g_gena_len[c];
+        uint32_t x = 0, y = 0;
+        memset(track, 0, 0x1000);
+        while (n > 0 && y < 0x1000 - 8) {
+            uint8_t b = src[x];
+            track[y] = b;
+            if (b == 0x09)
+                for (int k = 1; k <= 5; k++)
+                    track[y + k] = 0x09;
+            if (b & 0x80) {
+                n--;
+                x++;
+                unsigned cnt = src[x];
+                for (unsigned k = 0; k < cnt && y + k < 0x1000; k++)
+                    track[y + k] = b;
+                y += cnt - 1;
+            }
+            x++;
+            y++;
+            n--;
+        }
+    }
+    int n_a = 0, n_b = 0;
+    if (BunbunCustomCourse(idx < 8 ? idx : 8, track, 0x1000)) {
+        for (int k = 0; k < 0x1000; k++) {
+            n_a += track[k] >= 0x40 && track[k] < 0x80;
+            n_b += track[k] >= 0x80 && track[k] < 0xC0;
+        }
+        if (n_a && !n_b)
+            for (int k = 0; k < 0x1000; k++)
+                if (track[k] >= 0x40 && track[k] < 0x80)
+                    track[k] = (uint8_t)(track[k] + 0x40);
+    }
+}

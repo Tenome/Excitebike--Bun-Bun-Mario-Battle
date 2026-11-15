@@ -4,6 +4,7 @@
  * moved. Checked by tools/difftest816.py on s2.
  */
 #include "hand/hand.h"
+#include "port.h"
 
 enum {
     P1_HELD_HI = 0x20, P1_PRESS_HI = 0x21, P2_HELD_HI = 0x22, P2_PRESS_HI = 0x23,
@@ -1711,6 +1712,8 @@ static void scene_table_copy1(u16 table, u16 base, u16 dst, u16 back)
  * routines' exits). */
 static void bsx_exit1(u32 site)
 {
+    if (port_bsx_exit(site))            /* the port's exit instead (port.h) */
+        return;
     fi = 1;
     wr8(ABS(0x4200), 0);
     lda8(0x00);
@@ -2073,6 +2076,7 @@ void LoadCourse_m1x1(void)
     fc = b >= 0x09;                                    /* C from the loop's CMP #$09 */
     sep(0x10);
     DB = pull8();
+    port_course_loaded();               /* the port's custom courses (port.h) */
     retl();
 }
 /*
@@ -11939,6 +11943,8 @@ void DigitsToNumber_m1x0(void)
  * BIOS. */
 void EndScreenStart_m1x1(void)
 {
+    if (port_end_screen_start())        /* the port restarts the hour (port.h) */
+        return;
     lda8(rd8(DP(0x21)));
     and8(0x10);
     if (fz) { ret(); return; }

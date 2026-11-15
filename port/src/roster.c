@@ -692,3 +692,46 @@ void RosterExtraRidersFrame(void)
         }
     PpuSetExtraObjects(g_ppu, n ? objs : NULL, (size_t)n);
 }
+
+/* ---- the BIOS exits and course overrides in native mode ---------------------
+ * The recompiled port replaces these with hle_funcs (src/gen_stubs.c,
+ * src/courses.c); in native mode the hand-written routines run and ask here. */
+#include "hand/hand.h"
+extern int r816_native;
+extern int g_port_reset_request;
+
+/* HleEndScreenStart: Start restarts the broadcast hour (minute 0, frame 0)
+ * and goes to the credits, mode $12. */
+int port_end_screen_start(void)
+{
+    if (!r816_native || !(rd8(DP(0x21)) & 0x10))
+        return 0;
+    wr8(LONG(0x7FFFFF), 0);
+    wr8(LONG(0x7FFFFA), 0);
+    wr8(LONG(0x7FFFFB), 0);
+    lda8(0x12); wr8(DP(0x76), 0x12);
+    wr8(DP(0x75), 0);
+    wr8(DP(0x77), 0);
+    wr8(ABS(0x1923), dec8(rd8(ABS(0x1923))));
+    ret();
+    return 1;
+}
+
+/* HleCreditsExit: the credits' Start ($80:9F3A) resets the console at the
+ * next frame instead of jumping into the BIOS. */
+int port_bsx_exit(u32 site)
+{
+    if (!r816_native || site != 0x809F3A)
+        return 0;
+    g_port_reset_request = 1;
+    sep(0x20);
+    ret();
+    return 1;
+}
+
+void BunbunCourseOverride(int idx);     /* src/courses.c */
+void port_course_override(int idx)
+{
+    if (r816_native)
+        BunbunCourseOverride(idx);
+}

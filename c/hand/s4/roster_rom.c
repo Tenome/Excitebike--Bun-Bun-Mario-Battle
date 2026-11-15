@@ -81,3 +81,6 @@ int port_rival_pace(void) { return 100; }
 void port_ws_rider_sprites(void) { }
 int port_ws_shadow_margin(void) { return 0; }
 void port_ws_shadow_fix(void) { }
+int port_end_screen_start(void) { return 0; }
+int port_bsx_exit(u32 site) { (void)site; return 0; }
+void port_course_override(int idx) { (void)idx; }

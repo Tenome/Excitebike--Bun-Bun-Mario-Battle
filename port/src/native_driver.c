@@ -233,6 +233,16 @@ void BunbunNativeRunFrame(void)
     }
 }
 
+/* A console reset (the credits' exit): start the C over from Reset. */
+void BunbunNativeReset(void)
+{
+    if (!s_booted)
+        return;
+    for (int i = 0; i < 3; i++)
+        if (s_fiber[i]) { DeleteFiber(s_fiber[i]); s_fiber[i] = NULL; }
+    s_booted = 0;
+}
+
 /* A computed transfer (jump table) to the routine at pc: its hand-written C,
  * the variant for the current register widths. */
 static void call_checked(const HandEntry *e)
@@ -280,6 +290,7 @@ int r816_native_call(uint32_t pc24)
 }
 
 #else
+void BunbunNativeReset(void) { }
 void BunbunNativeRunFrame(void) { r816_native = 0; }
 void r816_native_tick(uint32_t a) { (void)a; }
 int r816_native_call(uint32_t pc24) { (void)pc24; return 0; }

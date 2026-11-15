@@ -3,6 +3,7 @@
  * of the same name (see hand.txt) and is checked by tools/difftest816.py.
  */
 #include "hand/hand.h"
+#include "port.h"
 
 /* Direct page scratch used as call arguments by the DMA helpers. */
 #define ARG_LEN     DP(0x00)    /* 16-bit byte count */
@@ -209,6 +210,7 @@ void LoadCourse_m1x1(void)
     fc = b >= 0x09;                                    /* C from the loop's CMP #$09 */
     sep(0x10);
     DB = pull8();
+    port_course_loaded();               /* the port's custom courses (port.h) */
     retl();
 }
 

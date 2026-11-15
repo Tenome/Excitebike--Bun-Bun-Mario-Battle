@@ -131,7 +131,7 @@ The rest of the 1 MB is graphics, tracks, music and other data.
    the $A7 landing, and the IRQ handler nine bytes higher). Everything is
    difftested on the S1 / S4 snapshots; the differences between the
    Stadiums are now written down routine by routine.
-0e. ✅ The game runs from the decompiled C alone (Gen B, 2026-11-14): native
+0e. ✅ The game runs from the decompiled C alone (both engines, 2026-11-14): native
    mode (`BUNBUN_NATIVE=1`, launcher Game > Engine) runs the hand-written
    Reset / NMI / IRQ handlers on fibers over the port's PPU, APU and DMA,
    with every bus access charging the clock (`port/src/native_driver.c`,

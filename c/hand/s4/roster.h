@@ -81,5 +81,17 @@ void port_ws_rider_sprites(void);
  * gives its two sprites ($16C0/$16C4 + Y) their X9 bits. */
 int port_ws_shadow_margin(void);
 void port_ws_shadow_fix(void);
+/* The port's replacements for the BS-X BIOS exits and its course
+ * overrides (the recompiled port does these in hle_funcs; native mode runs
+ * the hand-written routines themselves). 0 / nothing in the original.
+ * port_end_screen_start: at EndScreenStart ($80:9CD1) with Start pressed,
+ * restart the broadcast hour and go to the credits, returning for the
+ * routine (1 = done). port_bsx_exit: at a JML into the BIOS (site = its
+ * address), do the port's exit instead (1 = done, frame popped).
+ * port_course_override: after LoadCourse expanded course idx into $7F:4000,
+ * replace it with a custom or Stadium 1-2 course. */
+int port_end_screen_start(void);
+int port_bsx_exit(u32 site);
+void port_course_override(int idx);
 
 #endif
