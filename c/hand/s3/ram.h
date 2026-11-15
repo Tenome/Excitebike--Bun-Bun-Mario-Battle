@@ -216,8 +216,8 @@
 #define RACE_SEC        0x03AF  /* seconds */
 #define RACE_FRAMES     0x03B0  /* frames (shown as hundredths) */
 #define FINISH_CROSSED  0x03AC  /* the player crossed the finish (once per lap) */
-#define COURSE_NUM      0x027D  /* the course being built (picks its pointer tables) */
-#define PLAYER_BUF_COL  0x027B  /* the player's column in TRACK_BUF */
+#define ROW_TYPE        0x027D  /* the row type of the course entry being built (9 = the finish row); the bonus builders use it as their course index */
+#define TRACK_READ_POS  0x027B  /* word: the builder's read position in TRACK_BUF (a little ahead of the player) */
 
 /* ---- more globals ---- */
 #define RIDER_PIECE_ACTION 0x0226  /* [+$8] X = rider: the pending piece action (PieceAction runs it) */

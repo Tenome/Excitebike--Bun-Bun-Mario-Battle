@@ -26,6 +26,8 @@
 
 #include "cpu_state.h"
 #include "common_cpu_infra.h"
+#include "snes/snes.h"
+#include "snes/cart.h"
 
 #define GENA_CRC32 0x6e6d087cu      /* Stadium 1 (6-30) dump, see rom_identity.txt */
 
@@ -47,6 +49,46 @@ static uint32_t crc32_buf(const uint8_t *p, size_t n)
 static uint8_t lorom(const uint8_t *rom, uint32_t a)
 {
     return rom[((a >> 16) & 0x1F) * 0x8000u + (a & 0x7FFFu)];
+}
+
+/* The race rows: a course byte picks a row type (run codes through the map
+ * at $81:8A30, the rest by value), and the row type a column layout through
+ * the pointer tables $81:8010 / $81:8040: per column a start byte X, then
+ * tile words (tile & $07FF, height in the top five bits) until X = $1E, and
+ * 0 after the last column. Both engines carry the same tables and layouts
+ * except row type $1C (Gen A terrain $44, obstacle $1C): Gen B gives three of
+ * its tiles height $0C where Gen A has $1F (checked for every row type 0-$2F,
+ * docs/NOTES.md). With Gen A courses loaded, the Gen B image takes Gen A's
+ * words for every row of the same shape, so the courses build as they did in
+ * their own engine. Returns the number of words changed. */
+static int take_gena_rows(const uint8_t *a, uint8_t *b, size_t bsize)
+{
+    int changed = 0;
+    for (int rt = 0; rt < 0x30; rt++) {
+        uint32_t pa = lorom(a, 0x818010u + rt) | lorom(a, 0x818040u + rt) << 8;
+        uint32_t pb = lorom(b, 0x818010u + rt) | lorom(b, 0x818040u + rt) << 8;
+        if (pa < 0x8000 || pb < 0x8000)
+            continue;
+        uint32_t oa = 0x8000u + (pa & 0x7FFFu), ob = 0x8000u + (pb & 0x7FFFu);   /* bank $81 */
+        for (int col = 0; col < 32; col++) {
+            if (ob + 1 >= bsize || a[oa] != b[ob])
+                break;                       /* a different shape: leave the row */
+            unsigned x = a[oa];
+            if (x == 0 || x >= 0x1E)
+                break;
+            oa++; ob++;
+            for (; x < 0x1E; x += 2, oa += 2, ob += 2) {
+                if (ob + 1 >= bsize)
+                    return changed;
+                if (a[oa] != b[ob] || a[oa + 1] != b[ob + 1]) {
+                    b[ob] = a[oa];
+                    b[ob + 1] = a[oa + 1];
+                    changed++;
+                }
+            }
+        }
+    }
+    return changed;
 }
 
 void BunbunCoursesInit(void)
@@ -94,6 +136,10 @@ void BunbunCoursesInit(void)
                 k++;
             }
         }
+    }
+    if (g_snes && g_snes->cart && g_snes->cart->rom) {
+        int w = take_gena_rows(rom, g_snes->cart->rom, g_snes->cart->romSize);
+        fprintf(stderr, "[bunbun] Gen A race rows: %d tile words taken\n", w);
     }
     SDL_free(rom);
     g_gena_set = atoi(set) - 1;

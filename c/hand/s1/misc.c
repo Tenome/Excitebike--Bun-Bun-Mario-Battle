@@ -248,7 +248,7 @@ void BroadcastEventInject_m1x1(void)
     }
     rep(0x10);
     {
-        u16 col = (u16)(rd16(ABS(PLAYER_BUF_COL)) + 3);
+        u16 col = (u16)(rd16(ABS(TRACK_READ_POS)) + 3);
         u8 v;
         for (;;) {
             v = rd8(LONG(TRACK_BUF + col));

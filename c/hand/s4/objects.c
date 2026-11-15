@@ -2461,7 +2461,7 @@ void PlaceMinuteMarker_m1x1(void)
         if (fn) { DB = pull8(); nz8(DB); retl(); return; }
     }
     rep(0x10);
-    X = rd16(ABS(PLAYER_BUF_COL)); nz16(X);
+    X = rd16(ABS(TRACK_READ_POS)); nz16(X);
     X = inc16(X); X = inc16(X); X = inc16(X);
     for (;;) {
         lda8(rd8(LONGX(TRACK_BUF)));
@@ -7087,7 +7087,7 @@ void FillLaneColumn_m1x1(void)
  * scenery rows $0B53-$0C93. */
 static void course_column(u16 lo_table, u16 hi_table, u16 back)
 {
-    X = rd8(ABS(COURSE_NUM)); nz8((u8)X);
+    X = rd8(ABS(ROW_TYPE)); nz8((u8)X);
     lda8(rd8(ABSX(lo_table))); wr8(DP(0x09), (u8)A);
     lda8(rd8(ABSX(hi_table))); wr8(DP(0x0A), (u8)A);
     ldy8(0x00); wr8(DP(0x0E), 0);
@@ -11193,7 +11193,7 @@ void LoadRaceColumn_m1x1(void)
 next_entry:
     WAIT_TICK();
     rep(0x10);
-    Y = rd16(ABS(PLAYER_BUF_COL)); nz16(Y);
+    Y = rd16(ABS(TRACK_READ_POS)); nz16(Y);
     if (fz) {
         lda8(rd8(ILDPY(0x07)));
         wr8(ABS(LAPS_LEFT), (u8)A);
@@ -11205,10 +11205,10 @@ next_entry:
     }
 read_entry:
     rep(0x20);
-    wr16(ABS(PLAYER_BUF_COL), inc16(rd16(ABS(PLAYER_BUF_COL))));
+    wr16(ABS(TRACK_READ_POS), inc16(rd16(ABS(TRACK_READ_POS))));
     sep(0x20);
-    if (fx) { Y = rd8(ABS(PLAYER_BUF_COL)); nz8((u8)Y); }
-    else { Y = rd16(ABS(PLAYER_BUF_COL)); nz16(Y); }
+    if (fx) { Y = rd8(ABS(TRACK_READ_POS)); nz8((u8)Y); }
+    else { Y = rd16(ABS(TRACK_READ_POS)); nz16(Y); }
     lda8(rd8(ILDPY(0x07)));
     if (fz) goto out;
     sep(0x10);
@@ -11217,21 +11217,21 @@ read_entry:
         and8(0x0F);
         X = (u8)A; nz8((u8)X);
         lda8(rd8(ABSX(0x8A30)));
-        wr8(ABS(COURSE_NUM), (u8)A);
+        wr8(ABS(ROW_TYPE), (u8)A);
     } else {
         sep(0x10);
         ldx8(0x01);
         and8(0x7F);
-        wr8(ABS(COURSE_NUM), (u8)A);
+        wr8(ABS(ROW_TYPE), (u8)A);
     }
 column:
-    X = rd8(ABS(COURSE_NUM)); nz8((u8)X);
+    X = rd8(ABS(ROW_TYPE)); nz8((u8)X);
     push8(0x81); push16(0x8AC1); RaceRowList_m1x1();
     Y = rd8(ABS(0x027E)); nz8((u8)Y);
     lda8(rd8((((u32)DB << 16) + rd16(DP(0x05)) + Y) & 0xFFFFFF));
     if (fz) {
         wr8(ABS(0x027E), (u8)A);
-        lda8(rd8(ABS(COURSE_NUM)));
+        lda8(rd8(ABS(ROW_TYPE)));
         cmp8((u8)A, 0x09);
         if (!fz) goto next_entry;
         wr8(ABS(FINISH_CROSSED), 0);
@@ -11239,7 +11239,7 @@ column:
         wr8(ABS(LAPS_LEFT), dec8(rd8(ABS(LAPS_LEFT))));
         if (fz) { lda8(0x01); wr8(ABS(0x098A), 0x01); }
         lda8(0x00);
-        wr8(ABS(PLAYER_BUF_COL), 0);
+        wr8(ABS(TRACK_READ_POS), 0);
         wr8(ABS(0x027C), 0);
         wr8(ABS(0x0929), 0);
         rep(0x20);
@@ -11254,7 +11254,7 @@ column:
     push8((u8)A);
     rep(0x30);
     X = rd16(DP(COURSE_COLUMN)); nz16(X);
-    lda16(rd16(ABS(PLAYER_BUF_COL)));
+    lda16(rd16(ABS(TRACK_READ_POS)));
     wr16(LONGX(TRACK_COL_INDEX), A);
     wr16(DP(COURSE_COLUMN), inc16(rd16(DP(COURSE_COLUMN))));
     wr16(DP(COURSE_COLUMN), inc16(rd16(DP(COURSE_COLUMN))));
@@ -11264,7 +11264,7 @@ column:
     Y = inc8((u8)Y);
     Y = inc8((u8)Y);
     wr8(ABS(0x027E), (u8)Y);
-    lda8(rd8(ABS(COURSE_NUM)));
+    lda8(rd8(ABS(ROW_TYPE)));
     cmp8((u8)A, 0x09);
     if (fz) {
         lda8(rd8(ABS(LAPS_LEFT)));
@@ -11373,12 +11373,12 @@ void BuildCourseColumn_m1x1(void)
     X = (u8)A; nz8((u8)X);
     lda8(rd8(ABSX(0xD270))); wr8(DP(0x07), (u8)A);
     lda8(rd8(ABSX(0xD272))); wr8(DP(0x08), (u8)A);
-    Y = rd8(ABS(PLAYER_BUF_COL)); nz8((u8)Y);
+    Y = rd8(ABS(TRACK_READ_POS)); nz8((u8)Y);
     if (fz) {
         lda8(course_list4(0x07));
         wr8(ABS(0x09C9), (u8)A);
         Y = inc8((u8)Y);
-        wr8(ABS(PLAYER_BUF_COL), (u8)Y);
+        wr8(ABS(TRACK_READ_POS), (u8)Y);
     }
     lda8(rd8(ABS(0x0279)));
     cmp8((u8)A, rd8(ABS(RIDER_COLUMN)));
@@ -11393,14 +11393,14 @@ void BuildCourseColumn_m1x1(void)
     for (;;) {
         WAIT_TICK();
         if (step == 0) {
-            Y = rd8(ABS(PLAYER_BUF_COL)); nz8((u8)Y);
-            wr8(ABS(PLAYER_BUF_COL), inc8(rd8(ABS(PLAYER_BUF_COL))));
+            Y = rd8(ABS(TRACK_READ_POS)); nz8((u8)Y);
+            wr8(ABS(TRACK_READ_POS), inc8(rd8(ABS(TRACK_READ_POS))));
             lda8(course_list4(0x07));
             if (fz) { ret(); return; }
             cmp8((u8)A, 0x09);
             if (fz) {
                 lda8(0x01);
-                wr8(ABS(PLAYER_BUF_COL), 0x01);
+                wr8(ABS(TRACK_READ_POS), 0x01);
             }
             cmp8((u8)A, 0x80);
             if (fc) {
@@ -11408,7 +11408,7 @@ void BuildCourseColumn_m1x1(void)
                 wr8(ABS(0x027A), (u8)A);
                 step = 1;
             } else {
-                wr8(ABS(COURSE_NUM), (u8)A);
+                wr8(ABS(ROW_TYPE), (u8)A);
                 step = 2;
             }
         }
@@ -11417,10 +11417,10 @@ void BuildCourseColumn_m1x1(void)
             lda8(0x00);
             wr8(ABS(BUILD_COLUMN), 0);
             wr8(ABS(0x027E), 0);
-            wr8(ABS(COURSE_NUM), 0);
+            wr8(ABS(ROW_TYPE), 0);
         }
         /* L80DBE5 */
-        X = rd8(ABS(COURSE_NUM)); nz8((u8)X);
+        X = rd8(ABS(ROW_TYPE)); nz8((u8)X);
         push16(0xDAD8); CourseRowList_m1x1();
         Y = rd8(ABS(0x027E)); nz8((u8)Y);
         lda8(course_list4(0x05));
@@ -11843,12 +11843,12 @@ void BuildBonusColumn_m1x1(void)
     lda8(rd8(LONGX(0x81CAAC))); wr8(DP(0x07), (u8)A);
     lda8(rd8(LONGX(0x81CAB4))); wr8(DP(0x08), (u8)A);
     lda8(rd8(LONGX(0x81CABC))); wr8(DP(0x09), (u8)A);
-    Y = rd8(ABS(PLAYER_BUF_COL)); nz8((u8)Y);
+    Y = rd8(ABS(TRACK_READ_POS)); nz8((u8)Y);
     if (fz) {
         lda8(rd8(ILDPY(0x07)));
         wr8(ABS(0x09C9), (u8)A);
         Y = inc8((u8)Y);
-        wr8(ABS(PLAYER_BUF_COL), (u8)Y);
+        wr8(ABS(TRACK_READ_POS), (u8)Y);
     }
     lda8(rd8(ABS(0x0279)));
     cmp8((u8)A, rd8(ABS(RIDER_COLUMN)));
@@ -11863,14 +11863,14 @@ void BuildBonusColumn_m1x1(void)
     for (;;) {
         WAIT_TICK();
         if (step == 0) {
-            Y = rd8(ABS(PLAYER_BUF_COL)); nz8((u8)Y);
-            wr8(ABS(PLAYER_BUF_COL), inc8(rd8(ABS(PLAYER_BUF_COL))));
+            Y = rd8(ABS(TRACK_READ_POS)); nz8((u8)Y);
+            wr8(ABS(TRACK_READ_POS), inc8(rd8(ABS(TRACK_READ_POS))));
             lda8(rd8(ILDPY(0x07)));
             if (fz) { ret(); return; }
             cmp8((u8)A, 0x09);
             if (fz) {
                 lda8(0x01);
-                wr8(ABS(PLAYER_BUF_COL), 0x01);
+                wr8(ABS(TRACK_READ_POS), 0x01);
             }
             cmp8((u8)A, 0x80);
             if (fc) {
@@ -11892,12 +11892,12 @@ void BuildBonusColumn_m1x1(void)
         }
         if (step != 2) {
             /* L80ED8F */
-            wr8(ABS(COURSE_NUM), (u8)A);
+            wr8(ABS(ROW_TYPE), (u8)A);
             cmp8((u8)A, 0x03);
             if (fz) wr8(DP(BONUS_SIGN), inc8(rd8(DP(BONUS_SIGN))));
         }
         /* L80ED98 */
-        X = rd8(ABS(COURSE_NUM)); nz8((u8)X);
+        X = rd8(ABS(ROW_TYPE)); nz8((u8)X);
         push16(0xED9D); BonusRowList_m1x1();
         Y = rd8(ABS(0x027E)); nz8((u8)Y);
         lda8(rd8((((u32)DB << 16) + rd16(DP(0x05)) + Y) & 0xFFFFFF));

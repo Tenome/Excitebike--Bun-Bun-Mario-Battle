@@ -167,7 +167,9 @@ The rest of the 1 MB is graphics, tracks, music and other data.
    (`port/src/courses.c`); with `BUNBUN_GENA_ROM=<s1 dump>` and
    `BUNBUN_COURSES=1|2` the Gen B engine plays the Stadium 1 or 2 courses
    (converted on load, run flag `$40` → `$80`). Runs without errors; the
-   terrain-code mapping is not yet checked tile by tile. Without the override
+   terrain mapping is checked: every row type builds the same columns in
+   both engines except `$1C` (Gen A terrain `$44`), whose Gen A words the port
+   takes when it plays Gen A courses (docs/NOTES.md). Without the override
    the replacement builds a track buffer identical to the original (checked
    against the interpreter-only build: 353 bytes, 0 differences).
 1. ✅ Match routines across versions. A↔A and B↔B: `tools/xmatch.py` and the

@@ -182,6 +182,19 @@ Courses expand to 315-393 columns (Gen A) and 338-416 (Gen B). The second
 special course is identical in both generations except for the ground code, so
 Gen A courses should convert to the Gen B engine by moving `$40-$7F` to
 `$80-$BF`. That is the cheapest route to running all 16 courses in one engine.
+The race rows behind the codes (`tools/abdiff.py`-era check, 2026-11-15): a
+course byte picks a row type (a run code through the map `$81:8A30`, which
+is the same in both engines, the rest by value), and the row type a column
+layout through `$81:8010` / `$81:8040` (per column a start byte X, then tile
+words, tile & `$07FF` and a height in the top five bits, until X = `$1E`).
+Every row type `$00-$2F` builds the same tiles and heights in both engines
+except `$1C` (obstacle `$1C`, Gen A terrain `$44` / Gen B `$84`): Gen B gives
+its tiles `$6A`, `$69`, `$68` height `$0C`, Gen A `$1F`. Stadium 1-2 courses
+use `$44` on 61 columns, so the port takes Gen A's words for that row when
+it plays Gen A courses (`port/src/courses.c`, 3 words). Codes `$30-$3F` index
+past the 48-entry tables: in Gen A `$30` points at `$81:4080` (open bus),
+and Stadium 1 course 2 uses `$30`/`$31` three times each.
+
 Gen B also randomises some columns at race start (`$81:A18B`, mode 3).
 
 ## Build stamp and debug flags (`$81:8000`)
