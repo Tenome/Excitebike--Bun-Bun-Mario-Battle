@@ -121,9 +121,17 @@ Luigi, Toad, Wario; Stadium 1 normally has three). `BUNBUN_UNLOCK=1` grants
 it at the frame boundary when mode 1 starts (`port/src/game_rtl.c`), and
 Wario races in Stadium 1.
 
-## BS-X player data the game reads (`$11:5716-$5734`)
-Both generations read a block the BS-X BIOS maintains (open bus without it):
-* `$11:5719-$571F`: episode flags. Gen A: two or more set → Wario unlock
+## The save block (`$11:5700-$5734`)
+Earlier read as BS-X player data; it is the game's own save. Gen B
+`$82:8F27`-`$82:8F6F` (SaveChecksum, SaveHeaderCheck, SaveBestRecords) write
+it: `$11:5700` a copy of the ROM title (`$00:FFC0`, a mismatch wipes the
+block), `$5710-$5713` the stream clock, `$5714` the hour, `$5716` the Stadium
+selector, `$5718 + weekday` the day's entry, `$5720` the best run's course
+times, `$572C-$572E` the best total time, `$5730-$5734` the best score; the
+16-bit sum of `$10-$12:5000-$5FFF` goes to `$10:5004` and its complement to
+`$10:5002`. The names are in `c/hand/long_ram.h`. It reads open bus where
+no memory answers, as the notes below found:
+* `$11:5719-$571F`: the weekday entries. Gen A: two or more set → Wario unlock
   (above); `$80:A41C` also ORs pairs of them into the end-screen digits
   `$0856-$0858`.
 * Gen B `$80:A070`: `$11:5730-$5734` combined as a 5-digit number (weights

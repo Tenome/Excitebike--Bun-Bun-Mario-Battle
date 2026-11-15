@@ -50,9 +50,9 @@ static void random_body(void)
     adc8(rd8(ABS(OPVCT)));
     eor8(rd8(DP(FRAME_COUNT)));
     adc8(rd8(DP(0x64)));
-    adc8(rd8(LONG(0x7FFFFF)));
-    adc8(rd8(LONG(0x7FFFFA)));
-    adc8(rd8(LONG(0x7FFFFB)));
+    adc8(rd8(LONG(BCAST_MINUTE)));
+    adc8(rd8(LONG(BCAST_FRAME)));
+    adc8(rd8(LONG(BCAST_FRAME_HI)));
     retl();
 }
 void RandomB_m1x1(void) { random_body(); }
@@ -245,11 +245,11 @@ void SelectName_m1x1(void)
         wr8(ABS(0x1701 + k * 4), 0x84);
     lda8((u8)X);
     cmp8((u8)X, 0x03);
-    int st = rd8(LONG(0x81800C)) != 0;
+    int st = rd8(LONG(STADIUM_SELECT)) != 0;
     u8 row = roster_select_name_row(st, X);
     if (fz) {
         push8((u8)X);
-        lda8(rd8(LONG(0x81800C)));
+        lda8(rd8(LONG(STADIUM_SELECT)));
         X = (u8)A;
         lda8(rd8(LONG(0x808E46 + X)));
         X = pull8();
@@ -354,7 +354,7 @@ void SelectDraw_m1x1(void)
     lda8(cursor);
     Y = cursor;
     wr8(ABS(0x1579), cursor);
-    int st = rd8(LONG(0x81800C)) != 0;
+    int st = rd8(LONG(STADIUM_SELECT)) != 0;
     for (int i = roster_count() - 1; i >= 5; i--)
         draw_portrait(i, cursor, st);
     for (int i = 4; i >= 0; i--) {
@@ -505,7 +505,7 @@ void SpcUploadFrom(u32 stream);
  */
 void SelectMain_m1x1(void)
 {
-    lda8(rd8(LONG(0x81800E)));
+    lda8(rd8(LONG(DEBUG_ENABLED)));
     if (!fz) {
         lda8(rd8(DP(P1_PRESS_HI)));
         and8(0x10);
@@ -541,12 +541,12 @@ void SelectMain_m1x1(void)
     }
     lda8(rd8(ABS(0x198B)));
     if (!fz) {
-        lda8(rd8(LONG(0x7FFFFF)));
+        lda8(rd8(LONG(BCAST_MINUTE)));
         cmp8((u8)A, 0x06);
         if (fc) {
             if (!fz) goto next_segment;
             rep(0x20);
-            lda16(rd16(LONG(0x7FFFFA)));
+            lda16(rd16(LONG(BCAST_FRAME)));
             cmp16(A, 0x0708);
             sep(0x20);
             if (fc) goto next_segment;
@@ -655,7 +655,7 @@ next_segment:
     {
         ldx8(0xFF);
         wr8(DP(0x00), 0xFF);
-        lda8(rd8(LONG(0x7FFFFF)));
+        lda8(rd8(LONG(BCAST_MINUTE)));
         do {
             wr8(DP(0x00), inc8(rd8(DP(0x00))));
             X = inc8((u8)X);

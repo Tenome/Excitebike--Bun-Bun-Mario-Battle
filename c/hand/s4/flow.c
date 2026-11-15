@@ -163,7 +163,7 @@ void Mode02_SegmentCard_m1x1(void)
     lda8(asl8((u8)A));
     fc = 0; adc8(rd8(DP(FINAL_RACE)));
     X = (u8)A; nz8((u8)X);
-    lda8(rd8(LONG(0x7FFFFF)));
+    lda8(rd8(LONG(BCAST_MINUTE)));
     cmp8((u8)A, rd8(ABSX(0x88AF)));
     if (!fc) { ret(); return; }
     NextMode_m1x1();
@@ -222,7 +222,7 @@ static void demo_exit(void)
  * C clear while it plays. */
 void DemoInputStep_m1x1(void)
 {
-    lda8(rd8(LONG(0x81800E)));
+    lda8(rd8(LONG(DEBUG_ENABLED)));
     if (!fz) {
         lda8(rd8(DP(P1_PRESS_HI)));
         and8(0x10);
@@ -269,7 +269,7 @@ void DemoInputStep_m1x1(void)
  * Start (sound $2D) leaves through exit 0. */
 void TitlePushStart_m1x1(void)
 {
-    lda8(rd8(LONG(0x7FFFFF)));
+    lda8(rd8(LONG(BCAST_MINUTE)));
     cmp8((u8)A, 0x06);
     if (!fc) { ret(); return; }
     wr8(DP(0xC5), inc8(rd8(DP(0xC5))));

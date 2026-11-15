@@ -11,16 +11,6 @@ enum { BSX_STATUS = 0x2190, BSX_CTRL = 0x2191, BSX_DATA = 0x2192, BSX_ERR = 0x21
 #define ARG_LEN     DP(0x00)    /* 16-bit byte count */
 #define ARG_SRC     DP(0x02)    /* 16-bit source address */
 #define ARG_SRCBANK DP(0x04)    /* source bank */
-#define BS_CLOCK_F0   LONG(0x7FFFF0)
-#define BS_CLOCK_F1   LONG(0x7FFFF1)
-#define BS_CLOCK_F2   LONG(0x7FFFF2)
-#define BS_CLOCK_F3   LONG(0x7FFFF3)
-#define BS_CHANNEL    LONG(0x7FFFF7)    /* 16-bit: opened time channel */
-#define BS_HOUR       LONG(0x7FFFF9)
-#define BS_FRAME      LONG(0x7FFFFA)    /* 16-bit: frames into the minute */
-#define BS_SYNCED     LONG(0x7FFFFC)    /* 16-bit: clock set from the stream */
-#define BS_MINUTE     LONG(0x7FFFFF)
-#define QUEUE_HEAD   LONG(0x7F0000)
 
 
 
@@ -682,7 +672,7 @@ void CopyTrackColumn_m1x1(void)
         push16(A);
         and16(0x07FF);
         ora16(0x0800);
-        wr16(LONGX(0x7F000C), A);
+        wr16(LONGX(VQ_DATA), A);
         lda16(pull16());
         A = (u16)((A >> 8) | (A << 8)); nz8((u8)A);
         and16(0x00FF);

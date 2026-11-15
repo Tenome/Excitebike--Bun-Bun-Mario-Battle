@@ -84,7 +84,7 @@ void BlankQueueRowB_m1x1(void)
     rep(0x20);
     lda16(0x00FC);
     do {
-        wr16(LONGX(0x7F000C), 0x00FC);
+        wr16(LONGX(VQ_DATA), 0x00FC);
         X = dec8((u8)X);
         X = dec8((u8)X);
     } while (!fz);
@@ -146,7 +146,7 @@ void ScrollByPlayerSpeed_m1x1(void)
  * mode $15 and leave the caller (drop its return, JMP $80:8F17). */
 void EndAtBonusMinute_m1x1(void)
 {
-    lda8(rd8(LONG(0x7FFFFF)));
+    lda8(rd8(LONG(BCAST_MINUTE)));
     cmp8((u8)A, 0x38);
     if (!fz) cmp8((u8)A, 0x1F);
     if (!fz) { ret(); return; }
@@ -295,11 +295,11 @@ void BsxReadHeader3_m1x1(void)
 void CheckCourseTime_m1x1(void)
 {
     X = rd8(DP(COURSE_SLOT)); nz8((u8)X);
-    lda8(rd8(LONG(0x7FFFFF)));
+    lda8(rd8(LONG(BCAST_MINUTE)));
     cmp8((u8)A, rd8(ABSX(0xE76D)));
     if (fz) {
         rep(0x20);
-        lda16(rd16(LONG(0x7FFFFA)));
+        lda16(rd16(LONG(BCAST_FRAME)));
         cmp16(A, 0x0708);
         if (fc) {
             sep(0x20);
@@ -375,12 +375,12 @@ void StepJumpBanner_m1x1(void)
  * frame count reaches $0708 set $CA. */
 void CheckBonusTime_m1x1(void)
 {
-    lda8(rd8(LONG(0x7FFFFF)));
+    lda8(rd8(LONG(BCAST_MINUTE)));
     cmp8((u8)A, 0x1E);
     if (!fz) cmp8((u8)A, 0x37);
     if (fz) {
         rep(0x20);
-        lda16(rd16(LONG(0x7FFFFA)));
+        lda16(rd16(LONG(BCAST_FRAME)));
         cmp16(A, 0x0708);
         if (fc) {
             sep(0x20);

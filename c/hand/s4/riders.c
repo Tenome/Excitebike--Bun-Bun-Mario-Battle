@@ -147,7 +147,7 @@ void LoadRiderPalettes_m1x1(void)
     lda8(0x82);
     push8(0x82);
     DB = pull8(); nz8(DB);
-    int st = rd8(LONG(0x81800C)) != 0;
+    int st = rd8(LONG(STADIUM_SELECT)) != 0;
     int var = rd8(ABS(0x1E91)) != 0;
     u8 ch = rd8(ABS(0x154F));
     /* $00 = st * 100 + var * 50 + ch * 10 (8-bit), as the original leaves it */

@@ -14,7 +14,6 @@
 #include "hand/hand.h"
 #include "ram.h"
 
-#define QUEUE_HEAD   LONG(0x7F0000)
 
 static inline u32 q(u16 off, u16 field) { return (0x7F0000u + field + off) & 0xFFFFFF; }
 
@@ -40,7 +39,7 @@ void VramQueueCopy_m1x1(void)
     wr8(DP(0x09), 0);
     u32 src = ILDP(0x02);
     do {
-        u16 off = rd16(QUEUE_HEAD);
+        u16 off = rd16(LONG(VQ_END));
         wr8(q(off, 2), 0x80);
         wr8(q(off, 3), 0x01);
         wr8(q(off, 4), 0x18);
@@ -60,9 +59,9 @@ void VramQueueCopy_m1x1(void)
             x += 2;
             wr8(DP(0x06), (u8)(rd8(DP(0x06)) - 1));
         } while (rd8(DP(0x06)) != 0);
-        u16 head = rd16(QUEUE_HEAD);
+        u16 head = rd16(LONG(VQ_END));
         u16 next = (u16)(head + 0x0C + rd16(DP(0x08)));
-        wr16(QUEUE_HEAD, next);
+        wr16(LONG(VQ_END), next);
         wr16(q(head, 0x0A), next);                     /* link to the next record */
         /* next tilemap row: VRAM address += $20 (8-bit adds, carry chain) */
         SET_A8(0x20); fc = 0;
@@ -97,9 +96,9 @@ static void begin_record(u16 off, u8 words)
 /* Close a record: link it, and step the VRAM address one tilemap row. */
 static void end_record(void)
 {
-    u16 head = rd16(QUEUE_HEAD);
+    u16 head = rd16(LONG(VQ_END));
     u16 next = (u16)(head + 0x0C + rd16(DP(0x08)));
-    wr16(QUEUE_HEAD, next);
+    wr16(LONG(VQ_END), next);
     wr16(q(head, 0x0A), next);
     A = next;                                          /* B keeps the head's high byte */
     SET_A8(0x20); fc = 0;
@@ -131,7 +130,7 @@ void VramQueueTiles_m1x1(void)
     wr8(DP(0x04), size >> 4);
     u16 y = 0;
     do {
-        u16 off = rd16(QUEUE_HEAD);
+        u16 off = rd16(LONG(VQ_END));
         begin_record(off, rd8(DP(0x05)));
         u16 x = off;
         do {
@@ -185,14 +184,14 @@ void NmiFlushVramQueue_m1x1(void)
     if (!locked && !empty) {
         u16 x = 2;
         do {
-            wr16(LONG(0x004300), rd16(ABS(x + 3)));    /* DMAP0, BBAD0 */
-            wr16(LONG(0x002116), rd16(ABS(x + 0)));    /* VMADD */
-            wr16(LONG(0x004302), rd16(ABS(x + 5)));    /* A1T0 */
-            wr16(LONG(0x004304), rd16(ABS(x + 7)));    /* A1B0 (and DAS0L, rewritten next) */
-            wr16(LONG(0x004305), rd16(ABS(x + 8)));    /* DAS0 */
+            wr16(LONG(DMAP0), rd16(ABS(x + 3)));    /* DMAP0, BBAD0 */
+            wr16(LONG(VMADDL), rd16(ABS(x + 0)));    /* VMADD */
+            wr16(LONG(A1T0L), rd16(ABS(x + 5)));    /* A1T0 */
+            wr16(LONG(A1B0), rd16(ABS(x + 7)));    /* A1B0 (and DAS0L, rewritten next) */
+            wr16(LONG(DAS0L), rd16(ABS(x + 8)));    /* DAS0 */
             sep(0x20);
-            wr8(LONG(0x002115), rd8(ABS(x + 2)));      /* VMAIN */
-            wr8(LONG(0x00420B), 0x01);                 /* MDMAEN: go */
+            wr8(LONG(VMAIN), rd8(ABS(x + 2)));      /* VMAIN */
+            wr8(LONG(MDMAEN), 0x01);                 /* MDMAEN: go */
             rep(0x20);
             x = rd16(ABS(x + 0x0A));                   /* next record */
             A = x;
@@ -324,7 +323,7 @@ void VramQueueBlock_m1x1(void)
     wr8(DP(0x04), size >> 4);
     u16 y = 1;
     do {
-        u16 off = rd16(QUEUE_HEAD);
+        u16 off = rd16(LONG(VQ_END));
         begin_record(off, rd8(DP(0x05)));
         u16 x = off;
         do {

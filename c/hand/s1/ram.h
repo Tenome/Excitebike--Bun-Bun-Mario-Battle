@@ -17,6 +17,7 @@
 #define HAND_S1_RAM_H
 
 #include "hand/snes_regs.h"
+#include "hand/long_ram.h"
 
 /* ---- joypads (ReadJoypads): hi = B Y Select Start Up Down Left Right,
  * lo = A X L R in the top nibble; "press" = newly pressed this frame ---- */

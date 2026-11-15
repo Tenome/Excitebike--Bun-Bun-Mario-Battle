@@ -11,16 +11,6 @@ enum { BSX_STATUS = 0x2190, BSX_CTRL = 0x2191, BSX_DATA = 0x2192, BSX_ERR = 0x21
 #define ARG_LEN     DP(0x00)    /* 16-bit byte count */
 #define ARG_SRC     DP(0x02)    /* 16-bit source address */
 #define ARG_SRCBANK DP(0x04)    /* source bank */
-#define BS_CLOCK_F0   LONG(0x7FFFF0)
-#define BS_CLOCK_F1   LONG(0x7FFFF1)
-#define BS_CLOCK_F2   LONG(0x7FFFF2)
-#define BS_CLOCK_F3   LONG(0x7FFFF3)
-#define BS_CHANNEL    LONG(0x7FFFF7)    /* 16-bit: opened time channel */
-#define BS_HOUR       LONG(0x7FFFF9)
-#define BS_FRAME      LONG(0x7FFFFA)    /* 16-bit: frames into the minute */
-#define BS_SYNCED     LONG(0x7FFFFC)    /* 16-bit: clock set from the stream */
-#define BS_MINUTE     LONG(0x7FFFFF)
-#define QUEUE_HEAD   LONG(0x7F0000)
 
 
 
@@ -84,7 +74,7 @@ static void fill_queue_row(u8 last, u16 tile)
     rep(0x20);
     lda16(tile);
     do {
-        wr16(LONGX(0x7F000C), tile);
+        wr16(LONGX(VQ_DATA), tile);
         X = dec8((u8)X);
         X = dec8((u8)X);
     } while (!fz);
@@ -152,14 +142,14 @@ void NmiFlushVramQueue_m1x1(void)
     if (!locked && !empty) {
         u16 x = 2;
         do {
-            wr16(LONG(0x004300), rd16(ABS(x + 3)));    /* DMAP0, BBAD0 */
-            wr16(LONG(0x002116), rd16(ABS(x + 0)));    /* VMADD */
-            wr16(LONG(0x004302), rd16(ABS(x + 5)));    /* A1T0 */
-            wr16(LONG(0x004304), rd16(ABS(x + 7)));    /* A1B0 (and DAS0L, rewritten next) */
-            wr16(LONG(0x004305), rd16(ABS(x + 8)));    /* DAS0 */
+            wr16(LONG(DMAP0), rd16(ABS(x + 3)));    /* DMAP0, BBAD0 */
+            wr16(LONG(VMADDL), rd16(ABS(x + 0)));    /* VMADD */
+            wr16(LONG(A1T0L), rd16(ABS(x + 5)));    /* A1T0 */
+            wr16(LONG(A1B0), rd16(ABS(x + 7)));    /* A1B0 (and DAS0L, rewritten next) */
+            wr16(LONG(DAS0L), rd16(ABS(x + 8)));    /* DAS0 */
             sep(0x20);
-            wr8(LONG(0x002115), rd8(ABS(x + 2)));      /* VMAIN */
-            wr8(LONG(0x00420B), 0x01);                 /* MDMAEN: go */
+            wr8(LONG(VMAIN), rd8(ABS(x + 2)));      /* VMAIN */
+            wr8(LONG(MDMAEN), 0x01);                 /* MDMAEN: go */
             rep(0x20);
             x = rd16(ABS(x + 0x0A));                   /* next record */
             A = x;
@@ -203,14 +193,14 @@ void StepLfsr_m1x1(void)
 void Mode00_IntroWait_m1x1(void)
 {
     int skip = 0;
-    lda8(rd8(LONG(0x81800E)));
+    lda8(rd8(LONG(DEBUG_ENABLED)));
     if ((u8)A != 0) {
         lda8(rd8(DP(P1_PRESS_HI)));
         and8(0x10);
         skip = (u8)A != 0;
     }
     if (!skip) {
-        lda8(rd8(LONG(0x7FFFFF)));
+        lda8(rd8(LONG(BCAST_MINUTE)));
         cmp8((u8)A, 0x04);
         if (!fc) {
             rep(0x20);
@@ -232,7 +222,7 @@ void Mode00_IntroWait_m1x1(void)
  */
 void Mode0E_TitleWait_m1x1(void)
 {
-    lda8(rd8(LONG(0x7FFFFF)));
+    lda8(rd8(LONG(BCAST_MINUTE)));
     cmp8((u8)A, 0x04);
     if (fc) {
         lda8(0x0C);
@@ -355,7 +345,7 @@ void ResetMinuteFrame_m1x1(void)
     push8((u8)A);
     rep(0x20);
     lda16(0x0000);
-    wr16(LONG(0x7FFFFA), 0x0000);
+    wr16(LONG(BCAST_FRAME), 0x0000);
     sep(0x20);
     ldx8(0x01);
     lda8(pull8());
@@ -588,7 +578,7 @@ void MergeBsxFlags_m1x1(void)
         ora8(rd8(LONG(0x11571D + i)));
         wr8(ABS(dst[i]), tsb8(rd8(ABS(dst[i]))));
     }
-    lda8(rd8(LONG(0x115716)));
+    lda8(rd8(LONG(SAVE_STADIUM)));
     for (int i = 0; i < 4; i++)
         lda8(asl8((u8)A));
     ora8(rd8(LONG(0x11571C)));

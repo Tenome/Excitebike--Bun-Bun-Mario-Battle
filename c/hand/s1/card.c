@@ -26,7 +26,7 @@ void Mode02_Setup_m1x1(void)
     /* segment from the minute */
     ldx8(0xFF);
     wr8(DP(0x00), 0xFF);
-    lda8(rd8(LONG(0x7FFFFF)));
+    lda8(rd8(LONG(BCAST_MINUTE)));
     do {
         wr8(DP(0x00), inc8(rd8(DP(0x00))));
         X = inc8((u8)X);
@@ -103,7 +103,7 @@ void Mode02_SegmentCard_m1x1(void)
     fc = 0;
     adc8(rd8(DP(FINAL_RACE)));
     X = (u8)A;
-    lda8(rd8(LONG(0x7FFFFF)));
+    lda8(rd8(LONG(BCAST_MINUTE)));
     cmp8((u8)A, rd8(ABS(0x8C43 + X)));
     if (!fc) {
         ret();

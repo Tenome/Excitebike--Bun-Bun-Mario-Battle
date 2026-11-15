@@ -2,6 +2,7 @@
  * Stadium 3-4 (Gen B): small screen routines, hand-written.
  */
 #include "hand/hand.h"
+#include "ram.h"
 #include "roster.h"
 
 void VramQueueTiles_m1x1(void);
@@ -48,11 +49,11 @@ void DrawClockB_m1x1(void)
     lda8(0x42); wr8(DP(0x00), 0x42);
     lda8(0x18); wr8(DP(0x01), 0x18);
     lda8(0x25); wr8(ABS(0x1E1E), 0x25);
-    u8 u = split_tens(rd8(LONG(0x7FFFF9)), 0x1E1F);       /* hour */
+    u8 u = split_tens(rd8(LONG(BCAST_HOUR)), 0x1E1F);       /* hour */
     wr8(ABS(0x1E20), u);
     ora8(0x10); wr8(ABS(0x1E25), (u8)A);
     lda8(rd8(ABS(0x1E1F))); fc = 0; adc8(0x10); wr8(ABS(0x1E24), (u8)A);
-    u = split_tens(rd8(LONG(0x7FFFFF)), 0x1E22);           /* minute */
+    u = split_tens(rd8(LONG(BCAST_MINUTE)), 0x1E22);           /* minute */
     wr8(ABS(0x1E23), u);
     ora8(0x10); wr8(ABS(0x1E28), (u8)A);
     lda8(rd8(ABS(0x1E22))); fc = 0; adc8(0x10); wr8(ABS(0x1E27), (u8)A);

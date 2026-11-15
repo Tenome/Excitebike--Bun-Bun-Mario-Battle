@@ -55,12 +55,12 @@ void DrawRaceHud_m1x1(void)
     lda8(0x0F);
     wr8(ABS(WRMPYB), 0x0F);
     rep(0x20);
-    int st = rd8(LONG(0x81800C)) != 0;
+    int st = rd8(LONG(STADIUM_SELECT)) != 0;
     lda16(rd16(ABS(RDMPYL)));                       /* RDMPYL: ch * 15 */
     fc = 0;
     adc16(0xA598);
     wr16(DP(0x02), A);
-    lda16(rd16(LONG(0x81800C)));
+    lda16(rd16(LONG(STADIUM_SELECT)));
     if (!fz) {
         lda16(rd16(DP(0x02)));
         fc = 0;

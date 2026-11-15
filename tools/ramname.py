@@ -4,14 +4,14 @@
     python tools/ramname.py s4            # write the names into c/hand/s4/*.c
     python tools/ramname.py s4 --check    # list what would change
 
-The names come from c/hand/<ver>/ram.h and c/hand/snes_regs.h (lines
-`#define NAME 0xADDR`). Only address operands are rewritten:
-ABS/ABSX/ABSY(0xADDR) and DP/DPX/DPY(0xAD); immediates, table addresses and
-comments stay as they are. Two cases are left alone because the address
-would mean something else there:
-  * DP operands in a function that moves the direct page (D = ...), or
-    whose comment says it runs with another D;
-  * every operand in a function that sets the data bank to $7F.
+The names come from c/hand/<ver>/ram.h, c/hand/long_ram.h and
+c/hand/snes_regs.h (lines `#define NAME 0xADDR`). Only address operands are
+rewritten: ABS/ABSX/ABSY(0xADDR), DP/DPX/DPY(0xAD) and LONG/LONGX(0xBBADDR);
+immediates, table addresses and comments stay as they are. A name whose
+comment starts with [X] is a record field and goes on indexed operands only.
+Two cases are left alone because the address would mean something else there:
+  * DP operands in a function that moves the direct page (D = ...);
+  * absolute operands in a function that sets the data bank to $7F.
 Direct-page names are applied only from $20 up ($00-$1F is scratch).
 
 tools/port_hand.py calls expand() to turn the names back into hex before it
@@ -25,23 +25,44 @@ import re
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEF = re.compile(r'^#define\s+(\w+)\s+0x([0-9A-Fa-f]+)\b')
-OPER = re.compile(r'\b(ABS|ABSX|ABSY|DP|DPX|DPY)\((0x[0-9A-Fa-f]+|[A-Z_][A-Z0-9_]*)\)')
+OPER = re.compile(r'\b(ABS|ABSX|ABSY|DP|DPX|DPY|LONG|LONGX)\((0x[0-9A-Fa-f]+|[A-Z_][A-Z0-9_]*)\)')
+INDEXED = ('ABSX', 'ABSY', 'DPX', 'DPY', 'LONGX')
+DEF_INDEXED = re.compile(r'/\*\s*\[X\]')   # "/* [X] ..." : indexed operands only
 DP_MIN = 0x20
 
 
+class Names(dict):
+    """name -> address, plus the names that apply to indexed operands only
+    (the fields of a record addressed as base + X)."""
+    def __init__(self):
+        super().__init__()
+        self.indexed = set()
+
+
 def load(ver):
-    """name -> address for <ver> (its ram.h and the register names);
-    an empty map when the version has no ram.h."""
-    names = {}
+    """name -> address for <ver> (its ram.h, the long addresses every dump
+    shares and the register names); empty when the version has no ram.h."""
+    names = Names()
     ram = os.path.join(ROOT, 'c', 'hand', ver, 'ram.h')
     if not os.path.exists(ram):
         return names
-    for path in (os.path.join(ROOT, 'c', 'hand', 'snes_regs.h'), ram):
+    for path in (os.path.join(ROOT, 'c', 'hand', 'snes_regs.h'),
+                 os.path.join(ROOT, 'c', 'hand', 'long_ram.h'), ram):
+        if not os.path.exists(path):
+            continue
         for line in open(path, encoding='utf-8'):
             m = DEF.match(line)
             if m:
                 names[m.group(1)] = int(m.group(2), 16)
+                if DEF_INDEXED.search(line):
+                    names.indexed.add(m.group(1))
     return names
+
+
+def width(mode, addr):
+    if mode.startswith('LONG'):
+        return 6
+    return 2 if mode.startswith('DP') else 4
 
 
 def chunks(text):
@@ -65,14 +86,18 @@ def far_bank(chunk):
 
 def name_text(text, names):
     """Rewrite hex address operands to names."""
-    by_addr = {}
+    indexed = getattr(names, 'indexed', set())
+    by_plain, by_idx = {}, {}
     for n, a in names.items():
-        by_addr.setdefault(a, n)
+        if n in indexed:
+            by_idx.setdefault(a, n)
+        else:
+            by_plain.setdefault(a, n)
+    for a, n in by_plain.items():
+        by_idx.setdefault(a, n)
     out = []
     for c in chunks(text):
-        if far_bank(c):
-            out.append(c)
-            continue
+        abs_ok = not far_bank(c)     # DB = $7F: absolute operands are bank $7F
         dp_ok = not moves_dp(c)
 
         def one(m):
@@ -83,7 +108,10 @@ def name_text(text, names):
             if mode.startswith('DP'):
                 if not dp_ok or a < DP_MIN or a > 0xFF:
                     return m.group(0)
-            n = by_addr.get(a)
+            elif mode.startswith('ABS'):
+                if not abs_ok:
+                    return m.group(0)
+            n = (by_idx if mode in INDEXED else by_plain).get(a)
             return '%s(%s)' % (mode, n) if n else m.group(0)
         out.append(OPER.sub(one, c))
     return ''.join(out)
@@ -96,7 +124,7 @@ def expand(text, names):
         if val.startswith('0x') or val not in names:
             return m.group(0)
         a = names[val]
-        return '%s(0x%0*X)' % (mode, 2 if mode.startswith('DP') else 4, a)
+        return '%s(0x%0*X)' % (mode, width(mode, a), a)
     text = OPER.sub(one, text)
 
     # names used as plain values (read_pad(..., P1_HELD_LO, ...)), outside
@@ -106,7 +134,7 @@ def expand(text, names):
         if w[0] in '/"' or w not in names:
             return w
         a = names[w]
-        return '0x%0*X' % (2 if a < 0x100 else 4, a)
+        return '0x%0*X' % (2 if a < 0x100 else 4 if a < 0x10000 else 6, a)
     return re.sub(r'/\*.*?\*/|//[^\n]*|"(?:\\.|[^"\\])*"|\b[A-Z_][A-Z0-9_]*\b', bare, text, flags=re.S)
 
 

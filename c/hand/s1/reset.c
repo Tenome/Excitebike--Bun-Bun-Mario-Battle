@@ -40,11 +40,11 @@ R816_EXPORT void ResetBoot1(void)
     lda16(0x1FFF); S = A;
     sep(0x30);
     push8(0x80); push16(0x8012); BsxDetect_m1x1();
-    lda8(rd8(LONG(0x7FFFE1)));
+    lda8(rd8(LONG(NO_RECEIVER)));
     if (fz) { push8(0x80); push16(0x801C); BsxOpenTimeChannel_m1x1(); }
-    lda8(0x13); wr8(LONG(0x7FFFF9), 0x13);
-    lda8(0x02); wr8(LONG(0x7FFFFF), 0x02); wr8(LONG(0x7FFFFA), 0x02);
-    lda8(0x05); wr8(LONG(0x7FFFFB), 0x05);
+    lda8(0x13); wr8(LONG(BCAST_HOUR), 0x13);
+    lda8(0x02); wr8(LONG(BCAST_MINUTE), 0x02); wr8(LONG(BCAST_FRAME), 0x02);
+    lda8(0x05); wr8(LONG(BCAST_FRAME_HI), 0x05);
     lda8(0x1E); wr8(ABS(0x1E84), 0x1E);
     wr8(ABS(0x1E85), 0);
     sep(0x20);
@@ -131,30 +131,30 @@ R816_EXPORT void ResetBoot2(void)
  * $081A cleared. */
 R816_EXPORT void MainLoopFrame1(void)
 {
-    lda8(rd8(LONG(0x7FFFFF)));
+    lda8(rd8(LONG(BCAST_MINUTE)));
     wr8(ABS(0x00B7), (u8)A);
     push8(0x80); push16(0x810D); BsxPollStream_m1x1();
     push16(0x8110); StepLfsr_m1x1();
     push8(0x80); push16(0x8114); ReadJoypads_m1x1();
     fi = 0;
-    lda8(rd8(LONG(0x81800E)));
+    lda8(rd8(LONG(DEBUG_ENABLED)));
     if (!fz) {
         lda8(rd8(DP(P2_PRESS_LO)));
         and8(0xC0);
         if (!fz) {
             lda8(asl8((u8)A));
-            lda8(rd8(LONG(0x7FFFFF)));
+            lda8(rd8(LONG(BCAST_MINUTE)));
             if (fc) {
                 lda8(dec8((u8)A));
                 if (fn) lda8(0x00);
             } else {
                 lda8(inc8((u8)A));
             }
-            wr8(LONG(0x7FFFFF), (u8)A);
+            wr8(LONG(BCAST_MINUTE), (u8)A);
             wr8(ABS(0x00B0), inc8(rd8(ABS(0x00B0))));
             lda8(0x01); wr8(ABS(0x1E84), 0x01);
             rep(0x20);
-            lda16(0x0000); wr16(LONG(0x7FFFFA), 0);
+            lda16(0x0000); wr16(LONG(BCAST_FRAME), 0);
             sep(0x20);
         }
         lda8(rd8(DP(P1_PRESS_LO)));

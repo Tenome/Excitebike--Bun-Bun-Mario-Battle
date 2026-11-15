@@ -27,7 +27,7 @@ void FinishModeSetup_m1x1(void)
  * $88 = $0A8C frames, fade in. */
 void Mode0D_Setup_m1x1(void)
 {
-    lda8(rd8(LONG(0x7FFFFF)));
+    lda8(rd8(LONG(BCAST_MINUTE)));
     cmp8((u8)A, 0x03);
     if (fc) {
         lda8(0x00);
@@ -80,7 +80,7 @@ void Mode0E_Setup_m1x1(void)
     wr8(DP(0x84), 0x02);
     lda8(0x2D); push8(0x80); push16(0x8B3B); QueueSound_m1x1();
     lda8(0x45); push8(0x80); push16(0x8B41); QueueSound_m1x1();
-    lda8(rd8(LONG(0x7FFFFF)));
+    lda8(rd8(LONG(BCAST_MINUTE)));
     cmp8((u8)A, 0x04);
     if (!fc)
         queue_text(0x8B63, 0x06C5, 0x8BCF, 0x0218);
@@ -95,7 +95,7 @@ void Mode0E_Setup_m1x1(void)
 void Mode0D_IntroText_m1x1(void)
 {
     int done = 0;
-    lda8(rd8(LONG(0x81800E)));
+    lda8(rd8(LONG(DEBUG_ENABLED)));
     if ((u8)A != 0) {
         lda8(rd8(DP(P1_PRESS_HI)));
         and8(0x10);

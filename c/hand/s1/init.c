@@ -93,7 +93,7 @@ void InitPpuRegisters_m1x1(void)
     wr16(DP(0x00), 0x1E80); A = 0x0000; Y = 0x00;
     push8(0x80); push16(0x8398); DmaFillZero_m0x1();  /* $00:0000, $1E80 bytes */
     A = 0x0002;
-    wr16(LONG(0x7F0000), 0x0002);                      /* VRAM queue empty */
+    wr16(LONG(VQ_END), 0x0002);                      /* VRAM queue empty */
 
     push16(D);
     A = 0x2100; D = 0x2100;                            /* DP = PPU registers */

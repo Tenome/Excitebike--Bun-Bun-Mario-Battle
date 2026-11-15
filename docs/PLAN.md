@@ -149,8 +149,11 @@ The rest of the 1 MB is graphics, tracks, music and other data.
    them back into hex before it translates a routine. Also named: the object
    slots, the timers and scrolling, the track column's VRAM position, the
    number staging buffer, the coin turbo, the jump contest's scores and the
-   sprite buffers. Next: the work RAM buffers in bank $7F and the sound
-   state.
+   sprite buffers. The long addresses all four dumps share are in
+   `c/hand/long_ram.h`: the VRAM upload queue and its record fields
+   (`$7F:0000`), the track buffer, the broadcast clock, the save block and
+   the two ROM switches (`$81:800C` Stadium, `$81:800E` debug). Next: the
+   sound state and the remaining direct-page globals.
 
 ### Phase 5: merge the Stadiums
 0. ✅ Found that each build already holds two Stadiums behind `$81:800C`; the

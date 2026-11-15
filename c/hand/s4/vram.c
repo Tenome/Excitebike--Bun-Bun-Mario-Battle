@@ -5,8 +5,8 @@
  * records past offset $F4 work.
  */
 #include "hand/hand.h"
+#include "ram.h"
 
-#define QUEUE_HEAD   LONG(0x7F0000)
 
 static inline u32 q(u16 off, u16 field) { return (0x7F0000u + field + off) & 0xFFFFFF; }
 
@@ -29,9 +29,9 @@ static void begin_record(u16 off, u8 words)
 /* Close a record: link it, and step the VRAM address one tilemap row. */
 static void end_record(void)
 {
-    u16 head = rd16(QUEUE_HEAD);
+    u16 head = rd16(LONG(VQ_END));
     u16 next = (u16)(head + 0x0C + rd16(DP(0x08)));
-    wr16(QUEUE_HEAD, next);
+    wr16(LONG(VQ_END), next);
     wr16(q(head, 0x0A), next);
     A = next;                                       /* high byte stays in B */
     SET_A8(0x20); fc = 0;
@@ -62,7 +62,7 @@ void VramQueueTilesFrom(u32 list)
     wr8(DP(0x04), size >> 4);
     u16 y = 0;
     do {
-        u16 off = rd16(QUEUE_HEAD);
+        u16 off = rd16(LONG(VQ_END));
         begin_record(off, rd8(DP(0x05)));
         u16 x = off;
         do {

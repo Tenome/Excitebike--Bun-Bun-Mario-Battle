@@ -23,9 +23,9 @@ void Random_m1x1(void)
     adc8(rd8(ABS(OPVCT)));
     eor8(rd8(DP(FRAME_COUNT)));
     adc8(rd8(DP(0x64)));
-    adc8(rd8(LONG(0x7FFFFF)));              /* minute */
-    adc8(rd8(LONG(0x7FFFFA)));              /* frame within the minute */
-    adc8(rd8(LONG(0x7FFFFB)));
+    adc8(rd8(LONG(BCAST_MINUTE)));              /* minute */
+    adc8(rd8(LONG(BCAST_FRAME)));              /* frame within the minute */
+    adc8(rd8(LONG(BCAST_FRAME_HI)));
     retl();
 }
 
@@ -95,13 +95,13 @@ void DrawClock_m1x1(void)
     wr8(ABS(0x1E1E), 0x25);                 /* 5 tiles wide, 2 rows */
 
     wr8(ABS(0x1E1F), 0x50);                 /* hours */
-    u8 units = split_digits(rd8(LONG(0x7FFFF9)), ABS(0x1E1F));
+    u8 units = split_digits(rd8(LONG(BCAST_HOUR)), ABS(0x1E1F));
     wr8(ABS(0x1E20), units);
     fc = 0; adc8(0x10); wr8(ABS(0x1E25), (u8)A);
     lda8(rd8(ABS(0x1E1F))); fc = 0; adc8(0x10); wr8(ABS(0x1E24), (u8)A);
 
     wr8(ABS(0x1E22), 0x50);                 /* minutes */
-    units = split_digits(rd8(LONG(0x7FFFFF)), ABS(0x1E22));
+    units = split_digits(rd8(LONG(BCAST_MINUTE)), ABS(0x1E22));
     wr8(ABS(0x1E23), units);
     fc = 0; adc8(0x10); wr8(ABS(0x1E28), (u8)A);
     lda8(rd8(ABS(0x1E22))); fc = 0; adc8(0x10); wr8(ABS(0x1E27), (u8)A);
@@ -128,14 +128,14 @@ void DrawClock_m1x1(void)
 void Mode00_IntroWait_m1x1(void)
 {
     int skip = 0;
-    lda8(rd8(LONG(0x81800E)));
+    lda8(rd8(LONG(DEBUG_ENABLED)));
     if ((u8)A != 0) {
         lda8(rd8(DP(P1_PRESS_HI)));
         and8(0x10);
         skip = (u8)A != 0;
     }
     if (!skip) {
-        lda8(rd8(LONG(0x7FFFFF)));
+        lda8(rd8(LONG(BCAST_MINUTE)));
         cmp8((u8)A, 0x04);
         if (!fc) {
             rep(0x20);
@@ -158,7 +158,7 @@ void Mode00_IntroWait_m1x1(void)
  */
 void Mode0E_TitleWait_m1x1(void)
 {
-    lda8(rd8(LONG(0x7FFFFF)));
+    lda8(rd8(LONG(BCAST_MINUTE)));
     cmp8((u8)A, 0x04);
     if (fc) {
         lda8(0x0C);
@@ -222,7 +222,7 @@ void FadeStep_m1x1(void)
  */
 void BroadcastEventInject_m1x1(void)
 {
-    lda8(rd8(LONG(0x7FFFFF)));
+    lda8(rd8(LONG(BCAST_MINUTE)));
     cmp8((u8)A, rd8(ABS(0x00B7)));
     if (fz) goto done;
     lda8(rd8(ABS(0x0CD7)));
@@ -232,7 +232,7 @@ void BroadcastEventInject_m1x1(void)
     if (!fz) goto done;
     {
         int x = 7;
-        lda8(rd8(LONG(0x7FFFFF)));
+        lda8(rd8(LONG(BCAST_MINUTE)));
         for (; x >= 0; x--) {
             cmp8((u8)A, rd8(ABS(0x82A7 + x)));
             if (fz)
@@ -299,7 +299,7 @@ void ResetMinuteFrame_m1x1(void)
     push8((u8)A);
     rep(0x20);
     lda16(0x0000);
-    wr16(LONG(0x7FFFFA), 0x0000);
+    wr16(LONG(BCAST_FRAME), 0x0000);
     sep(0x20);
     ldx8(0x01);
     lda8(pull8());
@@ -384,7 +384,7 @@ static void fill_queue_row(u8 last, u16 tile)
     rep(0x20);
     lda16(tile);
     do {
-        wr16(LONGX(0x7F000C), tile);
+        wr16(LONGX(VQ_DATA), tile);
         X = dec8((u8)X);
         X = dec8((u8)X);
     } while (!fz);
@@ -632,7 +632,7 @@ void MergeBsxFlags_m1x1(void)
         ora8(rd8(LONG(0x11571D + i)));
         wr8(ABS(dst[i]), tsb8(rd8(ABS(dst[i]))));
     }
-    lda8(rd8(LONG(0x115716)));
+    lda8(rd8(LONG(SAVE_STADIUM)));
     for (int i = 0; i < 4; i++)
         lda8(asl8((u8)A));
     ora8(rd8(LONG(0x11571C)));

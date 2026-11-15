@@ -144,7 +144,7 @@ void ReadJoypads_m1x1(void)
  */
 void LoadCourse_m1x1(void)
 {
-    if (rd16(LONG(0x7F4000)) != 0 && (rd16(DP(FINAL_RACE)) & 0xFF) != 0) {
+    if (rd16(LONG(TRACK_BUF)) != 0 && (rd16(DP(FINAL_RACE)) & 0xFF) != 0) {
         A = rd16(DP(FINAL_RACE)) & 0xFF;
         sep(0x30);
         retl();
@@ -158,13 +158,13 @@ void LoadCourse_m1x1(void)
      * special course; done with the original's ASL/ADC so C and V match. */
     u16 index;
     if (rd16(ABS(0x0CD7)) != 0) {
-        A = asl16(rd16(LONG(0x81800C)));
+        A = asl16(rd16(LONG(STADIUM_SELECT)));
         fc = 0;
         adc16(0x0010);
         index = A;
     } else {
         wr16(DP(0x00), rd16(DP(COURSE_SLOT)) & 0xFF);
-        A = asl16(asl16(rd16(LONG(0x81800C))));
+        A = asl16(asl16(rd16(LONG(STADIUM_SELECT))));
         fc = 0;
         adc16(rd16(DP(0x00)));
         index = A = asl16(A);
@@ -210,15 +210,6 @@ void LoadCourse_m1x1(void)
 }
 
 /* BS-X handshake area at the top of WRAM ($7F:FFE0-$7F:FFFF). */
-#define BS_CLOCK_F0   LONG(0x7FFFF0)
-#define BS_CLOCK_F1   LONG(0x7FFFF1)
-#define BS_CLOCK_F2   LONG(0x7FFFF2)
-#define BS_CLOCK_F3   LONG(0x7FFFF3)
-#define BS_CHANNEL    LONG(0x7FFFF7)    /* 16-bit: opened time channel */
-#define BS_HOUR       LONG(0x7FFFF9)
-#define BS_FRAME      LONG(0x7FFFFA)    /* 16-bit: frames into the minute */
-#define BS_SYNCED     LONG(0x7FFFFC)    /* 16-bit: clock set from the stream */
-#define BS_MINUTE     LONG(0x7FFFFF)
 enum { BSX_STATUS = 0x2190, BSX_CTRL = 0x2191, BSX_DATA = 0x2192, BSX_ERR = 0x2193,
        BSX_RESET = 0x2197, BSX_CHANNEL = 0x218E };
 
@@ -228,7 +219,7 @@ static void restart_minute(u16 ret_addr, u8 a)
 {
     push16(ret_addr);
     push8(a);
-    wr16(BS_FRAME, 0);
+    wr16(LONG(BCAST_FRAME), 0);
     X = 1;
     pull8();
     pull16();
@@ -250,7 +241,7 @@ void BsxPollStream_m1x1(void)
     push8(getP());
     sep(0x30);
     X = 0;
-    if (rd8(ABS(BSX_STATUS)) != 0 && rd16(ABS(BSX_CHANNEL)) == rd16(BS_CHANNEL)) {
+    if (rd8(ABS(BSX_STATUS)) != 0 && rd16(ABS(BSX_CHANNEL)) == rd16(LONG(BS_TIME_CHAN))) {
         if ((rd8(ABS(BSX_ERR)) & 0x0C) == 0) {
             u8 b = 0;
             for (int i = 0; i < 6; i++)                /* header: 5 skipped, 6th = 1 */
@@ -265,19 +256,19 @@ void BsxPollStream_m1x1(void)
             if (ok) {
                 rd8(ABS(BSX_DATA));
                 u8 minute = rd8(ABS(BSX_DATA));
-                if (minute != rd8(BS_MINUTE))
+                if (minute != rd8(LONG(BCAST_MINUTE)))
                     restart_minute(0xF913, minute);
-                wr8(BS_MINUTE, minute);
-                wr8(BS_HOUR, rd8(ABS(BSX_DATA)));
-                wr8(BS_CLOCK_F3, rd8(ABS(BSX_DATA)));
-                wr8(BS_CLOCK_F2, rd8(ABS(BSX_DATA)));
-                wr8(BS_CLOCK_F1, rd8(ABS(BSX_DATA)));
+                wr8(LONG(BCAST_MINUTE), minute);
+                wr8(LONG(BCAST_HOUR), rd8(ABS(BSX_DATA)));
+                wr8(LONG(BSX_CLOCK_3), rd8(ABS(BSX_DATA)));
+                wr8(LONG(BSX_CLOCK_2), rd8(ABS(BSX_DATA)));
+                wr8(LONG(BSX_CLOCK_1), rd8(ABS(BSX_DATA)));
                 rd8(ABS(BSX_DATA));
                 u8 last = rd8(ABS(BSX_DATA));
-                wr8(BS_CLOCK_F0, last);
-                if (rd8(BS_SYNCED) == 0) {
+                wr8(LONG(BSX_CLOCK_0), last);
+                if (rd8(LONG(BSX_SYNCED)) == 0) {
                     restart_minute(0xF946, last);
-                    wr8(BS_SYNCED, 1);
+                    wr8(LONG(BSX_SYNCED), 1);
                 }
             }
         }
@@ -286,20 +277,20 @@ void BsxPollStream_m1x1(void)
     }
 
     /* local clock */
-    u16 frame = rd16(BS_FRAME);
+    u16 frame = rd16(LONG(BCAST_FRAME));
     if (X == 0) {
         frame++;
         if (frame == 0x0E4C) {
             wr8(DP(0xB0), (u8)(rd8(DP(0xB0)) + 1));
-            u8 minute = (u8)(rd8(BS_MINUTE) + 1);
-            wr8(BS_MINUTE, minute);
-            if (minute == 0x3C && rd8(BS_HOUR) != 0x11)
+            u8 minute = (u8)(rd8(LONG(BCAST_MINUTE)) + 1);
+            wr8(LONG(BCAST_MINUTE), minute);
+            if (minute == 0x3C && rd8(LONG(BCAST_HOUR)) != 0x11)
                 wr8(ABS(BSX_RESET), 0x80);
-            wr16(BS_SYNCED, 0);
+            wr16(LONG(BSX_SYNCED), 0);
             frame = 0;
         }
     }
-    wr16(BS_FRAME, frame);
+    wr16(LONG(BCAST_FRAME), frame);
     A = frame;
     setP(pull8());
     retl();
