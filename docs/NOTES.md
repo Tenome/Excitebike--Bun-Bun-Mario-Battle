@@ -544,4 +544,10 @@ reloaded replays the same 300 frames with identical WRAM, VRAM, CGRAM and
 OAM. 2 is the fiber driver above (interrupts mid-routine, no save states).
 The frame loop's boot finishes inside the first host frame, so its intro
 starts sooner than the other modes' (scripts that poke the minute early see
-the whole intro).
+the whole intro). Poke it at frame 2 instead (`wait 2` / `poke 1FFFF 05`):
+checked 2026-11-15 after the RAM naming, the Gen B frame loop then runs
+player select (Luigi), course preview and the race with every rider, and
+Gen A reaches the player select and the course card. The naming itself
+changes no code: with the names expanded to hex, every hand-written routine
+of all four dumps equals the pre-naming commit (d113ca7) apart from the
+intended ResetBootAll split in S2 / S3.
