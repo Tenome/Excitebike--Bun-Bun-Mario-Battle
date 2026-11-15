@@ -415,7 +415,7 @@ void DrawBigSprite_m1x1(void)
     push8((u8)Y);
     Y = rd8(DP(0x04)); nz8((u8)Y);
     lda8(rd8(DP(0x00)));
-    wr8(ABSY(0x1600), (u8)A); wr8(ABSY(0x1608), (u8)A);
+    wr8(ABSY(OAM_BUF), (u8)A); wr8(ABSY(0x1608), (u8)A);
     fc = 0; adc8(0x10);
     wr8(ABSY(0x1604), (u8)A); wr8(ABSY(0x160C), (u8)A);
     lda8(rd8(DP(0x01)));
@@ -444,7 +444,7 @@ void DrawBigSprite_m1x1(void)
     lda8(lsr8((u8)A));
     Y = (u8)A; nz8((u8)Y);
     lda8(0x02);
-    wr8(ABSY(0x1820), 0x02); wr8(ABSY(0x1821), 0x02);
+    wr8(ABSY(OAM_SIZE_BUF), 0x02); wr8(ABSY(0x1821), 0x02);
     wr8(ABSY(0x1822), 0x02); wr8(ABSY(0x1823), 0x02);
     Y = pull8(); nz8((u8)Y);
     ret();
@@ -460,7 +460,7 @@ void SpawnExhaust_m1x1(void)
     push8(0x81);
     DB = pull8(); nz8(DB);
     push8((u8)X);
-    lda8(rd8(ABS(0x0CE0)));
+    lda8(rd8(ABS(TURBO_ON)));
     if (fz) goto out;
     Y = rd8(ABS(0x1961)); nz8((u8)Y);
     lda8(rd8(ABSY(0x9444)));
@@ -501,7 +501,7 @@ void MirrorJumpRider_m1x1(void)
     Y = rd8(ABS(0x0004)); nz8((u8)Y);
     ldx8(0x10);
     do {
-        lda8(rd8(ABSY(0x1600)));
+        lda8(rd8(ABSY(OAM_BUF)));
         wr8(ABSY(0x1700), (u8)A);
         Y = inc8((u8)Y);
         X = dec8((u8)X);
@@ -522,7 +522,7 @@ void MirrorJumpRider_m1x1(void)
     fc = 0; adc8(0x40);
     Y = (u8)A; nz8((u8)Y);
     lda8(0x02);
-    wr8(ABSY(0x1820), 0x02); wr8(ABSY(0x1821), 0x02);
+    wr8(ABSY(OAM_SIZE_BUF), 0x02); wr8(ABSY(0x1821), 0x02);
     wr8(ABSY(0x1822), 0x02); wr8(ABSY(0x1823), 0x02);
     Y = rd8(ABS(0x0004)); nz8((u8)Y);
     lda8(rd8(ABSY(0x1603)));
@@ -924,7 +924,7 @@ void StepObjectX_m1x1(void);
 void ItemFlashState_m1x1(void)
 {
     lda8(rd8(DP(0x84)));
-    ora8(rd8(DP(0x60)));
+    ora8(rd8(DP(OVERHEATED)));
     if (!fz) { lda8(0x00); wr8(DP(0x5E), 0x00); ret(); return; }
     lda8(rd8(DP(0x5E)));
     if (fz) { ret(); return; }

@@ -74,9 +74,9 @@ void Mode0E_Setup_m1x1(void)
     lda8(0x19); wr8(ABS(BG3SC), 0x19);     /* BG3SC */
     lda8(0x01); wr8(ABS(BG34NBA), 0x01);     /* BG34NBA */
     lda8(0x17); wr8(ABS(SH_TM), 0x17);     /* TM shadow */
-    lda8(0x01); wr8(DP(0x8C), 0x01);
+    lda8(0x01); wr8(DP(SCROLL_HALF), 0x01);
     ldx8(0x02);
-    wr8(DP(0x92), 0x02);
+    wr8(DP(BG_SCROLL), 0x02);
     wr8(DP(0x84), 0x02);
     lda8(0x2D); push8(0x80); push16(0x8B3B); QueueSound_m1x1();
     lda8(0x45); push8(0x80); push16(0x8B41); QueueSound_m1x1();
@@ -102,10 +102,10 @@ void Mode0D_IntroText_m1x1(void)
         done = (u8)A != 0;
     }
     if (!done) {
-        lda8(rd8(DP(0x8A)));
+        lda8(rd8(DP(TIMER_A)));
         if ((u8)A == 0) {
             lda8(0x05);
-            wr8(DP(0x8A), 0x05);
+            wr8(DP(TIMER_A), 0x05);
             rep(0x20);
             u16 line = inc16(rd16(DP(0x9E)));
             wr16(DP(0x9E), line);
@@ -126,7 +126,7 @@ void Mode0D_IntroText_m1x1(void)
             push16(0x8AE6);
             VramQueueCopy_m1x1();
         }
-        wr8(DP(0x8A), dec8(rd8(DP(0x8A))));
+        wr8(DP(TIMER_A), dec8(rd8(DP(TIMER_A))));
         rep(0x20);
         u16 t = dec16(rd16(DP(MODE_TIMER)));
         wr16(DP(MODE_TIMER), t);
@@ -151,7 +151,7 @@ void Mode0D_IntroText_m1x1(void)
  */
 void SetupSpriteRow15_m1x1(void)
 {
-    wr8(ABS(0x1958), inc8(rd8(ABS(0x1958))));
+    wr8(ABS(SPRITES_FROZEN), inc8(rd8(ABS(SPRITES_FROZEN))));
     ldx8(0x0E);
     do {
         lda8((u8)X);

@@ -734,7 +734,7 @@ void RiderLaneBand_m1x1(void)
  */
 void SetupSpriteRow15_m1x1(void)
 {
-    wr8(ABS(0x1958), inc8(rd8(ABS(0x1958))));
+    wr8(ABS(SPRITES_FROZEN), inc8(rd8(ABS(SPRITES_FROZEN))));
     ldx8(0x0E);
     do {
         lda8((u8)X);

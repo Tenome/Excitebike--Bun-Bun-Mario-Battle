@@ -189,7 +189,7 @@ void FadeStep_m1x1(void)
     if (fn) {
         for (int a = 0x92; a <= 0x95; a++)
             wr8(DP(a), 0);
-        wr8(ABS(0x1958), 0);
+        wr8(ABS(SPRITES_FROZEN), 0);
         wr8(ABS(0x1E0C), 0);
         lda8(0x80);
         push8(0x80); push16(0x8348); QueueSound_m1x1();
@@ -266,7 +266,7 @@ void BroadcastEventInject_m1x1(void)
             break;
         }
         rep(0x20);
-        Y = rd16(ABS(0x08A4)) & 0xFF;
+        Y = rd16(ABS(RIDER_LANE_NUM)) & 0xFF;
         A = Y;
         sep(0x20);
         u8 item = rd8(ABS(0x82AF + Y));
@@ -523,7 +523,7 @@ void InitFadeState_m1x1(void)
 {
     lda8(0x0F); wr8(DP(0x2C), 0x0F);
     lda8(0x80); wr8(ABS(SH_INIDISP), 0x80);
-    wr8(DP(0x92), 0);
+    wr8(DP(BG_SCROLL), 0);
     lda8(0x01);
     for (int a = 0x1959; a <= 0x195C; a++) {
         wr8(ABS(a), (u8)A);
@@ -658,7 +658,7 @@ void EndScreenTimeout_m1x1(void)
     lda8(0x03); wr8(DP(0x01), 0x03);
     push16(0x9E3F); VramQueueCopy_m1x1();
     lda8(0x09);
-    wr8(ABS(0x0453), 0x09);
+    wr8(ABS(END_STEP), 0x09);
     ret();
 }
 

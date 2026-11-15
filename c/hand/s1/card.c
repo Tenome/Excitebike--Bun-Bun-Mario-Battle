@@ -66,7 +66,7 @@ void Mode02_Setup_m1x1(void)
 
     /* "course N" tiles: list at $03D2 = [size $42][8 tiles] */
     lda8(0x42);
-    wr8(ABS(0x03D2), 0x42);                            /* 2 wide, 4 rows */
+    wr8(ABS(DIGIT_BUF), 0x42);                            /* 2 wide, 4 rows */
     u8 t = (u8)((rd8(DP(0x7C)) << 1) | 0x10);
     lda8(t);
     for (int row = 0; row < 4; row++) {

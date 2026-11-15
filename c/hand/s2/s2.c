@@ -54,10 +54,10 @@ void SetupJumpContest_m1x1(void)
         wr8(ABSX(0x0C13), 0x3B); wr8(ABSX(0x0C53), 0x3B); wr8(ABSX(0x0C93), 0x3B);
         X = dec8((u8)X);
     } while (!fn);
-    lda8(0x34); wr8(ABS(0x0270), 0x34);
+    lda8(0x34); wr8(ABS(TRACK_ROW_PTR), 0x34);
     lda8(0x0A); wr8(ABS(0x0273), 0x0A);
-    lda8(0x05); wr8(ABS(0x0272), 0x05);
-    lda8(0x74); wr8(ABS(0x0271), 0x74);
+    lda8(0x05); wr8(ABS(TRACK_VRAM_HALF), 0x05);
+    lda8(0x74); wr8(ABS(TRACK_VRAM_COL), 0x74);
     lda8(0x08); wr8(ABS(RIDER_WHEEL), 0x08);
     lda8(0x09); wr8(ABS(RIDER_COLUMN), 0x09);
     lda8(0x30); wr8(ABS(RIDER_X), 0x30);
@@ -103,7 +103,7 @@ void ResultsBonusCount_m1x1(void)
     if (fz) {
         ldy8(0x0E);
         do {
-            lda8(rd8(ABSY(0x086E)));
+            lda8(rd8(ABSY(PLAYER_PLACE)));
             lda8(dec8((u8)A));
             if (fz) break;
             Y = dec8((u8)Y);
@@ -161,7 +161,7 @@ void ResultsBonusCount_m1x1(void)
         wr8(ABS(0x03D5), 0xFC); wr8(ABS(0x03D6), 0xFC);
         wr8(ABS(0x03DA), 0xFC); wr8(ABS(0x03DB), 0xFC);
     }
-    lda8(0xFC); wr8(ABS(0x03D3), 0xFC); wr8(ABS(0x03D8), 0xFC);
+    lda8(0xFC); wr8(ABS(DIGIT_ROW), 0xFC); wr8(ABS(0x03D8), 0xFC);
     lda8(0x04); wr8(DP(MODE_TIMER), 0x04);
     rep(0x20);
     lda16(0x1CB6); wr16(DP(0x00), 0x1CB6);
@@ -191,12 +191,12 @@ tick:
 void TemperatureGauge_m1x1(void)
 {
     lda8(rd8(DP(0x84)));
-    ora8(rd8(ABS(0x0CE0)));
+    ora8(rd8(ABS(TURBO_ON)));
     u8 top;
     if (!fz) goto off;
     lda8(rd8(ABS(0x0940)));
     if (!fz) {
-        lda8(rd8(DP(0x60)));
+        lda8(rd8(DP(OVERHEATED)));
         lda8(lsr8((u8)A));
         if (fc) goto off;
         top = 0x01;
@@ -230,7 +230,7 @@ void TemperatureGauge_m1x1(void)
     lda8(rd8(ABS(ENGINE_HEAT)));
     cmp8((u8)A, 0x20);
     if (fc) {
-        wr8(DP(0x60), (u8)A);
+        wr8(DP(OVERHEATED), (u8)A);
         wr8(ABS(0x0940), (u8)A);
         push8((u8)A);
         lda8(0x2E); push8(0x80); push16(0xCF78); QueueSound_m1x1();
@@ -243,7 +243,7 @@ void TemperatureGauge_m1x1(void)
     if (warn) {
         lda8(rd8(DP(0xA2)));
         if (fz) {
-            lda8(rd8(ABS(0x0CE0)));
+            lda8(rd8(ABS(TURBO_ON)));
             if (fz) { lda8(0x2C); push8(0x80); push16(0xCF95); QueueSound_m1x1(); }
             wr8(DP(0xA2), (u8)A);   /* Stadium 2 has no LDA #$01 here: $A2 takes A as it is */
         }
@@ -261,11 +261,11 @@ draw:
     wr8(DP(0x01), (u8)A);
     lda8(rd8(ABS(ENGINE_HEAT)));
     fc = 0; adc8(0x58);
-    X = rd8(ABS(0x0CE0)); nz8((u8)X);
+    X = rd8(ABS(TURBO_ON)); nz8((u8)X);
     if (!fz) lda8(0x78);
     wr8(DP(0x00), (u8)A);
     ldx8(0x0C);
-    lda8(rd8(ABS(0x0CE0)));
+    lda8(rd8(ABS(TURBO_ON)));
     lda8(asl8((u8)A)); lda8(asl8((u8)A));
     Y = (u8)A; nz8((u8)Y);
     do {
@@ -319,8 +319,8 @@ void EndScreenCode_m1x1(void)
     lda8(rd8(DP(P1_PRESS_LO)));
     and8(0x80);
     if (fz) { ret(); return; }
-    wr8(ABS(0x0453), inc8(rd8(ABS(0x0453))));
-    wr8(ABS(0x0453), inc8(rd8(ABS(0x0453))));
+    wr8(ABS(END_STEP), inc8(rd8(ABS(END_STEP))));
+    wr8(ABS(END_STEP), inc8(rd8(ABS(END_STEP))));
     lda8(0x20); wr8(DP(MODE_TIMER), 0x20);
     end_box2(0x80, 0xD9, 0x9B49);
     rep(0x20);
@@ -359,7 +359,7 @@ void EndScreenChoice_m1x1(void)
         lda8(0x43);
         push8(0x80); push16(0x9BA8); QueueSound_m1x1();
     }
-    lda8(rd8(ABS(0x0454))); wr8(ABS(0x0453), (u8)A);
+    lda8(rd8(ABS(0x0454))); wr8(ABS(END_STEP), (u8)A);
     lda8(0x20); wr8(DP(MODE_TIMER), 0x20);
     end_box2(0x80, 0xD9, 0x9BD1);
     ret();
@@ -430,8 +430,8 @@ void BroadcastTotals_m1x1(void)
     lda8(0x17); wr8(ABS(SH_TM), 0x17);
     wr8(ABS(FADE_STATE), inc8(rd8(ABS(FADE_STATE))));
     wr8(DP(MODE_ACTIVE), inc8(rd8(DP(MODE_ACTIVE))));
-    wr8(ABS(0x0453), 0);
-    wr8(ABS(0x0452), 0);
+    wr8(ABS(END_STEP), 0);
+    wr8(ABS(ENTRY_CURSOR), 0);
     lda8(0x20); wr8(DP(MODE_TIMER), 0x20);
     lda8(0xD8); wr8(DP(0x9A), 0xD8);
     ret();

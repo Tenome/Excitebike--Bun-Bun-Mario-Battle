@@ -97,10 +97,40 @@
 #define RIDER_X_FRAC    0x0914  /* track position fraction */
 #define RIDER_BAND      0x0958  /* which band of the track the rider is in */
 #define RIDER_WANT_LEAN 0x0971  /* CPU rider's wanted lean */
+#define RIDER_LANE_NUM  0x08A4  /* lane 5..1 from the lane position */
 
 #define RIDER_DIST      0x085E  /* words, 2X: distance to the player */
 #define RANK_ORDER      0x0950  /* 8 bytes: rider numbers by lane position */
 #define ENGINE_HEAT     0x0990  /* the player's engine temperature */
+
+/* ---- timers, scrolling, the HUD ---- */
+#define TIMER_A         0x008A  /* a mode's second timer (the start countdown's beeps) */
+#define TIMER_B         0x008C  /* a mode's third timer (the waving pose) */
+#define SCROLL_HALF     0x0090  /* BG1 nametable half, flips on each scroll carry */
+#define BG_SCROLL       0x009A  /* BG1 horizontal scroll (+= the player's step) */
+#define SCROLL_PAGE     0x009D  /* scroll pages passed (high byte of SCROLL_X) */
+#define OVERHEATED      0x0060  /* the engine is overheated (odd) */
+#define JUMP_STATE      0x00C7  /* jump contest: 1 the drop, 2 the run-out */
+#define PLAYER_PLACE    0x086E  /* the player's place (8 minus the riders beaten) */
+#define COIN_COUNT      0x0CDF  /* coins collected (5 win the turbo) */
+#define TURBO_ON        0x0CE0  /* the coin turbo is running */
+#define ENGINE_PITCH    0x198A  /* engine sound pitch, sent to APU port 2 */
+#define DIGIT_BUF       0x03CF  /* number staging: the size byte, then two rows of tiles */
+#define DIGIT_ROW       0x03D0  /* the upper row of DIGIT_BUF (the lower row is +$10) */
+#define TRACK_ROW_PTR   0x0276  /* the track column's VRAM row pointer */
+#define TRACK_VRAM_COL  0x0277  /* the track column's VRAM column (wraps at $20) */
+#define TRACK_VRAM_HALF 0x0278  /* the track column's nametable half (^ 4) */
+#define END_STEP        0x0450  /* end screen: its step (table $80:98C8) */
+#define ENTRY_CURSOR    0x044F  /* end screen: the digit being entered */
+#define JUMP_LAST_DIST  0x1567  /* word: the last jump distance (half-units) */
+#define JUMP_COUNT      0x1569  /* word: the jump count */
+#define JUMP_RANK       0x156B  /* the jump's rank ($FF none) */
+#define JUMP_BEST_SCORE 0x156D  /* word: the best score */
+
+/* ---- sprites ---- */
+#define OAM_BUF         0x1600  /* $0200 bytes: the OAM low table image */
+#define OAM_SIZE_BUF    0x1820  /* 128 size bytes, packed into the high table */
+#define SPRITES_FROZEN  0x1958  /* leave the sprites where they are */
 
 /* ---- objects (the jump contest's and the bonus screens' actors):
  * 16-byte arrays of 8 word slots, index X = 2 * slot (14-0); SpawnObject

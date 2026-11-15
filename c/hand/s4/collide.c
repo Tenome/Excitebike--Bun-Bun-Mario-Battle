@@ -251,25 +251,25 @@ meet:
             lda8(rd8(ABS(RIDER_SPEED_LO)));
             ora8(rd8(ABS(RIDER_SPEED_HI)));
             if (!fz) {
-                wr8(ABS(0x0CDF), inc8(rd8(ABS(0x0CDF))));
+                wr8(ABS(COIN_COUNT), inc8(rd8(ABS(COIN_COUNT))));
                 sound80(0x29, 0xC85E);
                 push8((u8)Y);
                 push8((u8)X);
                 push8(0x80); push16(0xC864); CollectCoin_m1x1();
                 X = pull8();
                 Y = pull8(); nz8((u8)Y);
-                lda8(rd8(ABS(0x0CDF)));
+                lda8(rd8(ABS(COIN_COUNT)));
                 cmp8((u8)A, 0x05);
                 if (fz) {
                     sound80(0x2D, 0xC87C);
                     lda8(0x01);
-                    wr8(ABS(0x0CE0), 0x01);
+                    wr8(ABS(TURBO_ON), 0x01);
                     push8(0x80); push16(0xC885); QueueSoundB_m1x1();
                     lda8(0x20);
                     wr8(ABS(ENGINE_HEAT), 0x20);
                 } else if (fc) {
                     lda8(0x06);
-                    wr8(ABS(0x0CDF), 0x06);
+                    wr8(ABS(COIN_COUNT), 0x06);
                 }
             }
         }

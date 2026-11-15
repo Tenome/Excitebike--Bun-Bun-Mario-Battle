@@ -2,6 +2,7 @@
  * Stadium 1 per-frame housekeeping, hand-written (called from the main loop).
  */
 #include "hand/hand.h"
+#include "ram.h"
 
 /*
  * $80:B4AE StepLfsr (M=1, X=1, RTS). One step of the 96-bit shift register
@@ -28,7 +29,7 @@ void StepLfsr_m1x1(void)
  */
 void ClearOamBuffer_m1x1(void)
 {
-    lda8(rd8(ABS(0x1958)));
+    lda8(rd8(ABS(SPRITES_FROZEN)));
     if ((u8)A != 0) {
         ret();
         return;

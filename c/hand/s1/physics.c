@@ -31,16 +31,16 @@ void RiderShadowY_m1x1(void)
  */
 void ScrollByPlayerSpeed_m1x1(void)
 {
-    lda8(rd8(DP(0x92)));
+    lda8(rd8(DP(BG_SCROLL)));
     fc = 0;
     adc8(rd8(ABS(RIDER_STEP)));
-    wr8(DP(0x92), (u8)A);
+    wr8(DP(BG_SCROLL), (u8)A);
     wr8(DP(SCROLL_X), (u8)A);
     if (!fc) { ret(); return; }
-    lda8(rd8(DP(0x8C)));
+    lda8(rd8(DP(SCROLL_HALF)));
     eor8(0x01);
-    wr8(DP(0x8C), (u8)A);
-    wr8(DP(0x95), inc8(rd8(DP(0x95))));
+    wr8(DP(SCROLL_HALF), (u8)A);
+    wr8(DP(SCROLL_PAGE), inc8(rd8(DP(SCROLL_PAGE))));
     ret();
 }
 

@@ -42,7 +42,7 @@ void RaceFinishStep_m1x1(void)
         lda8(0x00);
         wr8(ABS(0x092D), 0x00);
         wr8(ABS(0x0940), 0x00);
-        wr8(DP(0x60), 0x00);
+        wr8(DP(OVERHEATED), 0x00);
         X = rd8(DP(0x84)); nz8((u8)X);
         X = dec8((u8)X);
         if (!fz) { ret(); return; }
@@ -195,7 +195,7 @@ void Mode11_m1x1(void)
 void Mode0F_EndScreen_m1x1(void)
 {
     push16(0x98B4); BsxEndIfFlagged_m1x1();
-    lda8(rd8(ABS(0x0450)));
+    lda8(rd8(ABS(END_STEP)));
     lda8(asl8((u8)A));
     X = (u8)A; nz8((u8)X);
     lda8(rd8(ABSX(0x98C8))); wr8(DP(0x00), (u8)A);
@@ -308,7 +308,7 @@ static void overheat_dust(void)
     lda8(rd8(DP(FRAME_COUNT)));
     and8(0x0F);
     if (fz) { push8(0x80); push16(0xABB5); SpawnDustPuff_m1x1(); }
-    lda8(rd8(DP(0x60)));
+    lda8(rd8(DP(OVERHEATED)));
     lda8(lsr8((u8)A));
     if (fc) {
         lda8(0x58); wr8(DP(0x00), 0x58);
@@ -326,10 +326,10 @@ static void overheat_dust(void)
  * state 5 unless set). */
 void OverheatStep_m1x1(void)
 {
-    lda8(rd8(DP(0x60)));
+    lda8(rd8(DP(OVERHEATED)));
     ora8(rd8(ABS(0x0940)));
     if (fz) { ret(); return; }
-    lda8(rd8(DP(0x60)));
+    lda8(rd8(DP(OVERHEATED)));
     cmp8((u8)A, 0x08);
     if (fz) {
         lda8(0x00); wr8(ABS(0x0940), 0x00);
@@ -370,7 +370,7 @@ void OverheatStep_m1x1(void)
 void ItemFlashState_m1x1(void)
 {
     lda8(rd8(DP(0x84)));
-    ora8(rd8(DP(0x60)));
+    ora8(rd8(DP(OVERHEATED)));
     if (!fz) { lda8(0x00); wr8(DP(0x5E), 0x00); ret(); return; }
     lda8(rd8(DP(0x5E)));
     if (fz) { ret(); return; }

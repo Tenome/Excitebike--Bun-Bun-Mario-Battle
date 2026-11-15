@@ -102,10 +102,33 @@
 #define RIDER_RUNOUT    0x090C  /* run-out column past the finish */
 #define RIDER_BAND      0x0958  /* which band of the track the rider is in */
 #define RIDER_WANT_LEAN 0x0971  /* CPU rider's wanted lean */
+#define RIDER_LANE_NUM  0x08A4  /* lane 5..1 from the lane position */
 
 #define RIDER_DIST      0x085E  /* words, 2X: distance to the player */
 #define RANK_ORDER      0x0950  /* 8 bytes: rider numbers by lane position */
 #define ENGINE_HEAT     0x0990  /* the player's engine temperature */
+
+/* ---- timers, scrolling, the HUD ---- */
+#define TIMER_A         0x008A  /* a mode's second timer (the start countdown's beeps) */
+#define SCROLL_HALF     0x008C  /* BG1 nametable half, flips on each scroll carry */
+#define BG_SCROLL       0x0092  /* BG1 horizontal scroll (+= the player's step) */
+#define SCROLL_PAGE     0x0095  /* scroll pages passed (high byte of SCROLL_X) */
+#define OVERHEATED      0x0060  /* the engine is overheated (odd) */
+#define PLAYER_PLACE    0x086E  /* the player's place (8 minus the riders beaten) */
+#define COIN_COUNT      0x0CDF  /* coins collected (5 win the turbo) */
+#define TURBO_ON        0x0CE0  /* the coin turbo is running */
+#define DIGIT_BUF       0x03D2  /* number staging: the size byte, then two rows of tiles */
+#define DIGIT_ROW       0x03D3  /* the upper row of DIGIT_BUF (the lower row is +$10) */
+#define TRACK_ROW_PTR   0x0270  /* the track column's VRAM row pointer */
+#define TRACK_VRAM_COL  0x0271  /* the track column's VRAM column (wraps at $20) */
+#define TRACK_VRAM_HALF 0x0272  /* the track column's nametable half (^ 4) */
+#define END_STEP        0x0453  /* end screen: its step */
+#define ENTRY_CURSOR    0x0452  /* end screen: the digit being entered */
+
+/* ---- sprites ---- */
+#define OAM_BUF         0x1600  /* $0200 bytes: the OAM low table image */
+#define OAM_SIZE_BUF    0x1820  /* 128 size bytes, packed into the high table */
+#define SPRITES_FROZEN  0x1958  /* leave the sprites where they are */
 
 /* ---- objects (the jump contest's and the bonus screens' actors):
  * 16-byte arrays of 8 word slots, index X = 2 * slot (14-0); SpawnObject

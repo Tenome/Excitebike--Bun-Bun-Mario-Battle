@@ -126,11 +126,11 @@ static void queue_big_digit(u16 jsr_ret, u8 first)
  * draw it as a big digit (tiles $30 + (place - 1) * 2) at VRAM $1859. */
 void DrawPlace_m1x1(void)
 {
-    lda8(rd8(ABS(0x086E)));
+    lda8(rd8(ABS(PLAYER_PLACE)));
     if ((u8)A == 0) { ret(); return; }
     lda8(0x59); wr8(DP(0x00), 0x59);
     lda8(0x18); wr8(DP(0x01), 0x18);
-    lda8(rd8(ABS(0x086E)));
+    lda8(rd8(ABS(PLAYER_PLACE)));
     SET_A8(dec8((u8)A));
     SET_A8(asl8((u8)A));
     fc = 0; adc8(0x30);
@@ -190,12 +190,12 @@ void RaceSetup_m1x1(void)
             wr8(ABS(0x09D3 + t * 0x80 + x), 0x3B);
     X = 0xFF;
     lda8(0xBF); wr8(ABS(0x1601), 0xBF);
-    lda8(0xF7); wr8(ABS(0x1600), 0xF7);
+    lda8(0xF7); wr8(ABS(OAM_BUF), 0xF7);
     lda8(0xFF); wr8(ABS(0x1602), 0xFF);
-    lda8(0x34); wr8(ABS(0x0270), 0x34);
-    lda8(0x14); wr8(ABS(0x0271), 0x14);
+    lda8(0x34); wr8(ABS(TRACK_ROW_PTR), 0x34);
+    lda8(0x14); wr8(ABS(TRACK_VRAM_COL), 0x14);
     lda8(0x0A); wr8(ABS(0x0273), 0x0A);
-    lda8(0x05); wr8(ABS(0x0272), 0x05);
+    lda8(0x05); wr8(ABS(TRACK_VRAM_HALF), 0x05);
     ret();
 }
 
@@ -209,13 +209,13 @@ void RaceSetup_m1x1(void)
  */
 void UpdatePlayerPlace_m1x1(void)
 {
-    if (rd8(ABS(0x086E)) == 0 || rd8(DP(0x84)) != 0 || rd8(DP(RACE_STARTED)) == 0) {
+    if (rd8(ABS(PLAYER_PLACE)) == 0 || rd8(DP(0x84)) != 0 || rd8(DP(RACE_STARTED)) == 0) {
         ret();
         return;
     }
     rep(0x20);
     A = 0x0008;
-    wr16(ABS(0x086E), 0x0008);
+    wr16(ABS(PLAYER_PLACE), 0x0008);
     u16 me = rd16(ABS(RIDER_DIST));
     A = me;
     for (u8 y = 0x0E; y != 0; y -= 2) {
@@ -223,7 +223,7 @@ void UpdatePlayerPlace_m1x1(void)
         u16 other = rd16(ABS(0x085E + y));
         cmp16(me, other);
         if (me > other)
-            wr16(ABS(0x086E), dec16(rd16(ABS(0x086E))));
+            wr16(ABS(PLAYER_PLACE), dec16(rd16(ABS(PLAYER_PLACE))));
     }
     Y = 0;
     nz8(0);
@@ -318,9 +318,9 @@ void PlayerOverheatWarn_m1x1(void)
 {
     lda8((u8)X);
     ora8(rd8(ABS(0x0940)));
-    ora8(rd8(DP(0x60)));
+    ora8(rd8(DP(OVERHEATED)));
     ora8(rd8(ABS(0x01E8 + X)));
-    ora8(rd8(ABS(0x0CE0)));
+    ora8(rd8(ABS(TURBO_ON)));
     if (!fz) { ret(); return; }
     lda8(0x08);
     wr8(ABS(ENGINE_HEAT), 0x08);

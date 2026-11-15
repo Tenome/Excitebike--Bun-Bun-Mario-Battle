@@ -41,8 +41,8 @@ void EndScreenCode_m1x1(void)
     lda8(rd8(DP(P1_PRESS_LO)));
     and8(0x80);
     if (fz) { ret(); return; }
-    wr8(ABS(0x0450), inc8(rd8(ABS(0x0450))));
-    wr8(ABS(0x0450), inc8(rd8(ABS(0x0450))));
+    wr8(ABS(END_STEP), inc8(rd8(ABS(END_STEP))));
+    wr8(ABS(END_STEP), inc8(rd8(ABS(END_STEP))));
     lda8(0x20); wr8(DP(MODE_TIMER), 0x20);
     end_box3(0x80, 0x59, 0x9A43);
     rep(0x20);
@@ -81,7 +81,7 @@ void EntryMenuStep_m1x1(void)
         lda8(0x43);
         push8(0x80); push16(0x9AA2); QueueSoundB_m1x1();
     }
-    lda8(rd8(ABS(0x0451))); wr8(ABS(0x0450), (u8)A);
+    lda8(rd8(ABS(0x0451))); wr8(ABS(END_STEP), (u8)A);
     lda8(0x20); wr8(DP(MODE_TIMER), 0x20);
     end_box3(0x80, 0x59, 0x9ACB);
     ret();
@@ -177,9 +177,9 @@ void TitleScrollStep_m1x1(void)
         and8(0x10);
         if (!fz) goto leave;
     }
-    lda8(rd8(DP(0x8A)));
+    lda8(rd8(DP(TIMER_A)));
     if (fz) {
-        lda8(0x05); wr8(DP(0x8A), 0x05);
+        lda8(0x05); wr8(DP(TIMER_A), 0x05);
         rep(0x20);
         wr16(DP(0xA6), inc16(rd16(DP(0xA6))));
         lda16(rd16(DP(0xA6)));
@@ -200,7 +200,7 @@ void TitleScrollStep_m1x1(void)
         sep(0x20);
         push16(0x86C8); QueueTileRows_m1x1();
     }
-    wr8(DP(0x8A), dec8(rd8(DP(0x8A))));
+    wr8(DP(TIMER_A), dec8(rd8(DP(TIMER_A))));
     rep(0x20);
     {
         u16 t = dec16(rd16(DP(MODE_TIMER)));
@@ -225,7 +225,7 @@ leave:
  * adds the landing on tile $A7. */
 void ReadBonusTrack_m1x1(void)
 {
-    lda8(rd8(DP(0xC7)));
+    lda8(rd8(DP(JUMP_STATE)));
     cmp8((u8)A, 0x02);
     if (fz) wr8(ABS(RIDER_INPUT), 0);
     X = rd8(ABS(RIDER_COLUMN)); nz8((u8)X);
@@ -268,14 +268,14 @@ void ReadBonusTrack_m1x1(void)
         cmp16(A, 0x0100);
         sep(0x20);
         if (fz) {
-            lda8(0x02); wr8(DP(0xC7), 0x02);
+            lda8(0x02); wr8(DP(JUMP_STATE), 0x02);
             lda8(0x80); wr8(ABS(RIDER_Y), 0x80);
             wr8(ABS(RIDER_AIR), 0); wr8(ABS(0x0226), 0); wr8(ABS(RIDER_HEIGHT), 0);
             ret();
             return;
         }
     }
-    lda8(0x01); wr8(DP(0xC7), 0x01);
+    lda8(0x01); wr8(DP(JUMP_STATE), 0x01);
     rep(0x20);
     lda16(rd16(DP(SCROLL_X)));
     wr16(DP(0xC8), A);

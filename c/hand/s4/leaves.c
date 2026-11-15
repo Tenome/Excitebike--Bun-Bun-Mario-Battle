@@ -34,13 +34,13 @@ void QueueResultsRow_m1x1(void)
  * (while non-zero) and send it to APUIO2. */
 void FadeApuVolume_m1x1(void)
 {
-    lda8(rd8(ABS(0x198A)));
+    lda8(rd8(ABS(ENGINE_PITCH)));
     if (!fz) {
         fc = 1;
         sbc8(0x04);
-        wr8(ABS(0x198A), (u8)A);
+        wr8(ABS(ENGINE_PITCH), (u8)A);
     }
-    lda8(rd8(ABS(0x198A)));
+    lda8(rd8(ABS(ENGINE_PITCH)));
     wr8(ABS(APUIO2), (u8)A);
     ret();
 }
@@ -128,16 +128,16 @@ void DispatchBy85B_m1x1(void)
  * $9D. */
 void ScrollByPlayerSpeed_m1x1(void)
 {
-    lda8(rd8(DP(0x9A)));
+    lda8(rd8(DP(BG_SCROLL)));
     fc = 0;
     adc8(rd8(ABS(RIDER_STEP)));
-    wr8(DP(0x9A), (u8)A);
+    wr8(DP(BG_SCROLL), (u8)A);
     wr8(DP(SCROLL_X), (u8)A);
     if (fc) {
-        lda8(rd8(DP(0x90)));
+        lda8(rd8(DP(SCROLL_HALF)));
         eor8(0x01);
-        wr8(DP(0x90), (u8)A);
-        wr8(DP(0x9D), inc8(rd8(DP(0x9D))));
+        wr8(DP(SCROLL_HALF), (u8)A);
+        wr8(DP(SCROLL_PAGE), inc8(rd8(DP(SCROLL_PAGE))));
     }
     ret();
 }
@@ -212,7 +212,7 @@ void AddBcdDigits_m1x1(void)
     do {
         lda8(rd8(ABSX(0x154A)));
         fc = 0;
-        adc8(rd8(ABSX(0x03D0)));
+        adc8(rd8(ABSX(DIGIT_ROW)));
         cmp8((u8)A, 0x0A);
         if (fc) {
             sbc8(0x0A);
@@ -397,7 +397,7 @@ static void hundreds(void)
 {
     rep(0x20);
     ldy8(0x00);
-    lda16(rd16(ABS(0x1569)));
+    lda16(rd16(ABS(JUMP_COUNT)));
     for (;;) {
         cmp16(A, 0x00C8);
         if (!fc) break;
@@ -418,7 +418,7 @@ void Hundreds_m0x1(void) { hundreds(); }
  * $79 = $75 = 1, $77 = 0, $A2 = 8. */
 void SetupJumpScreen_m1x1(void)
 {
-    lda8(0x08); wr8(ABS(0x0450), 0x08);
+    lda8(0x08); wr8(ABS(END_STEP), 0x08);
     lda8(0x02); wr8(ABS(SH_TM), 0x02); wr8(ABS(SH_TS), 0x02);
     lda8(0x25); wr8(ABS(BGMODE), 0x25);
     lda8(0x01); wr8(DP(0x79), 0x01); wr8(DP(MODE_ACTIVE), 0x01);
@@ -501,7 +501,7 @@ void SetupCourseScreen_m1x1(void)
     lda8(0x43); wr8(ABS(BG2SC), 0x43);
     lda8(0x55); wr8(ABS(BG12NBA), 0x55);
     lda8(0x30); wr8(ABS(RIDER_HEIGHT), 0x30);
-    wr8(ABS(0x1958), 0);
+    wr8(ABS(SPRITES_FROZEN), 0);
     ret();
 }
 

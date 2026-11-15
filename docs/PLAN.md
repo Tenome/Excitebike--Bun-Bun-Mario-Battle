@@ -146,8 +146,11 @@ The rest of the 1 MB is graphics, tracks, music and other data.
    (`c/hand/snes_regs.h`), the game-flow globals, the PPU shadows and 37
    rider fields (35 in Gen A) for all four dumps; `tools/ramname.py` writes them into the
    address operands (about 2,700 in S1 and S4) and `tools/port_hand.py` turns
-   them back into hex before it translates a routine. Next: the object slots,
-   the track buffers and the HUD.
+   them back into hex before it translates a routine. Also named: the object
+   slots, the timers and scrolling, the track column's VRAM position, the
+   number staging buffer, the coin turbo, the jump contest's scores and the
+   sprite buffers. Next: the work RAM buffers in bank $7F and the sound
+   state.
 
 ### Phase 5: merge the Stadiums
 0. ✅ Found that each build already holds two Stadiums behind `$81:800C`; the

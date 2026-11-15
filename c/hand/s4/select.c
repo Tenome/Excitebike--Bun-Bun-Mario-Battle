@@ -441,7 +441,7 @@ void SelectTransition_m1x1(void)
     if (fz) {
         lda8(rd8(ABS(0x198B)));
         if (fz) {
-            wr8(DP(0x90), 0);
+            wr8(DP(SCROLL_HALF), 0);
             lda8(0x17);
             wr8(ABS(SH_TM), 0x17);
         }
@@ -473,11 +473,11 @@ void SelectTimer_m1x1(void)
     ora8(0x10);
     wr8(ABS(0x03D3), (u8)A);
     lda8(rd8(DP(0x00)));
-    wr8(ABS(0x03D0), (u8)A);
+    wr8(ABS(DIGIT_ROW), (u8)A);
     ora8(0x10);
     wr8(ABS(0x03D2), (u8)A);
     lda8(0x22);
-    wr8(ABS(0x03CF), 0x22);
+    wr8(ABS(DIGIT_BUF), 0x22);
     rep(0x20);
     lda16(0x1A8F); wr16(DP(0x00), 0x1A8F);
     lda16(0x03CF); wr16(DP(0x02), 0x03CF);
@@ -600,7 +600,7 @@ void SelectMain_m1x1(void)
         if (!fz) goto tail;
     }
     /* the choice */
-    wr8(DP(0x90), inc8(rd8(DP(0x90))));
+    wr8(DP(SCROLL_HALF), inc8(rd8(DP(SCROLL_HALF))));
     wr8(ABS(0x198B), inc8(rd8(ABS(0x198B))));
     lda8(0x15);
     wr8(ABS(SH_TM), 0x15);
