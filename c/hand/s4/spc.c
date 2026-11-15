@@ -122,7 +122,7 @@ void StartCredits_m1x1(void)
     rep(0x20);
     lda16(0xFFFF); wr16(DP(PIC_SCROLL), 0xFFFF);
     lda16(0x0090); wr16(ABS(PALETTE_BUF), 0x0090);
-    lda16(0x0020); wr16(ABS(0x1C01), 0x0020);
+    lda16(0x0020); wr16(ABS(PALETTE_BUF + 0x01), 0x0020);
     sep(0x20);
     wr8(ABS(PALETTE_DIRTY), inc8(rd8(ABS(PALETTE_DIRTY))));
     lda8(0x10); wr8(ABS(APUIO0), 0x10);

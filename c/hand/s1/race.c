@@ -189,9 +189,9 @@ void RaceSetup_m1x1(void)
         for (int t = 0; t < 6; t++)
             wr8(ABS(0x09D3 + t * 0x80 + x), 0x3B);
     X = 0xFF;
-    lda8(0xBF); wr8(ABS(0x1601), 0xBF);
+    lda8(0xBF); wr8(ABS(OAM_BUF + 0x01), 0xBF);
     lda8(0xF7); wr8(ABS(OAM_BUF), 0xF7);
-    lda8(0xFF); wr8(ABS(0x1602), 0xFF);
+    lda8(0xFF); wr8(ABS(OAM_BUF + 0x02), 0xFF);
     lda8(0x34); wr8(ABS(TRACK_ROW_PTR), 0x34);
     lda8(0x14); wr8(ABS(TRACK_VRAM_COL), 0x14);
     lda8(0x0A); wr8(ABS(0x0273), 0x0A);

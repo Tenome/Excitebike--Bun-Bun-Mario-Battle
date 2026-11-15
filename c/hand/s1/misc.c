@@ -318,7 +318,7 @@ void SumBytes0850_m1x1(void)
         if (fn) break;
     }
     and8(0x3F);
-    wr8(ABS(0x085B), (u8)A);
+    wr8(ABS(ENTRY_CODE + 0x0B), (u8)A);
     retl();
 }
 
@@ -636,7 +636,7 @@ void MergeBsxFlags_m1x1(void)
     for (int i = 0; i < 4; i++)
         lda8(asl8((u8)A));
     ora8(rd8(LONG(0x11571C)));
-    wr8(ABS(0x0859), tsb8(rd8(ABS(0x0859))));
+    wr8(ABS(ENTRY_CODE + 0x09), tsb8(rd8(ABS(ENTRY_CODE + 0x09))));
     retl();
 }
 

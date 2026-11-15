@@ -469,13 +469,13 @@ void SelectTimer_m1x1(void)
         wr8(DP(0x00), inc8(rd8(DP(0x00))));
         WAIT_TICK();
     }
-    wr8(ABS(0x03D1), (u8)A);
+    wr8(ABS(DIGIT_ROW + 0x01), (u8)A);
     ora8(0x10);
-    wr8(ABS(0x03D3), (u8)A);
+    wr8(ABS(DIGIT_ROW + 0x03), (u8)A);
     lda8(rd8(DP(0x00)));
     wr8(ABS(DIGIT_ROW), (u8)A);
     ora8(0x10);
-    wr8(ABS(0x03D2), (u8)A);
+    wr8(ABS(DIGIT_ROW + 0x02), (u8)A);
     lda8(0x22);
     wr8(ABS(DIGIT_BUF), 0x22);
     rep(0x20);
@@ -585,7 +585,7 @@ void SelectMain_m1x1(void)
     wr16(ABS(MODE_TIMER), dec16(rd16(ABS(MODE_TIMER))));
     sep(0x20);
     if (fz) {
-        lda8(rd8(ABS(0x1701)));
+        lda8(rd8(ABS(OAM_BUF + 0x101)));
         cmp8((u8)A, 0xF0);
         if (fz) {
             lda8(0x01);

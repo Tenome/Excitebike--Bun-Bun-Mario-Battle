@@ -196,11 +196,11 @@ void DispatchByDistance_m1x1(void)
  * $8E, attribute $2D; $1824 = 2. */
 void SetJumpBanner_m1x1(void)
 {
-    lda8(0x38); wr8(ABS(0x1610), 0x38);
-    lda8(rd8(ABS(0x199C))); wr8(ABS(0x1611), (u8)A);
-    lda8(0x8E); wr8(ABS(0x1612), 0x8E);
-    lda8(0x2D); wr8(ABS(0x1613), 0x2D);
-    lda8(0x02); wr8(ABS(0x1824), 0x02);
+    lda8(0x38); wr8(ABS(OAM_BUF + 0x10), 0x38);
+    lda8(rd8(ABS(0x199C))); wr8(ABS(OAM_BUF + 0x11), (u8)A);
+    lda8(0x8E); wr8(ABS(OAM_BUF + 0x12), 0x8E);
+    lda8(0x2D); wr8(ABS(OAM_BUF + 0x13), 0x2D);
+    lda8(0x02); wr8(ABS(OAM_SIZE_BUF + 0x04), 0x02);
     ret();
 }
 

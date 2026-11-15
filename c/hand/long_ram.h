@@ -38,10 +38,10 @@
 #define VQ0_SRC_BANK    0x7F0009
 #define VQ0_SIZE        0x7F000A
 #define VQ0_NEXT        0x7F000C
-#define VQ0_DATA        0x7F000E  /* the first record's data (indexed by byte) */
+#define VQ0_DATA        0x7F000E  /* [+$40] the first record's data (indexed by byte) */
 
 /* ---- the track ---- */
-#define TRACK_BUF       0x7F4000  /* the course expanded to one byte per column ($81:A01B) */
+#define TRACK_BUF       0x7F4000  /* [+$2000] the course expanded to one byte per column ($81:A01B) */
 #define TRACK_COL_INDEX 0x7F6000  /* words: the column index built from TRACK_BUF */
 
 /* ---- the broadcast clock ($7F:FFE0-$7F:FFFF; BsxPollStream copies the
@@ -61,17 +61,17 @@
 /* ---- the save block (bank $10-$12, $5000-$5FFF; checked by SaveHeaderCheck) ---- */
 #define SAVE_SUM_INV    0x105002  /* word: the checksum's complement */
 #define SAVE_SUM        0x105004  /* word: 16-bit sum of the three banks' $5000-$5FFF */
-#define SAVE_TITLE      0x115700  /* 16 bytes: the ROM title, a copy of $00:FFC0 */
+#define SAVE_TITLE      0x115700  /* [+$10] 16 bytes: the ROM title, a copy of $00:FFC0 */
 #define SAVE_CLOCK      0x115710  /* 4 bytes: BSX_CLOCK_0-3 when saved */
 #define SAVE_CLOCK_HI   0x115712
 #define SAVE_HOUR       0x115714  /* word: the hour when saved */
 #define SAVE_STADIUM    0x115716  /* word: STADIUM_SELECT when saved */
 #define SAVE_DAYS       0x115718  /* [X] by weekday: the day's entry (Gen A: two set unlock Wario) */
-#define SAVE_TIMES      0x115720  /* 4 x 3 bytes: the best run's course times */
+#define SAVE_TIMES      0x115720  /* [+$C] 4 x 3 bytes: the best run's course times */
 #define SAVE_BEST_TIME  0x11572C  /* the best total time: minutes */
 #define SAVE_BEST_SEC   0x11572D  /* seconds */
 #define SAVE_BEST_FRAC  0x11572E  /* hundredths */
-#define SAVE_BEST_SCORE 0x115730  /* 5 digits, the high one first */
+#define SAVE_BEST_SCORE 0x115730  /* [+$5] 5 digits, the high one first */
 
 /* ---- ROM ---- */
 #define ROM_TITLE       0x00FFC0  /* [X] the cartridge header's title */

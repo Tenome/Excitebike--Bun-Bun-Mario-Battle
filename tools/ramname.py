@@ -9,6 +9,9 @@ c/hand/snes_regs.h (lines `#define NAME 0xADDR`). Only address operands are
 rewritten: ABS/ABSX/ABSY(0xADDR), DP/DPX/DPY(0xAD) and LONG/LONGX(0xBBADDR);
 immediates, table addresses and comments stay as they are. A name whose
 comment starts with [X] is a record field and goes on indexed operands only.
+A comment holding [+$N] marks a buffer or array of N bytes: an absolute or
+long address inside it with no name of its own is written NAME + 0xOFF
+(OAM_BUF + 0x11, RIDER_X + 0x01 for rider 1).
 Two cases are left alone because the address would mean something else there:
   * DP operands in a function that moves the direct page (D = ...);
   * absolute operands in a function that sets the data bank to $7F.
@@ -28,15 +31,19 @@ DEF = re.compile(r'^#define\s+(\w+)\s+0x([0-9A-Fa-f]+)\b')
 OPER = re.compile(r'\b(ABS|ABSX|ABSY|DP|DPX|DPY|LONG|LONGX)\((0x[0-9A-Fa-f]+|[A-Z_][A-Z0-9_]*)\)')
 INDEXED = ('ABSX', 'ABSY', 'DPX', 'DPY', 'LONGX')
 DEF_INDEXED = re.compile(r'/\*\s*\[X\]')   # "/* [X] ..." : indexed operands only
+DEF_SPAN = re.compile(r'\[\+\$([0-9A-Fa-f]+)\]')   # "[+$200]": a buffer of that size
+SPAN_OPER = re.compile(r'\b(ABS|ABSX|ABSY|LONG|LONGX)\(([A-Z_][A-Z0-9_]*) \+ 0x([0-9A-Fa-f]+)\)')
 DP_MIN = 0x20
 
 
 class Names(dict):
     """name -> address, plus the names that apply to indexed operands only
-    (the fields of a record addressed as base + X)."""
+    (the fields of a record addressed as base + X) and the sizes of the
+    buffers whose inner addresses are written NAME + offset."""
     def __init__(self):
         super().__init__()
         self.indexed = set()
+        self.spans = {}
 
 
 def load(ver):
@@ -56,6 +63,9 @@ def load(ver):
                 names[m.group(1)] = int(m.group(2), 16)
                 if DEF_INDEXED.search(line):
                     names.indexed.add(m.group(1))
+                s = DEF_SPAN.search(line)
+                if s:
+                    names.spans[m.group(1)] = int(s.group(1), 16)
     return names
 
 
@@ -95,6 +105,14 @@ def name_text(text, names):
             by_plain.setdefault(a, n)
     for a, n in by_plain.items():
         by_idx.setdefault(a, n)
+    spans = sorted((names[n], names[n] + size, n)
+                   for n, size in getattr(names, 'spans', {}).items())
+
+    def in_span(a):
+        for lo, hi, n in spans:
+            if lo < a < hi:
+                return '%s + 0x%02X' % (n, a - lo)
+        return None
     out = []
     for c in chunks(text):
         abs_ok = not far_bank(c)     # DB = $7F: absolute operands are bank $7F
@@ -112,6 +130,8 @@ def name_text(text, names):
                 if not abs_ok:
                     return m.group(0)
             n = (by_idx if mode in INDEXED else by_plain).get(a)
+            if n is None and not mode.startswith('DP'):
+                n = in_span(a)
             return '%s(%s)' % (mode, n) if n else m.group(0)
         out.append(OPER.sub(one, c))
     return ''.join(out)
@@ -119,6 +139,14 @@ def name_text(text, names):
 
 def expand(text, names):
     """Turn named address operands back into hex (DP as 2 digits, ABS as 4)."""
+    def span(m):
+        mode, n, off = m.group(1), m.group(2), int(m.group(3), 16)
+        if n not in names:
+            return m.group(0)
+        a = names[n] + off
+        return '%s(0x%0*X)' % (mode, width(mode, a), a)
+    text = SPAN_OPER.sub(span, text)
+
     def one(m):
         mode, val = m.group(1), m.group(2)
         if val.startswith('0x') or val not in names:

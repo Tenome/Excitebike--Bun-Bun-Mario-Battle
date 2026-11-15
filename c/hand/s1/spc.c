@@ -111,7 +111,7 @@ void StartCredits_m1x1(void)
     rep(0x20);
     lda16(0xFFFF); wr16(DP(PIC_SCROLL), 0xFFFF);
     lda16(0x0090); wr16(ABS(PALETTE_BUF), 0x0090);
-    lda16(0x0020); wr16(ABS(0x1C01), 0x0020);
+    lda16(0x0020); wr16(ABS(PALETTE_BUF + 0x01), 0x0020);
     sep(0x20);
     wr8(ABS(PALETTE_DIRTY), inc8(rd8(ABS(PALETTE_DIRTY))));
     lda8(0x10); wr8(ABS(APUIO0), 0x10);
@@ -212,7 +212,7 @@ static void rider_select1(int second, u16 base)
     sep(0x20);
     int choose = 0;
     if (fz) {
-        lda8(rd8(ABS(0x1701)));
+        lda8(rd8(ABS(OAM_BUF + 0x101)));
         cmp8((u8)A, 0xF0);
         if (!fz) choose = 1;
         else { lda8(0x01); wr8(ABS(MODE_TIMER), 0x01); }

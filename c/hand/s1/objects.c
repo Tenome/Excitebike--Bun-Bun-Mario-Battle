@@ -329,13 +329,13 @@ void PlayerColumnCheck_m1x1(void)
     if (!fz) {
         lda8(rd8(ABS(0x0904)));
         if (!fz) { ret(); return; }
-        lda8(rd8(ABSY(0x0A13)));
+        lda8(rd8(ABSY(TRACK_ROWS + 0x40)));
         Y = inc8((u8)Y);
-        cmp8((u8)A, rd8(ABSY(0x0A13)));
+        cmp8((u8)A, rd8(ABSY(TRACK_ROWS + 0x40)));
         if (fz) { ret(); return; }
         push16(0xDD9A); GroundHeightAbove_m1x1();
         fc = 0; adc8(0x08);
-        fc = 1; sbc8(rd8(ABSY(0x0A13)));
+        fc = 1; sbc8(rd8(ABSY(TRACK_ROWS + 0x40)));
         cmp8((u8)A, rd8(ABS(RIDER_Y)));
         if (fc) { ret(); return; }
         PlayerStop_m1x1();
@@ -343,11 +343,11 @@ void PlayerColumnCheck_m1x1(void)
     }
     lda8(rd8(ABS(0x09C7)));
     if (!fz) {
-        cmp8((u8)A, rd8(ABSY(0x0A13)));
+        cmp8((u8)A, rd8(ABSY(TRACK_ROWS + 0x40)));
         int stop;
         if (fz) {
             Y = inc8((u8)Y);
-            cmp8((u8)A, rd8(ABSY(0x0A13)));
+            cmp8((u8)A, rd8(ABSY(TRACK_ROWS + 0x40)));
             stop = !fc;
             if (!stop) goto ramp;
         } else stop = !fc;
@@ -477,24 +477,24 @@ static void show_clock(u16 minutes)
     lda16(rd16(ABSX(0xC6CE)));
     lda16(asl16(A));
     X = (u8)A; nz8((u8)X);
-    lda16(rd16(ABSX(0xC70A))); wr16(ABS(0x03D8), A);
+    lda16(rd16(ABSX(0xC70A))); wr16(ABS(DIGIT_ROW + 0x05), A);
     lda16(rd16(ABS(minutes + 1)));
     lda16(asl16(A));
     X = (u8)A; nz8((u8)X);
-    lda16(rd16(ABSX(0xC70A))); wr16(ABS(0x03D5), A);
+    lda16(rd16(ABSX(0xC70A))); wr16(ABS(DIGIT_ROW + 0x02), A);
     sep(0x20);
     lda8(rd8(ABS(minutes))); wr8(ABS(DIGIT_ROW), (u8)A);
     lda8(0x27); wr8(ABS(DIGIT_BUF), 0x27);
     rep(0x20);
     lda16(rd16(ABS(DIGIT_ROW))); ora16(0x9750); wr16(ABS(DIGIT_ROW), A);
-    fc = 0; adc16(0x6510); wr16(ABS(0x03DA), A);
-    lda16(rd16(ABS(0x03D5))); ora16(0x5050); wr16(ABS(0x03D5), A);
-    fc = 0; adc16(0x1010); wr16(ABS(0x03DC), A);
-    lda16(rd16(ABS(0x03D7))); ora16(0x5098); wr16(ABS(0x03D7), A);
-    fc = 0; adc16(0x1064); wr16(ABS(0x03DE), A);
+    fc = 0; adc16(0x6510); wr16(ABS(DIGIT_ROW + 0x07), A);
+    lda16(rd16(ABS(DIGIT_ROW + 0x02))); ora16(0x5050); wr16(ABS(DIGIT_ROW + 0x02), A);
+    fc = 0; adc16(0x1010); wr16(ABS(DIGIT_ROW + 0x09), A);
+    lda16(rd16(ABS(DIGIT_ROW + 0x04))); ora16(0x5098); wr16(ABS(DIGIT_ROW + 0x04), A);
+    fc = 0; adc16(0x1064); wr16(ABS(DIGIT_ROW + 0x0B), A);
     sep(0x20);
-    lda8(rd8(ABS(0x03D9))); ora8(0x50); wr8(ABS(0x03D9), (u8)A);
-    fc = 0; adc8(0x10); wr8(ABS(0x03E0), (u8)A);
+    lda8(rd8(ABS(DIGIT_ROW + 0x06))); ora8(0x50); wr8(ABS(DIGIT_ROW + 0x06), (u8)A);
+    fc = 0; adc8(0x10); wr8(ABS(DIGIT_ROW + 0x0D), (u8)A);
     VramQueueTiles20_m1x1();
 }
 
@@ -840,12 +840,12 @@ void QueueFiveDigits_m1x1(void)
         else X = inc8((u8)X);
         wr8(ABSY(DIGIT_ROW), (u8)A);
         ora8(0x10);
-        wr8(ABSY(0x03D9), (u8)A);
+        wr8(ABSY(DIGIT_ROW + 0x06), (u8)A);
         Y = inc8((u8)Y);
         cmp8((u8)Y, 0x05);
     } while (!fc);
-    wr8(ABS(0x03D8), 0);
-    lda8(0x10); wr8(ABS(0x03DE), 0x10);
+    wr8(ABS(DIGIT_ROW + 0x05), 0);
+    lda8(0x10); wr8(ABS(DIGIT_ROW + 0x0B), 0x10);
     lda8(0x26); wr8(ABS(DIGIT_BUF), 0x26);
     rep(0x20);
     lda16(0x03D2); wr16(DP(0x02), 0x03D2);
@@ -880,9 +880,9 @@ void CourseColumn_m1x1(void)
         if (fz) {
             lda8(rd8(DP(0x10)));
             if (fz) lda8(0x3B);
-            wr8(ABSY(0x0B53), (u8)A); wr8(ABSY(0x0B93), (u8)A);
-            wr8(ABSY(0x0BD3), (u8)A); wr8(ABSY(0x0C13), (u8)A);
-            wr8(ABSY(0x0C53), (u8)A); wr8(ABSY(0x0C93), (u8)A);
+            wr8(ABSY(TRACK_ROWS + 0x180), (u8)A); wr8(ABSY(TRACK_ROWS + 0x1C0), (u8)A);
+            wr8(ABSY(TRACK_ROWS + 0x200), (u8)A); wr8(ABSY(TRACK_ROWS + 0x240), (u8)A);
+            wr8(ABSY(TRACK_ROWS + 0x280), (u8)A); wr8(ABSY(TRACK_ROWS + 0x2C0), (u8)A);
             lda8(rd8(DP(0x0E)));
         }
         cmp8((u8)A, 0x04);
@@ -919,7 +919,7 @@ void MarkerObjects_m1x1(void)
     rep(0x20);
     do {
         lda16(rd16(LONGX(0x80D2DF)));
-        wr16(ABSY(0x1C08), A);
+        wr16(ABSY(PALETTE_BUF + 0x08), A);
         X = inc8((u8)X); X = inc8((u8)X);
         Y = inc8((u8)Y); Y = inc8((u8)Y);
         cmp8((u8)Y, 0x08);
@@ -940,18 +940,18 @@ void SparkPieceStep_m1x1(void)
     lda8((u8)X);
     lda8(asl8((u8)A));
     Y = (u8)A; nz8((u8)Y);
-    lda8(rd8(ABSX(EFFECT_X))); wr8(ABSY(0x1610), (u8)A);
-    lda8(rd8(ABSX(EFFECT_Y))); wr8(ABSY(0x1611), (u8)A);
+    lda8(rd8(ABSX(EFFECT_X))); wr8(ABSY(OAM_BUF + 0x10), (u8)A);
+    lda8(rd8(ABSX(EFFECT_Y))); wr8(ABSY(OAM_BUF + 0x11), (u8)A);
     lda8(rd8(ABSX(EFFECT_FRAME)));
     push8((u8)X);
     X = (u8)A; nz8((u8)X);
-    lda8(rd8(LONGX(0x8195EB))); wr8(ABSY(0x1612), (u8)A);
-    lda8(0x2D); wr8(ABSY(0x1613), 0x2D);
+    lda8(rd8(LONGX(0x8195EB))); wr8(ABSY(OAM_BUF + 0x12), (u8)A);
+    lda8(0x2D); wr8(ABSY(OAM_BUF + 0x13), 0x2D);
     X = pull8(); nz8((u8)X);
     lda8((u8)Y);
     lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
     Y = (u8)A; nz8((u8)Y);
-    lda8(0x02); wr8(ABSY(0x1824), 0x02);
+    lda8(0x02); wr8(ABSY(OAM_SIZE_BUF + 0x04), 0x02);
     wr8(ABSX(EFFECT_TIMER), dec8(rd8(ABSX(EFFECT_TIMER))));
     if (!fz) { ret(); return; }
     lda8(0x04); wr8(ABSX(EFFECT_TIMER), 0x04);
@@ -1128,7 +1128,7 @@ void BallHit_m1x1(void)
     ora8(rd8(ABS(OVERHEAT_LOCK)));
     if (!fz) { ret(); return; }
     X = (u8)A; nz8((u8)X);
-    lda8(rd8(ABS(0x019B)));
+    lda8(rd8(ABS(RIDER_PAGE + 0x03)));
     lda8(lsr8((u8)A));
     if (!fc) { ret(); return; }
     lda8(rd8(ABS(0x08C7)));
@@ -1141,18 +1141,18 @@ void BallHit_m1x1(void)
     cmp8((u8)A, rd8(ABS(0x097C)));
     if (!fc) { ret(); return; }
     lda8(rd8(ABS(RIDER_X)));
-    cmp8((u8)A, rd8(ABS(0x090F)));
+    cmp8((u8)A, rd8(ABS(RIDER_RUNOUT + 0x03)));
     if (fc) { ret(); return; }
     adc8(0x12);
-    cmp8((u8)A, rd8(ABS(0x090F)));
+    cmp8((u8)A, rd8(ABS(RIDER_RUNOUT + 0x03)));
     if (!fc) { ret(); return; }
     push16(0xCB7E); GroundHeightAbove_m1x1();
     fc = 1; sbc8(0x08);
     cmp8((u8)A, rd8(ABS(RIDER_Y)));
     if (fc) { ret(); return; }
     ldy8(0xFF); wr8(ABS(RIDER_BUMPED), 0xFF);
-    Y = inc8((u8)Y); wr8(ABS(0x01AB), (u8)Y);
-    Y = inc8((u8)Y); wr8(ABS(0x01D3), (u8)Y);
+    Y = inc8((u8)Y); wr8(ABS(RIDER_STEER + 0x03), (u8)Y);
+    Y = inc8((u8)Y); wr8(ABS(RIDER_TIMER + 0x03), (u8)Y);
     Y = inc8((u8)Y); wr8(ABS(0x091F), (u8)Y);
     lda8(0x01);
     ret();
@@ -1479,11 +1479,11 @@ void SelectTimerDigits_m1x1(void)
         wr8(DP(0x00), inc8(rd8(DP(0x00))));
         WAIT_TICK();
     }
-    fc = 0; adc8(0x50); wr8(ABS(0x03D4), (u8)A);
-    fc = 0; adc8(0x10); wr8(ABS(0x03D6), (u8)A);
+    fc = 0; adc8(0x50); wr8(ABS(DIGIT_ROW + 0x01), (u8)A);
+    fc = 0; adc8(0x10); wr8(ABS(DIGIT_ROW + 0x03), (u8)A);
     lda8(rd8(DP(0x00)));
     fc = 0; adc8(0x50); wr8(ABS(DIGIT_ROW), (u8)A);
-    fc = 0; adc8(0x10); wr8(ABS(0x03D5), (u8)A);
+    fc = 0; adc8(0x10); wr8(ABS(DIGIT_ROW + 0x02), (u8)A);
     lda8(0x22); wr8(ABS(DIGIT_BUF), 0x22);
     rep(0x20);
     lda16(0x1A8F); wr16(DP(0x00), 0x1A8F);
@@ -1517,13 +1517,13 @@ void ShowBonusBest_m1x1(void)
     if (!fz) {
         lda8(rd8(DP(0x00)));
         fc = 0; adc8(0x50); wr8(ABS(DIGIT_ROW), (u8)A);
-        fc = 0; adc8(0x10); wr8(ABS(0x03D5), (u8)A);
+        fc = 0; adc8(0x10); wr8(ABS(DIGIT_ROW + 0x02), (u8)A);
     } else {
-        lda8(0xFC); wr8(ABS(DIGIT_ROW), 0xFC); wr8(ABS(0x03D5), 0xFC);
+        lda8(0xFC); wr8(ABS(DIGIT_ROW), 0xFC); wr8(ABS(DIGIT_ROW + 0x02), 0xFC);
     }
     lda8(rd8(DP(0x01)));
-    fc = 0; adc8(0x50); wr8(ABS(0x03D4), (u8)A);
-    fc = 0; adc8(0x10); wr8(ABS(0x03D6), (u8)A);
+    fc = 0; adc8(0x50); wr8(ABS(DIGIT_ROW + 0x01), (u8)A);
+    fc = 0; adc8(0x10); wr8(ABS(DIGIT_ROW + 0x03), (u8)A);
     lda8(0x22); wr8(ABS(DIGIT_BUF), 0x22);
     rep(0x20);
     lda16(0x1959); wr16(DP(0x00), 0x1959);
@@ -1656,21 +1656,21 @@ void ConfettiStep_m1x1(void)
     lda8((u8)X);
     lda8(asl8((u8)A));
     Y = (u8)A; nz8((u8)Y);
-    lda8(rd8(ABSX(EFFECT_X))); wr8(ABSY(0x1610), (u8)A);
-    lda8(rd8(ABSX(EFFECT_Y))); wr8(ABSY(0x1611), (u8)A);
+    lda8(rd8(ABSX(EFFECT_X))); wr8(ABSY(OAM_BUF + 0x10), (u8)A);
+    lda8(rd8(ABSX(EFFECT_Y))); wr8(ABSY(OAM_BUF + 0x11), (u8)A);
     lda8(rd8(ABSX(0x0140)));
     cmp8((u8)A, 0xF0);
     if (fc) lda8(0x00);
     else lda8(rd8(ABSX(EFFECT_FRAME)));
     push8((u8)X);
     X = (u8)A; nz8((u8)X);
-    lda8(rd8(LONGX(0x81959B))); wr8(ABSY(0x1612), (u8)A);
-    lda8(rd8(LONGX(0x81959F))); wr8(ABSY(0x1613), (u8)A);
+    lda8(rd8(LONGX(0x81959B))); wr8(ABSY(OAM_BUF + 0x12), (u8)A);
+    lda8(rd8(LONGX(0x81959F))); wr8(ABSY(OAM_BUF + 0x13), (u8)A);
     X = pull8(); nz8((u8)X);
     lda8((u8)Y);
     lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
     Y = (u8)A; nz8((u8)Y);
-    lda8(0x02); wr8(ABSY(0x1824), 0x02);
+    lda8(0x02); wr8(ABSY(OAM_SIZE_BUF + 0x04), 0x02);
     wr8(ABSX(0x0140), inc8(rd8(ABSX(0x0140))));
     lda8(rd8(ABSX(0x0140)));
     if (fz) {
@@ -1742,7 +1742,7 @@ void PodiumWalkIn_m1x1(void)
         wr8(ABSX(OBJ_STEP), (u8)A);
         lda8(0x08); wr8(ABSX(OBJ_DELAY), 0x08);
         wr8(ABSX(OBJ_X), dec8(rd8(ABSX(OBJ_X))));
-        lda8(rd8(ABS(0x0303)));
+        lda8(rd8(ABS(OBJ_TYPE + 0x0A)));
         cmp8((u8)A, 0x04);
         int arrived;
         lda8(rd8(ABSX(OBJ_X)));
@@ -1942,7 +1942,7 @@ void RaceTimer_m1x1(void)
         cmp8((u8)A, 0x04);
         if (!fc) { ret(); return; }
     }
-    wr8(ABS(RIDER_DIST), 0); wr8(ABS(0x085F), 0);
+    wr8(ABS(RIDER_DIST), 0); wr8(ABS(RIDER_DIST + 0x01), 0);
     lda8(0x02); wr8(DP(RACE_END), 0x02);
     lda8(0x2D);
     push8(0x80); push16(0xC6C4); QueueSound_m1x1();
@@ -2067,13 +2067,13 @@ static void bonus_count1(void)
         Y = inc8((u8)Y);
         WAIT_TICK();
     }
-    fc = 0; adc8(0x50); wr8(ABS(0x03D4), (u8)A);
-    fc = 0; adc8(0x10); wr8(ABS(0x03D6), (u8)A);
+    fc = 0; adc8(0x50); wr8(ABS(DIGIT_ROW + 0x01), (u8)A);
+    fc = 0; adc8(0x10); wr8(ABS(DIGIT_ROW + 0x03), (u8)A);
     lda8((u8)Y);
     fc = 0; adc8(0x50); wr8(ABS(DIGIT_ROW), (u8)A);
-    fc = 0; adc8(0x10); wr8(ABS(0x03D5), (u8)A);
+    fc = 0; adc8(0x10); wr8(ABS(DIGIT_ROW + 0x02), (u8)A);
     cmp8((u8)Y, 0x00);
-    if (fz) { lda8(0xFC); wr8(ABS(DIGIT_ROW), 0xFC); wr8(ABS(0x03D5), 0xFC); }
+    if (fz) { lda8(0xFC); wr8(ABS(DIGIT_ROW), 0xFC); wr8(ABS(DIGIT_ROW + 0x02), 0xFC); }
     push16(0xDEB1); VramQueueTiles20_m1x1();
     ret();
 }
@@ -2157,7 +2157,7 @@ void RivalTarget_m1x1(void)
                     cmp8((u8)A, 0x40);
                     if (fc) goto plain;
                     lda8(rd8(ABS(RIDER_BAND)));
-                    cmp8((u8)A, rd8(ABS(0x095B)));
+                    cmp8((u8)A, rd8(ABS(RIDER_BAND + 0x03)));
                     if (fz) { ret(); return; }
                 }
                 lda8(rd8(ABSX(RIDER_TARGET_HI)));
@@ -2277,7 +2277,7 @@ void LaunchBall_m1x1(void)
 {
     lda8(rd8(ABS(0x092C)));
     if (fz) { ret(); return; }
-    lda8(rd8(ABS(0x01DB)));
+    lda8(rd8(ABS(RIDER_ACTIVE + 0x03)));
     ldx8(0x07);
     lda8(rd8(ABSX(RIDER_PAGE)));
     lda8(lsr8((u8)A));
@@ -2373,8 +2373,8 @@ void WheelSpark_m1x1(void)
     lda8(rd8(DP(FRAME_COUNT)));
     and8(0x04);
     if (!fz) {
-        lda8(0xF0); wr8(ABSY(0x16C2), 0xF0);
-        lda8(0xE0); wr8(ABSY(0x16C6), 0xE0);
+        lda8(0xF0); wr8(ABSY(OAM_BUF + 0xC2), 0xF0);
+        lda8(0xE0); wr8(ABSY(OAM_BUF + 0xC6), 0xE0);
     }
     lda8(rd8(ABSX(RIDER_BAND)));
     if (fz) {
@@ -2386,17 +2386,17 @@ void WheelSpark_m1x1(void)
         Y = pull8(); nz8((u8)Y);
         wr8(DP(0x02), (u8)A);
         cmp8((u8)A, 0x00);
-        if (fz) { lda8(0xF0); wr8(ABSY(0x16C1), 0xF0); wr8(ABSY(0x16C5), 0xF0); }
+        if (fz) { lda8(0xF0); wr8(ABSY(OAM_BUF + 0xC1), 0xF0); wr8(ABSY(OAM_BUF + 0xC5), 0xF0); }
     }
     lda8(rd8(ABSX(RIDER_Y)));
     cmp8((u8)A, 0x58);
     if (!fc) lda8(0x0C);
     else lda8(rd8(DP(0x02)));
     ora8(0x21);
-    wr8(ABSY(0x16C3), (u8)A);
-    wr8(ABSY(0x16C7), (u8)A);
+    wr8(ABSY(OAM_BUF + 0xC3), (u8)A);
+    wr8(ABSY(OAM_BUF + 0xC7), (u8)A);
     lda8(rd8(ABSX(RIDER_SPEED_HI)));
-    if (fz) { lda8(0xF8); wr8(ABSY(0x16C5), 0xF8); }
+    if (fz) { lda8(0xF8); wr8(ABSY(OAM_BUF + 0xC5), 0xF8); }
     ret();
 }
 
@@ -2660,15 +2660,15 @@ void DrawSparksAndMarkers_m1x1(void)
             if (!fz) {
                 lda8(0xB6);
                 push16(0xED0C); HeightAbove_m1x1();
-                wr8(ABSY(0x16A1), (u8)A);
+                wr8(ABSY(OAM_BUF + 0xA1), (u8)A);
                 lda8(rd8(ABSX(RIDER_X)));
                 fc = 0; adc8(0x0A);
-                wr8(ABSY(0x16A0), (u8)A);
+                wr8(ABSY(OAM_BUF + 0xA0), (u8)A);
                 wr8(DP(0x01), (u8)Y);
                 Y = rd8(ABSX(0x0981)); nz8((u8)Y);
                 lda8(rd8(ABSY(0xE6EE)));
                 Y = rd8(DP(0x01)); nz8((u8)Y);
-                wr8(ABSY(0x16A2), (u8)A);
+                wr8(ABSY(OAM_BUF + 0xA2), (u8)A);
                 push8((u8)Y);
                 lda8((u8)Y);
                 fc = 0; adc8(0xA0);
@@ -2676,7 +2676,7 @@ void DrawSparksAndMarkers_m1x1(void)
                 Y = (u8)A; nz8((u8)Y);
                 lda8(0x02); wr8(ABSY(OAM_SIZE_BUF), 0x02);
                 Y = pull8(); nz8((u8)Y);
-                lda8(0x21); wr8(ABSY(0x16A3), 0x21);
+                lda8(0x21); wr8(ABSY(OAM_BUF + 0xA3), 0x21);
             }
         }
         push16(0xED3D); WheelSpark_m1x1();
@@ -2869,13 +2869,13 @@ void PlayerTileState_m1x1(void)
         cmp8((u8)A, rd8(ABS(0x09C8)));
         if (!fz) {
             wr8(ABS(0x09C8), (u8)A);
-            lda8(rd8(ABSX(0x0A93)));
+            lda8(rd8(ABSX(TRACK_ROWS + 0xC0)));
             fc = 0; adc8(rd8(ABS(BONUS_RESULT)));
             wr8(ABS(BONUS_RESULT), (u8)A);
         }
     }
     lda8(rd8(ABS(RIDER_BUMPED)));
-    if (fz) { lda8(rd8(ABSX(0x0A13))); wr8(ABS(PLAYER_GROUND), (u8)A); }
+    if (fz) { lda8(rd8(ABSX(TRACK_ROWS + 0x40))); wr8(ABS(PLAYER_GROUND), (u8)A); }
     lda8(rd8(ABSX(TRACK_ROWS)));
     wr8(ABS(RIDER_TILE_Y), (u8)A);
     cmp8((u8)A, 0x28);
@@ -2889,7 +2889,7 @@ void PlayerTileState_m1x1(void)
         ret();
         return;
     }
-    lda8(rd8(ABSX(0x0A53)));
+    lda8(rd8(ABSX(TRACK_ROWS + 0x80)));
     if (!fz) {
         lda8(rd8(ABS(0x09C7)));
         ora8(rd8(ABS(RIDER_AIR)));
@@ -2897,10 +2897,10 @@ void PlayerTileState_m1x1(void)
         lda8(rd8(ABSX(TRACK_ROWS)));
         and8(0x40);
         if (!fz) { ret(); return; }
-        wr8(ABSX(0x0A53), 0);
+        wr8(ABSX(TRACK_ROWS + 0x80), 0);
         lda8(0x3B);
-        wr8(ABSX(0x0B53), 0x3B); wr8(ABSX(0x0B93), 0x3B); wr8(ABSX(0x0BD3), 0x3B);
-        wr8(ABSX(0x0C13), 0x3B); wr8(ABSX(0x0C53), 0x3B); wr8(ABSX(0x0C93), 0x3B);
+        wr8(ABSX(TRACK_ROWS + 0x180), 0x3B); wr8(ABSX(TRACK_ROWS + 0x1C0), 0x3B); wr8(ABSX(TRACK_ROWS + 0x200), 0x3B);
+        wr8(ABSX(TRACK_ROWS + 0x240), 0x3B); wr8(ABSX(TRACK_ROWS + 0x280), 0x3B); wr8(ABSX(TRACK_ROWS + 0x2C0), 0x3B);
         wr8(ABS(RIDER_TILE), 0x3B);
     }
     lda8(rd8(ABSX(TRACK_ROWS)));
@@ -2936,18 +2936,18 @@ void PackEntryNumber_m1x1(void)
     push16(0xA28A); Add32_m1x1();
     lda8(rd8(DP(0x10)));
     and8(0x0F);
-    ora8(rd8(ABS(0x085A)));
-    wr8(ABS(0x085A), (u8)A);
+    ora8(rd8(ABS(ENTRY_CODE + 0x0A)));
+    wr8(ABS(ENTRY_CODE + 0x0A), (u8)A);
     lda8(rd8(DP(0x10)));
     lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
-    wr8(ABS(0x0859), (u8)A);
+    wr8(ABS(ENTRY_CODE + 0x09), (u8)A);
     lda8(rd8(DP(0x11)));
     and8(0x0F);
-    wr8(ABS(0x0858), (u8)A);
+    wr8(ABS(ENTRY_CODE + 0x08), (u8)A);
     lda8(rd8(DP(0x11)));
     and8(0x30);
-    ora8(rd8(ABS(0x0855)));
-    wr8(ABS(0x0855), (u8)A);
+    ora8(rd8(ABS(ENTRY_CODE + 0x05)));
+    wr8(ABS(ENTRY_CODE + 0x05), (u8)A);
     retl();
 }
 
@@ -3011,18 +3011,18 @@ void PackRecordTime_m1x1(void)
     push16(0xA200); Add32_m1x1();
     lda8(rd8(DP(0x11)));
     lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
-    wr8(ABS(0x0854), (u8)A);
-    lda8(rd8(DP(0x11))); and8(0x0F); wr8(ABS(0x0855), (u8)A);
+    wr8(ABS(ENTRY_CODE + 0x04), (u8)A);
+    lda8(rd8(DP(0x11))); and8(0x0F); wr8(ABS(ENTRY_CODE + 0x05), (u8)A);
     lda8(rd8(DP(0x10)));
     lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
-    wr8(ABS(0x0856), (u8)A);
-    lda8(rd8(DP(0x10))); and8(0x0F); wr8(ABS(0x0857), (u8)A);
+    wr8(ABS(ENTRY_CODE + 0x06), (u8)A);
+    lda8(rd8(DP(0x10))); and8(0x0F); wr8(ABS(ENTRY_CODE + 0x07), (u8)A);
     lda8(rd8(DP(RANDOM_LFSR)));
     and8(0x02);
     ora8(rd8(DP(0x12)));
     and8(0x03);
     lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A));
-    wr8(ABS(0x085A), (u8)A);
+    wr8(ABS(ENTRY_CODE + 0x0A), (u8)A);
     retl();
 }
 
@@ -3180,11 +3180,11 @@ void ShowBonusLabel_m1x1(void)
         Y = inc8((u8)Y);
         WAIT_TICK();
     }
-    fc = 0; adc8(0x50); wr8(ABS(0x03D9), (u8)A);
-    fc = 0; adc8(0x10); wr8(ABS(0x03E0), (u8)A);
+    fc = 0; adc8(0x50); wr8(ABS(DIGIT_ROW + 0x06), (u8)A);
+    fc = 0; adc8(0x10); wr8(ABS(DIGIT_ROW + 0x0D), (u8)A);
     lda8((u8)Y);
-    fc = 0; adc8(0x50); wr8(ABS(0x03D8), (u8)A);
-    fc = 0; adc8(0x10); wr8(ABS(0x03DF), (u8)A);
+    fc = 0; adc8(0x50); wr8(ABS(DIGIT_ROW + 0x05), (u8)A);
+    fc = 0; adc8(0x10); wr8(ABS(DIGIT_ROW + 0x0C), (u8)A);
     lda8(0x20); wr8(DP(0x0F), 0x20);
     push16(0xD97C); VramQueueTiles_m1x1();
     ret();
@@ -3523,11 +3523,11 @@ void SteerObjectStep_m1x1(void)
     ldy8(0x00);
     lda8(rd8(ABSX(OBJ_VX)));
     if (fn) Y = dec8((u8)Y);
-    lda8((u8)Y); wr8(ABSX(0x029A), (u8)A);
+    lda8((u8)Y); wr8(ABSX(OBJ_VX + 0x01), (u8)A);
     ldy8(0x00);
     lda8(rd8(ABSX(OBJ_VY)));
     if (fn) Y = dec8((u8)Y);
-    lda8((u8)Y); wr8(ABSX(0x02AA), (u8)A);
+    lda8((u8)Y); wr8(ABSX(OBJ_VY + 0x01), (u8)A);
     rep(0x20);
     wr16(DP(0x04), lsr16(rd16(DP(0x04))));      /* LSR $04 with A 16-bit */
     if (fc) {
@@ -3951,22 +3951,22 @@ static void start_flags1(void)
                 lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A));
                 X = (u8)A; nz8((u8)X);
                 lda8(rd8(ABSY(0xBDEF)));
-                wr8(ABSX(0x17A1), (u8)A);
+                wr8(ABSX(OAM_BUF + 0x1A1), (u8)A);
                 fc = 0; adc8(0x08);
-                wr8(ABSX(0x17A5), (u8)A);
+                wr8(ABSX(OAM_BUF + 0x1A5), (u8)A);
                 lda8(rd8(DP(0x00)));
-                wr8(ABSX(0x17A2), (u8)A);
+                wr8(ABSX(OAM_BUF + 0x1A2), (u8)A);
                 ora8(0x10);
-                wr8(ABSX(0x17A6), (u8)A);
+                wr8(ABSX(OAM_BUF + 0x1A6), (u8)A);
                 lda8(0x31);
-                wr8(ABSX(0x17A3), 0x31); wr8(ABSX(0x17A7), 0x31);
+                wr8(ABSX(OAM_BUF + 0x1A3), 0x31); wr8(ABSX(OAM_BUF + 0x1A7), 0x31);
                 lda8(rd8(DP(0x01)));
-                wr8(ABSX(0x17A0), (u8)A); wr8(ABSX(0x17A4), (u8)A);
+                wr8(ABSX(OAM_BUF + 0x1A0), (u8)A); wr8(ABSX(OAM_BUF + 0x1A4), (u8)A);
                 lda8((u8)X);
                 lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
                 X = (u8)A; nz8((u8)X);
                 lda8(rd8(DP(0x08)));
-                wr8(ABSX(0x1888), (u8)A);
+                wr8(ABSX(OAM_SIZE_BUF + 0x68), (u8)A);
             }
         }
         Y = dec8((u8)Y);
@@ -4056,17 +4056,17 @@ void PackEntryCode_m1x1(void)
         push8(0x80); push16(back[i][0]); Mul16_m1x1();
         push16(back[i][1]); Add32_m1x1();
     }
-    lda8(rd8(LONG(0x115734))); wr8(DP(0x04), (u8)A);
+    lda8(rd8(LONG(SAVE_BEST_SCORE + 0x04))); wr8(DP(0x04), (u8)A);
     wr8(DP(0x05), 0); wr8(DP(0x06), 0); wr8(DP(0x07), 0);
     push16(0xA184); Add32_m1x1();
     lda8(rd8(DP(0x11)));
     lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
     wr8(ABS(ENTRY_CODE), (u8)A);
-    lda8(rd8(DP(0x11))); and8(0x0F); wr8(ABS(0x0851), (u8)A);
+    lda8(rd8(DP(0x11))); and8(0x0F); wr8(ABS(ENTRY_CODE + 0x01), (u8)A);
     lda8(rd8(DP(0x10)));
     lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
-    wr8(ABS(0x0852), (u8)A);
-    lda8(rd8(DP(0x10))); and8(0x0F); wr8(ABS(0x0853), (u8)A);
+    wr8(ABS(ENTRY_CODE + 0x02), (u8)A);
+    lda8(rd8(DP(0x10))); and8(0x0F); wr8(ABS(ENTRY_CODE + 0x03), (u8)A);
     retl();
 }
 
@@ -4085,13 +4085,13 @@ void QueueTimeDigits_m1x1(void)
         sbc8(0x0A);
         X = inc8((u8)X);
     }
-    wr8(ABS(0x03D4), (u8)A);
-    ora8(0x10); wr8(ABS(0x03DC), (u8)A);
+    wr8(ABS(DIGIT_ROW + 0x01), (u8)A);
+    ora8(0x10); wr8(ABS(DIGIT_ROW + 0x09), (u8)A);
     lda8((u8)X);
     cmp8((u8)A, 0x00);
     if (fz) lda8(0x0C);
     wr8(ABS(DIGIT_ROW), (u8)A);
-    ora8(0x10); wr8(ABS(0x03DB), (u8)A);
+    ora8(0x10); wr8(ABS(DIGIT_ROW + 0x08), (u8)A);
     static const u16 lo[2] = { 0x03D7, 0x03DA };
     for (int i = 0; i < 2; i++) {
         Y = inc8((u8)Y);
@@ -4109,10 +4109,10 @@ void QueueTimeDigits_m1x1(void)
         wr8(ABS(lo[i] - 1), (u8)A);
         ora8(0x10); wr8(ABS(lo[i] + 7), (u8)A);
     }
-    lda8(0x0A); wr8(ABS(0x03D5), 0x0A);
-    lda8(inc8((u8)A)); wr8(ABS(0x03D8), (u8)A);
-    lda8(0x1A); wr8(ABS(0x03DD), 0x1A);
-    lda8(inc8((u8)A)); wr8(ABS(0x03E0), (u8)A);
+    lda8(0x0A); wr8(ABS(DIGIT_ROW + 0x02), 0x0A);
+    lda8(inc8((u8)A)); wr8(ABS(DIGIT_ROW + 0x05), (u8)A);
+    lda8(0x1A); wr8(ABS(DIGIT_ROW + 0x0A), 0x1A);
+    lda8(inc8((u8)A)); wr8(ABS(DIGIT_ROW + 0x0D), (u8)A);
     lda8(0x28); wr8(ABS(DIGIT_BUF), 0x28);
     rep(0x20);
     lda16(0x03D2); wr16(DP(0x02), 0x03D2);
@@ -4141,7 +4141,7 @@ void DrawObjectSprites_m1x1(void)
     lda8(rd8(ABSX(OBJ_FRAME)));
     lda8(inc8((u8)A));
     wr8(ABS(WRMPYA), (u8)A);
-    lda8(rd8(ABSX(0x038A)));
+    lda8(rd8(ABSX(OBJ_SCRIPT + 0x01)));
     lda8(asl8((u8)A)); lda8(asl8((u8)A));
     wr8(ABS(WRMPYB), (u8)A);
     rep(0x30);
@@ -4149,7 +4149,7 @@ void DrawObjectSprites_m1x1(void)
     fc = 1; sbc16(0x0004);
     fc = 0; adc16(rd16(DP(0x00)));
     Y = A; nz16(Y);
-    lda16(rd16(ABSX(0x038A))); wr16(DP(0x00), A);
+    lda16(rd16(ABSX(OBJ_SCRIPT + 0x01))); wr16(DP(0x00), A);
     lda16(rd16(ABSX(OBJ_X))); wr16(DP(0x04), A);
     lda16(rd16(ABSX(OBJ_SCRIPT))); wr16(DP(0x0E), A);
     lda16(rd16(ABSX(OBJ_Y))); wr16(DP(0x06), A);
@@ -4166,13 +4166,13 @@ void DrawObjectSprites_m1x1(void)
             wr8(ABSX(OAM_BUF), (u8)A);
             lda8(rd8(ABSY(0xAB22)));
             fc = 0; adc8(rd8(DP(0x06)));
-            wr8(ABSX(0x1601), (u8)A);
+            wr8(ABSX(OAM_BUF + 0x01), (u8)A);
             lda8(rd8(ABSY(0xAB23)));
-            wr8(ABSX(0x1602), (u8)A);
+            wr8(ABSX(OAM_BUF + 0x02), (u8)A);
             lda8(rd8(ABSY(0xAB24)));
             and8(0xCF);
             ora8(rd8(DP(0x0E)));
-            wr8(ABSX(0x1603), (u8)A);
+            wr8(ABSX(OAM_BUF + 0x03), (u8)A);
             rep(0x20);
             push16(X);
             lda16(X);
@@ -4542,7 +4542,7 @@ void Mode09_m1x1(void)
         lda8((u8)X);
         lda8(asl8((u8)A)); lda8(asl8((u8)A));
         Y = (u8)A; nz8((u8)Y);
-        lda8(0xF0); wr8(ABSY(0x16C1), 0xF0);
+        lda8(0xF0); wr8(ABSY(OAM_BUF + 0xC1), 0xF0);
         X = dec8((u8)X);
     } while (!fn);
     ret();
@@ -4581,14 +4581,14 @@ void BonusResultStep_m1x1(void)
         wr8(ABS(DIGIT_ROW), inc8(rd8(ABS(DIGIT_ROW))));
         for (u16 a = 0x03D4; a <= 0x03D7; a++) wr8(ABS(a), 0x50);
         lda8(0x60);
-        wr8(ABS(0x03D8), 0x60);
-        wr8(ABS(0x03D8), inc8(rd8(ABS(0x03D8))));
+        wr8(ABS(DIGIT_ROW + 0x05), 0x60);
+        wr8(ABS(DIGIT_ROW + 0x05), inc8(rd8(ABS(DIGIT_ROW + 0x05))));
         for (u16 a = 0x03D9; a <= 0x03DC; a++) wr8(ABS(a), 0x60);
         lda8(rd8(ABS(0x1E88)));
         cmp8((u8)A, rd8(ABS(0x09C9)));
         if (!fz) {
             lda8(0xFC);
-            wr8(ABS(DIGIT_ROW), 0xFC); wr8(ABS(0x03D8), 0xFC);
+            wr8(ABS(DIGIT_ROW), 0xFC); wr8(ABS(DIGIT_ROW + 0x05), 0xFC);
             ldy8(0x00);
             lda8(rd8(ABS(0x1E88)));
             for (;;) {
@@ -4598,22 +4598,22 @@ void BonusResultStep_m1x1(void)
                 Y = inc8((u8)Y);
                 WAIT_TICK();
             }
-            fc = 0; adc8(0x50); wr8(ABS(0x03D5), (u8)A);
-            fc = 0; adc8(0x10); wr8(ABS(0x03DA), (u8)A);
+            fc = 0; adc8(0x50); wr8(ABS(DIGIT_ROW + 0x02), (u8)A);
+            fc = 0; adc8(0x10); wr8(ABS(DIGIT_ROW + 0x07), (u8)A);
             lda8((u8)Y);
-            fc = 0; adc8(0x50); wr8(ABS(0x03D4), (u8)A);
-            fc = 0; adc8(0x10); wr8(ABS(0x03D9), (u8)A);
-            lda8(rd8(ABS(0x03D4)));
+            fc = 0; adc8(0x50); wr8(ABS(DIGIT_ROW + 0x01), (u8)A);
+            fc = 0; adc8(0x10); wr8(ABS(DIGIT_ROW + 0x06), (u8)A);
+            lda8(rd8(ABS(DIGIT_ROW + 0x01)));
             cmp8((u8)A, 0x50);
             if (fz) {
                 lda8(0xFC);
-                wr8(ABS(0x03D4), 0xFC); wr8(ABS(0x03D9), 0xFC);
-                lda8(rd8(ABS(0x03D5)));
+                wr8(ABS(DIGIT_ROW + 0x01), 0xFC); wr8(ABS(DIGIT_ROW + 0x06), 0xFC);
+                lda8(rd8(ABS(DIGIT_ROW + 0x02)));
                 cmp8((u8)A, 0x50);
                 if (fz) {
                     lda8(0xFC);
-                    wr8(ABS(0x03D5), 0xFC); wr8(ABS(0x03D6), 0xFC);
-                    wr8(ABS(0x03DA), 0xFC); wr8(ABS(0x03DB), 0xFC);
+                    wr8(ABS(DIGIT_ROW + 0x02), 0xFC); wr8(ABS(DIGIT_ROW + 0x03), 0xFC);
+                    wr8(ABS(DIGIT_ROW + 0x07), 0xFC); wr8(ABS(DIGIT_ROW + 0x08), 0xFC);
                 }
             }
         }
@@ -4733,15 +4733,15 @@ draw:
     Y = (u8)A; nz8((u8)Y);
     do {
         lda8(rd8(DP(0x00)));
-        wr8(ABSX(0x17F0), (u8)A);
+        wr8(ABSX(OAM_BUF + 0x1F0), (u8)A);
         fc = 0; adc8(0x08);
         wr8(DP(0x00), (u8)A);
         cmp8((u8)A, 0x70);
         lda8(fc ? 0xC7 : 0xF0);
-        wr8(ABSX(0x17F1), (u8)A);
+        wr8(ABSX(OAM_BUF + 0x1F1), (u8)A);
         lda8(rd8(ABSY(0xCFF2)));
-        wr8(ABSX(0x17F2), (u8)A);
-        lda8(0x21); wr8(ABSX(0x17F3), 0x21);
+        wr8(ABSX(OAM_BUF + 0x1F2), (u8)A);
+        lda8(0x21); wr8(ABSX(OAM_BUF + 0x1F3), 0x21);
         Y = inc8((u8)Y);
         X = dec8((u8)X); X = dec8((u8)X); X = dec8((u8)X); X = dec8((u8)X);
     } while (!fn);
@@ -4809,21 +4809,21 @@ void EntryNumberEditor_m1x1(void)
     lda8(rd8(ABS(ENTRY_CURSOR)));
     lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A));
     fc = 0; adc8(0x70);
-    wr8(ABS(OAM_BUF), (u8)A); wr8(ABS(0x1604), (u8)A);
+    wr8(ABS(OAM_BUF), (u8)A); wr8(ABS(OAM_BUF + 0x04), (u8)A);
     lda8(rd8(DP(FRAME_COUNT)));
     and8(0x18);
     lda8(lsr8((u8)A)); lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
     wr8(DP(0x00), (u8)A);
     lda8(0x8E);
     fc = 0; adc8(rd8(DP(0x00)));
-    wr8(ABS(0x1601), (u8)A);
+    wr8(ABS(OAM_BUF + 0x01), (u8)A);
     lda8(0x78);
     fc = 1; sbc8(rd8(DP(0x00)));
-    wr8(ABS(0x1605), (u8)A);
-    lda8(0xFE); wr8(ABS(0x1602), 0xFE); wr8(ABS(0x1606), 0xFE);
-    lda8(0x21); wr8(ABS(0x1603), 0x21);
-    lda8(0xA1); wr8(ABS(0x1607), 0xA1);
-    wr8(ABS(OAM_SIZE_BUF), 0); wr8(ABS(0x1821), 0);
+    wr8(ABS(OAM_BUF + 0x05), (u8)A);
+    lda8(0xFE); wr8(ABS(OAM_BUF + 0x02), 0xFE); wr8(ABS(OAM_BUF + 0x06), 0xFE);
+    lda8(0x21); wr8(ABS(OAM_BUF + 0x03), 0x21);
+    lda8(0xA1); wr8(ABS(OAM_BUF + 0x07), 0xA1);
+    wr8(ABS(OAM_SIZE_BUF), 0); wr8(ABS(OAM_SIZE_BUF + 0x01), 0);
     lda8(rd8(DP(P1_PRESS_HI)));
     and8(0x10);
     if (fz) { ret(); return; }
@@ -5052,30 +5052,30 @@ void DemoPadDisplay_m1x1(void)
     wr8(DP(0x00), (u8)A);
     ldy8(0x80);
     lda8(0x80);
-    wr8(ABSY(OAM_BUF), (u8)A); wr8(ABSY(0x1608), (u8)A);
+    wr8(ABSY(OAM_BUF), (u8)A); wr8(ABSY(OAM_BUF + 0x08), (u8)A);
     fc = 0; adc8(0x10);
-    wr8(ABSY(0x1604), (u8)A); wr8(ABSY(0x160C), (u8)A);
+    wr8(ABSY(OAM_BUF + 0x04), (u8)A); wr8(ABSY(OAM_BUF + 0x0C), (u8)A);
     lda8(0x18);
-    wr8(ABSY(0x1601), (u8)A); wr8(ABSY(0x1605), (u8)A);
+    wr8(ABSY(OAM_BUF + 0x01), (u8)A); wr8(ABSY(OAM_BUF + 0x05), (u8)A);
     fc = 0; adc8(0x10);
-    wr8(ABSY(0x1609), (u8)A); wr8(ABSY(0x160D), (u8)A);
+    wr8(ABSY(OAM_BUF + 0x09), (u8)A); wr8(ABSY(OAM_BUF + 0x0D), (u8)A);
     lda8(rd8(DP(0x00)));
-    wr8(ABSY(0x1602), (u8)A);
+    wr8(ABSY(OAM_BUF + 0x02), (u8)A);
     lda8(inc8((u8)A)); lda8(inc8((u8)A));
-    wr8(ABSY(0x1606), (u8)A);
+    wr8(ABSY(OAM_BUF + 0x06), (u8)A);
     fc = 0; adc8(0x1E);
-    wr8(ABSY(0x160A), (u8)A);
+    wr8(ABSY(OAM_BUF + 0x0A), (u8)A);
     lda8(inc8((u8)A)); lda8(inc8((u8)A));
-    wr8(ABSY(0x160E), (u8)A);
+    wr8(ABSY(OAM_BUF + 0x0E), (u8)A);
     lda8(0x26);
-    wr8(ABSY(0x1603), 0x26); wr8(ABSY(0x1607), 0x26);
-    wr8(ABSY(0x160B), 0x26); wr8(ABSY(0x160F), 0x26);
+    wr8(ABSY(OAM_BUF + 0x03), 0x26); wr8(ABSY(OAM_BUF + 0x07), 0x26);
+    wr8(ABSY(OAM_BUF + 0x0B), 0x26); wr8(ABSY(OAM_BUF + 0x0F), 0x26);
     lda8((u8)Y);
     lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
     Y = (u8)A; nz8((u8)Y);
     lda8(0x02);
-    wr8(ABSY(OAM_SIZE_BUF), 0x02); wr8(ABSY(0x1821), 0x02);
-    wr8(ABSY(0x1822), 0x02); wr8(ABSY(0x1823), 0x02);
+    wr8(ABSY(OAM_SIZE_BUF), 0x02); wr8(ABSY(OAM_SIZE_BUF + 0x01), 0x02);
+    wr8(ABSY(OAM_SIZE_BUF + 0x02), 0x02); wr8(ABSY(OAM_SIZE_BUF + 0x03), 0x02);
     lda8(rd8(ABS(0x098E)));
     lda8(rol8((u8)A)); lda8(rol8((u8)A)); lda8(rol8((u8)A));
     and8(0x03);
@@ -5084,27 +5084,27 @@ void DemoPadDisplay_m1x1(void)
     wr8(DP(0x00), (u8)A);
     ldy8(0x70);
     lda8(0xB0);
-    wr8(ABSY(OAM_BUF), (u8)A); wr8(ABSY(0x1608), (u8)A);
+    wr8(ABSY(OAM_BUF), (u8)A); wr8(ABSY(OAM_BUF + 0x08), (u8)A);
     fc = 0; adc8(0x18);
-    wr8(ABSY(0x1604), (u8)A); wr8(ABSY(0x160C), (u8)A);
+    wr8(ABSY(OAM_BUF + 0x04), (u8)A); wr8(ABSY(OAM_BUF + 0x0C), (u8)A);
     lda8(0x18);
-    wr8(ABSY(0x1601), (u8)A); wr8(ABSY(0x1605), (u8)A);
+    wr8(ABSY(OAM_BUF + 0x01), (u8)A); wr8(ABSY(OAM_BUF + 0x05), (u8)A);
     fc = 0; adc8(0x10);
-    wr8(ABSY(0x1609), (u8)A); wr8(ABSY(0x160D), (u8)A);
+    wr8(ABSY(OAM_BUF + 0x09), (u8)A); wr8(ABSY(OAM_BUF + 0x0D), (u8)A);
     lda8(rd8(DP(0x00)));
-    wr8(ABSY(0x1602), (u8)A);
-    lda8(inc8((u8)A)); lda8(inc8((u8)A)); wr8(ABSY(0x1606), (u8)A);
-    lda8(inc8((u8)A)); lda8(inc8((u8)A)); wr8(ABSY(0x160A), (u8)A);
-    lda8(inc8((u8)A)); lda8(inc8((u8)A)); wr8(ABSY(0x160E), (u8)A);
+    wr8(ABSY(OAM_BUF + 0x02), (u8)A);
+    lda8(inc8((u8)A)); lda8(inc8((u8)A)); wr8(ABSY(OAM_BUF + 0x06), (u8)A);
+    lda8(inc8((u8)A)); lda8(inc8((u8)A)); wr8(ABSY(OAM_BUF + 0x0A), (u8)A);
+    lda8(inc8((u8)A)); lda8(inc8((u8)A)); wr8(ABSY(OAM_BUF + 0x0E), (u8)A);
     lda8(0x28);
-    wr8(ABSY(0x1603), 0x28); wr8(ABSY(0x1607), 0x28);
-    wr8(ABSY(0x160B), 0x28); wr8(ABSY(0x160F), 0x28);
+    wr8(ABSY(OAM_BUF + 0x03), 0x28); wr8(ABSY(OAM_BUF + 0x07), 0x28);
+    wr8(ABSY(OAM_BUF + 0x0B), 0x28); wr8(ABSY(OAM_BUF + 0x0F), 0x28);
     lda8((u8)Y);
     lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
     Y = (u8)A; nz8((u8)Y);
     lda8(0x02);
-    wr8(ABSY(OAM_SIZE_BUF), 0x02); wr8(ABSY(0x1821), 0x02);
-    wr8(ABSY(0x1822), 0x02); wr8(ABSY(0x1823), 0x02);
+    wr8(ABSY(OAM_SIZE_BUF), 0x02); wr8(ABSY(OAM_SIZE_BUF + 0x01), 0x02);
+    wr8(ABSY(OAM_SIZE_BUF + 0x02), 0x02); wr8(ABSY(OAM_SIZE_BUF + 0x03), 0x02);
     push16(0xE4E1); DemoPushStart_m1x1();
     ret();
 }
@@ -5501,7 +5501,7 @@ void FollowObjectPath_m1x1(void)
             return;
         }
     }
-    lda8(rd8(ABSX(0x027A)));
+    lda8(rd8(ABSX(OBJ_X + 0x01)));
     if (fz) { push8(0x81); push16(0x97C6); QueueMapTile_m1x1(); }
     push8(0x81); push16(0x97CA); VelocityDirection_m1x1();
     ret();
@@ -5535,7 +5535,7 @@ static void course_map_slot1(void)
     if (fn) { fc = 0; adc16(rd16(DP(0xA8))); }
     X = A; nz16(X);
     lda16(rd16(LONGX(TRACK_COL_INDEX)));
-    cmp16(A, rd16(LONGX(0x7F5FFE)));
+    cmp16(A, rd16(LONGX(TRACK_BUF + 0x1FFE)));
     if (!fz) lda16(dec16(A));
     X = A; nz16(X);
     lda16(rd16(ABS(RIDER_LANE_NUM)));
@@ -5709,7 +5709,7 @@ void ShowEntryPassword_m1x1(void)
         ora8(rd8(DP(0x00)));
         wr8(ABSX(DIGIT_ROW), (u8)A);
         ora8(0x10);
-        wr8(ABSX(0x03DF), (u8)A);
+        wr8(ABSX(DIGIT_ROW + 0x0C), (u8)A);
         X = dec8((u8)X);
     } while (!fn);
     lda8(0x2C); wr8(ABS(DIGIT_BUF), 0x2C);
@@ -5821,7 +5821,7 @@ void SetHdmaPreset_m1x1(void)
     lda8(0x01); wr8(ABS(0x0815), 0x01);
     lda8(0x1C); wr8(ABS(SH_HDMAEN), 0x1C);
     sep(0x10);
-    wr8(ABS(PALETTE_BUF), 0); wr8(ABS(0x1C01), 0);
+    wr8(ABS(PALETTE_BUF), 0); wr8(ABS(PALETTE_BUF + 0x01), 0);
     wr8(ABS(PALETTE_DIRTY), inc8(rd8(ABS(PALETTE_DIRTY))));
     DB = pull8(); nz8(DB);
     retl();
@@ -5935,10 +5935,10 @@ void SetupJumpContest_m1x1(void)
     do {
         lda8(0xFC); wr8(ABSX(TRACK_ROWS), 0xFC);
         lda8(0x00);
-        wr8(ABSX(0x0A13), 0); wr8(ABSX(0x0A53), 0); wr8(ABSX(0x0A93), 0);
+        wr8(ABSX(TRACK_ROWS + 0x40), 0); wr8(ABSX(TRACK_ROWS + 0x80), 0); wr8(ABSX(TRACK_ROWS + 0xC0), 0);
         lda8(0x3B);
-        wr8(ABSX(0x0B53), 0x3B); wr8(ABSX(0x0B93), 0x3B); wr8(ABSX(0x0BD3), 0x3B);
-        wr8(ABSX(0x0C13), 0x3B); wr8(ABSX(0x0C53), 0x3B); wr8(ABSX(0x0C93), 0x3B);
+        wr8(ABSX(TRACK_ROWS + 0x180), 0x3B); wr8(ABSX(TRACK_ROWS + 0x1C0), 0x3B); wr8(ABSX(TRACK_ROWS + 0x200), 0x3B);
+        wr8(ABSX(TRACK_ROWS + 0x240), 0x3B); wr8(ABSX(TRACK_ROWS + 0x280), 0x3B); wr8(ABSX(TRACK_ROWS + 0x2C0), 0x3B);
         X = dec8((u8)X);
     } while (!fn);
     lda8(0x34); wr8(ABS(TRACK_ROW_PTR), 0x34);
@@ -6618,24 +6618,24 @@ void ResultsBonusCount_m1x1(void)
         Y = inc8((u8)Y);
     }
     wr8(DP(0x00), (u8)A);
-    ora8(0x50); wr8(ABS(0x03D5), (u8)A);
-    eor8(0x30); wr8(ABS(0x03DA), (u8)A);
+    ora8(0x50); wr8(ABS(DIGIT_ROW + 0x02), (u8)A);
+    eor8(0x30); wr8(ABS(DIGIT_ROW + 0x07), (u8)A);
     cmp8((u8)Y, 0x00);
     if (!fz) {
         lda8((u8)Y);
-        ora8(0x50); wr8(ABS(0x03D4), (u8)A);
-        eor8(0x30); wr8(ABS(0x03D9), (u8)A);
+        ora8(0x50); wr8(ABS(DIGIT_ROW + 0x01), (u8)A);
+        eor8(0x30); wr8(ABS(DIGIT_ROW + 0x06), (u8)A);
     } else {
-        lda8(0xFC); wr8(ABS(0x03D4), 0xFC); wr8(ABS(0x03D9), 0xFC);
+        lda8(0xFC); wr8(ABS(DIGIT_ROW + 0x01), 0xFC); wr8(ABS(DIGIT_ROW + 0x06), 0xFC);
     }
     lda8((u8)Y);
     ora8(rd8(DP(0x00)));
     if (fz) {
         lda8(0xFC);
-        wr8(ABS(0x03D5), 0xFC); wr8(ABS(0x03D6), 0xFC);
-        wr8(ABS(0x03DA), 0xFC); wr8(ABS(0x03DB), 0xFC);
+        wr8(ABS(DIGIT_ROW + 0x02), 0xFC); wr8(ABS(DIGIT_ROW + 0x03), 0xFC);
+        wr8(ABS(DIGIT_ROW + 0x07), 0xFC); wr8(ABS(DIGIT_ROW + 0x08), 0xFC);
     }
-    lda8(0xFC); wr8(ABS(DIGIT_ROW), 0xFC); wr8(ABS(0x03D8), 0xFC);
+    lda8(0xFC); wr8(ABS(DIGIT_ROW), 0xFC); wr8(ABS(DIGIT_ROW + 0x05), 0xFC);
     lda8(0x04); wr8(DP(MODE_TIMER), 0x04);
     rep(0x20);
     lda16(0x1CB6); wr16(DP(0x00), 0x1CB6);
@@ -7293,12 +7293,12 @@ column:
                 if (!fc) {
                     X = rd8(ABS(0x0929)); nz8((u8)X);
                     lda8(rd8(ABSX(0x8A3D)));
-                    wr8(LONG(0x7F0026), (u8)A);
+                    wr8(LONG(VQ0_DATA + 0x18), (u8)A);
                     wr8(ABS(0x0929), inc8(rd8(ABS(0x0929))));
                     cmp8((u8)X, 0x05);
                     if (fz) {
                         lda8(rd8(ABS(LAP)));
-                        wr8(LONG(0x7F0026), (u8)A);
+                        wr8(LONG(VQ0_DATA + 0x18), (u8)A);
                     }
                 }
             }
@@ -7808,7 +7808,7 @@ void RaceResultsSetup_m1x1(void)
     sep(0x20);
     push16(0x94E7); TickRaceClock_m1x1();
     lda8(rd8(ABS(RIDER_DIST)));
-    ora8(rd8(ABS(0x085F)));
+    ora8(rd8(ABS(RIDER_DIST + 0x01)));
     if (fz) {
         push16(0x94F2); DrawText95C4_m1x1();
     } else {
@@ -7819,11 +7819,11 @@ void RaceResultsSetup_m1x1(void)
         ora8(0x30);
         wr8(ABS(DIGIT_ROW), (u8)A);
         lda8(inc8((u8)A));
-        wr8(ABS(0x03D4), (u8)A);
+        wr8(ABS(DIGIT_ROW + 0x01), (u8)A);
         fc = 0; adc8(0x0F);
-        wr8(ABS(0x03D5), (u8)A);
+        wr8(ABS(DIGIT_ROW + 0x02), (u8)A);
         lda8(inc8((u8)A));
-        wr8(ABS(0x03D6), (u8)A);
+        wr8(ABS(DIGIT_ROW + 0x03), (u8)A);
         rep(0x20);
         lda16(0x1CAC); wr16(DP(0x00), 0x1CAC);
         lda16(0x03D2); wr16(DP(0x02), 0x03D2);
@@ -7839,22 +7839,22 @@ void RaceResultsSetup_m1x1(void)
         ora8(0x50);
         wr8(ABS(DIGIT_ROW), (u8)A);
         fc = 0; adc8(0x10);
-        wr8(ABS(0x03D8), (u8)A);
+        wr8(ABS(DIGIT_ROW + 0x05), (u8)A);
         lda8(rd8(ABSX(0x95E5)));
         ora8(0x50);
-        wr8(ABS(0x03D4), (u8)A);
+        wr8(ABS(DIGIT_ROW + 0x01), (u8)A);
         fc = 0; adc8(0x10);
-        wr8(ABS(0x03D9), (u8)A);
+        wr8(ABS(DIGIT_ROW + 0x06), (u8)A);
         lda8(rd8(ABSX(0x95ED))); wr8(DP(0xB2), (u8)A);
         lda8(0x25); wr8(ABS(DIGIT_BUF), 0x25);
         lda8(0x50);
-        wr8(ABS(0x03D5), 0x50); wr8(ABS(0x03D6), 0x50); wr8(ABS(0x03D7), 0x50);
+        wr8(ABS(DIGIT_ROW + 0x02), 0x50); wr8(ABS(DIGIT_ROW + 0x03), 0x50); wr8(ABS(DIGIT_ROW + 0x04), 0x50);
         fc = 0; adc8(0x10);
-        wr8(ABS(0x03DA), (u8)A); wr8(ABS(0x03DB), (u8)A); wr8(ABS(0x03DC), (u8)A);
+        wr8(ABS(DIGIT_ROW + 0x07), (u8)A); wr8(ABS(DIGIT_ROW + 0x08), (u8)A); wr8(ABS(DIGIT_ROW + 0x09), (u8)A);
         lda8(rd8(ABSX(0x95DD)));
         if (fz) {
             lda8(0xFC);
-            wr8(ABS(DIGIT_ROW), 0xFC); wr8(ABS(0x03D8), 0xFC);
+            wr8(ABS(DIGIT_ROW), 0xFC); wr8(ABS(DIGIT_ROW + 0x05), 0xFC);
         }
         rep(0x20);
         lda16(0x1CB6); wr16(DP(0x00), 0x1CB6);
@@ -8077,7 +8077,7 @@ void Mode12_AfterEnd_m1x1(void)
         fc = 1; sbc8(rd8(DP(0x00)));
         wr8(ABS(SH_INIDISP), (u8)A);
         lda8(0x09); wr8(ABS(PALETTE_BUF), 0x09);
-        wr8(ABS(0x1C01), 0);
+        wr8(ABS(PALETTE_BUF + 0x01), 0);
         wr8(ABS(PALETTE_DIRTY), inc8(rd8(ABS(PALETTE_DIRTY))));
         lda8(0xFF); wr8(ABS(COLOUR_CYCLE), 0xFF);
     }
@@ -8217,8 +8217,8 @@ void SaveHeaderCheck_m1x1(void)
             X = dec8((u8)X); X = dec8((u8)X);
         } while (!fn);
         lda16(0x0004);
-        wr16(LONG(SAVE_TIMES), 4); wr16(LONG(0x115723), 4);
-        wr16(LONG(0x115726), 4); wr16(LONG(0x115729), 4);
+        wr16(LONG(SAVE_TIMES), 4); wr16(LONG(SAVE_TIMES + 0x03), 4);
+        wr16(LONG(SAVE_TIMES + 0x06), 4); wr16(LONG(SAVE_TIMES + 0x09), 4);
         lda16(0x0010); wr16(LONG(SAVE_BEST_TIME), 0x0010);
     }
     lda16(rd16(LONG(BSX_CLOCK_0))); wr16(LONG(SAVE_CLOCK), A);
@@ -8252,19 +8252,19 @@ void SaveBestRecords_m1x1(void)
     cmp8((u8)A, rd8(LONG(SAVE_BEST_TIME)));
     if (!fz) better = !fc;
     else {
-        lda8(rd8(ABS(0x084E)));
+        lda8(rd8(ABS(TOTAL_TIME + 0x01)));
         cmp8((u8)A, rd8(LONG(SAVE_BEST_SEC)));
         if (!fz) better = !fc;
         else {
-            lda8(rd8(ABS(0x084F)));
+            lda8(rd8(ABS(TOTAL_TIME + 0x02)));
             cmp8((u8)A, rd8(LONG(SAVE_BEST_FRAC)));
             better = !fc;
         }
     }
     if (better) {
         lda8(rd8(ABS(TOTAL_TIME))); wr8(LONG(SAVE_BEST_TIME), (u8)A);
-        lda8(rd8(ABS(0x084E))); wr8(LONG(SAVE_BEST_SEC), (u8)A);
-        lda8(rd8(ABS(0x084F))); wr8(LONG(SAVE_BEST_FRAC), (u8)A);
+        lda8(rd8(ABS(TOTAL_TIME + 0x01))); wr8(LONG(SAVE_BEST_SEC), (u8)A);
+        lda8(rd8(ABS(TOTAL_TIME + 0x02))); wr8(LONG(SAVE_BEST_FRAC), (u8)A);
         wr8(ABS(0x085C), inc8(rd8(ABS(0x085C))));
         ldx8(0x0B);
         do {
@@ -8327,36 +8327,36 @@ void BroadcastTotals_m1x1(void)
     lda8(0x11); wr8(DP(0x1A), 0x11);
     push8(0x80); push16(0x9779); QueueFiveDigits_m1x1();
     wr8(ABS(TOTAL_TIME), 0);
-    wr8(ABS(0x084E), 0);
-    wr8(ABS(0x084F), 0);
+    wr8(ABS(TOTAL_TIME + 0x01), 0);
+    wr8(ABS(TOTAL_TIME + 0x02), 0);
     ldx8(0x00);
     do {
         Y = rd8(ABSX(0x083F)); nz8((u8)Y);
         lda8(rd8(ABSY(0xC6CE))); wr8(ABSX(0x083F), (u8)A);
-        fc = 0; adc8(rd8(ABS(0x084F)));
-        wr8(ABS(0x084F), (u8)A);
+        fc = 0; adc8(rd8(ABS(TOTAL_TIME + 0x02)));
+        wr8(ABS(TOTAL_TIME + 0x02), (u8)A);
         cmp8((u8)A, 0x64);
         if (fc) {
             sbc8(0x64);
-            wr8(ABS(0x084F), (u8)A);
-            u8 v = inc8(rd8(ABS(0x084E))); wr8(ABS(0x084E), v);
+            wr8(ABS(TOTAL_TIME + 0x02), (u8)A);
+            u8 v = inc8(rd8(ABS(TOTAL_TIME + 0x01))); wr8(ABS(TOTAL_TIME + 0x01), v);
             if (fz) wr8(ABS(TOTAL_TIME), inc8(rd8(ABS(TOTAL_TIME))));
         }
         lda8(rd8(ABSX(0x083E)));
-        fc = 0; adc8(rd8(ABS(0x084E)));
-        wr8(ABS(0x084E), (u8)A);
+        fc = 0; adc8(rd8(ABS(TOTAL_TIME + 0x01)));
+        wr8(ABS(TOTAL_TIME + 0x01), (u8)A);
         cmp8((u8)A, 0x3C);
         if (fc) {
             sbc8(0x3C);
-            wr8(ABS(0x084E), (u8)A);
+            wr8(ABS(TOTAL_TIME + 0x01), (u8)A);
             wr8(ABS(TOTAL_TIME), inc8(rd8(ABS(TOTAL_TIME))));
         }
         lda8(rd8(ABSX(0x083D)));
         fc = 0; adc8(rd8(ABS(TOTAL_TIME)));
         wr8(ABS(TOTAL_TIME), (u8)A);
         lda8(rd8(ABS(TOTAL_TIME))); wr8(ABS(0x0849), (u8)A);
-        lda8(rd8(ABS(0x084E))); wr8(ABS(0x084A), (u8)A);
-        lda8(rd8(ABS(0x084F))); wr8(ABS(0x084B), (u8)A);
+        lda8(rd8(ABS(TOTAL_TIME + 0x01))); wr8(ABS(0x084A), (u8)A);
+        lda8(rd8(ABS(TOTAL_TIME + 0x02))); wr8(ABS(0x084B), (u8)A);
         X = inc8((u8)X); X = inc8((u8)X); X = inc8((u8)X);
         cmp8((u8)X, 0x0C);
     } while (!fc);
@@ -8642,15 +8642,15 @@ void LoadSavedEntry_m1x1(void)
     sep(0x30);
     lda8(rd8(DP(0x10))); and8(0x03);
     lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A));
-    wr8(ABS(0x0854), tsb8(rd8(ABS(0x0854))));
+    wr8(ABS(ENTRY_CODE + 0x04), tsb8(rd8(ABS(ENTRY_CODE + 0x04))));
     lda8(rd8(DP(0x10))); and8(0x0C);
     lda8(asl8((u8)A)); lda8(asl8((u8)A));
-    wr8(ABS(0x0853), tsb8(rd8(ABS(0x0853))));
+    wr8(ABS(ENTRY_CODE + 0x03), tsb8(rd8(ABS(ENTRY_CODE + 0x03))));
     lda8(rd8(DP(0x10))); and8(0x30);
-    wr8(ABS(0x0852), tsb8(rd8(ABS(0x0852))));
+    wr8(ABS(ENTRY_CODE + 0x02), tsb8(rd8(ABS(ENTRY_CODE + 0x02))));
     lda8(rd8(DP(0x10))); and8(0xC0);
     lda8(lsr8((u8)A)); lda8(lsr8((u8)A));
-    wr8(ABS(0x0851), tsb8(rd8(ABS(0x0851))));
+    wr8(ABS(ENTRY_CODE + 0x01), tsb8(rd8(ABS(ENTRY_CODE + 0x01))));
     lda8(rd8(DP(0x11))); and8(0x03);
     lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A)); lda8(asl8((u8)A));
     wr8(ABS(ENTRY_CODE), tsb8(rd8(ABS(ENTRY_CODE))));

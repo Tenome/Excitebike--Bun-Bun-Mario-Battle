@@ -128,7 +128,7 @@ void RivalTarget_m1x1(void)
                     cmp8((u8)A, 0x40);
                     if (fc) goto table;
                     lda8(rd8(ABS(RIDER_BAND)));
-                    cmp8((u8)A, rd8(ABS(0x095B)));
+                    cmp8((u8)A, rd8(ABS(RIDER_BAND + 0x03)));
                     bump = !fz;
                 }
                 if (bump) {

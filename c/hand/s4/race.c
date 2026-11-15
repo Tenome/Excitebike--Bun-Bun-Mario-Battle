@@ -96,7 +96,7 @@ void WinnerFigure_m1x1(void)
         lda8(0x08);
         wr8(ABS(0x036F + X), 0x08);
         wr8(ABS(0x027F + X), dec8(rd8(ABS(0x027F + X))));
-        lda8(rd8(ABS(0x0309)));
+        lda8(rd8(ABS(OBJ_TYPE + 0x0A)));
         cmp8((u8)A, 0x04);
         u8 limit = fz ? 0x95 : 0x90;
         lda8(rd8(ABS(0x027F + X)));
