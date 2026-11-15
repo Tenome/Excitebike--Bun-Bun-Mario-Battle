@@ -287,8 +287,12 @@ u32 roster_name(int st, int ch, u16 orig)
     return 0x800000 | orig;
 }
 
+static int extra_char(int rider);
 u8 roster_crash_voice(int st, int var, int ch, int rider)
 {
+    int xc = extra_char(rider & 7);
+    if (xc >= 0)
+        return g_ch[xc].voice[st ? 1 : 0][var ? 1 : 0][0];   /* its own voice */
     ch = real_char(ch);
     if (ch >= 5 && ch < g_count)
         return g_ch[ch].voice[st ? 1 : 0][var ? 1 : 0][rider & 7];
@@ -493,7 +497,7 @@ void RivalsAfterFrame(void)
  * PlaceRiderShadow hid the ones off page 1. Inside the wide view, give each
  * column its X9 bit and put the rows back. */
 int BunbunWsExtra(void);
-void port_ws_rider_sprites(void)
+static void ws_rider_sprites(void)
 {
     int extra = BunbunWsExtra();
     if (!extra || g_ram[0x76] != 0x03)
@@ -542,4 +546,149 @@ void port_ws_shadow_fix(void)
     unsigned k = (Y & 0xFF) >> 2;
     g_ram[0x1850 + k] = (uint8_t)(((x - 7) & 0x1FF) >> 8);
     g_ram[0x1851 + k] = (uint8_t)(((x - 15) & 0x1FF) >> 8);
+}
+
+/* ---- every character in the race ---------------------------------------------
+ * (launcher: Game > Every character races.) A race shows four characters: the
+ * player's (sprite slot 0) and three rivals, whose animation frames stream
+ * into four VRAM slots, and the four Koopa riders 4-7, drawn from one fixed
+ * sheet. Here the characters not in the lineup take Koopa riders 4, 5, ...
+ * Their frames could not stream (no VRAM or sprite palettes are free for
+ * them), so they are drawn by the port's renderer as extra objects, with
+ * their own rider set and palette, in the place and the OAM order of the
+ * Koopa's sprites:
+ *
+ *   PlaceRiderShadow ($80:CE96, the last routine to touch a rider's four
+ *   16x16 sprites, at OAM buffer $1600 + $07) ends in port_ws_rider_sprites.
+ *   For such a rider each visible sprite is parked at Y = $F0 (off screen)
+ *   with attribute MAGIC and a ticket number as its tile; the ticket records
+ *   the quadrant, Y, animation frame ($1961 + rider) and character. X and its
+ *   ninth bit stay, so the sprite keeps its place through the game's own OAM
+ *   DMA. Before each frame is drawn, RosterExtraRidersFrame finds the parked
+ *   sprites in the PPU's OAM and draws each quadrant from its ticket. */
+#define XR_MAGIC 0xA5               /* attribute: V flip, priority 2, palette 2, table 1 */
+typedef struct { u8 slot, q, y, frame, ch; u32 stamp; } XRec;
+static XRec s_xr[256];
+static u8 s_xnext;
+static u32 s_xframe;
+
+static int all_riders_on(void)
+{
+    static int v = -1;
+    if (v < 0) v = bunbun_option("BUNBUN_ALL_RIDERS", "game.allriders", 1);
+    return v && g_ready;
+}
+
+/* The character whose own rider set (slot 0 of its own race) is this one. */
+static int set_owner(u8 bank, u16 off, int var)
+{
+    for (int c = 0; c < g_count; c++)
+        if (g_ch[c].bank[var][0] == bank && g_ch[c].off[var][0] == off)
+            return c;
+    return -1;
+}
+
+/* Character drawn for rider 4-7, or -1 for the Koopa. */
+static int extra_char(int rider)
+{
+    if (rider < 4 || !all_riders_on())
+        return -1;
+    int var = g_ram[0x1E91] ? 1 : 0;
+    u8 ch = g_ram[0x154F];
+    unsigned in = 0;
+    for (int s = 0; s < 4; s++) {
+        int c = set_owner(roster_rider_bank(ch, var, s), roster_rider_offset(ch, var, s * 2), var);
+        if (c >= 0) in |= 1u << c;
+    }
+    int k = rider - 4;
+    for (int c = 0; c < g_count; c++)
+        if (!(in & (1u << c)) && k-- == 0)
+            return c;
+    return -1;
+}
+
+static void extra_rider_sprites(void)
+{
+    unsigned r = X & 0xFF;
+    if (r < 4 || r > 7)
+        return;
+    int ch = extra_char((int)r);
+    if (ch < 0)
+        return;
+    unsigned o = g_ram[0x07];
+    for (unsigned q = 0; q < 4; q++) {
+        unsigned e = 0x1600 + o + 4 * q;
+        u8 y = g_ram[e + 1];
+        if (y >= 0xE0)
+            continue;                                  /* hidden by the game */
+        u8 t = s_xnext++;
+        s_xr[t] = (XRec){ (u8)((o >> 2) + q), (u8)q, y, g_ram[0x1961 + r], (u8)ch, s_xframe };
+        g_ram[e + 1] = 0xF0;
+        g_ram[e + 2] = t;
+        g_ram[e + 3] = XR_MAGIC;
+    }
+}
+
+void port_ws_rider_sprites(void)
+{
+    ws_rider_sprites();
+    extra_rider_sprites();
+}
+
+/* One 16x16 quadrant q of animation frame f of character ch, RGB15 with bit
+ * 15 set on opaque pixels. Frame f is the 32x32 picture at set + (f & $FE) *
+ * $200 + (f & 1) * $100: a row of eight tiles, the next row $200 on; the four
+ * 16x16 sprites are tiles 0-1, 2-3, 4-5, 6-7 of it (as the slots in VRAM). */
+static void draw_quadrant(uint16_t *pix, int ch, int f, int q)
+{
+    int st = rd8(LONG(0x81800C)) ? 1 : 0, var = g_ram[0x1E91] ? 1 : 0;
+    u32 set = (u32)g_ch[ch].bank[var][0] << 16 | g_ch[ch].off[var][0];
+    u32 a = set + (u32)(f & 0xFE) * 0x200 + (u32)(f & 1) * 0x100;
+    u32 pal = g_ch[ch].pal[st][var][0];
+    uint16_t col[16];
+    for (int i = 0; i < 16; i++)
+        col[i] = (uint16_t)(rom16(pal + i * 2) & 0x7FFF);
+    for (int ty = 0; ty < 2; ty++)
+        for (int tx = 0; tx < 2; tx++) {
+            u32 t = a + (u32)ty * 0x200 + (u32)(q * 2 + tx) * 32;
+            for (int row = 0; row < 8; row++) {
+                u8 p0 = rom8(t + row * 2), p1 = rom8(t + row * 2 + 1);
+                u8 p2 = rom8(t + 16 + row * 2), p3 = rom8(t + 17 + row * 2);
+                for (int px = 0; px < 8; px++) {
+                    int b = 7 - px;
+                    int c = (p0 >> b & 1) | (p1 >> b & 1) << 1 | (p2 >> b & 1) << 2 | (p3 >> b & 1) << 3;
+                    pix[(ty * 8 + row) * 16 + tx * 8 + px] = c ? (uint16_t)(col[c] | 0x8000) : 0;
+                }
+            }
+        }
+}
+
+#include "snes/ppu.h"
+extern Ppu *g_ppu;
+void RosterExtraRidersFrame(void)
+{
+    static PpuExtraObject objs[32];
+    static uint16_t pix[32][256];
+    s_xframe++;
+    if (!g_ppu)
+        return;
+    int n = 0;
+    if (all_riders_on())
+        for (int slot = 0; slot < 128 && n < 32; slot++) {
+            uint16_t w0 = g_ppu->oam[slot * 2], w1 = g_ppu->oam[slot * 2 + 1];
+            if ((w0 >> 8) != 0xF0 || (w1 >> 8) != XR_MAGIC)
+                continue;
+            const XRec *rc = &s_xr[w1 & 0xFF];
+            if (rc->slot != slot || s_xframe - rc->stamp > 8)
+                continue;
+            int x = (w0 & 0xFF) | ((g_ppu->highOam[slot >> 2] >> ((slot & 3) * 2)) & 1) << 8;
+            if (x >= 256 + g_ppu->extraRightCur)
+                x -= 512;
+            draw_quadrant(pix[n], rc->ch, rc->frame, rc->q);
+            objs[n] = (PpuExtraObject){ .x = x, .y = rc->y, .width = 16, .height = 16, .stride = 16,
+                                        .priority = 2, .math = 0, .oamSlot = (uint8_t)slot,
+                                        .order = 1, .pixels = pix[n] };
+            n++;
+        }
+    PpuSetExtraObjects(g_ppu, n ? objs : NULL, (size_t)n);
 }

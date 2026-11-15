@@ -312,6 +312,34 @@ So each character's frames are one 16 KB set (frame `f` at
 `set + (f & $FE) * $200 + (f & 1) * $100`, two 8-tile rows of `$100` bytes),
 and the race always shows the four characters, the player's in slot 0.
 
+### Riders on screen (Gen B race)
+
+Measured from PPU dumps during a Stadium 4 final (OBSEL 1: sprite tiles at
+VRAM word $2000, second table +$1000). DrawAllRiders ($80:CA98) walks the
+sorted riders ($0950); rider r gets palette $80:BAD7[r] and OAM offset
+$80:BAC7[sort position]. DrawBigSprite ($80:B22B) draws four 16x16 sprites,
+tiles t, t+2, t+4, t+6 (top left, top right, bottom left, bottom right):
+
+* riders 0-3 use the streamed slots, tiles $80:B296[r] in the first table
+  ($00, $08, $20, $28: each slot is two rows of eight tiles, rows 0/1 at
+  +0 and +$200 of the frame), palettes 1-4;
+* riders 4-7 (the Koopas) take t from the pose table $80:BA99 (high byte =
+  table) in a fixed Koopa sheet (first table rows $40-$5F, $80-$9F, $C0-$DF),
+  palette 7.
+
+Free in a race: most of the second table (rows $40-$7F, $A0-$BF) and sprite
+palette 5 (the player's blink colour during the coin turbo). Four more
+streamed characters would need 16 KB of sets streamed into those rows and
+four palettes, which the eight sprite palettes do not have. The port's
+*every character races* option therefore draws the extra characters outside
+the PPU: PlaceRiderShadow ($80:CE96), the last routine to touch a rider's
+four sprites, ends in a port hook that parks the visible sprites of a
+reassigned Koopa at Y = $F0 with attribute $A5 and a ticket number as the
+tile; before each frame the port finds them in the PPU's OAM (after the
+game's own OAM DMA, so the timing is the game's) and draws each 16x16
+quadrant from the ticket (frame $1961 + r, character, Y) as a renderer
+extra object at the sprite's X and OAM order (`port/src/roster.c`).
+
 ## Sound samples
 
 The driver sets the sample directory to `$5C00` (DSP `$5D` = `$5C`, ARAM

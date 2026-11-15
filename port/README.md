@@ -111,7 +111,9 @@ state, so you continue where you were.
     would need the race engine rewritten, which the decompilation is working
     towards); *Rival pace*: easy (rivals 15% slower), normal (the
     original) or hard (15% faster), applied to the target speed the rival
-    AI ($80:BE66) picks.
+    AI ($80:BE66) picks; *Every character races* (default on): the
+    characters missing from a race's lineup take Koopa riders 4, 5, ...,
+    so all six race together (`src/roster.c`, see docs/NOTES.md).
   * *Widescreen*: 16:9 races (`src/widescreen_bunbun.c`). The track's
     right margin is filled by replaying the track streamer ($81:8A4D) a few
     columns ahead into the unused part of its 64-column tilemap; the bottom

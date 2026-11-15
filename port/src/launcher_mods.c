@@ -73,6 +73,7 @@ static const Opt kGameOpts[] = {
     { "stadium", "Stadium", "Which Stadium's rules, schedule and end screen to play.", "game.stadium", "4", RECOMP_MOD_OPTION_CHOICE, kStadium, 2 },
     { "courses", "Courses", "Play the Stadium 1 or 2 courses in this engine.", "game.courses", "own", RECOMP_MOD_OPTION_CHOICE, kCourses, 3 },
     { "luigi", "Expanded roster", "Add Luigi (from data/s3.sfc) as a sixth character.", "game.luigi", "1", RECOMP_MOD_OPTION_CHOICE, kOnOff, 2 },
+    { "allriders", "Every character races", "Characters not in the race's lineup ride in place of Koopa riders, so all of them race together.", "game.allriders", "1", RECOMP_MOD_OPTION_CHOICE, kOnOff, 2 },
     { "widescreen", "Widescreen", "Show more of the track to both sides in races. Takes effect when the game restarts.", "display.widescreen", "off", RECOMP_MOD_OPTION_CHOICE, kWide, 2 },
     { "pace", "Rival pace", "The target speed every CPU rival accelerates toward.", "game.pace", "normal", RECOMP_MOD_OPTION_CHOICE, kPace, 3 },
     { "rivals", "CPU rivals", "The original runs the course alone and meets the seven rivals only in the final; this fills every race with them.", "game.rivals", "all", RECOMP_MOD_OPTION_CHOICE, kRivals, 2 },

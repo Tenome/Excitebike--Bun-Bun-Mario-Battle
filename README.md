@@ -32,6 +32,7 @@ What the port adds:
 | Feature | |
 |---|---|
 | **Expanded roster** | Mario, Yoshi, Kinopio, Wario, Peach and Luigi in one player select (Luigi's rider set and voice come from the Stadium 3 dump) |
+| **Every character races** | The characters not in a race's lineup ride in place of Koopa riders, so all six race together (drawn by the port's renderer with their own sprites and colours) |
 | **CPU rivals in every race** | The original runs the free runs alone and meets the seven rivals only in the final; the port fills every race (the engine's eight rider slots) |
 | **Widescreen** | 16:9 races and jump contest: the track, crowd, HUD, riders and their shadows continue into both margins; menus and the course preview are pillarboxed |
 | **Rival pace** | Easy, normal (original) or hard CPU rivals: a percentage on the target speed the rival AI picks |

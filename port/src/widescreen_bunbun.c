@@ -170,9 +170,15 @@ static void track_lookahead(void)
 }
 
 /* Per frame, after the host has set the symmetric budget. */
+#ifdef BUNBUN_GENB
+void RosterExtraRidersFrame(void);   /* src/roster.c: every character races */
+#endif
 void BunbunWsBeginFrame(unsigned number)
 {
     (void)number;
+#ifdef BUNBUN_GENB
+    RosterExtraRidersFrame();
+#endif
     int extra = ws_extra();
     if (!extra || !g_ppu || !g_snes || !g_snes->cart || !g_snes->cart->rom)
         return;
