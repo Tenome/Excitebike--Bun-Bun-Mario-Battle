@@ -58,12 +58,16 @@ static uint8_t lorom(const uint8_t *rom, uint32_t a)
  * 0 after the last column. Both engines carry the same tables and layouts
  * except row type $1C (Gen A terrain $44, obstacle $1C): Gen B gives three of
  * its tiles height $0C where Gen A has $1F (checked for every row type 0-$2F,
- * docs/NOTES.md). With Gen A courses loaded, the Gen B image takes Gen A's
- * words for every row of the same shape, so the courses build as they did in
- * their own engine. Returns the number of words changed. */
-static int take_gena_rows(const uint8_t *a, uint8_t *b, size_t bsize)
+ * docs/NOTES.md). The differing words are recorded when the Gen A ROM loads;
+ * while Gen A courses are in use the Gen B image holds Gen A's words, so the
+ * courses build as they did in their own engine, and Gen B's come back when
+ * the Stadium changes to 3 or 4 (src/stadium_select.c). */
+static struct { uint32_t off; uint8_t a[2], b[2]; } s_rows[64];
+static int s_nrows, s_rows_on;
+
+static void record_gena_rows(const uint8_t *a, const uint8_t *b, size_t bsize)
 {
-    int changed = 0;
+    s_nrows = 0;
     for (int rt = 0; rt < 0x30; rt++) {
         uint32_t pa = lorom(a, 0x818010u + rt) | lorom(a, 0x818040u + rt) << 8;
         uint32_t pb = lorom(b, 0x818010u + rt) | lorom(b, 0x818040u + rt) << 8;
@@ -79,47 +83,51 @@ static int take_gena_rows(const uint8_t *a, uint8_t *b, size_t bsize)
             oa++; ob++;
             for (; x < 0x1E; x += 2, oa += 2, ob += 2) {
                 if (ob + 1 >= bsize)
-                    return changed;
-                if (a[oa] != b[ob] || a[oa + 1] != b[ob + 1]) {
-                    b[ob] = a[oa];
-                    b[ob + 1] = a[oa + 1];
-                    changed++;
+                    return;
+                if ((a[oa] != b[ob] || a[oa + 1] != b[ob + 1]) && s_nrows < 64) {
+                    s_rows[s_nrows].off = ob;
+                    s_rows[s_nrows].a[0] = a[oa]; s_rows[s_nrows].a[1] = a[oa + 1];
+                    s_rows[s_nrows].b[0] = b[ob]; s_rows[s_nrows].b[1] = b[ob + 1];
+                    s_nrows++;
                 }
             }
         }
     }
-    return changed;
 }
 
-void BunbunCoursesInit(void)
+/* Gen A's words in the Gen B image (on) or Gen B's own back (off). */
+static void gena_rows(int on)
 {
-    const char *path = getenv("BUNBUN_GENA_ROM");
-    char setbuf[8];
-    int want = bunbun_option("BUNBUN_COURSES", "game.courses", 0);   /* launcher: Game > Courses ("own" = 0) */
-    if (want == 0) {                       /* Stadium 1 or 2 plays its own courses */
-        int st = bunbun_option("BUNBUN_STADIUM", "game.stadium", 0);
-        if (st == 1 || st == 2)
-            want = st;
-    }
-    SDL_snprintf(setbuf, sizeof setbuf, "%d", want);
-    const char *set = setbuf;
-    if (!set || (atoi(set) != 1 && atoi(set) != 2))
+    if (on == s_rows_on || !g_snes || !g_snes->cart || !g_snes->cart->rom)
         return;
+    for (int i = 0; i < s_nrows; i++)
+        memcpy(g_snes->cart->rom + s_rows[i].off, on ? s_rows[i].a : s_rows[i].b, 2);
+    s_rows_on = on;
+}
+
+/* Load and convert the Gen A courses once (data/s1.sfc, or BUNBUN_GENA_ROM). */
+static int gena_load(void)
+{
+    static int tried;
+    if (g_gena || tried)
+        return g_gena != NULL;
+    tried = 1;
+    const char *path = getenv("BUNBUN_GENA_ROM");
     uint8_t *rom = NULL;
     size_t n = 0;
     if (path) {                             /* an explicit dump wins */
         rom = SDL_LoadFile(path, &n);
-        if (!rom) { fprintf(stderr, "[bunbun] cannot open BUNBUN_GENA_ROM '%s'\n", path); return; }
+        if (!rom) { fprintf(stderr, "[bunbun] cannot open BUNBUN_GENA_ROM '%s'\n", path); return 0; }
     } else {                                /* built in, else data/s1.sfc */
         rom = bunbun_data_load_dump("s1.sfc");
         n = rom ? 0x100000 : 0;
         if (!rom)
-            return;
+            return 0;
     }
     if (n != 0x100000 || crc32_buf(rom, n) != GENA_CRC32) {
         fprintf(stderr, "[bunbun] the Stadium 1 dump is not the expected one\n");
         SDL_free(rom);
-        return;
+        return 0;
     }
     /* Gen A tables: starts $81:8C59, lengths $81:8C6D, data $81:8C81. */
     uint32_t total = 0;
@@ -144,12 +152,34 @@ void BunbunCoursesInit(void)
         }
     }
     if (g_snes && g_snes->cart && g_snes->cart->rom) {
-        int w = take_gena_rows(rom, g_snes->cart->rom, g_snes->cart->romSize);
-        fprintf(stderr, "[bunbun] Gen A race rows: %d tile words taken\n", w);
+        record_gena_rows(rom, g_snes->cart->rom, g_snes->cart->romSize);
+        fprintf(stderr, "[bunbun] Gen A race rows: %d tile words differ\n", s_nrows);
     }
     SDL_free(rom);
-    g_gena_set = atoi(set) - 1;
-    fprintf(stderr, "[bunbun] using Stadium %d courses from the Gen A ROM\n", g_gena_set + 1);
+    return 1;
+}
+
+/* Play Stadium 1's (set 0) or Stadium 2's (set 1) courses, or this engine's
+ * own (-1). The Courses setting (game.courses 1 / 2) wins over the Stadium.
+ * Returns 0 when the Gen A courses are wanted but data/s1.sfc is missing. */
+int BunbunCoursesUse(int set)
+{
+    int forced = bunbun_option("BUNBUN_COURSES", "game.courses", 0);   /* launcher: Game > Courses ("own" = 0) */
+    if (forced == 1 || forced == 2)
+        set = forced - 1;
+    if (set >= 0 && !gena_load())
+        set = -1;
+    gena_rows(set >= 0);
+    if (set != g_gena_set && set >= 0)
+        fprintf(stderr, "[bunbun] using Stadium %d courses from the Gen A ROM\n", set + 1);
+    g_gena_set = set;
+    return set >= 0 || forced == 0;
+}
+
+void BunbunCoursesInit(void)
+{
+    int st = bunbun_option("BUNBUN_STADIUM", "game.stadium", 0);
+    BunbunCoursesUse(st == 1 || st == 2 ? st - 1 : -1);
 }
 
 int BunbunCustomCourse(int index, uint8_t *buf, int cap);   /* src/mods_folder.c */

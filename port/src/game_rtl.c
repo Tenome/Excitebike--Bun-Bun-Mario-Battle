@@ -54,6 +54,7 @@ int g_port_reset_request;
 #include <string.h>
 #include "bunbun_settings.h"
 void BunbunCoursesInit(void);
+void BunbunStadiumApply(int st);
 int BunbunModsFolderApply(void);
 void RosterInit(void);
 static void GameInitialize(void)
@@ -67,19 +68,17 @@ static void GameInitialize(void)
     if (!courses_ready) { courses_ready = 1; BunbunCoursesInit(); }
 #endif
     int st = bunbun_option("BUNBUN_STADIUM", "game.stadium", 0);   /* launcher: Game > Stadium */
-    if (st && g_snes && g_snes->cart && g_snes->cart->rom && g_snes->cart->romSize > 0x800C) {
 #ifdef BUNBUN_GENB
-        if (st == 3 || st == 4)     /* Gen B build: 0 = Stadium 3, 1 = Stadium 4 */
-            g_snes->cart->rom[0x800C] = (uint8_t)(st - 3);
-        else if (st == 1 || st == 2)  /* Stadium 1 / 2 in this engine: its courses
-                                       * (src/courses.c) on side 0 / 1, as in Gen A
-                                       * (side 1 also ends the hour with mode $12) */
-            g_snes->cart->rom[0x800C] = (uint8_t)(st - 1);
+    /* Stadiums 1-4 (src/stadium_select.c): 3 / 4 this build's own, 1 / 2
+     * their courses in this engine on side 0 / 1; the title's select can
+     * change it later. */
+    BunbunStadiumApply(st ? st : 4);
 #else
+    if (st && g_snes && g_snes->cart && g_snes->cart->rom && g_snes->cart->romSize > 0x800C) {
         if (st == 1 || st == 2)     /* Gen A build: 0 = Stadium 1, 1 = Stadium 2 */
             g_snes->cart->rom[0x800C] = (uint8_t)(st - 1);
-#endif
     }
+#endif
 }
 
 /* Start skips the broadcast's waiting segments (on by default;

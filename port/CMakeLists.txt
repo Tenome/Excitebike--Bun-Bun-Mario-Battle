@@ -48,6 +48,7 @@ function(bunbun_game tgt gendir cfgdir identity title)
       ${CMAKE_SOURCE_DIR}/src/game_rtl.c
       ${CMAKE_SOURCE_DIR}/src/gen_stubs.c
       ${CMAKE_SOURCE_DIR}/src/courses.c
+      ${CMAKE_SOURCE_DIR}/src/stadium_select.c
       ${CMAKE_SOURCE_DIR}/src/mods_folder.c
       ${CMAKE_SOURCE_DIR}/src/bunbun_data.c
       ${CMAKE_SOURCE_DIR}/src/bunbun_settings.c

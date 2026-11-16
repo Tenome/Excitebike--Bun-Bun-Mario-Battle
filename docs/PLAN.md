@@ -186,7 +186,8 @@ The rest of the 1 MB is graphics, tracks, music and other data.
    characters are the combined roster. Still Gen B's for them: the bonus
    game itself, the result board's jump rows, the HUD and the Stadium
    look (docs/NOTES.md, "Stadiums 1-4 in the Gen B exe").
-3. Stadium select: in the launcher (done); in the game itself (to do).
+3. ✅ Stadium select: in the launcher, and in the game (L / R on the title
+   and the attract demo, `port/src/stadium_select.c`).
    The combined roster is done (all six characters in the Gen B exe).
 4. Port extras later: widescreen, more riders, higher frame rate, mods.
 

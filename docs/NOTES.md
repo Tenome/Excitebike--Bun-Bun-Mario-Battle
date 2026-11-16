@@ -278,7 +278,9 @@ in code: minutes `$1F`/`$38` (EndAtBonusMinute, mode `$15`), `$1E`/`$37`
 (CheckBonusTime), `$28` (EndJumpMode, the bonus HDMA scene).
 
 ### Stadiums 1-4 in the Gen B exe (the merge)
-Game > Stadium (BUNBUN_STADIUM) 1 or 2 runs that Stadium in the Gen B
+Game > Stadium (BUNBUN_STADIUM), or in the game L / R on the title and the
+attract demo (a "< STADIUM n >" label drawn by the port, saved to
+bunbun.ini; `port/src/stadium_select.c`). 1 or 2 runs that Stadium in the Gen B
 engine: its eight courses and its special course from data/s1.sfc
 (`port/src/courses.c`; the race rows that differ take Gen A's words), side
 0 / 1 of the build (`$81:800C`, so side 1 ends the hour with mode `$12` as
