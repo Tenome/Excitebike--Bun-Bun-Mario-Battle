@@ -13345,6 +13345,7 @@ void BroadcastEndScreens_m1x1(void)
     cmp8((u8)X, 0x03);
     int bonus = fz;
     if (!bonus) { cmp8((u8)X, 0x01); bonus = fz; }
+    bonus = port_bonus_entry((u8)X, bonus);       /* roster.h: Stadium 1-2 rules */
     if (bonus) {
         lda8(0x17); wr8(DP(GAME_MODE), 0x17);
         lda8(rd8(ABS(BONUS_TRIES)));

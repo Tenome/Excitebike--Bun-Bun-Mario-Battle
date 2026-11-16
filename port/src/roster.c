@@ -454,6 +454,15 @@ int port_race_is_final(void)
     return g_ram[0x7D] != 0 && !g_rivals_forced && !gena_rules();
 }
 
+/* Gen A's hour has one bonus game, at its end (after course 4); Gen B's has
+ * one after course 2 as well. */
+int port_bonus_entry(u8 entry, int orig)
+{
+    if (gena_rules())
+        return entry == 3;
+    return orig;
+}
+
 static uint8_t *end_minutes(void)       /* $80:C468 in the cartridge image */
 {
     if (!g_snes || !g_snes->cart || !g_snes->cart->rom || g_snes->cart->romSize < 0x4480)

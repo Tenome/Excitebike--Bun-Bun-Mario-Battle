@@ -78,6 +78,7 @@ void roster_note_choice(int ch) { (void)ch; }
 
 int port_hide_clock(void) { return 0; }
 int port_race_is_final(void) { return rd8(DP(FINAL_RACE)) != 0; }
+int port_bonus_entry(u8 entry, int orig) { (void)entry; return orig; }
 int port_rival_pace(void) { return 100; }
 void port_ws_rider_sprites(void) { }
 int port_ws_shadow_margin(void) { return 0; }

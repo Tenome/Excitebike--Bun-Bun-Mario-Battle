@@ -283,9 +283,10 @@ engine: its eight courses and its special course from data/s1.sfc
 (`port/src/courses.c`; the race rows that differ take Gen A's words), side
 0 / 1 of the build (`$81:800C`, so side 1 ends the hour with mode `$12` as
 Gen A's Stadium 2 does), and Gen A's rule of no jump contests: a final goes
-to its results as a free run does (`port_race_is_final`, `src/roster.c`).
-Still Gen B's: the bonus game after course 2 and the one at the end of the
-hour, the result board's jump rows (they show 0), the HUD and the Stadium
+to its results as a free run does (`port_race_is_final`, `src/roster.c`),
+and one bonus game, after course 4 (`port_bonus_entry` in
+BroadcastEndScreens: entry 1 goes on to course 3). Still Gen B's: the bonus
+game itself, the result board's jump rows (they show 0), the HUD and the Stadium
 graphics and palette (side 0 / 1, that is Stadium 3 / 4's look). Gen A's
 Stadium 1 and 2 differ from each other only in courses, the special
 course, the attract demo's first entry, Wario (Stadium 2) and the end

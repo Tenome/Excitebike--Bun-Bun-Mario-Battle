@@ -181,9 +181,10 @@ The rest of the 1 MB is graphics, tracks, music and other data.
    only in Gen B.
 2. ✅ (first version, 2026-11-15) The Gen B engine is the base: the Gen B
    exe plays Stadiums 1-4 (launcher Game > Stadium). Stadiums 1-2 bring
-   their courses, special courses and Gen A's no-jump-contest hour; the
+   their courses, special courses and Gen A's hour (no jump contests, one
+   bonus game at the end); the
    characters are the combined roster. Still Gen B's for them: the bonus
-   games' minutes, the result board's jump rows, the HUD and the Stadium
+   game itself, the result board's jump rows, the HUD and the Stadium
    look (docs/NOTES.md, "Stadiums 1-4 in the Gen B exe").
 3. Stadium select: in the launcher (done); in the game itself (to do).
    The combined roster is done (all six characters in the Gen B exe).
