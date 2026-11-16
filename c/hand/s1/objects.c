@@ -1473,7 +1473,7 @@ void DriftUpObject_m1x1(void)
 void SelectTimerDigits_m1x1(void)
 {
     lda8(rd8(DP(MODE_TIMER))); wr8(ABS(WRDIVL), (u8)A);
-    lda8(rd8(DP(0x89))); wr8(ABS(WRDIVH), (u8)A);
+    lda8(rd8(DP(MODE_TIMER + 0x01))); wr8(ABS(WRDIVH), (u8)A);
     lda8(0x3C); wr8(ABS(WRDIVB), 0x3C);
     wr8(DP(0x00), 0);
     lda8(rd8(ABS(RDDIVL)));
@@ -1629,7 +1629,8 @@ static void mul16_00(void)
 void Mul16_m1x1(void) { mul16_00(); }
 void Mul16_m1x0(void) { mul16_00(); }
 
-/* $80:BCCD Mul16c (RTS): $40:$41 * $42:$43 -> $44-$47. */
+/* $80:BCCD Mul16c (RTS): $40:$41 * $42:$43 -> $44-$47 (direct page; the
+ * IRQ calls it with D = $1B00). */
 void Mul16c_m1x1(void)
 {
     static const u16 back[4] = { 0xBCD9, 0xBCF0, 0xBD0C, 0xBD28 };
@@ -2177,7 +2178,7 @@ plain:
     lda8(rd8(ABSY(0xBDD7)));
 set:
     wr8(ABSX(RIDER_TARGET_HI), (u8)A);
-    lda8(rd8(DPX(0x2F)));
+    lda8(rd8(DPX(RANDOM_LFSR + 0x03)));
     and8(0x0F);
     Y = (u8)A; nz8((u8)Y);
     lda8(rd8(ABSY(0xBDCF)));
@@ -2345,7 +2346,7 @@ void RetargetRival_m1x1(void)
         lda8(rd8(ABSX(RIDER_X)));
         and8(0x10);
         if (fz) { ret(); return; }
-        lda8(rd8(DPX(0x2E)));
+        lda8(rd8(DPX(RANDOM_LFSR + 0x02)));
         cmp8((u8)A, 0xC0);
         if (!fc) { ret(); return; }
         if (fz) Y = inc8((u8)Y);
@@ -2508,7 +2509,7 @@ void CpuLaneDecision_m1x1(void)
     if (fc) { ret(); return; }
     lda8(asl8((u8)A));
     if (!fc) { ret(); return; }
-    lda8(rd8(DPX(0x2D)));
+    lda8(rd8(DPX(RANDOM_LFSR + 0x01)));
     cmp8((u8)A, 0xE0);
     if (!fc) { ret(); return; }
     cmp8((u8)A, 0xF8);
@@ -3284,7 +3285,7 @@ static void crash_loop1(int enter_turn)
                 wr8(ABS(GAUGE_ON), (u8)A);
                 lda8(rd8(DP(RIDER_TURN)));
                 if (fz) { lda8(0x25); push8(0x80); push16(0xC4A4); QueueSound_m1x1(); }
-                lda8(rd8(DP(0x2F)));
+                lda8(rd8(DP(RANDOM_LFSR + 0x03)));
                 and8(0x03);
                 Y = (u8)A; nz8((u8)Y);
             }
@@ -6720,12 +6721,12 @@ void RacePlaceRiders_m1x1(void)
         lda8(rd8(ABSX(0xB849))); wr8(ABSX(RIDER_X), (u8)A);
         lda8(0x06); wr8(ABSX(RIDER_LEAN), 0x06); wr8(ABSX(RIDER_TARGET_HI), 0x06);
         lda8(0x01); wr8(ABSX(RIDER_PAGE), 0x01); wr8(ABSX(RIDER_ACTIVE), 0x01);
-        lda8(rd8(DPX(0x2D)));
+        lda8(rd8(DPX(RANDOM_LFSR + 0x01)));
         lda8(lsr8((u8)A));
         wr8(ABSX(RIDER_TARGET_LO), (u8)A);
         X = dec8((u8)X);
     } while (!fn);
-    lda8(rd8(DPX(0x2D)));
+    lda8(rd8(DPX(RANDOM_LFSR + 0x01)));
     and8(0x03);
     if (fz) lda8(0x02);
     X = (u8)A; nz8((u8)X);
@@ -8792,7 +8793,7 @@ void ClearRiderAction_m1x1(void)
 }
 
 /* $80:BC55 (RTS, M=0): A * $40 through Mul16c ($42 = A), the middle word
- * $45 back in A. */
+ * $45 back in A. Called from the IRQ with D = $1B00. */
 void ScaleIrqLine_m0x1(void)
 {
     wr16(DP(0x42), A);

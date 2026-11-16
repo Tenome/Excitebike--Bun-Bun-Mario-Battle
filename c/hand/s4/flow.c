@@ -68,7 +68,7 @@ void RaceFinishStep_m1x1(void)
     } else {
         push16(0xAB74); NextMode_m1x1();
         wr8(DP(UPLOAD_SRC), 0);
-        wr8(DP(0x87), 0);
+        wr8(DP(UPLOAD_SRC + 0x01), 0);
     }
     lda8(rd8(ABS(ATTRACT_DEMO)));
     if (fz) { ret(); return; }
@@ -146,7 +146,7 @@ table:
     lda8(rd8(ABSY(0xBAEF)));
 table_lo:
     wr8(ABSX(RIDER_TARGET_HI), (u8)A);
-    lda8(rd8(DPX(0x2F)));
+    lda8(rd8(DPX(RANDOM_LFSR + 0x03)));
     and8(0x0F);
     Y = (u8)A; nz8((u8)Y);
     lda8(rd8(ABSY(0xBAE7)));

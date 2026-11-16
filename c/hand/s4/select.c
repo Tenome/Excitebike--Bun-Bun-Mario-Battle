@@ -49,7 +49,7 @@ static void random_body(void)
     adc8(rd8(ABS(OPVCT)));
     adc8(rd8(ABS(OPVCT)));
     eor8(rd8(DP(FRAME_COUNT)));
-    adc8(rd8(DP(0x64)));
+    adc8(rd8(DP(FRAME_COUNT + 0x01)));
     adc8(rd8(LONG(BCAST_MINUTE)));
     adc8(rd8(LONG(BCAST_FRAME)));
     adc8(rd8(LONG(BCAST_FRAME_HI)));
@@ -458,7 +458,7 @@ void SelectTransition_m1x1(void)
 void SelectTimer_m1x1(void)
 {
     lda8(rd8(DP(MODE_TIMER))); wr8(ABS(WRDIVL), (u8)A);
-    lda8(rd8(DP(0x89))); wr8(ABS(WRDIVH), (u8)A);
+    lda8(rd8(DP(MODE_TIMER + 0x01))); wr8(ABS(WRDIVH), (u8)A);
     lda8(0x3C); wr8(ABS(WRDIVB), 0x3C);
     wr8(DP(0x00), 0);
     lda8(rd8(ABS(RDDIVL)));

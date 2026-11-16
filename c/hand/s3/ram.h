@@ -34,17 +34,17 @@
 #define P2_PREV_LO      0x002B
 
 /* ---- game flow ---- */
-#define FRAME_COUNT     0x0063  /* word: +1 per game frame (main loop) */
+#define FRAME_COUNT     0x0063  /* [+$2] word: +1 per game frame (main loop) */
 #define MODE_ACTIVE     0x0075  /* RunGameModeScript: 0 = run the mode's init */
 #define GAME_MODE       0x0076  /* index of the mode's script ($80:B52B) */
 #define MODE_STEP       0x0077  /* position in the mode's handler list */
 #define COURSE_SLOT     0x007C  /* course counter in the broadcast schedule */
 #define FINAL_RACE      0x007D  /* the final of the course (second race) */
-#define RIDER_TURN      0x007F  /* [+$8] frame & 7: the rider whose turn it is */
-#define MODE_TIMER      0x0088  /* word: the current mode's frame timer */
+#define RIDER_TURN      0x007F  /* frame & 7: the rider whose turn it is */
+#define MODE_TIMER      0x0088  /* [+$2] word: the current mode's frame timer */
 #define MODE_HOLD       0x0050  /* RunGameModeScript: setup waits while set */
 #define RACE_STARTED    0x0092  /* the run has begun (countdown over) */
-#define SCROLL_X        0x009C  /* word: the track's scroll position */
+#define SCROLL_X        0x009C  /* [+$2] word: the track's scroll position */
 #define CLOCK_MINUTE    0x00B7  /* broadcast minute, copied from $7F:FFFF */
 #define COUNTDOWN       0x00C3  /* the start countdown's step (1-4) */
 #define NMI_FRAME_READY 0x0817  /* set by the NMI: the main loop runs a frame */
@@ -142,17 +142,17 @@
 #define SND_RING        0x1400  /* [+$100] 4 rings of 64 commands, channel n at + $40 * n */
 
 /* ---- more direct page ---- */
-#define RANDOM_LFSR     0x002C  /* 12 bytes: the shift register StepLfsr turns (a random source) */
+#define RANDOM_LFSR     0x002C  /* [+$C] 12 bytes: the shift register StepLfsr turns (a random source) */
 #define RIDER_LEAN_TIMER 0x0045  /* [+$8] X = rider: frames until the next lean step (the finish wave timer) */
 #define RACE_END        0x0084  /* the run is over (2 = the time ran out; even and nonzero ends the mode) */
 #define SUB_STEP        0x0085  /* a screen's own step: the DispatchBy85 tables, the 20 jump steps */
-#define UPLOAD_SRC      0x0086  /* word: the NMI animation tile upload source ($0200 bytes; Gen B bank $9B to VRAM $5A00, Gen A $9E to $4A00) */
+#define UPLOAD_SRC      0x0086  /* [+$2] word: the NMI animation tile upload source ($0200 bytes; Gen B bank $9B to VRAM $5A00, Gen A $9E to $4A00) */
 #define LIGHTS_TIMER    0x008E  /* how long the countdown lights stay up */
 #define HDMA_ZOOM       0x0095  /* the IRQ builds the HDMA line table from the scroll */
 #define PARALLAX_ON     0x0096  /* the IRQ builds the parallax lines (ParallaxLines) */
 #define BONUS_SIGN      0x0097  /* the bonus course sign is up */
-#define BG1_VSCROLL     0x009E  /* word: BG1 vertical scroll */
-#define ZOOM            0x00A2  /* word: the jump and bonus screens' zoom ($0100 = 1:1) */
+#define BG1_VSCROLL     0x009E  /* [+$2] word: BG1 vertical scroll */
+#define ZOOM            0x00A2  /* [+$2] word: the jump and bonus screens' zoom ($0100 = 1:1) */
 #define COURSE_COLUMN   0x00AE  /* the course column being loaded into the track */
 #define BONUS_SECONDS   0x00B4  /* the bonus course clock, seconds left */
 #define BONUS_TICK      0x00B5  /* frames into the bonus clock's second */
@@ -174,7 +174,7 @@
 
 /* ---- direct page, part 3 ---- */
 #define RIDER_HOLD      0x003D  /* [+$8] X = rider: frames the rider is held (start-line delay X * 8 + $1C, $0A after a crash) */
-#define PIC_SCROLL      0x00A6  /* word: the title and credits picture's scroll (also the intro zoom to $0100) */
+#define PIC_SCROLL      0x00A6  /* [+$2] word: the title and credits picture's scroll (also the intro zoom to $0100) */
 #define CLOCK_HIDE      0x00CB  /* the race clock is not redrawn (the best-time blink) */
 #define PLACE_BONUS     0x00BA  /* the place bonus, counted down into the score on the results */
 #define COIN_TAKEN      0x00B2  /* a coin was taken: redraw the map cells behind it */
@@ -335,14 +335,14 @@
 #define WHEELIE_LOCK    0x1979  /* the wheelie's first-time flag ($30), 1 after an arrow piece */
 #define CLOCK_TIMER     0x1E84  /* frames to the clock colon's next blink (30) */
 #define TITLE_BLINK     0x00C5  /* the title's PUSH START blink counter */
-#define END_FRAMES      0x00C1  /* word: frames on the after-the-end screen */
+#define END_FRAMES      0x00C1  /* [+$2] word: frames on the after-the-end screen */
 #define FIRST_RIVAL     0x007E  /* the first rider slot checked for riders ahead (1) */
 #define TUMBLE_TIMER    0x003A  /* the crash tumble timer ($20); also the bonus course's setup wait */
 #define BONUS_SHOWN     0x09C6  /* the bonus count shown, stepping toward BONUS_RESULT */
 #define LAST_TRACK_COL  0x09C8  /* the jump/bonus track column last read (points count once per column) */
 #define SH_BG1SC        0x1900  /* a copy of BG1SC */
 #define BG1_VOFS        0x009B  /* BG1's vertical scroll when VSCROLL_ZOOM is clear */
-#define SPEED_SHOWN     0x00D0  /* word: the speed readout's last value */
+#define SPEED_SHOWN     0x00D0  /* [+$2] word: the speed readout's last value */
 #define SELECT_WAIT     0x198F  /* player select: frames before the choice is taken */
 #define JUMP_SKIPPED    0x1999  /* the jump result board was skipped (everything shown at once) */
 #define BONUS_BANNER    0x00D4  /* the stadium bonus banner's timer ($80 at the finish) */

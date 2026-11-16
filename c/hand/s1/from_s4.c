@@ -466,11 +466,11 @@ void SpawnExhaust_m1x1(void)
         if (fz) {
             lda8(rd8(DP(RANDOM_LFSR))); and8(0x07); fc = 0; adc8(0x38);
             wr8(ABSX(EFFECT_X), (u8)A);
-            lda8(rd8(DP(0x2D))); and8(0x0F); fc = 0; adc8(rd8(ABS(RIDER_Y))); sbc8(0x02);
+            lda8(rd8(DP(RANDOM_LFSR + 0x01))); and8(0x0F); fc = 0; adc8(rd8(ABS(RIDER_Y))); sbc8(0x02);
             wr8(ABSX(EFFECT_Y), (u8)A);
-            lda8(rd8(DP(0x2E))); and8(0x07); fc = 0; adc8(0x3C);
+            lda8(rd8(DP(RANDOM_LFSR + 0x02))); and8(0x07); fc = 0; adc8(0x3C);
             wr8(ABSX(EFFECT_STEP), (u8)A);
-            lda8(rd8(DP(0x2F))); and8(0x0F); fc = 0; adc8(rd8(ABS(RIDER_Y))); sbc8(0x02);
+            lda8(rd8(DP(RANDOM_LFSR + 0x03))); and8(0x0F); fc = 0; adc8(rd8(ABS(RIDER_Y))); sbc8(0x02);
             wr8(ABSX(0x0130), (u8)A);
             lda8(0xB2); wr8(ABSX(EFFECT_FRAME), 0xB2);
             lda8(0x02); wr8(ABSX(EFFECT_KIND), 0x02);

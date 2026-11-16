@@ -22,7 +22,7 @@ void Random_m1x1(void)
     adc8(rd8(ABS(OPVCT)));                 /* OPVCT low, high */
     adc8(rd8(ABS(OPVCT)));
     eor8(rd8(DP(FRAME_COUNT)));
-    adc8(rd8(DP(0x64)));
+    adc8(rd8(DP(FRAME_COUNT + 0x01)));
     adc8(rd8(LONG(BCAST_MINUTE)));              /* minute */
     adc8(rd8(LONG(BCAST_FRAME)));              /* frame within the minute */
     adc8(rd8(LONG(BCAST_FRAME_HI)));

@@ -9,9 +9,9 @@ c/hand/snes_regs.h (lines `#define NAME 0xADDR`). Only address operands are
 rewritten: ABS/ABSX/ABSY(0xADDR), DP/DPX/DPY(0xAD) and LONG/LONGX(0xBBADDR);
 immediates, table addresses and comments stay as they are. A name whose
 comment starts with [X] is a record field and goes on indexed operands only.
-A comment holding [+$N] marks a buffer or array of N bytes: an absolute or
-long address inside it with no name of its own is written NAME + 0xOFF
-(OAM_BUF + 0x11, RIDER_X + 0x01 for rider 1).
+A comment holding [+$N] marks a buffer, array or word of N bytes: an address
+inside it with no name of its own is written NAME + 0xOFF (OAM_BUF + 0x11,
+RIDER_X + 0x01 for rider 1, UPLOAD_SRC + 0x01 for a word's high byte).
 Two cases are left alone because the address would mean something else there:
   * DP operands where D is not 0: followed through the function line by
     line (push16(D) / D = pull16() restore, D = 0 makes them valid again),
@@ -35,7 +35,7 @@ INDEXED = ('ABSX', 'ABSY', 'DPX', 'DPY', 'LONGX')
 DEF_INDEXED = re.compile(r'/\*\s*\[X\]')   # "/* [X] ..." : indexed operands only
 DEF_SPAN = re.compile(r'\[\+\$([0-9A-Fa-f]+)\]')   # "[+$200]": a buffer of that size
 COMP_OPER = re.compile(r'\b(ABS|ABSX|ABSY|DP|DPX|DPY|LONG|LONGX)\((0x[0-9A-Fa-f]+) \+ ')
-SPAN_OPER = re.compile(r'\b(ABS|ABSX|ABSY|LONG|LONGX)\(([A-Z_][A-Z0-9_]*) \+ 0x([0-9A-Fa-f]+)\)')
+SPAN_OPER = re.compile(r'\b(ABS|ABSX|ABSY|DP|DPX|DPY|LONG|LONGX)\(([A-Z_][A-Z0-9_]*) \+ 0x([0-9A-Fa-f]+)\)')
 DP_MIN = 0x20
 
 
@@ -162,7 +162,7 @@ def name_text(text, names):
                 if not abs_ok:
                     return None
             n = (by_idx if indexed else by_plain).get(a)
-            if n is None and not mode.startswith('DP'):
+            if n is None:
                 n = in_span(a)
             return n
 

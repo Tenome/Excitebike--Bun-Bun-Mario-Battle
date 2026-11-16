@@ -14,7 +14,7 @@ void StepLfsr_m1x1(void)
 {
     u8 a = rd8(DP(RANDOM_LFSR)) & 0x02;
     wr8(ABS(0x0000), a);
-    a = (u8)((rd8(DP(0x2D)) & 0x02) ^ rd8(ABS(0x0000)));
+    a = (u8)((rd8(DP(RANDOM_LFSR + 0x01)) & 0x02) ^ rd8(ABS(0x0000)));
     lda8(a);
     fc = a != 0;
     for (int i = 0x2C; i <= 0x37; i++)
