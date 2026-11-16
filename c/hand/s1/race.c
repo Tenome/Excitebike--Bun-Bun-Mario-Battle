@@ -194,7 +194,7 @@ void RaceSetup_m1x1(void)
     lda8(0xFF); wr8(ABS(OAM_BUF + 0x02), 0xFF);
     lda8(0x34); wr8(ABS(TRACK_ROW_PTR), 0x34);
     lda8(0x14); wr8(ABS(TRACK_VRAM_COL), 0x14);
-    lda8(0x0A); wr8(ABS(0x0273), 0x0A);
+    lda8(0x0A); wr8(ABS(BUILD_COL), 0x0A);
     lda8(0x05); wr8(ABS(TRACK_VRAM_HALF), 0x05);
     ret();
 }

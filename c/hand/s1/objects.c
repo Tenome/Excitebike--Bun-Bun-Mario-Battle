@@ -5953,7 +5953,7 @@ void SetupJumpContest_m1x1(void)
         X = dec8((u8)X);
     } while (!fn);
     lda8(0x34); wr8(ABS(TRACK_ROW_PTR), 0x34);
-    lda8(0x0A); wr8(ABS(0x0273), 0x0A);
+    lda8(0x0A); wr8(ABS(BUILD_COL), 0x0A);
     lda8(0x05); wr8(ABS(TRACK_VRAM_HALF), 0x05);
     lda8(0x74); wr8(ABS(TRACK_VRAM_COL), 0x74);
     lda8(0x08); wr8(ABS(RIDER_WHEEL), 0x08);
@@ -6385,11 +6385,11 @@ void BuildCourseColumn_m1x1(void)
         Y = inc8((u8)Y);
         wr8(ABS(TRACK_READ_POS), (u8)Y);
     }
-    lda8(rd8(ABS(0x0273)));
+    lda8(rd8(ABS(BUILD_COL)));
     cmp8((u8)A, rd8(ABS(RIDER_COLUMN)));
     if (!fz) { ret(); return; }
     int step;   /* 0 = next entry, 1 = counting empty rows, 2 = same row */
-    lda8(rd8(ABS(0x0274)));
+    lda8(rd8(ABS(BUILD_EMPTY)));
     if (!fz) step = 1;
     else {
         lda8(rd8(ABS(ROW_OFFSET)));
@@ -6410,7 +6410,7 @@ void BuildCourseColumn_m1x1(void)
             cmp8((u8)A, 0x80);
             if (fc) {
                 and8(0x7F);
-                wr8(ABS(0x0274), (u8)A);
+                wr8(ABS(BUILD_EMPTY), (u8)A);
                 step = 1;
             } else {
                 wr8(ABS(ROW_TYPE), (u8)A);
@@ -6418,7 +6418,7 @@ void BuildCourseColumn_m1x1(void)
             }
         }
         if (step == 1) {
-            wr8(ABS(0x0274), dec8(rd8(ABS(0x0274))));
+            wr8(ABS(BUILD_EMPTY), dec8(rd8(ABS(BUILD_EMPTY))));
             lda8(0x00);
             wr8(ABS(BUILD_COLUMN), 0);
             wr8(ABS(ROW_OFFSET), 0);
@@ -6476,7 +6476,7 @@ void BuildCourseColumn_m1x1(void)
     }
     lda8(rd8(ABS(RIDER_COLUMN)));
     push16(0xDC7F); NextColumn_m1x1();
-    wr8(ABS(0x0273), (u8)A);
+    wr8(ABS(BUILD_COL), (u8)A);
     ret();
 }
 
@@ -7202,7 +7202,7 @@ void LoadRaceColumn_m1x1(void)
     lda8(0x00); wr8(DP(0x07), 0x00);
     lda8(0x40); wr8(DP(0x08), 0x40);
     lda8(0x7F); wr8(DP(0x09), 0x7F);
-    lda8(rd8(ABS(0x0273)));
+    lda8(rd8(ABS(BUILD_COL)));
     cmp8((u8)A, rd8(ABS(RIDER_COLUMN)));
     if (!fz) goto out;
     lda8(rd8(ABS(ROW_OFFSET)));
@@ -7350,7 +7350,7 @@ column:
     }
     lda8(rd8(ABS(RIDER_COLUMN)));
     push8(0x81); push16(0x8BA7); NextColumnLong_m1x1();
-    wr8(ABS(0x0273), (u8)A);
+    wr8(ABS(BUILD_COL), (u8)A);
     DB = pull8(); nz8(DB);
     retl();
     return;

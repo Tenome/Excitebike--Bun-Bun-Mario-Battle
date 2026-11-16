@@ -305,6 +305,10 @@
 #define JUMP_RUN_LEN    0x1985  /* word: the jump run's length for this entry */
 #define COMBO_COUNTS    0x1543  /* [+$6] coin combos counted by length (index = combo 1-5) */
 
+/* ---- scenery course builder ---- */
+#define BUILD_COL       0x0279  /* the scenery builder's column (it steps when it reaches the player's) */
+#define BUILD_EMPTY     0x027A  /* empty rows left from a $80+ script entry */
+
 /* ---- sprites ---- */
 #define OAM_BUF         0x1600  /* [+$200] $0200 bytes: the OAM low table image */
 #define OAM_SIZE_BUF    0x1820  /* [+$80] 128 size bytes, packed into the high table */

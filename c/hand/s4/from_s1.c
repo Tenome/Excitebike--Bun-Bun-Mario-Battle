@@ -839,8 +839,8 @@ void AddScore_m1x1(void)
     } while (!fn);
     ret();
 }
-/* $81:9FF7 ApplyVelocityX (RTL): X position $0279/$027A,X += speed $0299,X
- * (fraction $02B9,X). */
+/* $81:9FF7 ApplyVelocityX (RTL): X position $027F/$0280,X += speed $029F,X
+ * (fraction $02BF,X). */
 void ApplyVelocityX_m1x1(void)
 {
     apply_speed(0x029F, 0x02BF, 0x027F);

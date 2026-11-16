@@ -4664,8 +4664,8 @@ void AddScore_m1x1(void)
     } while (!fn);
     ret();
 }
-/* $81:9FF7 ApplyVelocityX (RTL): X position $0279/$027A,X += speed $0299,X
- * (fraction $02B9,X). */
+/* $81:9FF7 ApplyVelocityX (RTL): X position $027F/$0280,X += speed $029F,X
+ * (fraction $02BF,X). */
 void ApplyVelocityX_m1x1(void)
 {
     apply_speed(0x029F, 0x02BF, 0x027F);
@@ -9089,7 +9089,7 @@ void BonusSignStep_m1x1(void)
     if (fz) { sep(0x20); ret(); return; }
     lda8(0x28); wr8(DP(0x0F), 0x28);
     rep(0x20);
-    lda16(rd16(ABS(0x0279)));
+    lda16(rd16(ABS(BUILD_COL)));
     fc = 0; adc16(0x000B);
     and16(0x0020);
     eor16(0x0020);
@@ -9097,7 +9097,7 @@ void BonusSignStep_m1x1(void)
     lda16(lsr16(A)); lda16(lsr16(A)); lda16(lsr16(A));
     fc = 0; adc16(0x0B20);
     wr16(DP(0x00), A);
-    lda16(rd16(ABS(0x0279)));
+    lda16(rd16(ABS(BUILD_COL)));
     fc = 0; adc16(0x000B);
     and16(0x001F);
     ora16(rd16(DP(0x00)));
@@ -10485,7 +10485,7 @@ void ResetRaceBoard_m1x1(void)
     lda8(0xFF); wr8(ABS(OAM_BUF + 0x02), 0xFF);
     lda8(0x34); wr8(ABS(TRACK_ROW_PTR), 0x34);
     lda8(0x14); wr8(ABS(TRACK_VRAM_COL), 0x14);
-    lda8(0x0A); wr8(ABS(0x0279), 0x0A);
+    lda8(0x0A); wr8(ABS(BUILD_COL), 0x0A);
     lda8(0x05); wr8(ABS(TRACK_VRAM_HALF), 0x05);
     ret();
 }
@@ -10574,7 +10574,7 @@ void StartBonusCourse_m1x1(void)
         X = dec8((u8)X);
     } while (!fn);
     lda8(0x34); wr8(ABS(TRACK_ROW_PTR), 0x34);
-    lda8(0x0A); wr8(ABS(0x0279), 0x0A);
+    lda8(0x0A); wr8(ABS(BUILD_COL), 0x0A);
     lda8(0x05); wr8(ABS(TRACK_VRAM_HALF), 0x05);
     lda8(0x74); wr8(ABS(TRACK_VRAM_COL), 0x74);
     lda8(0x08); wr8(ABS(RIDER_WHEEL), 0x08);
@@ -13880,7 +13880,7 @@ void SetupJumpContest_m1x1(void)
         X = dec8((u8)X);
     } while (!fn);
     lda8(0x34); wr8(ABS(TRACK_ROW_PTR), 0x34);
-    lda8(0x0A); wr8(ABS(0x0279), 0x0A);
+    lda8(0x0A); wr8(ABS(BUILD_COL), 0x0A);
     lda8(0x05); wr8(ABS(TRACK_VRAM_HALF), 0x05);
     lda8(0x74); wr8(ABS(TRACK_VRAM_COL), 0x74);
     lda8(0x08); wr8(ABS(RIDER_WHEEL), 0x08);
@@ -14485,7 +14485,7 @@ void LoadRaceColumn_m1x1(void)
     lda8(0x00); wr8(DP(0x07), 0x00);
     lda8(0x40); wr8(DP(0x08), 0x40);
     lda8(0x7F); wr8(DP(0x09), 0x7F);
-    lda8(rd8(ABS(0x0279)));
+    lda8(rd8(ABS(BUILD_COL)));
     cmp8((u8)A, rd8(ABS(RIDER_COLUMN)));
     if (!fz) goto out;
     lda8(rd8(ABS(ROW_OFFSET)));
@@ -14630,7 +14630,7 @@ column:
     }
     lda8(rd8(ABS(RIDER_COLUMN)));
     push8(0x81); push16(0x8BB0); NextColumnLong_m1x1();
-    wr8(ABS(0x0279), (u8)A);
+    wr8(ABS(BUILD_COL), (u8)A);
     DB = pull8(); nz8(DB);
     retl();
     return;
@@ -14669,11 +14669,11 @@ void BuildCourseColumn_m1x1(void)
         Y = inc8((u8)Y);
         wr8(ABS(TRACK_READ_POS), (u8)Y);
     }
-    lda8(rd8(ABS(0x0279)));
+    lda8(rd8(ABS(BUILD_COL)));
     cmp8((u8)A, rd8(ABS(RIDER_COLUMN)));
     if (!fz) { ret(); return; }
     int step;   /* 0 = next entry, 1 = counting empty rows, 2 = same row */
-    lda8(rd8(ABS(0x027A)));
+    lda8(rd8(ABS(BUILD_EMPTY)));
     if (!fz) step = 1;
     else {
         lda8(rd8(ABS(ROW_OFFSET)));
@@ -14694,7 +14694,7 @@ void BuildCourseColumn_m1x1(void)
             cmp8((u8)A, 0x80);
             if (fc) {
                 and8(0x7F);
-                wr8(ABS(0x027A), (u8)A);
+                wr8(ABS(BUILD_EMPTY), (u8)A);
                 step = 1;
             } else {
                 wr8(ABS(ROW_TYPE), (u8)A);
@@ -14702,7 +14702,7 @@ void BuildCourseColumn_m1x1(void)
             }
         }
         if (step == 1) {
-            wr8(ABS(0x027A), dec8(rd8(ABS(0x027A))));
+            wr8(ABS(BUILD_EMPTY), dec8(rd8(ABS(BUILD_EMPTY))));
             lda8(0x00);
             wr8(ABS(BUILD_COLUMN), 0);
             wr8(ABS(ROW_OFFSET), 0);
@@ -14760,7 +14760,7 @@ void BuildCourseColumn_m1x1(void)
     }
     lda8(rd8(ABS(RIDER_COLUMN)));
     push16(0xDB76); NextColumn_m1x1();
-    wr8(ABS(0x0279), (u8)A);
+    wr8(ABS(BUILD_COL), (u8)A);
     ret();
 }
 /* $80:F75B RunRiderPieces (RTS, X = rider): the rider's piece script.
@@ -15089,11 +15089,11 @@ void BuildBonusColumn_m1x1(void)
         Y = inc8((u8)Y);
         wr8(ABS(TRACK_READ_POS), (u8)Y);
     }
-    lda8(rd8(ABS(0x0279)));
+    lda8(rd8(ABS(BUILD_COL)));
     cmp8((u8)A, rd8(ABS(RIDER_COLUMN)));
     if (!fz) { ret(); return; }
     int step;   /* 0 = next entry, 1 = counting empty rows, 2 = same row */
-    lda8(rd8(ABS(0x027A)));
+    lda8(rd8(ABS(BUILD_EMPTY)));
     if (!fz) step = 1;
     else {
         lda8(rd8(ABS(ROW_OFFSET)));
@@ -15114,17 +15114,17 @@ void BuildBonusColumn_m1x1(void)
             cmp8((u8)A, 0x80);
             if (fc) {
                 and8(0x7F);
-                wr8(ABS(0x027A), (u8)A);
+                wr8(ABS(BUILD_EMPTY), (u8)A);
                 lda8(rd8(ILDPY(0x07)));
                 and8(0x1F);
-                wr8(ABS(0x027A), (u8)A);
+                wr8(ABS(BUILD_EMPTY), (u8)A);
                 step = 1;
             } else {
                 step = 3;
             }
         }
         if (step == 1) {
-            wr8(ABS(0x027A), dec8(rd8(ABS(0x027A))));
+            wr8(ABS(BUILD_EMPTY), dec8(rd8(ABS(BUILD_EMPTY))));
             lda8(0x00);
             wr8(ABS(BUILD_COLUMN), 0);
             wr8(ABS(ROW_OFFSET), 0);
@@ -15187,7 +15187,7 @@ void BuildBonusColumn_m1x1(void)
     }
     lda8(rd8(ABS(RIDER_COLUMN)));
     push16(0xEE04); NextColumn_m1x1();
-    wr8(ABS(0x0279), (u8)A);
+    wr8(ABS(BUILD_COL), (u8)A);
     ret();
 }
 /* $81:9E9F (RTS): draw object $03A3 as a sprite group: its type $02FF

@@ -268,6 +268,10 @@
 #define BALL_DUE        0x092C  /* the ball is due: rider 7's slot launches it once off screen */
 #define COURSE_TIMES    0x081C  /* [+$1E] ten 3-byte times (minutes, seconds, hundredths), $FF ends */
 
+/* ---- scenery course builder ---- */
+#define BUILD_COL       0x0273  /* the scenery builder's column (it steps when it reaches the player's) */
+#define BUILD_EMPTY     0x0274  /* empty rows left from a $80+ script entry */
+
 /* ---- sprites ---- */
 #define OAM_BUF         0x1600  /* [+$200] $0200 bytes: the OAM low table image */
 #define OAM_SIZE_BUF    0x1820  /* [+$80] 128 size bytes, packed into the high table */

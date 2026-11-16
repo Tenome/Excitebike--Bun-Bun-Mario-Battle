@@ -202,7 +202,7 @@ void BunbunWsBeginFrame(unsigned number)
         PpuSetWidescreenLayerWorldMirrorBand(g_ppu, 1, 184, 224, 0, 256);
         return;
     }
-    PpuSetExtraSideSpace(g_ppu, 0, 0, 0);
+    PpuSetExtraSideSpace(g_ppu, 0, 0, 0);       /* the bonus game (mode 9) too: untested wide */
     return;
 #endif
     if (mode == 0x03) {                                        /* a race: the wide view */
