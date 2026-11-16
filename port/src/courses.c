@@ -31,8 +31,8 @@
 
 #define GENA_CRC32 0x6e6d087cu      /* Stadium 1 (6-30) dump, see rom_identity.txt */
 
-static uint8_t *g_gena;               /* converted Gen A course bytes, 8 courses */
-static uint32_t g_gena_off[8], g_gena_len[8];
+static uint8_t *g_gena;               /* converted Gen A course bytes: 8 courses, 2 special */
+static uint32_t g_gena_off[10], g_gena_len[10];
 static int g_gena_set = -1;           /* 0 = Stadium 1, 1 = Stadium 2, -1 = off */
 
 static uint32_t crc32_buf(const uint8_t *p, size_t n)
@@ -95,8 +95,14 @@ void BunbunCoursesInit(void)
 {
     const char *path = getenv("BUNBUN_GENA_ROM");
     char setbuf[8];
-    SDL_snprintf(setbuf, sizeof setbuf, "%d", bunbun_option("BUNBUN_COURSES", "game.courses", 0));
-    const char *set = setbuf;              /* launcher: Game > Courses ("own" = 0) */
+    int want = bunbun_option("BUNBUN_COURSES", "game.courses", 0);   /* launcher: Game > Courses ("own" = 0) */
+    if (want == 0) {                       /* Stadium 1 or 2 plays its own courses */
+        int st = bunbun_option("BUNBUN_STADIUM", "game.stadium", 0);
+        if (st == 1 || st == 2)
+            want = st;
+    }
+    SDL_snprintf(setbuf, sizeof setbuf, "%d", want);
+    const char *set = setbuf;
     if (!set || (atoi(set) != 1 && atoi(set) != 2))
         return;
     uint8_t *rom = NULL;
@@ -117,13 +123,13 @@ void BunbunCoursesInit(void)
     }
     /* Gen A tables: starts $81:8C59, lengths $81:8C6D, data $81:8C81. */
     uint32_t total = 0;
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 10; i++) {
         g_gena_off[i] = total;
         g_gena_len[i] = lorom(rom, 0x818C6Du + 2 * i) | lorom(rom, 0x818C6Eu + 2 * i) << 8;
         total += g_gena_len[i];
     }
     g_gena = (uint8_t *)malloc(total);
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 10; i++) {
         uint32_t s = lorom(rom, 0x818C59u + 2 * i) | lorom(rom, 0x818C5Au + 2 * i) << 8;
         uint8_t *dst = g_gena + g_gena_off[i];
         for (uint32_t k = 0; k < g_gena_len[i]; k++)
@@ -148,14 +154,29 @@ void BunbunCoursesInit(void)
 
 int BunbunCustomCourse(int index, uint8_t *buf, int cap);   /* src/mods_folder.c */
 
+/* Gen B course index (0-7 by Stadium * 4 + course, 8 the special course of
+ * the attract demo and practice) -> the Gen A course to play instead, or -1.
+ * Gen A keeps a special course per Stadium: entry 8 + Stadium. */
+static int gena_course(unsigned idx)
+{
+    if (!g_gena || g_gena_set < 0)
+        return -1;
+    if (idx < 8)
+        return g_gena_set * 4 + (int)(idx & 3);
+    if (idx == 8)
+        return 8 + g_gena_set;
+    return -1;
+}
+
 /* $81:A130 (M0X0, X = course index * 2, DB = $80, D = $0000). */
 RecompReturn HleCourseLoad(CpuState *cpu)
 {
     unsigned idx = (cpu->X & 0xFFFF) >> 1;
     const uint8_t *src;
     uint32_t len;
-    if (g_gena && g_gena_set >= 0 && idx < 8) {
-        unsigned c = (unsigned)g_gena_set * 4 + (idx & 3);
+    int gc = gena_course(idx);
+    if (gc >= 0) {
+        unsigned c = (unsigned)gc;
         src = g_gena + g_gena_off[c];
         len = g_gena_len[c];
     } else {
@@ -234,8 +255,9 @@ void BunbunCourseOverride(int idx)
 {
     extern uint8_t g_ram[];
     uint8_t *track = &g_ram[0x14000];                           /* $7F:4000 */
-    if (g_gena && g_gena_set >= 0 && idx >= 0 && idx < 8) {
-        unsigned c = (unsigned)g_gena_set * 4 + (idx & 3);
+    int gc = idx >= 0 ? gena_course((unsigned)idx) : -1;
+    if (gc >= 0) {
+        unsigned c = (unsigned)gc;
         const uint8_t *src = g_gena + g_gena_off[c];
         int32_t n = (int32_t)g_gena_len[c];
         uint32_t x = 0, y = 0;

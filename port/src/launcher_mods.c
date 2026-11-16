@@ -48,7 +48,8 @@ static const Choice kFlow[] = {
     { "broadcast", "Original broadcast timing" },
 };
 #ifdef BUNBUN_GENB
-static const Choice kStadium[] = { { "4", "Stadium 4" }, { "3", "Stadium 3" } };
+static const Choice kStadium[] = { { "4", "Stadium 4" }, { "3", "Stadium 3" },
+                                    { "2", "Stadium 2 (needs data/s1.sfc)" }, { "1", "Stadium 1 (needs data/s1.sfc)" } };
 static const Choice kCourses[] = {
     { "own", "The Stadium's own courses" },
     { "1", "Stadium 1 courses (needs data/s1.sfc)" },
@@ -75,7 +76,7 @@ static const Choice kEngine[] = {
 static const Opt kGameOpts[] = {
     { "engine", "Engine", "Native runs the game entirely from the hand-written C of the decompilation instead of the recompiled program. Takes effect when the game restarts.", "game.engine", "recompiled", RECOMP_MOD_OPTION_CHOICE, kEngine, 2 },
     { "flow", "Game flow", "Without the clock the port moves on as soon as a screen is done; the original waits for the satellite broadcast's schedule.", "game.flow", "menu", RECOMP_MOD_OPTION_CHOICE, kFlow, 2 },
-    { "stadium", "Stadium", "Which Stadium's rules, schedule and end screen to play.", "game.stadium", "4", RECOMP_MOD_OPTION_CHOICE, kStadium, 2 },
+    { "stadium", "Stadium", "Which Stadium to play. Stadiums 1 and 2 run their courses in this engine.", "game.stadium", "4", RECOMP_MOD_OPTION_CHOICE, kStadium, 4 },
     { "courses", "Courses", "Play the Stadium 1 or 2 courses in this engine.", "game.courses", "own", RECOMP_MOD_OPTION_CHOICE, kCourses, 3 },
     { "luigi", "Expanded roster", "Add Luigi (from data/s3.sfc) as a sixth character.", "game.luigi", "1", RECOMP_MOD_OPTION_CHOICE, kOnOff, 2 },
     { "allriders", "Every character races", "Characters not in the race's lineup ride in place of Koopa riders, so all of them race together.", "game.allriders", "1", RECOMP_MOD_OPTION_CHOICE, kOnOff, 2 },

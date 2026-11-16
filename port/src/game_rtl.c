@@ -71,6 +71,10 @@ static void GameInitialize(void)
 #ifdef BUNBUN_GENB
         if (st == 3 || st == 4)     /* Gen B build: 0 = Stadium 3, 1 = Stadium 4 */
             g_snes->cart->rom[0x800C] = (uint8_t)(st - 3);
+        else if (st == 1 || st == 2)  /* Stadium 1 / 2 in this engine: its courses
+                                       * (src/courses.c) on side 0 / 1, as in Gen A
+                                       * (side 1 also ends the hour with mode $12) */
+            g_snes->cart->rom[0x800C] = (uint8_t)(st - 1);
 #else
         if (st == 1 || st == 2)     /* Gen A build: 0 = Stadium 1, 1 = Stadium 2 */
             g_snes->cart->rom[0x800C] = (uint8_t)(st - 1);
