@@ -2368,12 +2368,17 @@ void WheelSpark_m1x1(void)
     if (fz) { ret(); return; }
     lda8(rd8(ABSX(RIDER_HEIGHT)));
     if (!fz) { ret(); return; }
-    lda8(rd8(ABSX(RIDER_PAGE)));
-    lda8(lsr8((u8)A));
-    if (!fc) { ret(); return; }
-    lda8(rd8(ABSX(RIDER_X)));
-    cmp8((u8)A, 0x10);
-    if (!fc) { ret(); return; }
+    int margin = port_ws_spark_margin();     /* port.h: a rider in the widescreen margins */
+    if (margin) {
+        lda8(rd8(ABSX(RIDER_X)));
+    } else {
+        lda8(rd8(ABSX(RIDER_PAGE)));
+        lda8(lsr8((u8)A));
+        if (!fc) { ret(); return; }
+        lda8(rd8(ABSX(RIDER_X)));
+        cmp8((u8)A, 0x10);
+        if (!fc) { ret(); return; }
+    }
     push16(0xCE17); DrawRiderShadowPair_m1x1();
     lda8(rd8(DP(FRAME_COUNT)));
     and8(0x04);
@@ -2402,6 +2407,7 @@ void WheelSpark_m1x1(void)
     wr8(ABSY(OAM_BUF + 0xC7), (u8)A);
     lda8(rd8(ABSX(RIDER_SPEED_HI)));
     if (fz) { lda8(0xF8); wr8(ABSY(OAM_BUF + 0xC5), 0xF8); }
+    if (margin) port_ws_spark_fix();
     ret();
 }
 

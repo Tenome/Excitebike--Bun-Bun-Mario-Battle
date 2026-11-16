@@ -84,3 +84,33 @@ void port_ws_clip_rider(void)
     g_ram[0x1820 + k] = (uint8_t)(2 | x9a); g_ram[0x1822 + k] = (uint8_t)(2 | x9a);
     g_ram[0x1821 + k] = (uint8_t)(2 | x9b); g_ram[0x1823 + k] = (uint8_t)(2 | x9b);
 }
+
+/* Widescreen wheel-spark pairs: WheelSpark ($80:CDF6) draws a rider's two
+ * sprites at X - 7 and X - 15 only on page 1 from column $10. In the wide
+ * view it also draws them for a rider in the margins, and the two sprites
+ * ($16C0/$16C4 + Y, size entries $1850/$1851 + Y/4) get X9. */
+static int gena_rider_x(void)
+{
+    unsigned r = X & 0xFF;
+    return ((int)g_ram[0x0198 + r] - 1) * 256 + g_ram[0x0190 + r];
+}
+
+int port_ws_spark_margin(void)
+{
+    int extra = BunbunWsExtra();
+    if (!extra || g_ram[0x76] != 0x03 || (X & 0xFF) > 7)
+        return 0;
+    unsigned r = X & 0xFF;
+    if ((g_ram[0x0198 + r] & 1) && g_ram[0x0190 + r] >= 0x10)
+        return 0;                                      /* the original draws it */
+    int x = gena_rider_x();
+    return x > -extra && x < 256 + extra + 15;
+}
+
+void port_ws_spark_fix(void)
+{
+    int x = gena_rider_x();
+    unsigned k = (Y & 0xFF) >> 2;
+    g_ram[0x1850 + k] = (uint8_t)(((x - 7) & 0x1FF) >> 8);
+    g_ram[0x1851 + k] = (uint8_t)(((x - 15) & 0x1FF) >> 8);
+}
