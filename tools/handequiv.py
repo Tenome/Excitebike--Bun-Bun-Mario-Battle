@@ -53,9 +53,25 @@ def git_show(path):
     return subprocess.run(['git', '-C', ROOT, 'show', '%s:%s' % (BASE, path)], capture_output=True, text=True, encoding='utf-8').stdout
 
 
+def base_names(ver):
+    """The RAM names as they were at BASE (its own ram.h files), so a base
+    that already uses names expands too."""
+    names = ramname.Names()
+    for h in ('c/hand/snes_regs.h', 'c/hand/long_ram.h', 'c/hand/%s/ram.h' % ver):
+        for line in git_show(h).splitlines():
+            m = ramname.DEF.match(line)
+            if m:
+                names[m.group(1)] = int(m.group(2), 16)
+                s = ramname.DEF_SPAN.search(line)
+                if s:
+                    names.spans[m.group(1)] = int(s.group(1), 16)
+    return names
+
+
 total = 0
 for v in vers:
     names = ramname.load(v)
+    onames = base_names(v)
     hdr = ''
     for h in ('c/hand/snes_regs.h', 'c/hand/long_ram.h', 'c/hand/%s/ram.h' % v):
         p = os.path.join(ROOT, h)
@@ -69,8 +85,10 @@ for v in vers:
             continue
         nm = macros(hdr + new)
         om = macros(old)
+        for k in onames:
+            om.pop(k, None)
         nf = port_hand.extract_functions(ramname.expand(new, names))
-        of = port_hand.extract_functions(old)
+        of = port_hand.extract_functions(ramname.expand(old, onames))
         for k in sorted(set(nf) & set(of)):
             a, b = norm(of[k][1], om), norm(nf[k][1], nm)
             if a != b:
