@@ -11,8 +11,8 @@
  *   off    256 columns, the original picture (nothing here runs)
  *   16:9   348 columns (46 each side): 16:9 with the SNES's 8:7 pixels
  *
- * Races and the jump contest show the wide view; every other screen is
- * pillarboxed (the course preview's track band and frame would each need
+ * Races, the attract demo / practice race, the jump contest and the
+ * bonus game show the wide view; every other screen is pillarboxed (the course preview's track band and frame would each need
  * their own fill rules). Both exes: Gen A (Stadium 1-2) races take the same
  * policy without the lookahead; the addresses below are Gen B's.
  *
@@ -200,11 +200,13 @@ void BunbunWsBeginFrame(unsigned number)
      * streamer also writes 52 columns right of the left edge, so the
      * margins need no lookahead. Riders in the margins: ClipRiderSprite
      * ends with port_ws_clip_rider (src/native_gena.c). */
-    if (mode == 0x03 && g_ram[0x77] >= 6) {
+    if ((mode == 0x03 && g_ram[0x77] >= 6) || mode == 0x0C) {   /* races, the demo race */
         PpuSetWidescreenLayerWorldMirrorBand(g_ppu, 1, 184, 224, 0, 256);
         return;
     }
-    PpuSetExtraSideSpace(g_ppu, 0, 0, 0);       /* the bonus game (mode 9) too: untested wide */
+    if (mode == 0x09)                           /* the bonus game: the forest, Boos and posts */
+        return;                                 /* continue into the margins as it scrolls */
+    PpuSetExtraSideSpace(g_ppu, 0, 0, 0);
     return;
 #endif
     if (mode == 0x03) {                                        /* a race: the wide view */
@@ -228,5 +230,11 @@ void BunbunWsBeginFrame(unsigned number)
     }
     if (mode == 0x14)                                          /* the jump contest: its */
         return;                       /* scene fills the whole tilemap, so it extends as is */
+    if (mode == 0x0C) {                     /* the attract demo / practice race: a race */
+        PpuSetWidescreenLayerWorldMirrorBand(g_ppu, 1, 184, 224, 0, 256);   /* scene with the HUD */
+        return;
+    }
+    if (mode == 0x09)                       /* the bonus game: its forest, Boos and ramps */
+        return;                             /* continue into the margins as it scrolls */
     PpuSetExtraSideSpace(g_ppu, 0, 0, 0);                      /* elsewhere: pillarbox */
 }

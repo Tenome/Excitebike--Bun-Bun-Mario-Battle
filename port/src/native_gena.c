@@ -65,7 +65,7 @@ int BunbunWsExtra(void);
 void port_ws_clip_rider(void)
 {
     int extra = BunbunWsExtra();
-    if (!extra || g_ram[0x76] != 0x03)
+    if (!extra || (g_ram[0x76] != 0x03 && g_ram[0x76] != 0x0C))
         return;
     unsigned r = X & 0xFF;
     if (r > 7)
@@ -98,7 +98,7 @@ static int gena_rider_x(void)
 int port_ws_spark_margin(void)
 {
     int extra = BunbunWsExtra();
-    if (!extra || g_ram[0x76] != 0x03 || (X & 0xFF) > 7)
+    if (!extra || (g_ram[0x76] != 0x03 && g_ram[0x76] != 0x0C) || (X & 0xFF) > 7)
         return 0;
     unsigned r = X & 0xFF;
     if ((g_ram[0x0198 + r] & 1) && g_ram[0x0190 + r] >= 0x10)

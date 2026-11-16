@@ -518,7 +518,7 @@ int BunbunWsExtra(void);
 static void ws_rider_sprites(void)
 {
     int extra = BunbunWsExtra();
-    if (!extra || g_ram[0x76] != 0x03)
+    if (!extra || (g_ram[0x76] != 0x03 && g_ram[0x76] != 0x0C))
         return;
     unsigned r = X & 0xFF;
     int x = ((int)g_ram[0x019E + r] - 1) * 256 + g_ram[0x0196 + r];
@@ -549,7 +549,7 @@ static int ws_rider_x(void)
 int port_ws_shadow_margin(void)
 {
     int extra = BunbunWsExtra();
-    if (!extra || g_ram[0x76] != 0x03)
+    if (!extra || (g_ram[0x76] != 0x03 && g_ram[0x76] != 0x0C))
         return 0;
     unsigned r = X & 0xFF;
     if (g_ram[0x019E + r] == 1 && g_ram[0x0196 + r] >= 0x10)
