@@ -118,12 +118,37 @@ static void draw_label(uint16_t *pix, const char *text)
         }
 }
 
+/* The result board (mode 4) has BEST JUMP and JUMP BONUS lines (BG3, map
+ * $1800, rows 19-22, two tile rows per line) that Stadiums 1-2 never use:
+ * once the board shows its BEST JUMP label, those rows are blanked (tile
+ * $20FF) for the rest of the screen, the jump digits the game writes there
+ * later too. */
+static void hide_jump_rows(void)
+{
+#ifdef BUNBUN_GENB
+    static int hiding;
+    if (g_ram[0x76] != 0x04 || s_stadium > 2) {
+        hiding = 0;
+        return;
+    }
+    uint16_t *row19 = &g_ppu->vram[0x1800 + 19 * 32];
+    static const uint16_t best_jump[9] = { 0x200B, 0x200E, 0x202C, 0x202D, 0x20FF,
+                                           0x2023, 0x202E, 0x2026, 0x2029 };
+    if (!hiding && memcmp(row19 + 4, best_jump, sizeof best_jump) == 0)
+        hiding = 1;
+    if (hiding)
+        for (int i = 0; i < 4 * 32; i++)
+            row19[i] = 0x20FF;
+#endif
+}
+
 /* Per frame (begin_sim_frame, after the roster's extra riders): on the title
  * and the attract demo, L / R change the Stadium and the label is shown. */
 void BunbunStadiumSelectFrame(void)
 {
     if (!g_ppu || !s_stadium)
         return;
+    hide_jump_rows();
     static int shown;
     uint8_t mode = g_ram[0x76];
     if (mode != 0x00 && mode != 0x0E && mode != 0x0C) {

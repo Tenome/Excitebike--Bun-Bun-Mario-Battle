@@ -288,8 +288,10 @@ engine: its eight courses and its special course from data/s1.sfc
 Gen A's Stadium 2 does), and Gen A's rule of no jump contests: a final goes
 to its results as a free run does (`port_race_is_final`, `src/roster.c`),
 and one bonus game, after course 4 (`port_bonus_entry` in
-BroadcastEndScreens: entry 1 goes on to course 3). Still Gen B's: the bonus
-game itself, the result board's jump rows (they show 0), the HUD and the Stadium
+BroadcastEndScreens: entry 1 goes on to course 3), and a result board
+without the BEST JUMP and JUMP BONUS lines (`src/stadium_select.c` blanks
+BG3 rows 19-22 once the board's label is up). Still Gen B's: the bonus
+game itself, the HUD and the Stadium
 graphics and palette (side 0 / 1, that is Stadium 3 / 4's look). Gen A's
 Stadium 1 and 2 differ from each other only in courses, the special
 course, the attract demo's first entry, Wario (Stadium 2) and the end

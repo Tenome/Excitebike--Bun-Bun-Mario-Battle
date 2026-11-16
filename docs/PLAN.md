@@ -184,7 +184,7 @@ The rest of the 1 MB is graphics, tracks, music and other data.
    their courses, special courses and Gen A's hour (no jump contests, one
    bonus game at the end); the
    characters are the combined roster. Still Gen B's for them: the bonus
-   game itself, the result board's jump rows, the HUD and the Stadium
+   game itself, the HUD and the Stadium
    look (docs/NOTES.md, "Stadiums 1-4 in the Gen B exe").
 3. ✅ Stadium select: in the launcher, and in the game (L / R on the title
    and the attract demo, `port/src/stadium_select.c`).
