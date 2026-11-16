@@ -182,7 +182,7 @@ R816_EXPORT void MainLoopFrame1(void)
     push16(0x8182); ClearOamBuffer_m1x1();
     push16(0x8185); RunGameModeScript_m1x1();
 paused:
-    lda8(rd8(DP(0x90)));
+    lda8(rd8(DP(VSCROLL_ZOOM)));
     if (!fz) {
         push16(0x818C); LaneFromY_m1x1();
         push16(0x818F); RaceBookkeeping_m1x1();

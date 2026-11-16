@@ -78,7 +78,7 @@ void RaceFinishStep_m1x1(void)
         X = dec8((u8)X);
     } while (!fn);
     wr8(DP(GAME_MODE), 0);
-    wr8(DP(0x79), inc8(rd8(DP(0x79))));
+    wr8(DP(TURN_LATCH), inc8(rd8(DP(TURN_LATCH))));
     ChangeMode_m1x1();
 }
 
@@ -371,12 +371,12 @@ void ItemFlashState_m1x1(void)
 {
     lda8(rd8(DP(RACE_END)));
     ora8(rd8(DP(OVERHEATED)));
-    if (!fz) { lda8(0x00); wr8(DP(0x5E), 0x00); ret(); return; }
-    lda8(rd8(DP(0x5E)));
+    if (!fz) { lda8(0x00); wr8(DP(FLASH_TIMER), 0x00); ret(); return; }
+    lda8(rd8(DP(FLASH_TIMER)));
     if (fz) { ret(); return; }
     ldx8(0x00);
     ldy8(0x07);
-    lda8(rd8(DP(0x5E)));
+    lda8(rd8(DP(FLASH_TIMER)));
     cmp8((u8)A, 0x0D);
     if (fc) {
         lda8(lsr8((u8)A));

@@ -181,7 +181,7 @@ R816_EXPORT void MainLoopFrame4(void)
     push8(0x80); push16(0x818A); HideAllSprites_m1x1();
     push16(0x818D); RunGameModeScript_m1x1();
 paused:
-    lda8(rd8(DP(0x94)));
+    lda8(rd8(DP(VSCROLL_ZOOM)));
     if (!fz) {
         push16(0x8194); LaneFromY_m1x1();
         push16(0x8197); RaceFrameStep_m1x1();

@@ -11,6 +11,12 @@
  *                          instead (1 = done, frame popped)
  *   port_course_loaded     LoadCourse has expanded a course into $7F:4000:
  *                          apply a custom course
+ *   port_ws_clip_rider     ClipRiderSprite ($80:D069) has hidden the parts of
+ *                          rider X's sprite off the original screen: the
+ *                          port's widescreen shows those in its margins
+ *   port_ws_spark_margin   WheelSpark ($80:CDF6): rider X is in the
+ *                          widescreen margins, draw its pair there too (1)
+ *   port_ws_spark_fix      ... and give the pair's two sprites their X9 bits
  */
 #ifndef HAND_S1_PORT_H
 #define HAND_S1_PORT_H
@@ -18,4 +24,7 @@
 int port_end_screen_start(void);
 int port_bsx_exit(u32 site);
 void port_course_loaded(void);
+void port_ws_clip_rider(void);
+int port_ws_spark_margin(void);
+void port_ws_spark_fix(void);
 #endif

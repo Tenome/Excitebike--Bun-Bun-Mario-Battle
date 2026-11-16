@@ -421,7 +421,7 @@ void SetupJumpScreen_m1x1(void)
     lda8(0x08); wr8(ABS(END_STEP), 0x08);
     lda8(0x02); wr8(ABS(SH_TM), 0x02); wr8(ABS(SH_TS), 0x02);
     lda8(0x25); wr8(ABS(BGMODE), 0x25);
-    lda8(0x01); wr8(DP(0x79), 0x01); wr8(DP(MODE_ACTIVE), 0x01);
+    lda8(0x01); wr8(DP(TURN_LATCH), 0x01); wr8(DP(MODE_ACTIVE), 0x01);
     lda8(lsr8((u8)A)); wr8(DP(MODE_STEP), (u8)A);
     lda8(0x08); wr8(ABS(ZOOM), 0x08);
     ret();
@@ -432,7 +432,7 @@ void SetupJumpScreen_m1x1(void)
  * $1C. Then count $01D6,X up. */
 void RiderStartLane_m1x1(void)
 {
-    lda8(rd8(DPX(0x56)));
+    lda8(rd8(DPX(RIDER_DONE)));
     if (!fz) { ret(); return; }
     lda8((u8)X);
     if (fz) {

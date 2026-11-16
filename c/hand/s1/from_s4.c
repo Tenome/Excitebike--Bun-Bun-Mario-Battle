@@ -119,7 +119,7 @@ void Reach2_m1x1(void)
  * $1C. Then count $01D6,X up. */
 void RiderStartLane_m1x1(void)
 {
-    lda8(rd8(DPX(0x56)));
+    lda8(rd8(DPX(RIDER_DONE)));
     if (!fz) { ret(); return; }
     lda8((u8)X);
     if (fz) {
@@ -917,12 +917,12 @@ void ItemFlashState_m1x1(void)
 {
     lda8(rd8(DP(RACE_END)));
     ora8(rd8(DP(OVERHEATED)));
-    if (!fz) { lda8(0x00); wr8(DP(0x5E), 0x00); ret(); return; }
-    lda8(rd8(DP(0x5E)));
+    if (!fz) { lda8(0x00); wr8(DP(FLASH_TIMER), 0x00); ret(); return; }
+    lda8(rd8(DP(FLASH_TIMER)));
     if (fz) { ret(); return; }
     ldx8(0x00);
     ldy8(0x07);
-    lda8(rd8(DP(0x5E)));
+    lda8(rd8(DP(FLASH_TIMER)));
     cmp8((u8)A, 0x0D);
     if (fc) {
         lda8(lsr8((u8)A));

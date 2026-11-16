@@ -246,7 +246,7 @@ void VramQueueCopy_m1x1(void);
 void FinishModeSetup_m1x1(void)
 {
     lda8(0x01);
-    wr8(DP(0x79), 0x01);
+    wr8(DP(TURN_LATCH), 0x01);
     wr8(DP(MODE_ACTIVE), 0x01);
     SET_A8(lsr8(0x01));                     /* A = 0, C = 1 */
     wr8(DP(MODE_STEP), 0x00);

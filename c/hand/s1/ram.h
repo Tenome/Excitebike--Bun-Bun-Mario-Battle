@@ -245,6 +245,13 @@
 #define ENTRY_DIGITS    0x03A6  /* [+$4] the four digits entered on the end screen */
 #define COIN_TAKEN      0x00AA  /* a coin was taken: its type, erased from the track next */
 
+/* ---- direct page, part 4 ---- */
+#define START_STATE     0x003C  /* the start sequence: 1 = begin the countdown, 2 = running ($B5 when $54 is set) */
+#define RIDER_DONE      0x0056  /* [+$8] X = rider: stopped after the finish (3); skips the start walk while set */
+#define FLASH_TIMER     0x005E  /* the item-hit / finish flash countdown ($1D at the finish) */
+#define TURN_LATCH      0x0079  /* the player's last A/B bits at the finish (a new press speeds the run-out); 1 at a mode start */
+#define VSCROLL_ZOOM    0x0090  /* the NMI takes BG1's vertical scroll from $9E/$9F (else the wobble) */
+
 /* ---- sprites ---- */
 #define OAM_BUF         0x1600  /* [+$200] $0200 bytes: the OAM low table image */
 #define OAM_SIZE_BUF    0x1820  /* [+$80] 128 size bytes, packed into the high table */
