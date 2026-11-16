@@ -99,6 +99,10 @@ addresses, carried over by `tools/port_hand.py`):
   `$017E,X` and FlagRidersAtLine (`$80:C5FE`) reads `$019E,X` / `$0196,X`.
   Gen A's fields sit 6 bytes lower, so Stadium 1 reads other bytes there.
   The hand C keeps the original addresses.
+* DP `$54`: RacePlaceRiders sets it to 5 when it is 0, and the demo and
+  course-select setups set 5; nothing clears it, so the checks that return
+  while it is set (ThrottleAll's closing check, RidersThrottle's player
+  flags, the start-light steps) make the code after them dead in practice.
 * The IRQ's parallax code (ParallaxLines, ScaleByScroll, Mul16b) runs with
   D = `$1B00`, so its `$60-$6E` are `$1B60-$1B6E`, not the sound indexes.
 
@@ -547,7 +551,9 @@ starts sooner than the other modes' (scripts that poke the minute early see
 the whole intro). Poke it at frame 2 instead (`wait 2` / `poke 1FFFF 05`):
 checked 2026-11-15 after the RAM naming, the Gen B frame loop then runs
 player select (Luigi), course preview and the race with every rider, and
-Gen A reaches the player select and the course card. The naming itself
+Gen A reaches the player select and the course card; with the minute
+set to 11 at frame 2 and 13 later it runs a course 1 final with every rival
+(also in 16:9: the widescreen hooks are in the hand C). The naming itself
 changes no code: with the names expanded to hex, every hand-written routine
 of all four dumps equals the pre-naming commit (d113ca7) apart from the
 intended ResetBootAll split in S2 / S3.
