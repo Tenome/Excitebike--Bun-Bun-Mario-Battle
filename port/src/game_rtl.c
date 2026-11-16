@@ -74,10 +74,12 @@ static void GameInitialize(void)
      * change it later. */
     BunbunStadiumApply(st ? st : 4);
 #else
-    if (st && g_snes && g_snes->cart && g_snes->cart->rom && g_snes->cart->romSize > 0x800C) {
-        if (st == 1 || st == 2)     /* Gen A build: 0 = Stadium 1, 1 = Stadium 2 */
-            g_snes->cart->rom[0x800C] = (uint8_t)(st - 1);
-    }
+    /* Gen A build: 0 = Stadium 1, 1 = Stadium 2 (the title's select too). An
+     * unset choice keeps the dump's own byte (the S2 rebroadcast is S1 + 1). */
+    if (st == 1 || st == 2)
+        BunbunStadiumApply(st);
+    else if (g_snes && g_snes->cart && g_snes->cart->rom && g_snes->cart->romSize > 0x800C)
+        BunbunStadiumApply(g_snes->cart->rom[0x800C] ? 2 : 1);
 #endif
 }
 
