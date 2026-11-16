@@ -8041,12 +8041,12 @@ void RaceMoveStep_m1x1(void)
     fc = 0; adc8(rd8(ABS(SCROLL_FRAC)));
     wr8(ABS(SCROLL_FRAC), (u8)A);
     lda8(rd8(ABS(RIDER_STEP)));
-    adc8(rd8(DP(0x93)));
-    wr8(DP(0x93), (u8)A);
+    adc8(rd8(DP(FAR_SCROLL)));
+    wr8(DP(FAR_SCROLL), (u8)A);
     if (fc) {
-        lda8(rd8(DP(0x91)));
+        lda8(rd8(DP(FAR_HALF)));
         eor8(0x01);
-        wr8(DP(0x91), (u8)A);
+        wr8(DP(FAR_HALF), (u8)A);
     }
     ret();
 }

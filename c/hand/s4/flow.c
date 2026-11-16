@@ -74,7 +74,7 @@ void RaceFinishStep_m1x1(void)
     if (fz) { ret(); return; }
     ldx8(0x2B);
     do {
-        wr8(DPX(0x38), 0);
+        wr8(DPX(SLOW_TICK), 0);
         X = dec8((u8)X);
     } while (!fn);
     wr8(DP(GAME_MODE), 0);

@@ -283,10 +283,10 @@ void NmiFixedUploads_m1x1(void)
     if (rd8(ABS(ANIM_UPLOAD_ON)) != 0) {
         rep(0x20);
         sep(0x10);
-        if (rd16(ABS(0x1E10)) != 0) {
+        if (rd16(ABS(ANIM_VRAM)) != 0) {
             Y = 0x80; wr8(ABS(VMAIN), 0x80);
             A = 0x1801; wr16(DP(0x00), 0x1801);
-            vram_upload(0x88A7, rd16(ABS(0x1E10)), 0x0200, rd16(ABS(0x1E0A)), 0x8A);
+            vram_upload(0x88A7, rd16(ABS(ANIM_VRAM)), 0x0200, rd16(ABS(ANIM_SRC)), 0x8A);
         }
     }
     rep(0x20);

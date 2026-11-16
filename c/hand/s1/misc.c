@@ -37,11 +37,11 @@ void Random_m1x1(void)
 void TickTimers_m1x1(void)
 {
     ldx8(0x16);
-    u8 slow = dec8(rd8(DP(0x38)));
-    wr8(DP(0x38), slow);
+    u8 slow = dec8(rd8(DP(SLOW_TICK)));
+    wr8(DP(SLOW_TICK), slow);
     if (fn) {
         lda8(0x0A);
-        wr8(DP(0x38), 0x0A);
+        wr8(DP(SLOW_TICK), 0x0A);
         ldx8(0x29);
     }
     do {
@@ -80,15 +80,15 @@ static u8 split_digits(u8 value, u32 tens_tile)
  */
 void DrawClock_m1x1(void)
 {
-    lda8(rd8(ABS(0x1556)));
+    lda8(rd8(ABS(CLOCK_ON)));
     if ((u8)A == 0) { ret(); return; }
     u8 t = dec8(rd8(ABS(0x1E84)));
     wr8(ABS(0x1E84), t);
     if (t != 0) { ret(); return; }
 
-    lda8(rd8(ABS(0x1E85)));
+    lda8(rd8(ABS(CLOCK_COLON)));
     eor8(0x01);
-    wr8(ABS(0x1E85), (u8)A);                /* colon on/off */
+    wr8(ABS(CLOCK_COLON), (u8)A);                /* colon on/off */
     wr8(ABS(0x1E84), 0x1E);                 /* next toggle in 30 frames */
     wr8(DP(0x00), 0x42);                    /* VRAM $1842 */
     wr8(DP(0x01), 0x18);
@@ -106,7 +106,7 @@ void DrawClock_m1x1(void)
     fc = 0; adc8(0x10); wr8(ABS(0x1E28), (u8)A);
     lda8(rd8(ABS(0x1E22))); fc = 0; adc8(0x10); wr8(ABS(0x1E27), (u8)A);
 
-    lda8(rd8(ABS(0x1E85)));
+    lda8(rd8(ABS(CLOCK_COLON)));
     if ((u8)A == 0) {
         wr8(ABS(0x1E21), 0x96);             /* colon, top and bottom halves */
         wr8(ABS(0x1E26), 0xA6);

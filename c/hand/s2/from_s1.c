@@ -2468,10 +2468,10 @@ void NmiFixedUploads_m1x1(void)
     if (rd8(ABS(ANIM_UPLOAD_ON)) != 0) {
         rep(0x20);
         sep(0x10);
-        if (rd16(ABS(0x1E10)) != 0) {
+        if (rd16(ABS(ANIM_VRAM)) != 0) {
             Y = 0x80; wr8(ABS(VMAIN), 0x80);
             A = 0x1801; wr16(DP(0x00), 0x1801);
-            vram_upload(0x88A7, rd16(ABS(0x1E10)), 0x0200, rd16(ABS(0x1E0A)), 0x8A);
+            vram_upload(0x88A7, rd16(ABS(ANIM_VRAM)), 0x0200, rd16(ABS(ANIM_SRC)), 0x8A);
         }
     }
     rep(0x20);
@@ -2589,11 +2589,11 @@ void Random_m1x1(void)
 void TickTimers_m1x1(void)
 {
     ldx8(0x16);
-    u8 slow = dec8(rd8(DP(0x38)));
-    wr8(DP(0x38), slow);
+    u8 slow = dec8(rd8(DP(SLOW_TICK)));
+    wr8(DP(SLOW_TICK), slow);
     if (fn) {
         lda8(0x0A);
-        wr8(DP(0x38), 0x0A);
+        wr8(DP(SLOW_TICK), 0x0A);
         ldx8(0x29);
     }
     do {
@@ -2612,15 +2612,15 @@ void TickTimers_m1x1(void)
  */
 void DrawClock_m1x1(void)
 {
-    lda8(rd8(ABS(0x1556)));
+    lda8(rd8(ABS(CLOCK_ON)));
     if ((u8)A == 0) { ret(); return; }
     u8 t = dec8(rd8(ABS(0x1E84)));
     wr8(ABS(0x1E84), t);
     if (t != 0) { ret(); return; }
 
-    lda8(rd8(ABS(0x1E85)));
+    lda8(rd8(ABS(CLOCK_COLON)));
     eor8(0x01);
-    wr8(ABS(0x1E85), (u8)A);                /* colon on/off */
+    wr8(ABS(CLOCK_COLON), (u8)A);                /* colon on/off */
     wr8(ABS(0x1E84), 0x1E);                 /* next toggle in 30 frames */
     wr8(DP(0x00), 0x42);                    /* VRAM $1842 */
     wr8(DP(0x01), 0x18);
@@ -2638,7 +2638,7 @@ void DrawClock_m1x1(void)
     fc = 0; adc8(0x10); wr8(ABS(0x1E28), (u8)A);
     lda8(rd8(ABS(0x1E22))); fc = 0; adc8(0x10); wr8(ABS(0x1E27), (u8)A);
 
-    lda8(rd8(ABS(0x1E85)));
+    lda8(rd8(ABS(CLOCK_COLON)));
     if ((u8)A == 0) {
         wr8(ABS(0x1E21), 0x96);             /* colon, top and bottom halves */
         wr8(ABS(0x1E26), 0xA6);
@@ -3985,13 +3985,13 @@ void ScrollFarLayer_m1x1(void)
         lda8(asl8((u8)A));
     adc8(rd8(ABS(SCROLL_FRAC)));
     wr8(ABS(SCROLL_FRAC), (u8)A);
-    lda8(rd8(DP(0x8F)));
+    lda8(rd8(DP(FAR_SCROLL)));
     adc8(0x00);
-    wr8(DP(0x8F), (u8)A);
+    wr8(DP(FAR_SCROLL), (u8)A);
     if (!fc) { ret(); return; }
-    lda8(rd8(DP(0x8D)));
+    lda8(rd8(DP(FAR_HALF)));
     eor8(0x01);
-    wr8(DP(0x8D), (u8)A);
+    wr8(DP(FAR_HALF), (u8)A);
     ret();
 }
 /*
@@ -7387,12 +7387,12 @@ void RaceMoveStep_m1x1(void)
     fc = 0; adc8(rd8(ABS(SCROLL_FRAC)));
     wr8(ABS(SCROLL_FRAC), (u8)A);
     lda8(rd8(ABS(RIDER_STEP)));
-    adc8(rd8(DP(0x8F)));
-    wr8(DP(0x8F), (u8)A);
+    adc8(rd8(DP(FAR_SCROLL)));
+    wr8(DP(FAR_SCROLL), (u8)A);
     if (fc) {
-        lda8(rd8(DP(0x8D)));
+        lda8(rd8(DP(FAR_HALF)));
         eor8(0x01);
-        wr8(DP(0x8D), (u8)A);
+        wr8(DP(FAR_HALF), (u8)A);
     }
     ret();
 }
@@ -8090,7 +8090,7 @@ void ShowBonusLabel_m1x1(void)
         fc = 0; adc8(0x10); wr8(ABS(DIGIT_ROW + 0x07 + i), (u8)A);
     }
     ldy8(0x00);
-    lda8(rd8(DP(0xAC)));
+    lda8(rd8(DP(BONUS_SECONDS)));
     for (;;) {
         cmp8((u8)A, 0x0A);
         if (!fc) break;
@@ -8250,10 +8250,10 @@ slide:
  * goes down; at 0 the run ends ($84 = 2, sound $2D). Then the label. */
 void BonusTimerStep_m1x1(void)
 {
-    wr8(DP(0xAD), dec8(rd8(DP(0xAD))));
+    wr8(DP(BONUS_TICK), dec8(rd8(DP(BONUS_TICK))));
     if (fz) {
-        lda8(0x3C); wr8(DP(0xAD), 0x3C);
-        wr8(DP(0xAC), dec8(rd8(DP(0xAC))));
+        lda8(0x3C); wr8(DP(BONUS_TICK), 0x3C);
+        wr8(DP(BONUS_SECONDS), dec8(rd8(DP(BONUS_SECONDS))));
         if (fz) {
             lda8(0x02); wr8(DP(RACE_END), 0x02);
             lda8(0x2D);
@@ -8621,7 +8621,7 @@ void SegmentTimer_m1x1(void)
         if (fz) { ret(); return; }
         ldx8(0x2B);
         do {
-            wr8(DPX(0x38), 0);
+            wr8(DPX(SLOW_TICK), 0);
             X = dec8((u8)X);
         } while (!fn);
         wr8(DP(GAME_MODE), 0);
@@ -10365,23 +10365,23 @@ void RiderPaletteWords_m1x1(void)
         X = dec8((u8)X);
         Y = dec8((u8)Y);
     } while (!fn);
-    wr16(ABS(0x1E10), 0);
-    wr16(ABS(0x1E0E), inc16(rd16(ABS(0x1E0E))));
-    lda16(rd16(ABS(0x1E0E)));
+    wr16(ABS(ANIM_VRAM), 0);
+    wr16(ABS(ANIM_STRIP), inc16(rd16(ABS(ANIM_STRIP))));
+    lda16(rd16(ABS(ANIM_STRIP)));
     and16(0x0001);
     if (fz) {
-        lda16(rd16(ABS(0x1E0E)));
+        lda16(rd16(ABS(ANIM_STRIP)));
         and16(0x001E);
         X = (u8)A; nz8((u8)X);
         lda16(rd16(ABSX(0xB633)));
         fc = 0; adc16(0x8000);
-        wr16(ABS(0x1E0A), A);
+        wr16(ABS(ANIM_SRC), A);
         lda16(X);
         and16(0x0006);
         lda16(lsr16(A));
         A = (u16)((A >> 8) | (A << 8)); nz8((u8)A);
         fc = 0; adc16(0x4F00);
-        wr16(ABS(0x1E10), A);
+        wr16(ABS(ANIM_VRAM), A);
     }
     sep(0x20);
     lda8(rd8(ABS(PLAYER_CHAR)));
@@ -11833,7 +11833,7 @@ void LoadScene_m1x1(void)
 {
     push8((u8)X); push8((u8)Y);
     X = rd8(DP(GAME_MODE)); nz8((u8)X);
-    lda8(rd8(ABSX(0xB93B))); wr8(ABS(0x1556), (u8)A);
+    lda8(rd8(ABSX(0xB93B))); wr8(ABS(CLOCK_ON), (u8)A);
     wr8(ABS(NMITIMEN), 0);
     wr8(ABS(SH_HDMAEN), 0);
     wr8(ABS(HDMAEN), 0);
@@ -12603,8 +12603,8 @@ void SetBonusRow_m1x1(void)
 void StartBonusLabel_m1x1(void)
 {
     wr8(ABS(SPRITES_FROZEN), inc8(rd8(ABS(SPRITES_FROZEN))));
-    lda8(0x1E); wr8(DP(0xAC), 0x1E);
-    lda8(0x01); wr8(DP(0xAD), 0x01);
+    lda8(0x1E); wr8(DP(BONUS_SECONDS), 0x1E);
+    lda8(0x01); wr8(DP(BONUS_TICK), 0x01);
     ShowBonusLabel_m1x1();
 }
 /* $80:E2A4 (RTS): BG mode 9, BG1 map at $0000 (BG1SC = 1). */

@@ -309,6 +309,13 @@
 #define BUILD_COL       0x0279  /* the scenery builder's column (it steps when it reaches the player's) */
 #define BUILD_EMPTY     0x027A  /* empty rows left from a $80+ script entry */
 
+/* ---- far scroll ---- */
+#define FAR_HALF        0x0091  /* the far layer's tilemap half, flips on each carry of FAR_SCROLL */
+#define FAR_SCROLL      0x0093  /* the far layer's scroll, whole part (the player's speed adds into SCROLL_FRAC and carries here) */
+
+/* ---- timer divider ---- */
+#define SLOW_TICK       0x0038  /* counts to 11: the byte timers $50-$62 tick once per round ($39-$4F every frame) */
+
 /* ---- sprites ---- */
 #define OAM_BUF         0x1600  /* [+$200] $0200 bytes: the OAM low table image */
 #define OAM_SIZE_BUF    0x1820  /* [+$80] 128 size bytes, packed into the high table */

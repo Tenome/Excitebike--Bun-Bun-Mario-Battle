@@ -76,13 +76,13 @@ void ScrollFarLayer_m1x1(void)
         lda8(asl8((u8)A));
     adc8(rd8(ABS(SCROLL_FRAC)));
     wr8(ABS(SCROLL_FRAC), (u8)A);
-    lda8(rd8(DP(0x8F)));
+    lda8(rd8(DP(FAR_SCROLL)));
     adc8(0x00);
-    wr8(DP(0x8F), (u8)A);
+    wr8(DP(FAR_SCROLL), (u8)A);
     if (!fc) { ret(); return; }
-    lda8(rd8(DP(0x8D)));
+    lda8(rd8(DP(FAR_HALF)));
     eor8(0x01);
-    wr8(DP(0x8D), (u8)A);
+    wr8(DP(FAR_HALF), (u8)A);
     ret();
 }
 

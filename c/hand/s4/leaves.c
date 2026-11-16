@@ -261,10 +261,10 @@ void ObjectAdvanceOr5_m1x1(void) { object_advance_or(0x08, 0x06, 0x05); ret(); }
 void TickTimers_m1x1(void)
 {
     ldx8(0x16);
-    u8 d = dec8(rd8(DP(0x38)));
-    wr8(DP(0x38), d);
+    u8 d = dec8(rd8(DP(SLOW_TICK)));
+    wr8(DP(SLOW_TICK), d);
     if (fn) {
-        lda8(0x0A); wr8(DP(0x38), 0x0A);
+        lda8(0x0A); wr8(DP(SLOW_TICK), 0x0A);
         ldx8(0x29);
     }
     do {
@@ -462,13 +462,13 @@ static void scroll_by_speed16(void)
     lda8(asl8((u8)A));
     adc8(rd8(ABS(SCROLL_FRAC)));
     wr8(ABS(SCROLL_FRAC), (u8)A);
-    lda8(rd8(DP(0x93)));
+    lda8(rd8(DP(FAR_SCROLL)));
     adc8(0x00);
-    wr8(DP(0x93), (u8)A);
+    wr8(DP(FAR_SCROLL), (u8)A);
     if (fc) {
-        lda8(rd8(DP(0x91)));
+        lda8(rd8(DP(FAR_HALF)));
         eor8(0x01);
-        wr8(DP(0x91), (u8)A);
+        wr8(DP(FAR_HALF), (u8)A);
     }
     ret();
 }
