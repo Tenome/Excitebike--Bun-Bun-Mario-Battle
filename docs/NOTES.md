@@ -266,6 +266,33 @@ Seen on screen (port build, one boot per minute, `tools/minuteshots.sh`):
 
 The 2-minute cards are where the SoundLink narration played.
 
+Gen B's hour (Stadium 4, port build, one boot per minute with
+`tools/minuteshots.sh`): 0-2 intro, 3 title, 4-5 practice, 6 player select,
+then per course a free-run card and free run, a final card and final, and
+a jump contest after the final (minutes 16, 27, 41, 52); the bonus game
+after course 2 (28-30) and a jump contest to the end (54-59). The schedule
+is partly in tables: course cards `$80:88AF` (by `$7C * 2 + $7D`), each
+course's last minute `$80:E76D`, the jump contest's end minutes `$80:E749`,
+the bonus intro `$80:B5F6`, the race end minutes `$80:C468`; and partly
+in code: minutes `$1F`/`$38` (EndAtBonusMinute, mode `$15`), `$1E`/`$37`
+(CheckBonusTime), `$28` (EndJumpMode, the bonus HDMA scene).
+
+### Stadiums 1-4 in the Gen B exe (the merge)
+Game > Stadium (BUNBUN_STADIUM) 1 or 2 runs that Stadium in the Gen B
+engine: its eight courses and its special course from data/s1.sfc
+(`port/src/courses.c`; the race rows that differ take Gen A's words), side
+0 / 1 of the build (`$81:800C`, so side 1 ends the hour with mode `$12` as
+Gen A's Stadium 2 does), and Gen A's rule of no jump contests: a final goes
+to its results as a free run does (`port_race_is_final`, `src/roster.c`).
+Still Gen B's: the bonus game after course 2 and the one at the end of the
+hour, the result board's jump rows (they show 0), the HUD and the Stadium
+graphics and palette (side 0 / 1, that is Stadium 3 / 4's look). Gen A's
+Stadium 1 and 2 differ from each other only in courses, the special
+course, the attract demo's first entry, Wario (Stadium 2) and the end
+screen's exit; the scenery-course scripts and every race row type but $1C
+are byte-identical in the two engines.
+
+
 Mode `$12` (`$80:9F68`) is a staff credits roll (cast: ピーチ姫, ワリオ, ...; then
 St.GIGA staff, game staff, sound, programmers). Stadium 1 never shows it
 because its end screen jumps into the BIOS first. The port's replacement for

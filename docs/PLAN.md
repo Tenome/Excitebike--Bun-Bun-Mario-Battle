@@ -179,10 +179,14 @@ The rest of the 1 MB is graphics, tracks, music and other data.
    (docs/ENGINES.md): 129 routines the same, 204 changed, 74 only in Gen A
    (mostly the rival scripts, the EEPROM password and the Gen A HUD), 199
    only in Gen B.
-2. Use the Gen B engine (Stadium 4) as the base. Load each Stadium's data
-   (tracks, characters, graphics, rules) as a content pack.
-3. Add a Stadium select and a character roster that combines all of them
-   (Mario, Luigi, Toad, Wario, Peach, Yoshi).
+2. ✅ (first version, 2026-11-15) The Gen B engine is the base: the Gen B
+   exe plays Stadiums 1-4 (launcher Game > Stadium). Stadiums 1-2 bring
+   their courses, special courses and Gen A's no-jump-contest hour; the
+   characters are the combined roster. Still Gen B's for them: the bonus
+   games' minutes, the result board's jump rows, the HUD and the Stadium
+   look (docs/NOTES.md, "Stadiums 1-4 in the Gen B exe").
+3. Stadium select: in the launcher (done); in the game itself (to do).
+   The combined roster is done (all six characters in the Gen B exe).
 4. Port extras later: widescreen, more riders, higher frame rate, mods.
 
 ## Repository rules
