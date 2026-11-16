@@ -268,9 +268,9 @@ void TickTimers_m1x1(void)
         ldx8(0x29);
     }
     do {
-        lda8(rd8(DPX(0x39)));
+        lda8(rd8(DPX(BYTE_TIMERS)));
         if (!fz)
-            wr8(DPX(0x39), dec8(rd8(DPX(0x39))));
+            wr8(DPX(BYTE_TIMERS), dec8(rd8(DPX(BYTE_TIMERS))));
         X = dec8((u8)X);
     } while (!fn);
     retl();
@@ -496,7 +496,7 @@ void SetupCourseScreen_m1x1(void)
     lda8(rd8(DP(SUB_STEP)));
     lda8(lsr8((u8)A));
     lda8(lsr8((u8)A));
-    wr8(ABS(0x09C2), (u8)A);
+    wr8(ABS(RUN_DIGITS_COPY + 0x07), (u8)A);
     lda8(0x03); wr8(ABS(BG1SC), 0x03); wr8(ABS(SH_BG1SC), 0x03);
     lda8(0x43); wr8(ABS(BG2SC), 0x43);
     lda8(0x55); wr8(ABS(BG12NBA), 0x55);

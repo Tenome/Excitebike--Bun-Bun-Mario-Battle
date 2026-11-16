@@ -45,9 +45,9 @@ void TickTimers_m1x1(void)
         ldx8(0x29);
     }
     do {
-        lda8(rd8(DPX(0x39)));
+        lda8(rd8(DPX(BYTE_TIMERS)));
         if (!fz)
-            wr8(DPX(0x39), dec8(rd8(DPX(0x39))));
+            wr8(DPX(BYTE_TIMERS), dec8(rd8(DPX(BYTE_TIMERS))));
         X = dec8((u8)X);
     } while (!fn);
     ret();

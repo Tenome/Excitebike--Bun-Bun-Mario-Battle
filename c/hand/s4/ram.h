@@ -263,8 +263,8 @@
 #define BONUS_BEST      0x1E88  /* the best bonus count */
 
 /* ---- direct page, part 4 ---- */
-#define START_STATE     0x003C  /* the start sequence: 1 = begin the countdown, 2 = running ($B5 when $54 is set) */
-#define RIDER_DONE      0x0056  /* [+$8] X = rider: stopped after the finish (3); skips the start walk while set */
+#define START_TIMER     0x003C  /* the start sequence's timer, counted down every frame (1 begins the countdown; $B5 while START_DELAY runs) */
+#define RIDER_DONE      0x0056  /* [+$8] X = rider: set to 3 when it stops after the finish, counted down every 11th frame; the start walk waits for 0 */
 #define FLASH_TIMER     0x005E  /* the item-hit / finish flash countdown ($1D at the finish) */
 #define TURN_LATCH      0x0079  /* the player's last A/B bits at the finish (a new press speeds the run-out); 1 at a mode start */
 #define VSCROLL_ZOOM    0x0094  /* the NMI takes BG1's vertical scroll from BG1_VSCROLL (else the wobble) */
@@ -346,6 +346,19 @@
 #define RANK_SIGN_Y     0x00D3  /* the jump rank sign's Y (rises from $A0) */
 #define MINUTE_TICKS    0x00B8  /* minute changes counted by the clock (PlaceMinuteMarker clears it) */
 #define FINISH_TIMER    0x0052  /* the race-finish step's timer ($10) */
+
+/* ---- race running time, timers ---- */
+#define RUN_MIN         0x0080  /* the race's running time: minutes (RaceTimer; ends the race after 4) */
+#define RUN_SEC         0x0081  /* seconds */
+#define RUN_FRAMES      0x0082  /* frames (to 60) */
+#define RUN_DIGITS      0x09B3  /* [+$8] the running time as digits: minutes, seconds ($09B5), hundredths ($09B8) */
+#define RUN_DIGITS_COPY 0x09BB  /* [+$8] a copy of RUN_DIGITS */
+#define POSE_DRAWN      0x00A8  /* the pose DrawRider just drew (the player is mirrored at $16) */
+#define PLACE_COOLDOWN  0x003B  /* frames before the next rival is placed ($10; 2 after the player crashes) */
+#define BYTE_TIMERS     0x0039  /* [+$2A] bytes TickTimers counts down to 0: $39-$4F every frame, $50-$62 every 11th */
+
+/* ---- start delay ---- */
+#define START_DELAY     0x0054  /* the race start delay: 5, counted down every 11th frame; rider input and the start lights wait for 0 */
 
 /* ---- sprites ---- */
 #define OAM_BUF         0x1600  /* [+$200] $0200 bytes: the OAM low table image */

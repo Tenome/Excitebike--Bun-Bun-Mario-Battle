@@ -155,8 +155,8 @@ The rest of the 1 MB is graphics, tracks, music and other data.
    (`tools/handequiv.py` checks a rename keeps the same program).
    Gen A's rider, object and effect arrays sit 6 bytes below Gen B's; most
    $08xx-$0Cxx globals are at the same address in both. Still unnamed
-   because each has several uses: DP $54 (looks dead), $0279 (the builder
-   column and an object table), $0904 and $09C9.
+   because each has several uses: $0904 and $09C9, and a few screen-local
+   bytes.
 
 ### Phase 5: merge the Stadiums
 0. ✅ Found that each build already holds two Stadiums behind `$81:800C`; the

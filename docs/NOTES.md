@@ -99,10 +99,11 @@ addresses, carried over by `tools/port_hand.py`):
   `$017E,X` and FlagRidersAtLine (`$80:C5FE`) reads `$019E,X` / `$0196,X`.
   Gen A's fields sit 6 bytes lower, so Stadium 1 reads other bytes there.
   The hand C keeps the original addresses.
-* DP `$54`: RacePlaceRiders sets it to 5 when it is 0, and the demo and
-  course-select setups set 5; nothing clears it, so the checks that return
-  while it is set (ThrottleAll's closing check, RidersThrottle's player
-  flags, the start-light steps) make the code after them dead in practice.
+* DP `$54` (START_DELAY): RacePlaceRiders sets it to 5 when it is 0, the
+  demo and course-select setups set 5, and TickTimers counts it down every
+  11th frame with the other bytes of `$50-$62` (`$39-$4F` count every
+  frame: START_TIMER `$3C`, RIDER_HOLD, RIDER_LEAN_TIMER, ...). The checks
+  that return while it is set make the start wait about 55 frames.
 * The IRQ's parallax code (ParallaxLines, ScaleByScroll, Mul16b) runs with
   D = `$1B00`, so its `$60-$6E` are `$1B60-$1B6E`, not the sound indexes.
 

@@ -3,6 +3,7 @@
 
     python tools/ramname.py s4            # write the names into c/hand/s4/*.c
     python tools/ramname.py s4 --check    # list what would change
+    python tools/ramname.py s4 --renew    # rename from hex (after adding a name inside a span)
 
 The names come from c/hand/<ver>/ram.h, c/hand/long_ram.h and
 c/hand/snes_regs.h (lines `#define NAME 0xADDR`). Only address operands are
@@ -185,7 +186,7 @@ def name_text(text, names):
     return ''.join(out)
 
 
-def expand(text, names):
+def expand(text, names, bare_names=True):
     """Turn named address operands back into hex (DP as 2 digits, ABS as 4)."""
     def span(m):
         mode, n, off = m.group(1), m.group(2), int(m.group(3), 16)
@@ -202,6 +203,9 @@ def expand(text, names):
         a = names[val]
         return '%s(0x%0*X)' % (mode, width(mode, a), a)
     text = OPER.sub(one, text)
+
+    if not bare_names:
+        return text
 
     # names used as plain values (read_pad(..., P1_HELD_LO, ...)), outside
     # comments and strings
@@ -229,6 +233,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     ap.add_argument('ver')
     ap.add_argument('--check', action='store_true')
+    ap.add_argument('--renew', action='store_true', help='turn the names back into hex first, so a new name replaces a NAME + offset')
     a = ap.parse_args()
     names = load(a.ver)
     if not names:
@@ -236,7 +241,7 @@ def main():
     total = 0
     for f in sorted(glob.glob(os.path.join(ROOT, 'c', 'hand', a.ver, '*.c'))):
         text = open(f, encoding='utf-8').read()
-        new = name_text(text, names)
+        new = name_text(expand(text, names, bare_names=False) if a.renew else text, names)
         if new == text:
             continue
         n = sum(1 for x, y in zip(OPER.findall(text), OPER.findall(new)) if x != y)

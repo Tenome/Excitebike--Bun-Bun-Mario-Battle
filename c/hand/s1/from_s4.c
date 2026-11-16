@@ -856,8 +856,8 @@ void BsxFindFile_m0x0(void)
                 fc = 0; adc16(0x000D);
                 X = A; nz16(X);
                 sep(0x20);
-                u8 n = dec8(rd8(ABS(RIDER_LEAN_TIMER + 0x02)));
-                wr8(ABS(RIDER_LEAN_TIMER + 0x02), n);
+                u8 n = dec8(rd8(ABS(BYTE_TIMERS + 0x0E)));
+                wr8(ABS(BYTE_TIMERS + 0x0E), n);
                 WAIT_TICK();
                 if (fz) break;
             }
@@ -871,14 +871,14 @@ void BsxFindFile_m0x0(void)
             lda16(asl16(A));
             lda16(asl16(A));
             adc16(rd16(LONG(0x7E0047)));
-            wr16(ABS(RIDER_LEAN_TIMER + 0x02), X);
+            wr16(ABS(BYTE_TIMERS + 0x0E), X);
             adc16(rd16(LONG(0x7E0047)));
             adc16(0x0003);
             X = A; nz16(X);
             sep(0x20);
         }
-        u8 c = dec8(rd8(ABS(RIDER_LEAN_TIMER + 0x06)));
-        wr8(ABS(RIDER_LEAN_TIMER + 0x06), c);
+        u8 c = dec8(rd8(ABS(BYTE_TIMERS + 0x12)));
+        wr8(ABS(BYTE_TIMERS + 0x12), c);
         WAIT_TICK();
         if (fz) break;
     }

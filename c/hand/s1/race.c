@@ -39,7 +39,7 @@ void ClearRaceState_m1x1(void)
     Y = 0xFF; nz8(0xFF);
     for (int k = 3; k >= 0; k--) {
         X = (u16)k;
-        wr8(DPX(0x80), 0);
+        wr8(DPX(RUN_MIN), 0);
     }
     X = 0xFF;
     wr8(DP(RACE_END), 0);

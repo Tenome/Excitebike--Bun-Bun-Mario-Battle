@@ -242,7 +242,7 @@ meet:
     cmp8((u8)X, 0x00);
     if (fz) {
         cmp8((u8)Y, 0x07);
-        if (fz) { lda8(0x10); wr8(DP(0x5F), 0x10); }
+        if (fz) { lda8(0x10); wr8(DP(BYTE_TIMERS + 0x26), 0x10); }
     }
     lda8(rd8(ABS(RIDER_BUMPED)));
     if (fz) {
