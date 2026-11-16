@@ -107,8 +107,8 @@ R816_EXPORT void ResetBoot2(void)
     wr8(ABS(APUIO2), 0);
     wr8(ABS(APUIO3), 0);
     lda8(0xFC); wr8(ABS(APUIO0), 0xFC);
-    wr8(ABS(0x1E87), 0);
-    wr8(ABS(0x1E88), 0);
+    wr8(ABS(BONUS_TRIES), 0);
+    wr8(ABS(BONUS_BEST), 0);
     wr8(ABS(0x1556), 0);
     lda8(0x04); wr8(ABS(RECORD_TIME), 0x04);
     wr8(ABS(RECORD_TIME + 0x01), 0);

@@ -166,7 +166,7 @@ static void select_rider1(int shift, u16 back_upload, u16 back_sound)
     push8(0x80); push16(back_upload); SpcUpload_m1x1();
     lda8(0x3F);
     push8(0x80); push16(back_sound); QueueSound_m1x1();
-    lda8(0x60); wr8(ABS(0x1554), 0x60);
+    lda8(0x60); wr8(ABS(SELECT_DELAY), 0x60);
     lda8(rd8(ABS(SH_NMITIMEN))); wr8(ABS(NMITIMEN), (u8)A);
 }
 
@@ -179,7 +179,7 @@ static void select_rider1(int shift, u16 back_upload, u16 back_sound)
  * waiting and redraws the timer digits. */
 static void rider_select1(int second, u16 base)
 {
-    lda8(rd8(ABS(0x1554)));
+    lda8(rd8(ABS(SELECT_DELAY)));
     if (!fz) {
         cmp8((u8)A, 0x01);
         if (fz) {
@@ -190,11 +190,11 @@ static void rider_select1(int second, u16 base)
         }
         wr8(DP(P1_HELD_HI), 0);
         if (second) {
-            wr8(ABS(0x1554), dec8(rd8(ABS(0x1554))));
+            wr8(ABS(SELECT_DELAY), dec8(rd8(ABS(SELECT_DELAY))));
             push8(0x80); push16(base + 0x11); DrawSelectWheels_m1x1();
         } else {
             push8(0x80); push16(base + 0x0E); DrawSelectWheels_m1x1();
-            wr8(ABS(0x1554), dec8(rd8(ABS(0x1554))));
+            wr8(ABS(SELECT_DELAY), dec8(rd8(ABS(SELECT_DELAY))));
         }
         ret();
         return;
@@ -204,7 +204,7 @@ static void rider_select1(int second, u16 base)
     cmp16(A, 0x0001);
     sep(0x20);
     if (fz) wr8(DP(P1_HELD_HI), 0);
-    lda8(rd8(ABS(0x1E8B))); wr8(DP(0x1F), (u8)A);
+    lda8(rd8(ABS(SELECT_STEP))); wr8(DP(0x1F), (u8)A);
     push8(0x80); push16(base + 0x32); TurnSelectWheels_m1x1();
     push8(0x80); push16(base + 0x36); DrawSelectWheels_m1x1();
     rep(0x20);
@@ -226,7 +226,7 @@ static void rider_select1(int second, u16 base)
         }
     }
     if (choose) {
-        lda8(rd8(ABS(0x1547)));
+        lda8(rd8(ABS(SELECT_WHEELS)));
         if (second) select_rider1(6, 0x8E86, 0x8E90);
         else select_rider1(4, 0x8DCC, 0x8DD6);
     }

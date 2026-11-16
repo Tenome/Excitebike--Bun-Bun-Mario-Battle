@@ -116,10 +116,10 @@ void ResultsWait_m1x1(void)
     }
     sep(0x20);
     wr8(ABS(ATTRACT_DEMO), 0);
-    lda8(rd8(ABS(0x1E87)));
+    lda8(rd8(ABS(BONUS_TRIES)));
     fc = 1;
     sbc8(0x0A);
-    wr8(ABS(0x1E87), (u8)A);
+    wr8(ABS(BONUS_TRIES), (u8)A);
     lda8(0x09); wr8(DP(GAME_MODE), 0x09);
     r816_call_pc(0x808F17);
 }
@@ -3278,9 +3278,9 @@ void BonusResultStep_m1x1(void)
 static void bonus_result_body(void)
 {
     lda8(rd8(ABS(BONUS_RESULT)));
-    cmp8((u8)A, rd8(ABS(0x1E88)));
-    if (fc) wr8(ABS(0x1E88), (u8)A);
-    lda8(rd8(ABS(0x1E87)));
+    cmp8((u8)A, rd8(ABS(BONUS_BEST)));
+    if (fc) wr8(ABS(BONUS_BEST), (u8)A);
+    lda8(rd8(ABS(BONUS_TRIES)));
     int show = 1;
     if (!fn) { cmp8((u8)A, 0x0A); show = !fc; }
     if (show) {
@@ -8415,7 +8415,7 @@ void CrossFinish_m1x1(void)
         push8(0x80); push16(0xFE0E); AddStadiumBonus_m1x1();
         lda8(0x80); wr8(DP(0xD4), 0x80);
         lda8(rd8(DP(FINAL_RACE)));
-        if (fz) wr8(ABS(0x1E87), inc8(rd8(ABS(0x1E87))));
+        if (fz) wr8(ABS(BONUS_TRIES), inc8(rd8(ABS(BONUS_TRIES))));
         lda8(rd8(DP(OVERHEATED)));
         if (fz) { ret(); return; }
     } else {
@@ -9958,9 +9958,9 @@ void BroadcastEndScreens_m1x1(void)
     if (!bonus) { cmp8((u8)X, 0x01); bonus = fz; }
     if (bonus) {
         lda8(0x17); wr8(DP(GAME_MODE), 0x17);
-        lda8(rd8(ABS(0x1E87)));
+        lda8(rd8(ABS(BONUS_TRIES)));
         fc = 1; sbc8(0x0A);
-        wr8(ABS(0x1E87), (u8)A);
+        wr8(ABS(BONUS_TRIES), (u8)A);
     } else {
         wr8(DP(FINAL_RACE), 0);
         wr8(DP(COURSE_SLOT), inc8(rd8(DP(COURSE_SLOT))));

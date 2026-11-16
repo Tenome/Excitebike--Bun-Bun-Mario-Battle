@@ -234,6 +234,20 @@
 #define RECORD_TIME     0x083A  /* [+$3] the course record (minutes, seconds, hundredths) */
 #define RECORD_COURSE   0x084C  /* the course the record belongs to (course - 1; set means a record to show) */
 
+/* ---- bonus tries ---- */
+#define BONUS_TRIES     0x1E87  /* bonus tries banked: a win without rivals adds one, a bonus run takes 10 */
+#define BONUS_BEST      0x1E88  /* the best bonus count */
+
+/* ---- Gen A player select and end screen ---- */
+#define SELECT_WHEELS   0x1547  /* [+$4] the four select wheels' angles */
+#define SELECT_DELAY    0x1554  /* frames left after the choice before the next segment */
+#define SELECT_STEP     0x1E8B  /* the player select's step (2 = the second screen, with Wario) */
+#define END_SCROLL      0x009A  /* the end screen's BG X scroll (moves in 2 a frame) */
+
+/* ---- Gen A entry and coins ---- */
+#define ENTRY_DIGITS    0x03A6  /* [+$4] the four digits entered on the end screen */
+#define COIN_TAKEN      0x00AA  /* a coin was taken: its type, erased from the track next */
+
 /* ---- sprites ---- */
 #define OAM_BUF         0x1600  /* [+$200] $0200 bytes: the OAM low table image */
 #define OAM_SIZE_BUF    0x1820  /* [+$80] 128 size bytes, packed into the high table */
