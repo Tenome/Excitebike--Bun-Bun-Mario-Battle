@@ -7720,14 +7720,14 @@ static void podium_rider1(u16 x, u16 y, u16 back)
  * digits at $1CF5, the racer name; then NMI back on. */
 void RaceResultsSetup_m1x1(void)
 {
-    lda8(rd8(DP(0x7C)));
+    lda8(rd8(DP(COURSE_SLOT)));
     lda8(asl8((u8)A));
-    fc = 0; adc8(rd8(DP(0x7C)));
+    fc = 0; adc8(rd8(DP(COURSE_SLOT)));
     X = (u8)A; nz8((u8)X);
     lda8(rd8(ABS(RECORD_TIME))); wr8(ABSX(0x083D), (u8)A);
     lda8(rd8(ABS(RECORD_TIME + 0x01))); wr8(ABSX(0x083E), (u8)A);
     lda8(rd8(ABS(RECORD_TIME + 0x02))); wr8(ABSX(0x083F), (u8)A);
-    lda8(rd8(DP(0x7D)));
+    lda8(rd8(DP(FINAL_RACE)));
     if (fz) {
         wr8(ABS(NMITIMEN), 0);
         push8(0x80); push16(0x92FF); ClearTilemaps_m1x1();
@@ -7742,9 +7742,9 @@ void RaceResultsSetup_m1x1(void)
         results_dma1(0x1800, 0xB800, 0x89, 0x934F);
         D = pull16(); nz16(D);
         sep(0x20);
-        lda8(rd8(DP(0x7C)));
+        lda8(rd8(DP(COURSE_SLOT)));
         lda8(asl8((u8)A)); lda8(asl8((u8)A));
-        fc = 0; adc8(rd8(DP(0x7C)));
+        fc = 0; adc8(rd8(DP(COURSE_SLOT)));
         rep(0x20);
         and16(0x00FF);
         fc = 0; adc16(0x938C);
@@ -7755,7 +7755,7 @@ void RaceResultsSetup_m1x1(void)
         lda8(rd8(ABS(SH_NMITIMEN))); wr8(ABS(NMITIMEN), (u8)A);
         lda8(0x40); wr8(ABS(MODE_TIMER), 0x40);
         wr8(ABS(ENTRY_CURSOR), 0);
-        lda8(0xFC); wr8(DP(0x9E), 0xFC);
+        lda8(0xFC); wr8(DP(PIC_SCROLL), 0xFC);
         lda8(0x04); wr8(DP(0x9C), 0x04);
         lda8(0x00);
         push8(0x80); push16(0x938A); SetHdmaPreset_m1x1();
@@ -7845,7 +7845,7 @@ void RaceResultsSetup_m1x1(void)
         wr8(ABS(DIGIT_ROW + 0x01), (u8)A);
         fc = 0; adc8(0x10);
         wr8(ABS(DIGIT_ROW + 0x06), (u8)A);
-        lda8(rd8(ABSX(0x95ED))); wr8(DP(0xB2), (u8)A);
+        lda8(rd8(ABSX(0x95ED))); wr8(DP(PLACE_BONUS), (u8)A);
         lda8(0x25); wr8(ABS(DIGIT_BUF), 0x25);
         lda8(0x50);
         wr8(ABS(DIGIT_ROW + 0x02), 0x50); wr8(ABS(DIGIT_ROW + 0x03), 0x50); wr8(ABS(DIGIT_ROW + 0x04), 0x50);
@@ -7903,7 +7903,7 @@ static void scene_table_copy1(u16 table, u16 base, u16 dst, u16 back)
 void LoadScene_m1x1(void)
 {
     push8((u8)X); push8((u8)Y);
-    X = rd8(DP(0x76)); nz8((u8)X);
+    X = rd8(DP(GAME_MODE)); nz8((u8)X);
     lda8(rd8(ABSX(0xB940))); wr8(ABS(0x1556), (u8)A);
     wr8(ABS(NMITIMEN), 0);
     wr8(ABS(SH_HDMAEN), 0);
@@ -7947,7 +7947,7 @@ void LoadScene_m1x1(void)
     scene_table_copy1(0xB99F, 0xA100, 0x1D00, 0xB911);
     wr16(ABS(PALETTE_DIRTY), inc16(rd16(ABS(PALETTE_DIRTY))));
     sep(0x20);
-    Y = rd8(DP(0x76)); nz8((u8)Y);
+    Y = rd8(DP(GAME_MODE)); nz8((u8)Y);
     lda8(rd8(ABSY(0xB953)));
     lda8(rd8(ABSY(0xB979))); wr8(ABS(SH_HDMAEN), (u8)A);
     lda8(rd8(ABSY(0xB966))); wr8(ABS(ANIM_UPLOAD_ON), (u8)A);

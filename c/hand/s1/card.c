@@ -34,10 +34,10 @@ void Mode02_Setup_m1x1(void)
     } while (fc);
     u8 seg = rd8(DP(0x00));
     u8 course = lsr8(seg);
-    wr8(DP(0x7C), course);
+    wr8(DP(COURSE_SLOT), course);
     u8 kind = (u8)(rol8(course) & 0x01);
     lda8(kind);
-    wr8(DP(0x7D), kind);
+    wr8(DP(FINAL_RACE), kind);
     SET_A8(asl8(kind));
     fc = 0;
     adc8(kind);
@@ -61,13 +61,13 @@ void Mode02_Setup_m1x1(void)
     lda8(rd8(ABS(SH_NMITIMEN)));
     wr8(ABS(NMITIMEN), (u8)A);                           /* NMITIMEN back */
     lda8(0x01);
-    wr8(DP(0x75), 0x01);
+    wr8(DP(MODE_ACTIVE), 0x01);
     wr8(ABS(FADE_STATE), inc8(rd8(ABS(FADE_STATE))));          /* fade in */
 
     /* "course N" tiles: list at $03D2 = [size $42][8 tiles] */
     lda8(0x42);
     wr8(ABS(DIGIT_BUF), 0x42);                            /* 2 wide, 4 rows */
-    u8 t = (u8)((rd8(DP(0x7C)) << 1) | 0x10);
+    u8 t = (u8)((rd8(DP(COURSE_SLOT)) << 1) | 0x10);
     lda8(t);
     for (int row = 0; row < 4; row++) {
         if (row) { fc = 0; adc8(0x0F); }
@@ -75,7 +75,7 @@ void Mode02_Setup_m1x1(void)
         SET_A8(inc8((u8)A));
         wr8(ABS(DIGIT_ROW + 0x01 + row * 2), (u8)A);
     }
-    lda8(rd8(DP(0x7D)));
+    lda8(rd8(DP(FINAL_RACE)));
     and8(0x01);
     Y = asl8((u8)A);
     rep(0x20);

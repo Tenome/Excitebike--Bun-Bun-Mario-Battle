@@ -12588,12 +12588,12 @@ void StartRandomCourse_m1x1(void)
     } while (fc);
     lda8(rd8(DP(0x00)));
     lda8(lsr8((u8)A));
-    wr8(DP(0x7C), (u8)A);
+    wr8(DP(COURSE_SLOT), (u8)A);
     lda8(rol8((u8)A));
     and8(0x01);
-    wr8(DP(0x7D), (u8)A);
+    wr8(DP(FINAL_RACE), (u8)A);
     lda8(asl8((u8)A));
-    fc = 0; adc8(rd8(DP(0x7D)));
+    fc = 0; adc8(rd8(DP(FINAL_RACE)));
     wr8(DP(0x00), (u8)A);
     rep(0x20);
     push16(D);
@@ -12611,10 +12611,10 @@ void StartRandomCourse_m1x1(void)
     D = pull16(); nz16(D);
     sep(0x20);
     lda8(rd8(ABS(SH_NMITIMEN))); wr8(ABS(NMITIMEN), (u8)A);
-    lda8(0x01); wr8(DP(0x75), 0x01);
+    lda8(0x01); wr8(DP(MODE_ACTIVE), 0x01);
     wr8(ABS(FADE_STATE), inc8(rd8(ABS(FADE_STATE))));
     lda8(0x42); wr8(ABS(DIGIT_BUF), 0x42);
-    lda8(rd8(DP(0x7C)));
+    lda8(rd8(DP(COURSE_SLOT)));
     lda8(asl8((u8)A));
     ora8(0x10);
     for (int k = 0; k < 4; k++) {
@@ -12623,7 +12623,7 @@ void StartRandomCourse_m1x1(void)
         lda8(inc8((u8)A));
         wr8(ABS(DIGIT_ROW + 0x01 + 2 * k), (u8)A);
     }
-    lda8(rd8(DP(0x7D)));
+    lda8(rd8(DP(FINAL_RACE)));
     and8(0x01);
     lda8(asl8((u8)A));
     Y = (u8)A; nz8((u8)Y);
@@ -12643,7 +12643,7 @@ void StartRandomCourse_m1x1(void)
     lda8(0x44); wr8(ABS(BG12NBA), 0x44);
     lda8(0x01); wr8(ABS(BG34NBA), 0x01);
     lda8(0x17); wr8(ABS(SH_TM), 0x17);
-    wr8(DP(0x86), 0);
+    wr8(DP(UPLOAD_SRC), 0);
     wr8(DP(0x87), 0);
     push8(0x80); push16(0x89A8); SetupHdmaChannels_m1x1();
     ret();
@@ -13524,7 +13524,7 @@ void LoadScene_m1x1(void)
     lda8(0x82);
     push8(0x82); DB = pull8(); nz8(DB);
     push8((u8)X); push8((u8)Y);
-    X = rd8(DP(0x76)); nz8((u8)X);
+    X = rd8(DP(GAME_MODE)); nz8((u8)X);
     lda8(rd8(ABSX(0x92A7))); wr8(ABS(0x1566), (u8)A);
     wr8(ABS(NMITIMEN), 0);
     wr8(ABS(SH_HDMAEN), 0);
@@ -13600,7 +13600,7 @@ void LoadScene_m1x1(void)
     sep(0x30);
     push16(0x9267); UnpackToLowRam_m1x1();
     wr8(ABS(PALETTE_DIRTY), inc8(rd8(ABS(PALETTE_DIRTY))));
-    Y = rd8(DP(0x76)); nz8((u8)Y);
+    Y = rd8(DP(GAME_MODE)); nz8((u8)Y);
     lda8(rd8(ABSY(0x92D9))); wr8(ABS(SH_HDMAEN), (u8)A);
     lda8(rd8(ABSY(0x92C0))); wr8(ABS(ANIM_UPLOAD_ON), (u8)A);
     ldx8(0x0F);

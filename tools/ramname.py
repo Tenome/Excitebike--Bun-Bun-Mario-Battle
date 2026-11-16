@@ -13,7 +13,9 @@ A comment holding [+$N] marks a buffer or array of N bytes: an absolute or
 long address inside it with no name of its own is written NAME + 0xOFF
 (OAM_BUF + 0x11, RIDER_X + 0x01 for rider 1).
 Two cases are left alone because the address would mean something else there:
-  * DP operands in a function that moves the direct page (D = ...);
+  * DP operands where D is not 0: followed through the function line by
+    line (push16(D) / D = pull16() restore, D = 0 makes them valid again),
+    or everywhere in a function whose comment says it runs with another D;
   * absolute operands in a function that sets the data bank to $7F.
 Direct-page names are applied only from $20 up ($00-$1F is scratch).
 
@@ -91,6 +93,38 @@ def moves_dp(chunk):
     return bool(re.search(r'(?<![\w.])D = (?!\$0000\b)', chunk))
 
 
+SIG = re.compile(r'^(?:R816_EXPORT )?(?:static )?(?:inline )?(?:void|u8|u16|u32|int) \w+\([^;{]*$', re.M)
+D_EVENT = re.compile(r'push16\(D\)|(?<![\w.])D = ([^;]*);')
+
+
+def header_moves_dp(chunk):
+    """The comment above the function says it runs with another D
+    ("... with D = $1B00"): no direct-page names anywhere in it."""
+    m = SIG.search(chunk)
+    head = chunk[:m.start()] if m else ''
+    return bool(re.search(r'(?<![\w.])D = (?!\$0000\b)', head))
+
+
+def dp_lines(chunk):
+    """Per line of a function: is D = 0 at the start of the line? Follows
+    the code in order: push16(D) saves the state, D = pull16() brings it
+    back, D = 0 makes it valid and any other D = ... invalid."""
+    ok, stack, out = True, [], []
+    for line in chunk.split('\n'):
+        out.append(ok)
+        code = re.sub(r'/\*.*?\*/|//.*', '', line)
+        for m in D_EVENT.finditer(code):
+            if m.group(0) == 'push16(D)':
+                stack.append(ok)
+            else:
+                v = m.group(1).strip()
+                if v.startswith('pull16()'):
+                    ok = stack.pop() if stack else False
+                else:
+                    ok = v in ('0', '0x0000', '0x00')
+    return out
+
+
 def far_bank(chunk):
     return bool(re.search(r'push8\(0x7F\);\s*DB = ', chunk))
 
@@ -117,11 +151,12 @@ def name_text(text, names):
     out = []
     for c in chunks(text):
         abs_ok = not far_bank(c)     # DB = $7F: absolute operands are bank $7F
-        dp_ok = not moves_dp(c)
+        whole_dp = not header_moves_dp(c)
+        state = {'dp': True}
 
         def lookup(mode, a, indexed):
             if mode.startswith('DP'):
-                if not dp_ok or a < DP_MIN or a > 0xFF:
+                if not (whole_dp and state['dp']) or a < DP_MIN or a > 0xFF:
                     return None
             elif mode.startswith('ABS'):
                 if not abs_ok:
@@ -142,8 +177,11 @@ def name_text(text, names):
             mode, val = m.group(1), m.group(2)
             n = lookup(mode, int(val, 16), True)
             return '%s(%s + ' % (mode, n) if n else m.group(0)
-        c = OPER.sub(one, c)
-        out.append(COMP_OPER.sub(comp, c))
+        lines = c.split('\n')
+        for i, ok in enumerate(dp_lines(c)):
+            state['dp'] = ok
+            lines[i] = COMP_OPER.sub(comp, OPER.sub(one, lines[i]))
+        out.append('\n'.join(lines))
     return ''.join(out)
 
 
