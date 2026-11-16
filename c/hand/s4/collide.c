@@ -40,16 +40,16 @@ void CoinMilestone_m1x1(void)
         hit = fz;
     }
     if (hit) {
-        wr8(ABS(0x199D), (u8)A);
+        wr8(ABS(BANNER_COUNT), (u8)A);
         lda8(0x01);
         wr8(ABS(SCORE_ADD + 0x01), 0x01);
-        wr8(ABS(0x199A), 0x01);
+        wr8(ABS(BANNER_ON), 0x01);
         lda8(0x40);
-        wr8(ABS(0x199B), 0x40);
+        wr8(ABS(BANNER_TIMER), 0x40);
         lda8(rd8(ABS(RIDER_Y)));
         fc = 1;
         sbc8(0x10);
-        wr8(ABS(0x199C), (u8)A);
+        wr8(ABS(BANNER_Y), (u8)A);
         lda8(0x2B);
         push8(0x81); push16(0xC722); QueueSoundB_m1x1();
     }
@@ -124,10 +124,10 @@ void CollectCoin_m1x1(void)
     fc = 0;
     adc8(rd8(ABS(SCORE_ADD + 0x04)));
     wr8(ABS(SCORE_ADD + 0x04), (u8)A);
-    wr8(ABS(0x1543), inc8(rd8(ABS(0x1543))));
-    lda8(rd8(ABS(0x1543 + Y)));
+    wr8(ABS(COMBO_COUNTS), inc8(rd8(ABS(COMBO_COUNTS))));
+    lda8(rd8(ABS(COMBO_COUNTS + Y)));
     lda8(inc8((u8)A));
-    wr8(ABS(0x1543 + Y), (u8)A);
+    wr8(ABS(COMBO_COUNTS + Y), (u8)A);
     retl();
 }
 

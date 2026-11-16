@@ -46,7 +46,7 @@ R816_EXPORT void ResetBoot4a(void)
     lda8(0x02); wr8(LONG(BCAST_MINUTE), 0x02); wr8(LONG(BCAST_FRAME), 0x02);
     lda8(0x00); wr8(LONG(BCAST_FRAME_HI), 0x00);
     lda8(0x1E); wr8(ABS(0x1E84), 0x1E);
-    wr8(ABS(0x1E85), 0);
+    wr8(ABS(CLOCK_COLON), 0);
     sep(0x20);
     lda8(0x00); push8(0x00); DB = pull8(); nz8(DB);
     wr8(ABS(NMITIMEN), 0);
@@ -108,7 +108,7 @@ R816_EXPORT void ResetBoot4b(void)
     lda8(0xFC); wr8(ABS(APUIO0), 0xFC);
     wr8(ABS(BONUS_TRIES), 0);
     wr8(ABS(BONUS_BEST), 0);
-    wr8(ABS(0x1566), 0);
+    wr8(ABS(CLOCK_ON), 0);
     lda8(0x04); wr8(ABS(RECORD_TIME), 0x04);
     wr8(ABS(RECORD_TIME + 0x01), 0);
     wr8(ABS(RECORD_TIME + 0x02), 0);

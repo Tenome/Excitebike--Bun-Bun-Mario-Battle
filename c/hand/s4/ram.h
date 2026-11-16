@@ -282,6 +282,26 @@
 #define BALL_DUE        0x092C  /* the ball is due: rider 7's slot launches it once off screen */
 #define COURSE_TIMES    0x0819  /* [+$1E] ten 3-byte times (minutes, seconds, hundredths), $FF ends */
 
+/* ---- $15xx-$1Exx, part 2 ---- */
+#define CLOCK_ON        0x1566  /* the broadcast clock is shown (negative forces a redraw) */
+#define CLOCK_COLON     0x1E85  /* the clock's colon, blinking every 30 frames */
+#define BANNER_ON       0x199A  /* the coin banner / jump banner is up */
+#define BANNER_TIMER    0x199B  /* its timer (it rises while $20 or more) */
+#define BANNER_Y        0x199C  /* its Y position */
+#define BANNER_COUNT    0x199D  /* the count it shows (100 / 200 coins) */
+#define JUMP_NUMBER     0x1578  /* which jump of the contest (shown as + 1) */
+#define BONUS_FULL      0x1E92  /* bonus courses finished with a full score */
+#define BONUS_TENS      0x1E93  /* bonus points, tens */
+#define BONUS_UNITS     0x1E94  /* bonus points, units */
+#define BONUS_TRY       0x1E95  /* the bonus try count */
+#define ANIM_SRC        0x1E0A  /* word: the animation strip's source (bank $9B) */
+#define ANIM_STRIP      0x1E0E  /* the animation strip counter (RiderGfxCycle) */
+#define ANIM_VRAM       0x1E10  /* word: the animation strip's VRAM address (0 = none) */
+#define BONUS_DELAY     0x1991  /* word: frames before the bonus intro checks the minute */
+#define SPARK_FRAME     0x1987  /* the jump run's wheel-spark frame */
+#define JUMP_RUN_LEN    0x1985  /* word: the jump run's length for this entry */
+#define COMBO_COUNTS    0x1543  /* [+$6] coin combos counted by length (index = combo 1-5) */
+
 /* ---- sprites ---- */
 #define OAM_BUF         0x1600  /* [+$200] $0200 bytes: the OAM low table image */
 #define OAM_SIZE_BUF    0x1820  /* [+$80] 128 size bytes, packed into the high table */

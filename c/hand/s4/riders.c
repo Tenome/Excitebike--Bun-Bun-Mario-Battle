@@ -17,25 +17,25 @@ void RiderGfxCycle_m1x1(void)
     rep(0x20);
     lda16(rd16(ABS(ANIM_UPLOAD_ON)));
     if (!fz) {
-        wr16(ABS(0x1E10), 0);
-        wr16(ABS(0x1E0E), inc16(rd16(ABS(0x1E0E))));
-        lda16(rd16(ABS(0x1E0E)));
+        wr16(ABS(ANIM_VRAM), 0);
+        wr16(ABS(ANIM_STRIP), inc16(rd16(ABS(ANIM_STRIP))));
+        lda16(rd16(ABS(ANIM_STRIP)));
         and16(0x0001);
         if (fz) {
-            lda16(rd16(ABS(0x1E0E)));
+            lda16(rd16(ABS(ANIM_STRIP)));
             and16(0x001E);
             X = (u8)A; nz8((u8)X);
             lda16(rd16(ABS(0x8940 + X)));
             fc = 0;
             adc16(0xC000);
-            wr16(ABS(0x1E0A), A);
+            wr16(ABS(ANIM_SRC), A);
             lda16((u16)X);
             and16(0x0006);
             lda16(lsr16(A));
             A = (u16)((A << 8) | (A >> 8)); nz8((u8)A);   /* XBA */
             fc = 0;
             adc16(0x4F00);
-            wr16(ABS(0x1E10), A);
+            wr16(ABS(ANIM_VRAM), A);
         }
     }
     sep(0x20);

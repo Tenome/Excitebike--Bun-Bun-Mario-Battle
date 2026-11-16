@@ -197,7 +197,7 @@ void DispatchByDistance_m1x1(void)
 void SetJumpBanner_m1x1(void)
 {
     lda8(0x38); wr8(ABS(OAM_BUF + 0x10), 0x38);
-    lda8(rd8(ABS(0x199C))); wr8(ABS(OAM_BUF + 0x11), (u8)A);
+    lda8(rd8(ABS(BANNER_Y))); wr8(ABS(OAM_BUF + 0x11), (u8)A);
     lda8(0x8E); wr8(ABS(OAM_BUF + 0x12), 0x8E);
     lda8(0x2D); wr8(ABS(OAM_BUF + 0x13), 0x2D);
     lda8(0x02); wr8(ABS(OAM_SIZE_BUF + 0x04), 0x02);
@@ -355,18 +355,18 @@ void SetJumpBanner_m1x1(void);
  * and redraw it; at zero switch it off. */
 void StepJumpBanner_m1x1(void)
 {
-    lda8(rd8(ABS(0x199A)));
+    lda8(rd8(ABS(BANNER_ON)));
     if (fz) { retl(); return; }
-    lda8(rd8(ABS(0x199B)));
+    lda8(rd8(ABS(BANNER_TIMER)));
     if (fz) {
-        wr8(ABS(0x199A), 0);
+        wr8(ABS(BANNER_ON), 0);
         retl();
         return;
     }
     cmp8((u8)A, 0x20);
     if (fc)
-        wr8(ABS(0x199C), dec8(rd8(ABS(0x199C))));
-    wr8(ABS(0x199B), dec8(rd8(ABS(0x199B))));
+        wr8(ABS(BANNER_Y), dec8(rd8(ABS(BANNER_Y))));
+    wr8(ABS(BANNER_TIMER), dec8(rd8(ABS(BANNER_TIMER))));
     push16(0xC741); SetJumpBanner_m1x1();
     retl();
 }

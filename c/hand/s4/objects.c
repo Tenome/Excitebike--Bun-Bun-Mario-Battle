@@ -194,7 +194,7 @@ void StartBonusMode_m1x1(void)
         wr8(ABS(a), 0);
     rep(0x20);
     lda16(0x0708); wr16(DP(MODE_TIMER), 0x0708);
-    lda16(0x0258); wr16(ABS(0x1991), 0x0258);
+    lda16(0x0258); wr16(ABS(BONUS_DELAY), 0x0258);
     sep(0x20);
     lda8(0x1A); wr8(ABS(BG3SC), 0x1A);
     lda8(0x02); wr8(ABS(BG34NBA), 0x02);
@@ -370,7 +370,7 @@ void StartJumpMode_m1x1(void)
 {
     lda8(0x02);
     push8(0x80); push16(0xB76F); QueueSoundB_m1x1();
-    wr8(ABS(0x1578), 0);
+    wr8(ABS(JUMP_NUMBER), 0);
     wr8(ABS(JUMP_RANK), 0);
     wr8(ABS(TURBO_ON), 0);
     rep(0x20);
@@ -1027,8 +1027,8 @@ void AddBonusPoints_m1x1(void)
     if (fz) {
         lda8(0x01); wr8(ABS(SCORE_ADD + 0x01), 0x01);
         fc = 0;
-        adc8(rd8(ABS(0x1E92)));
-        wr8(ABS(0x1E92), (u8)A);
+        adc8(rd8(ABS(BONUS_FULL)));
+        wr8(ABS(BONUS_FULL), (u8)A);
     } else {
         for (;;) {
             cmp8((u8)A, 0x0A);
@@ -1039,13 +1039,13 @@ void AddBonusPoints_m1x1(void)
         }
         wr8(ABS(SCORE_ADD + 0x03), (u8)A);
         fc = 0;
-        adc8(rd8(ABS(0x1E94)));
-        wr8(ABS(0x1E94), (u8)A);
+        adc8(rd8(ABS(BONUS_UNITS)));
+        wr8(ABS(BONUS_UNITS), (u8)A);
         lda8(rd8(DP(0x00)));
         wr8(ABS(SCORE_ADD + 0x02), (u8)A);
         fc = 0;
-        adc8(rd8(ABS(0x1E93)));
-        wr8(ABS(0x1E93), (u8)A);
+        adc8(rd8(ABS(BONUS_TENS)));
+        wr8(ABS(BONUS_TENS), (u8)A);
     }
     push16(0xDD29); AddScore_m1x1();
     ret();
@@ -1835,9 +1835,9 @@ void BuildJumpScore_m1x1(void)
 void Mode09_BonusIntro_m1x1(void)
 {
     rep(0x20);
-    lda16(rd16(ABS(0x1991)));
+    lda16(rd16(ABS(BONUS_DELAY)));
     if (!fz) {
-        wr16(ABS(0x1991), dec16(rd16(ABS(0x1991))));
+        wr16(ABS(BONUS_DELAY), dec16(rd16(ABS(BONUS_DELAY))));
     } else {
         sep(0x20);
         lda8(rd8(DP(COURSE_SLOT)));
@@ -3148,8 +3148,8 @@ void ShowJumpResult_m1x1(void)
     lda8(0x38); wr8(ABS(OAM_BUF + 0x01), 0x38); wr8(ABS(OAM_BUF + 0x05), 0x38);
     lda8(0x31); wr8(ABS(OAM_BUF + 0x03), 0x31); wr8(ABS(OAM_BUF + 0x07), 0x31);
     lda8(0x02); wr8(ABS(OAM_SIZE_BUF), 0x02); wr8(ABS(OAM_SIZE_BUF + 0x01), 0x02);
-    wr8(ABS(0x1578), inc8(rd8(ABS(0x1578))));
-    X = rd8(ABS(0x1578)); nz8((u8)X);
+    wr8(ABS(JUMP_NUMBER), inc8(rd8(ABS(JUMP_NUMBER))));
+    X = rd8(ABS(JUMP_NUMBER)); nz8((u8)X);
     lda8(rd8(ABSX(0xE588))); wr8(ABS(OAM_BUF + 0x02), (u8)A);
     cmp8((u8)X, 0x0A);
     if (!fc) {
@@ -3157,7 +3157,7 @@ void ShowJumpResult_m1x1(void)
     } else {
         lda8(rd8(ABS(0xE592))); wr8(ABS(OAM_BUF + 0x06), (u8)A);
         ldx8(0x00);
-        lda8(rd8(ABS(0x1578)));
+        lda8(rd8(ABS(JUMP_NUMBER)));
         for (;;) {
             cmp8((u8)A, 0x0A);
             if (!fc) break;
@@ -3438,7 +3438,7 @@ void StartBonusResult_m1x1(void)
     lda8(0x1A); wr8(ABS(BG3SC), 0x1A);
     lda8(0x44); wr8(ABS(BG12NBA), 0x44);
     lda8(0x01); wr8(ABS(BG34NBA), 0x01);
-    lda8(rd8(ABS(0x1E95)));
+    lda8(rd8(ABS(BONUS_TRY)));
     wr8(ABS(DIGIT_ROW), (u8)A);
     ora8(0x10); wr8(ABS(DIGIT_ROW + 0x01), (u8)A);
     lda8(0x21); wr8(ABS(DIGIT_BUF), 0x21);
@@ -3447,23 +3447,23 @@ void StartBonusResult_m1x1(void)
     lda16(0x03CF); wr16(DP(0x02), 0x03CF);
     sep(0x20);
     push16(0xB6A4); VramQueueTiles20_m1x1();
-    lda8(rd8(ABS(0x1E92)));
-    ora8(rd8(ABS(0x1E93)));
-    ora8(rd8(ABS(0x1E94)));
+    lda8(rd8(ABS(BONUS_FULL)));
+    ora8(rd8(ABS(BONUS_TENS)));
+    ora8(rd8(ABS(BONUS_UNITS)));
     if (!fz) {
-        lda8(rd8(ABS(0x1E94)));
+        lda8(rd8(ABS(BONUS_UNITS)));
         ldy8(0x00);
         for (;;) { cmp8((u8)A, 0x0A); if (!fc) break; sbc8(0x0A); Y = inc8((u8)Y); WAIT_TICK(); }
         wr8(ABS(DIGIT_ROW + 0x02), (u8)A);
         ora8(0x10); wr8(ABS(DIGIT_ROW + 0x06), (u8)A);
         lda8((u8)Y);
-        fc = 0; adc8(rd8(ABS(0x1E93)));
+        fc = 0; adc8(rd8(ABS(BONUS_TENS)));
         ldy8(0x00);
         for (;;) { cmp8((u8)A, 0x0A); if (!fc) break; sbc8(0x0A); Y = inc8((u8)Y); WAIT_TICK(); }
         wr8(ABS(DIGIT_ROW + 0x01), (u8)A);
         ora8(0x10); wr8(ABS(DIGIT_ROW + 0x05), (u8)A);
         lda8((u8)Y);
-        fc = 0; adc8(rd8(ABS(0x1E92)));
+        fc = 0; adc8(rd8(ABS(BONUS_FULL)));
         wr8(ABS(DIGIT_ROW), (u8)A);
         ora8(0x10); wr8(ABS(DIGIT_ROW + 0x04), (u8)A);
         lda8(0x00); wr8(ABS(DIGIT_ROW + 0x03), 0x00);
@@ -5636,7 +5636,7 @@ void ShowCoinRank_m1x1(void)
         return;
     }
     ldy8(0x28);
-    lda8(rd8(ABS(0x199A)));
+    lda8(rd8(ABS(BANNER_ON)));
     rep(0x20);
     lda16(fz ? 0x90AC : 0x90D5);
     wr16(DP(0x00), A);
@@ -5647,8 +5647,8 @@ void ShowCoinRank_m1x1(void)
         Y = dec8((u8)Y);
     } while (!fn);
     ldy8(0x00);
-    lda8(rd8(ABS(0x199A)));
-    if (!fz) lda8(rd8(ABS(0x199D)));
+    lda8(rd8(ABS(BANNER_ON)));
+    if (!fz) lda8(rd8(ABS(BANNER_COUNT)));
     else lda8(rd8(ABS(COIN_TOTAL)));
     for (;;) {
         cmp8((u8)A, 0x0A);
@@ -5919,19 +5919,19 @@ void AddBcdDigits_m1x1(void);
 void ShowItemPoints_m1x1(void)
 {
     rep(0x20);
-    lda16(rd16(ABS(0x1548)));
+    lda16(rd16(ABS(COMBO_COUNTS + 0x05)));
     and16(0x00FF);
     lda16(asl16(A));
     wr16(DP(0x00), A);
     lda16(asl16(A)); lda16(asl16(A));
     fc = 0; adc16(rd16(DP(0x00)));
     wr16(DP(0x02), A);
-    lda16(rd16(ABS(0x1547)));
+    lda16(rd16(ABS(COMBO_COUNTS + 0x04)));
     and16(0x00FF);
     lda16(asl16(A)); lda16(asl16(A)); lda16(asl16(A));
     fc = 0; adc16(rd16(DP(0x02)));
     wr16(DP(0x02), A);
-    lda16(rd16(ABS(0x1546)));
+    lda16(rd16(ABS(COMBO_COUNTS + 0x03)));
     and16(0x00FF);
     lda16(asl16(A));
     wr16(DP(0x00), A);
@@ -5939,12 +5939,12 @@ void ShowItemPoints_m1x1(void)
     fc = 0; adc16(rd16(DP(0x00)));
     fc = 0; adc16(rd16(DP(0x02)));
     wr16(DP(0x02), A);
-    lda16(rd16(ABS(0x1545)));
+    lda16(rd16(ABS(COMBO_COUNTS + 0x02)));
     and16(0x00FF);
     lda16(asl16(A)); lda16(asl16(A));
     fc = 0; adc16(rd16(DP(0x02)));
     wr16(DP(0x02), A);
-    lda16(rd16(ABS(0x1544)));
+    lda16(rd16(ABS(COMBO_COUNTS + 0x01)));
     and16(0x00FF);
     lda16(asl16(A));
     fc = 0; adc16(rd16(DP(0x02)));
@@ -6322,7 +6322,7 @@ void AimVelocity_m1x1(void)
  * scene (3 before minute $28, else 2) and set $3A = $20. */
 void StartBonusTry_m1x1(void)
 {
-    wr8(ABS(0x1E95), inc8(rd8(ABS(0x1E95))));
+    wr8(ABS(BONUS_TRY), inc8(rd8(ABS(BONUS_TRY))));
     lda8(rd8(LONG(BCAST_MINUTE)));
     cmp8((u8)A, 0x28);
     lda8(fc ? 0x02 : 0x03);
@@ -7159,7 +7159,7 @@ void QueueBlinkBanner_m1x1(void)
     lda16(0x194B); wr16(DP(0x00), 0x194B);
     lda16(rd16(DP(SCROLL_X)));
     int alternate = fz;
-    if (!alternate) { cmp16(A, rd16(ABS(0x1985))); alternate = !fc; }
+    if (!alternate) { cmp16(A, rd16(ABS(JUMP_RUN_LEN))); alternate = !fc; }
     if (!alternate) {
         lda16(rd16(ABS(JUMP_RUN_STEP)));
         and16(0x000F);
@@ -7324,7 +7324,7 @@ void ShowDigitDifference_m1x1(void)
         if (fn) {
             fc = 0; adc8(0x0A);
             wr8(ABSX(SCORE_COPY), (u8)A);
-            wr8(ABSX(0x1548), dec8(rd8(ABSX(0x1548))));
+            wr8(ABSX(COMBO_COUNTS + 0x05), dec8(rd8(ABSX(COMBO_COUNTS + 0x05))));
         }
         X = dec8((u8)X);
     } while (!fn);
@@ -10976,8 +10976,8 @@ void JumpRiderStep_m1x1(void)
             Y = X; nz8((u8)Y);
             lda8(rd8(ABS(RIDER_X)));
             push8(0x81); push16(0xC52C); DrawRiderShadowPairLong_m1x1();
-            wr8(ABS(0x1987), inc8(rd8(ABS(0x1987))));
-            lda8(rd8(ABS(0x1987)));
+            wr8(ABS(SPARK_FRAME), inc8(rd8(ABS(SPARK_FRAME))));
+            lda8(rd8(ABS(SPARK_FRAME)));
             cmp8((u8)A, 0x01);
             if (fz) {
                 lda8(0xF0); wr8(ABSY(OAM_BUF + 0xC2), 0xF0);
@@ -10986,7 +10986,7 @@ void JumpRiderStep_m1x1(void)
                 cmp8((u8)A, 0x02);
                 if (fz) {
                     lda8(0xF0); wr8(ABSY(OAM_BUF + 0xC1), 0xF0); wr8(ABSY(OAM_BUF + 0xC5), 0xF0);
-                } else wr8(ABS(0x1987), 0);
+                } else wr8(ABS(SPARK_FRAME), 0);
             }
             lda8(0x2F); wr8(ABSY(OAM_BUF + 0xC3), 0x2F); wr8(ABSY(OAM_BUF + 0xC7), 0x2F);
         }
@@ -11019,7 +11019,7 @@ void JumpRunStart_m1x1(void)
         fc = 0; adc16(rd16(DP(0x00)));
         X = (u8)A; nz8((u8)X);
         lda16(rd16(LONGX(0x81C2C9)));
-        wr16(ABS(0x1985), A);
+        wr16(ABS(JUMP_RUN_LEN), A);
         sep(0x20);
         lda8(0x00); wr8(ABS(RIDER_SPEED_LO), 0x00);
         lda8(0x05); wr8(ABS(RIDER_SPEED_HI), 0x05);
@@ -11049,7 +11049,7 @@ void JumpRun_m1x1(void)
 {
     rep(0x20);
     lda16(rd16(DP(SCROLL_X)));
-    cmp16(A, rd16(ABS(0x1985)));
+    cmp16(A, rd16(ABS(JUMP_RUN_LEN)));
     if (!fc) {
         sep(0x20);
         push8(0x81); push16(0xC383); LoadRaceColumn_m1x1();
@@ -12780,13 +12780,13 @@ void NmiVramUpload_m1x1(void)
     if (!fz) {
         rep(0x20);
         sep(0x10);
-        lda16(rd16(ABS(0x1E10)));
+        lda16(rd16(ABS(ANIM_VRAM)));
         if (!fz) {
             ldy8(0x80); wr8(ABS(VMAIN), 0x80);
             lda16(0x1801); wr16(DP(0x00), 0x1801);
-            lda16(rd16(ABS(0x1E10))); wr16(ABS(VMADDL), A);
+            lda16(rd16(ABS(ANIM_VRAM))); wr16(ABS(VMADDL), A);
             lda16(0x0200); wr16(DP(0x05), 0x0200);
-            lda16(rd16(ABS(0x1E0A)));
+            lda16(rd16(ABS(ANIM_SRC)));
             ldx8(0x9B);
             ldy8(0x01);
             push16(0x850E); DmaKick_m0x1();
@@ -13525,7 +13525,7 @@ void LoadScene_m1x1(void)
     push8(0x82); DB = pull8(); nz8(DB);
     push8((u8)X); push8((u8)Y);
     X = rd8(DP(GAME_MODE)); nz8((u8)X);
-    lda8(rd8(ABSX(0x92A7))); wr8(ABS(0x1566), (u8)A);
+    lda8(rd8(ABSX(0x92A7))); wr8(ABS(CLOCK_ON), (u8)A);
     wr8(ABS(NMITIMEN), 0);
     wr8(ABS(SH_HDMAEN), 0);
     wr8(ABS(HDMAEN), 0);
@@ -13949,9 +13949,9 @@ void RacePlaceRiders_m1x1(void)
     } while (!fz);
     lda8(rd8(ABS(FINAL_RACE)));
     if (fz) {
-        wr8(ABS(0x1544), 0); wr8(ABS(0x1545), 0); wr8(ABS(0x1546), 0);
-        wr8(ABS(0x1547), 0); wr8(ABS(0x1548), 0);
-        wr8(ABS(0x1543), 0); wr8(ABS(COIN_TOTAL), 0);
+        wr8(ABS(COMBO_COUNTS + 0x01), 0); wr8(ABS(COMBO_COUNTS + 0x02), 0); wr8(ABS(COMBO_COUNTS + 0x03), 0);
+        wr8(ABS(COMBO_COUNTS + 0x04), 0); wr8(ABS(COMBO_COUNTS + 0x05), 0);
+        wr8(ABS(COMBO_COUNTS), 0); wr8(ABS(COIN_TOTAL), 0);
     }
     push16(0xA9A6); ShowCoinRank_m1x1();
     push8(0x80); push16(0xA9AA); LoadRiderPalettes_m1x1();
