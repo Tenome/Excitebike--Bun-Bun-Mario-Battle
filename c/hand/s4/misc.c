@@ -65,7 +65,7 @@ void DrawClockB_m1x1(void)
         lda8(0xFF);
         wr8(ABS(0x1E21), 0xFF);
         wr8(ABS(0x1E26), 0xFF);
-        lda8(rd8(ABS(0x00CA)));
+        lda8(rd8(ABS(LATE_IN_MINUTE)));
         if (!fz) { lda8(0x24); wr8(DP(0x0F), 0x24); }
     }
     if (port_hide_clock())

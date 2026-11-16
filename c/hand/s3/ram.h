@@ -316,6 +316,15 @@
 /* ---- timer divider ---- */
 #define SLOW_TICK       0x0038  /* counts to 11: the byte timers $50-$62 tick once per round ($39-$4F every frame) */
 
+/* ---- more race and screen globals ---- */
+#define LATE_IN_MINUTE  0x00CA  /* past frame $0708 of the race's end minute (the clock's colon turns colour) */
+#define FADE_FROM       0x00B9  /* FadePalette's first colour index (moved by 8 per step) */
+#define TALLY_TIMER     0x00CF  /* frames to the waving pose's next frame (8) */
+#define COURSE_BEST     0x083D  /* [+$0C] the four courses' best times, 3 bytes each (saved to SAVE_TIMES) */
+#define RIDER_ACTION_POSE 0x0981  /* [+$8] X = rider: the pose its piece action set */
+#define CAROUSEL_ANGLE  0x1554  /* [+$5] player select: the five portraits' angles on the ring */
+#define CAROUSEL_POS    0x155A  /* [+$A] player select: the portraits' screen positions */
+
 /* ---- sprites ---- */
 #define OAM_BUF         0x1600  /* [+$200] $0200 bytes: the OAM low table image */
 #define OAM_SIZE_BUF    0x1820  /* [+$80] 128 size bytes, packed into the high table */

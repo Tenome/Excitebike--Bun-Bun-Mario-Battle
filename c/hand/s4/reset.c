@@ -113,10 +113,10 @@ R816_EXPORT void ResetBoot4b(void)
     wr8(ABS(RECORD_TIME + 0x01), 0);
     wr8(ABS(RECORD_TIME + 0x02), 0);
     lda8(0x04);
-    wr8(ABS(0x083D), 0x04);
-    wr8(ABS(0x0840), 0x04);
-    wr8(ABS(0x0843), 0x04);
-    wr8(ABS(0x0846), 0x04);
+    wr8(ABS(COURSE_BEST), 0x04);
+    wr8(ABS(COURSE_BEST + 0x03), 0x04);
+    wr8(ABS(COURSE_BEST + 0x06), 0x04);
+    wr8(ABS(COURSE_BEST + 0x09), 0x04);
     lda8(0x0D); wr8(ABS(GAME_MODE), 0x0D);
 }
 

@@ -286,6 +286,11 @@
 #define BONUS_TICK      0x00AD  /* frames into the bonus clock's second */
 #define SLOW_TICK       0x0038  /* counts to 11: the byte timers $50-$62 tick once per round ($39-$4F every frame) */
 
+/* ---- more race and screen globals ---- */
+#define FADE_FROM       0x00B1  /* FadePalette's first colour index (moved by 8 per step) */
+#define COURSE_BEST     0x083D  /* [+$0C] the four courses' best times, 3 bytes each (saved to SAVE_TIMES) */
+#define RIDER_ACTION_POSE 0x0981  /* [+$8] X = rider: the pose its piece action set */
+
 /* ---- sprites ---- */
 #define OAM_BUF         0x1600  /* [+$200] $0200 bytes: the OAM low table image */
 #define OAM_SIZE_BUF    0x1820  /* [+$80] 128 size bytes, packed into the high table */

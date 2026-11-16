@@ -1533,7 +1533,7 @@ static void player_piece1(u16 back)
 static void set_rider_pair1(void)
 {
     wr8(ABSX(RIDER_POSE), (u8)A);
-    wr8(ABSX(0x0981), (u8)A);
+    wr8(ABSX(RIDER_ACTION_POSE), (u8)A);
     lda8(rd8(ABSX(RIDER_DISTANCE)));
     fc = 1; sbc8(rd8(ABSX(0x0238)));
     ret();
@@ -6104,7 +6104,7 @@ void SkyFadeObject_m1x1(void)
         wr8(ABS(PALETTE_DIRTY), inc8(rd8(ABS(PALETTE_DIRTY))));
         wr8(DP(0x9D), inc8(rd8(DP(0x9D))));
         lda8(0xC0); wr8(DP(MODE_TIMER), 0xC0);
-        lda8(0x06); wr8(DP(0xB1), 0x06);
+        lda8(0x06); wr8(DP(FADE_FROM), 0x06);
     }
     sep(0x20);
     ret();
@@ -7674,7 +7674,7 @@ void DrawSparksAndMarkers_m1x1(void)
                 fc = 0; adc8(0x0A);
                 wr8(ABSY(OAM_BUF + 0xA0), (u8)A);
                 wr8(DP(0x01), (u8)Y);
-                Y = rd8(ABSX(0x0981)); nz8((u8)Y);
+                Y = rd8(ABSX(RIDER_ACTION_POSE)); nz8((u8)Y);
                 lda8(rd8(ABSY(0xE6E7)));
                 Y = rd8(DP(0x01)); nz8((u8)Y);
                 wr8(ABSY(OAM_BUF + 0xA2), (u8)A);
@@ -7960,7 +7960,7 @@ void FadePaletteStep_m1x1(void)
     lda8(rd8(DP(FRAME_COUNT)));
     and8(0x07);
     if (fz) {
-        X = rd8(DP(0xB1)); nz8((u8)X);
+        X = rd8(DP(FADE_FROM)); nz8((u8)X);
         rep(0x20);
         static const u16 mask[3] = { 0x7C00, 0x03E0, 0x001F };
         static const u16 tgt[3] = { 0x9A45, 0x9A5D, 0x9A75 };
@@ -8058,7 +8058,7 @@ void FadeInObject_m1x1(void)
     X = rd8(ABS(OBJ_CURRENT)); nz8((u8)X);
     lda8(rd8(DP(MODE_TIMER)));
     if (fz) {
-        lda8(rd8(DP(0xB1)));
+        lda8(rd8(DP(FADE_FROM)));
         cmp8((u8)A, 0x16);
         if (fc) {
             wr8(ABSX(OBJ_STATE), inc8(rd8(ABSX(OBJ_STATE))));
@@ -8067,7 +8067,7 @@ void FadeInObject_m1x1(void)
             return;
         }
         fc = 0; adc8(0x08);
-        wr8(DP(0xB1), (u8)A);
+        wr8(DP(FADE_FROM), (u8)A);
         lda8(0xC0); wr8(DP(MODE_TIMER), 0xC0);
     }
     wr8(DP(MODE_TIMER), dec8(rd8(DP(MODE_TIMER))));
@@ -9048,9 +9048,9 @@ void EndScreenTimes_m1x1(void)
     X = (u8)A; nz8((u8)X);
     fc = 0; adc8(rd8(ABS(ENTRY_CURSOR)));
     Y = (u8)A; nz8((u8)Y);
-    lda8(rd8(ABSY(0x083D))); wr8(ABS(RACE_MIN), (u8)A);
-    lda8(rd8(ABSY(0x083E))); wr8(ABS(RACE_SEC), (u8)A);
-    lda8(rd8(ABSY(0x083F))); wr8(ABS(RACE_FRAMES), (u8)A);
+    lda8(rd8(ABSY(COURSE_BEST))); wr8(ABS(RACE_MIN), (u8)A);
+    lda8(rd8(ABSY(COURSE_BEST + 0x01))); wr8(ABS(RACE_SEC), (u8)A);
+    lda8(rd8(ABSY(COURSE_BEST + 0x02))); wr8(ABS(RACE_FRAMES), (u8)A);
     rep(0x20);
     lda16(rd16(ABSX(0x9A43))); wr16(DP(0x00), A);
     lda16(0x03B1); wr16(DP(0x18), 0x03B1);
@@ -11674,9 +11674,9 @@ void RaceResultsSetup_m1x1(void)
     lda8(asl8((u8)A));
     fc = 0; adc8(rd8(DP(COURSE_SLOT)));
     X = (u8)A; nz8((u8)X);
-    lda8(rd8(ABS(RECORD_TIME))); wr8(ABSX(0x083D), (u8)A);
-    lda8(rd8(ABS(RECORD_TIME + 0x01))); wr8(ABSX(0x083E), (u8)A);
-    lda8(rd8(ABS(RECORD_TIME + 0x02))); wr8(ABSX(0x083F), (u8)A);
+    lda8(rd8(ABS(RECORD_TIME))); wr8(ABSX(COURSE_BEST), (u8)A);
+    lda8(rd8(ABS(RECORD_TIME + 0x01))); wr8(ABSX(COURSE_BEST + 0x01), (u8)A);
+    lda8(rd8(ABS(RECORD_TIME + 0x02))); wr8(ABSX(COURSE_BEST + 0x02), (u8)A);
     lda8(rd8(DP(FINAL_RACE)));
     if (fz) {
         wr8(ABS(NMITIMEN), 0);
@@ -12162,7 +12162,7 @@ void SaveBestRecords_m1x1(void)
         wr8(ABS(NEW_TIME_RECORD), inc8(rd8(ABS(NEW_TIME_RECORD))));
         ldx8(0x0B);
         do {
-            lda8(rd8(ABSX(0x083D))); wr8(LONGX(SAVE_TIMES), (u8)A);
+            lda8(rd8(ABSX(COURSE_BEST))); wr8(LONGX(SAVE_TIMES), (u8)A);
             X = dec8((u8)X);
         } while (!fn);
     }
@@ -12620,7 +12620,7 @@ void ClearRiderAction_m1x1(void)
     lda8(0x00);
     wr8(ABSX(RIDER_PIECE_ACTION), 0);
     wr8(ABSX(RIDER_POSE), 0);
-    wr8(ABSX(0x0981), 0);
+    wr8(ABSX(RIDER_ACTION_POSE), 0);
     ret();
 }
 /* $80:BC50 (RTS, M=0): A * $40 through Mul16c ($42 = A), the middle word

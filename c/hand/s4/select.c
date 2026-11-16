@@ -124,16 +124,16 @@ void SinCos_m1x1(void)
 static u8 portrait_angle(int i)
 {
     if (i < 5 && !roster_select_general())
-        return rd8(ABS(0x1554 + i));
-    return (u8)(rd8(ABS(0x1554)) + roster_select_ring_offset(i) - roster_select_ring_offset(0));
+        return rd8(ABS(CAROUSEL_ANGLE + i));
+    return (u8)(rd8(ABS(CAROUSEL_ANGLE)) + roster_select_ring_offset(i) - roster_select_ring_offset(0));
 }
 
 /* Screen position of an added portrait (the original keeps 0-4 in RAM). */
 static void portrait_xy(int i, u8 *x, u8 *y)
 {
     if (i < 5 && !roster_select_general()) {
-        *x = rd8(ABS(0x155A + i));
-        *y = rd8(ABS(0x155F + i));
+        *x = rd8(ABS(CAROUSEL_POS + i));
+        *y = rd8(ABS(CAROUSEL_POS + 0x05 + i));
         return;
     }
     u16 sx = X, sy = Y;
@@ -156,17 +156,17 @@ void CarouselPos_m1x1(void)
     push8((u8)X);
     lda8(0x40);
     wr8(DP(0x08), 0x40);
-    lda8(rd8(ABS(0x1554 + X)));
+    lda8(rd8(ABS(CAROUSEL_ANGLE + X)));
     X = (u8)A; nz8((u8)X);
     push8(0x81); push16(0xA257); SinCos_m1x1();
     X = pull8(); nz8((u8)X);
     lda8(0x68); fc = 0; adc8(rd8(DP(0x04)));
-    wr8(ABS(0x155A + X), (u8)A);
+    wr8(ABS(CAROUSEL_POS + X), (u8)A);
     lda8(0x50); fc = 0; adc8(rd8(DP(0x00)));
-    wr8(ABS(0x155F + X), (u8)A);
+    wr8(ABS(CAROUSEL_POS + 0x05 + X), (u8)A);
     cmp8((u8)X, 0x00);
     if (fz) {
-        u8 a0 = rd8(ABS(0x1554));
+        u8 a0 = rd8(ABS(CAROUSEL_ANGLE));
         lda8(a0);
         if (roster_select_is_stop(a0)) {
             lda8(rd8(ABS(SELECT_TURN)));
@@ -217,10 +217,10 @@ void SelectRotate_m1x1(void)
     }
     ldx8(0x04);
     do {
-        lda8(rd8(ABS(0x1554 + X)));
+        lda8(rd8(ABS(CAROUSEL_ANGLE + X)));
         fc = 0;
         adc8(rd8(ABS(SELECT_TURN)));
-        wr8(ABS(0x1554 + X), (u8)A);
+        wr8(ABS(CAROUSEL_ANGLE + X), (u8)A);
         push8(0x80); push16(0x8BA5); CarouselPos_m1x1();
         X = dec8((u8)X);
     } while (!fn);
@@ -348,7 +348,7 @@ static void draw_portrait(int i, u8 cursor, int st)
  */
 void SelectDraw_m1x1(void)
 {
-    u8 a0 = rd8(ABS(0x1554));
+    u8 a0 = rd8(ABS(CAROUSEL_ANGLE));
     lda8(a0);
     u8 cursor = roster_select_cursor(a0);
     lda8(cursor);

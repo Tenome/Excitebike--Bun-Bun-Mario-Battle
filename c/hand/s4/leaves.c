@@ -303,7 +303,7 @@ void CheckCourseTime_m1x1(void)
         cmp16(A, 0x0708);
         if (fc) {
             sep(0x20);
-            lda8(0x01); wr8(ABS(0x00CA), 0x01);
+            lda8(0x01); wr8(ABS(LATE_IN_MINUTE), 0x01);
         }
     }
     sep(0x20);
@@ -319,7 +319,7 @@ void StopWhenStill_m1x1(void)
     ora8(rd8(ABS(RIDER_BUMPED)));
     if (fz) {
         lda8(0x01); wr8(DP(JUMP_BOARD_STEP), 0x01);
-        lda8(0x20); wr8(DP(0xCF), 0x20);
+        lda8(0x20); wr8(DP(TALLY_TIMER), 0x20);
         lda8(0x01);
         u8 m = rd8(DP(FRAME_COUNT));
         fz = (m & 0x01) == 0;
@@ -384,7 +384,7 @@ void CheckBonusTime_m1x1(void)
         cmp16(A, 0x0708);
         if (fc) {
             sep(0x20);
-            lda8(0x01); wr8(ABS(0x00CA), 0x01);
+            lda8(0x01); wr8(ABS(LATE_IN_MINUTE), 0x01);
         }
     }
     sep(0x20);
