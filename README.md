@@ -23,7 +23,8 @@ GUI, mods and a course editor that draws the game's own track.
 
 Two executables are built from your dumps of the Stadiums:
 
-* **`BunbunS4SNESRecomp.exe`**: the main game, the Stadium 3–4 engine (Gen B).
+* **`BunbunS4SNESRecomp.exe`**: the main game, the Stadium 3–4 engine (Gen B),
+  which also plays Stadiums 1 and 2.
 * **`BunbunS1SNESRecomp.exe`**: the Stadium 1–2 engine (Gen A), kept for the
   original Stadium 1–2 experience.
 
@@ -35,7 +36,7 @@ What the port adds:
 | **Expanded roster** | Mario, Yoshi, Kinopio, Wario, Peach and Luigi in one player select (Luigi's rider set and voice come from the Stadium 3 dump) |
 | **Every character races** | The characters not in a race's lineup ride in place of Koopa riders, so all six race together (drawn by the port's renderer with their own sprites and colours) |
 | **CPU rivals in every race** | The original runs the free runs alone and meets the seven rivals only in the final; the port fills every race (the engine's eight rider slots) |
-| **Widescreen** | 16:9 races and jump contest: the track, crowd, HUD, riders and their shadows continue into both margins; menus and the course preview are pillarboxed |
+| **Widescreen** | 16:9 races, the attract demo race, the jump contest and the bonus games, in both executables: the track, crowd, HUD, riders and their shadows continue into both margins; menus, cards and result screens are pillarboxed |
 | **Rival pace** | Easy, normal (original) or hard CPU rivals: a percentage on the target speed the rival AI picks |
 | **No broadcast clock** | Each screen moves on as soon as it is done instead of waiting for the satellite schedule; the original timing is one switch away |
 | **Skip buttons** | A or Start ends the player-select countdown, Start skips the course preview and results, Select ends a race |
@@ -43,7 +44,7 @@ What the port adds:
 | **Mods page** | Game options, a PNG rider sheet per character, a replacement sound folder, a custom course per slot, one switch per `mods/` folder |
 | **Course editor** | Opens on the game's courses and draws them with the game's own graphics; saves courses both engines play |
 | **No ROM needed after the build** | Your dumps are built into the executable; it runs from any folder |
-| **Stadium 1–2 courses** | Play the Stadium 1 or 2 courses in the Stadium 3–4 engine |
+| **All four Stadiums in one game** | The main executable plays Stadiums 1–4: Stadiums 1 and 2 bring their own courses and their broadcast hour (no jump contests, one bonus game at the end). Pick one with **L / R** on the title screen or in the launcher; the Stadium 1–2 executable switches between 1 and 2 the same way |
 
 Details, controls and every option: [port/README.md](port/README.md).
 Modding: [docs/MODDING.md](docs/MODDING.md).

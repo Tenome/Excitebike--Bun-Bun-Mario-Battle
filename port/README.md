@@ -17,8 +17,9 @@ Playable from boot to the end screen in both engines: title, player select,
 course preview, races, results, the final and the jump contest. On top of the
 original: a six-character roster, CPU rivals in every race, a clock-free
 flow with skip buttons, a launcher with a Mods page, sprite, sound and course
-mods, and a course editor. 207 of the 532 Stadium 3–4 routines and 152 of
-the 407 Stadium 1–2 routines run as hand-written C.
+mods, and a course editor. Every routine of both engines is hand-written C
+(the decompilation); the recompiled code runs part of it, and native mode
+(Game > Engine > Native) runs the whole game from it.
 
 ## ROM identity
 
@@ -87,10 +88,14 @@ the Mods page) to play it.
   Luigi) on the player select. Built with the dumps embedded it needs
   nothing else; otherwise it reads `data/s4.sfc` and, for Luigi,
   `data/s3.sfc` (`python port/tools/import_roms.py <dumps>`).
-  `BUNBUN_STADIUM=3|4` picks the Stadium, `BUNBUN_COURSES=1|2` plays the
-  Stadium 1 or 2 courses in it (needs `data/s1.sfc`).
+  It plays all four Stadiums: `BUNBUN_STADIUM=1|2|3|4` (launcher Game >
+  Stadium, or **L / R** on the title screen and the attract demo) picks
+  one; Stadiums 1 and 2 bring their own courses (from `data/s1.sfc`) and
+  their broadcast hour (no jump contests, one bonus game at the end).
+  `BUNBUN_COURSES=1|2` plays the Stadium 1 or 2 courses in any Stadium.
 * `build/Release/BunbunS1SNESRecomp.exe` is the Stadium 1-2 engine (Gen A),
-  kept for comparison and the original Stadium 1-2 experience.
+  kept for comparison and the original Stadium 1-2 experience (L / R on
+  the title switch between Stadiums 1 and 2).
 
 ## Settings and mods: the launcher
 
@@ -104,7 +109,7 @@ state, so you continue where you were.
 * **Settings**: display, audio, hotkeys, rewind.
 * **Mods** (stored in `bunbun.ini`):
   * *Game*: play without the broadcast clock (default) or with the original
-    timing; Stadium; Stadium 1/2 courses in the Gen B engine; the expanded
+    timing; Stadium (1-4); Stadium 1/2 courses in any Stadium; the expanded
     roster (Luigi); *CPU rivals*: the original runs the free-run races
     alone and meets its seven CPU rivals only in the final, the default here
     puts all seven in every race (the engine has eight rider slots; more
