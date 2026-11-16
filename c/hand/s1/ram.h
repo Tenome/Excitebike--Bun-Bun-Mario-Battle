@@ -252,6 +252,19 @@
 #define TURN_LATCH      0x0079  /* the player's last A/B bits at the finish (a new press speeds the run-out); 1 at a mode start */
 #define VSCROLL_ZOOM    0x0090  /* the NMI takes BG1's vertical scroll from $9E/$9F (else the wobble) */
 
+/* ---- race, finish and end screen ---- */
+#define ROW_OFFSET      0x0278  /* the builder's offset in the current row's column list (0 = take the next course entry) */
+#define PLAYER_LIFT     0x09C7  /* the player's landing lift (subtracted in HeightAbove; cleared on landing) */
+#define PLAYER_TUMBLE   0x0999  /* the crashed player is tumbling ($FF stopped dead, 1 the tumble ended) */
+#define START_POLES     0x0936  /* [+$8] the eight riders' start lanes, also the start-line flag poles' X */
+#define LAP_SIGN        0x0929  /* which digit of the LAP sign the builder writes next */
+#define RIDER_FINISHED  0x08C4  /* [+$8] X = rider: crossed the finish (the run-out and the wave) */
+#define NEW_TIME_RECORD 0x085C  /* the broadcast's total time is a new record (saved) */
+#define NEW_SCORE_RECORD 0x085D  /* the score is a new record (saved) */
+#define END_NEXT_STEP   0x0454  /* end screen: the step to go to after the current one */
+#define BALL_DUE        0x092C  /* the ball is due: rider 7's slot launches it once off screen */
+#define COURSE_TIMES    0x081C  /* [+$1E] ten 3-byte times (minutes, seconds, hundredths), $FF ends */
+
 /* ---- sprites ---- */
 #define OAM_BUF         0x1600  /* [+$200] $0200 bytes: the OAM low table image */
 #define OAM_SIZE_BUF    0x1820  /* [+$80] 128 size bytes, packed into the high table */

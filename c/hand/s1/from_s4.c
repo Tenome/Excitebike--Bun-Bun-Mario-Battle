@@ -779,7 +779,7 @@ void AimRatio_m1x1(void)
  * timer $45 = 8. */
 void RiderRunOut_m1x1(void)
 {
-    lda8(rd8(ABSX(0x08C4)));
+    lda8(rd8(ABSX(RIDER_FINISHED)));
     int done = fz;
     if (!done) {
         lda8(rd8(ABSX(RIDER_HEIGHT)));
@@ -1003,7 +1003,7 @@ void HeightAbove_m1x1(void)
     fc = 1;
     sbc8(rd8(ABSX(RIDER_HEIGHT)));
     sbc8(rd8(ABSX(RIDER_LANE)));
-    sbc8(rd8(ABS(0x09C7)));
+    sbc8(rd8(ABS(PLAYER_LIFT)));
     fc = 1;
     sbc8(0x08);
     ret();
