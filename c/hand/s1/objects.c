@@ -579,7 +579,7 @@ void CrossFinish_m1x1(void)
     lda8(rd8(DP(RACE_END)));
     if (!fz) { ret(); return; }
     wr8(ABS(FINISH_CROSSED), inc8(rd8(ABS(FINISH_CROSSED))));
-    lda8(0x1D); wr8(DP(FLASH_TIMER), 0x1D); wr8(DP(0xA4), 0x1D);
+    lda8(0x1D); wr8(DP(FLASH_TIMER), 0x1D); wr8(DP(LAP_CROSSED), 0x1D);
     lda8(rd8(ABS(LAPS_LEFT)));
     if (!fz) {
         cmp8((u8)A, 0x01);
@@ -5857,8 +5857,8 @@ void RiderPaletteWords_m1x1(void)
     }
     if (clear) {
         rep(0x20);
-        wr16(ABS(0x1E12), 0); wr16(ABS(0x1E14), 0);
-        wr16(ABS(0x1E16), 0); wr16(ABS(0x1E18), 0);
+        wr16(ABS(SPRITE_SET_SRC), 0); wr16(ABS(SPRITE_SET_SRC + 0x02), 0);
+        wr16(ABS(SPRITE_SET_SRC + 0x04), 0); wr16(ABS(SPRITE_SET_SRC + 0x06), 0);
         sep(0x20);
         ret();
         return;
@@ -5899,7 +5899,7 @@ void RiderPaletteWords_m1x1(void)
         fc = 0; adc16(rd16(DP(0x00)));
         fc = 0; adc16(rd16(ABSX(0xB618)));
         X = rd8(DP(0x0C)); nz8((u8)X);
-        wr16(ABSX(0x1E12), A);
+        wr16(ABSX(SPRITE_SET_SRC), A);
         X = dec8((u8)X);
         X = dec8((u8)X);
         Y = dec8((u8)Y);
@@ -7592,9 +7592,9 @@ void Mode03_Race_m1x1(void)
     push16(0xAA2B); AnimateAllWheels_m1x1();
     push16(0xAA2E); CpuRidersStep_m1x1();
     push16(0xAA31); DrawPlace_m1x1();
-    lda8(rd8(DP(0xA4)));
+    lda8(rd8(DP(LAP_CROSSED)));
     if (!fz) {
-        wr8(DP(0xA4), 0);
+        wr8(DP(LAP_CROSSED), 0);
         push8(0x80); push16(0xAA3B); RecordCourseTime_m1x1();
         push16(0xAA3E); DrawLap_m1x1();
         lda8(rd8(DP(RACE_END)));

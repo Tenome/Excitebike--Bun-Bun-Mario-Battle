@@ -8406,7 +8406,7 @@ void CrossFinish_m1x1(void)
     lda8(rd8(DP(RACE_END)));
     if (!fz) { ret(); return; }
     wr8(ABS(FINISH_CROSSED), inc8(rd8(ABS(FINISH_CROSSED))));
-    lda8(0x1D); wr8(DP(FLASH_TIMER), 0x1D); wr8(DP(0xAC), 0x1D);
+    lda8(0x1D); wr8(DP(FLASH_TIMER), 0x1D); wr8(DP(LAP_CROSSED), 0x1D);
     lda8(rd8(ABS(LAPS_LEFT)));
     if (!fz) {
         cmp8((u8)A, 0x01);
@@ -12128,9 +12128,9 @@ void Mode03_Race_m1x1(void)
     push16(0xAA32); SpinAllWheels_m1x1();
     push16(0xAA35); CpuRidersStep_m1x1();
     push16(0xAA38); QueuePlaceBadgeHud_m1x1();
-    lda8(rd8(DP(0xAC)));
+    lda8(rd8(DP(LAP_CROSSED)));
     if (!fz) {
-        wr8(DP(0xAC), 0);
+        wr8(DP(LAP_CROSSED), 0);
         push8(0x80); push16(0xAA42); RecordCourseTime_m1x1();
         push8(0x80); push16(0xAA46); CALL(QueueStadiumBadge_m1x1, 0x81CA37, 3);
         lda8(rd8(DP(RACE_END)));
@@ -12732,7 +12732,7 @@ void NmiVramUpload_m1x1(void)
     Y = 0x1801; nz16(Y); wr16(DP(0x00), 0x1801);
     rep(0x20);
     sep(0x10);
-    lda16(rd16(ABS(0x1E12)));
+    lda16(rd16(ABS(SPRITE_SET_SRC)));
     if (!fz) {
         static const u16 src[4] = { 0x1E12, 0x1E14, 0x1E16, 0x1E18 };
         static const u16 vram[4] = { 0x2000, 0x2080, 0x2200, 0x2280 };

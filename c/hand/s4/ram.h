@@ -360,6 +360,11 @@
 /* ---- start delay ---- */
 #define START_DELAY     0x0054  /* the race start delay: 5, counted down every 11th frame; rider input and the start lights wait for 0 */
 
+/* ---- lap flag, clock tiles, sprite sets ---- */
+#define LAP_CROSSED     0x00AC  /* a lap was just finished: the race frame records the course time and shows the badge ($1D) */
+#define CLOCK_TILES     0x1E1F  /* [+$C] the clock's "HH:MM" tiles, the upper row then the lower (+5) */
+#define SPRITE_SET_SRC  0x1E12  /* [+$8] word per rider sprite slot: the source of the frame it streams */
+
 /* ---- sprites ---- */
 #define OAM_BUF         0x1600  /* [+$200] $0200 bytes: the OAM low table image */
 #define OAM_SIZE_BUF    0x1820  /* [+$80] 128 size bytes, packed into the high table */

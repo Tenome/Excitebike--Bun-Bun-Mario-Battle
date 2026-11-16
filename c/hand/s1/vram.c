@@ -244,7 +244,7 @@ void NmiFixedUploads_m1x1(void)
     rep(0x20);
     sep(0x10);
 
-    if (rd16(ABS(0x1E12)) != 0) {
+    if (rd16(ABS(SPRITE_SET_SRC)) != 0) {
         static const struct { u16 ret1, ret2, vram, src; u16 bank; } slot[4] = {
             {0x879F, 0x87B4, 0x2000, 0x1E12, 0x1543},
             {0x87CA, 0x87DF, 0x2080, 0x1E14, 0x1544},

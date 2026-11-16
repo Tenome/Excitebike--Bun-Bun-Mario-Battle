@@ -116,7 +116,7 @@ void RiderSpriteSets_m1x1(void)
         fc = 0;
         adc16(rd16(DP(0x1E)));
         X = rd8(DP(0x0C));
-        wr16(ABS(0x1E12 + X), A);
+        wr16(ABS(SPRITE_SET_SRC + X), A);
         X = dec8((u8)X);
         X = dec8((u8)X);
         Y = dec8((u8)Y);

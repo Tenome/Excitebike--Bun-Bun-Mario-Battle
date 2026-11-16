@@ -50,21 +50,21 @@ void DrawClockB_m1x1(void)
     lda8(0x18); wr8(DP(0x01), 0x18);
     lda8(0x25); wr8(ABS(0x1E1E), 0x25);
     u8 u = split_tens(rd8(LONG(BCAST_HOUR)), 0x1E1F);       /* hour */
-    wr8(ABS(0x1E20), u);
-    ora8(0x10); wr8(ABS(0x1E25), (u8)A);
-    lda8(rd8(ABS(0x1E1F))); fc = 0; adc8(0x10); wr8(ABS(0x1E24), (u8)A);
+    wr8(ABS(CLOCK_TILES + 0x01), u);
+    ora8(0x10); wr8(ABS(CLOCK_TILES + 0x06), (u8)A);
+    lda8(rd8(ABS(CLOCK_TILES))); fc = 0; adc8(0x10); wr8(ABS(CLOCK_TILES + 0x05), (u8)A);
     u = split_tens(rd8(LONG(BCAST_MINUTE)), 0x1E22);           /* minute */
-    wr8(ABS(0x1E23), u);
-    ora8(0x10); wr8(ABS(0x1E28), (u8)A);
-    lda8(rd8(ABS(0x1E22))); fc = 0; adc8(0x10); wr8(ABS(0x1E27), (u8)A);
+    wr8(ABS(CLOCK_TILES + 0x04), u);
+    ora8(0x10); wr8(ABS(CLOCK_TILES + 0x09), (u8)A);
+    lda8(rd8(ABS(CLOCK_TILES + 0x03))); fc = 0; adc8(0x10); wr8(ABS(CLOCK_TILES + 0x08), (u8)A);
     lda8(rd8(ABS(CLOCK_COLON)));
     if (fz) {
-        lda8(0x46); wr8(ABS(0x1E21), 0x46);
-        lda8(0x56); wr8(ABS(0x1E26), 0x56);
+        lda8(0x46); wr8(ABS(CLOCK_TILES + 0x02), 0x46);
+        lda8(0x56); wr8(ABS(CLOCK_TILES + 0x07), 0x56);
     } else {
         lda8(0xFF);
-        wr8(ABS(0x1E21), 0xFF);
-        wr8(ABS(0x1E26), 0xFF);
+        wr8(ABS(CLOCK_TILES + 0x02), 0xFF);
+        wr8(ABS(CLOCK_TILES + 0x07), 0xFF);
         lda8(rd8(ABS(LATE_IN_MINUTE)));
         if (!fz) { lda8(0x24); wr8(DP(0x0F), 0x24); }
     }

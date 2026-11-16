@@ -94,25 +94,25 @@ void DrawClock_m1x1(void)
     wr8(DP(0x01), 0x18);
     wr8(ABS(0x1E1E), 0x25);                 /* 5 tiles wide, 2 rows */
 
-    wr8(ABS(0x1E1F), 0x50);                 /* hours */
-    u8 units = split_digits(rd8(LONG(BCAST_HOUR)), ABS(0x1E1F));
-    wr8(ABS(0x1E20), units);
-    fc = 0; adc8(0x10); wr8(ABS(0x1E25), (u8)A);
-    lda8(rd8(ABS(0x1E1F))); fc = 0; adc8(0x10); wr8(ABS(0x1E24), (u8)A);
+    wr8(ABS(CLOCK_TILES), 0x50);                 /* hours */
+    u8 units = split_digits(rd8(LONG(BCAST_HOUR)), ABS(CLOCK_TILES));
+    wr8(ABS(CLOCK_TILES + 0x01), units);
+    fc = 0; adc8(0x10); wr8(ABS(CLOCK_TILES + 0x06), (u8)A);
+    lda8(rd8(ABS(CLOCK_TILES))); fc = 0; adc8(0x10); wr8(ABS(CLOCK_TILES + 0x05), (u8)A);
 
-    wr8(ABS(0x1E22), 0x50);                 /* minutes */
-    units = split_digits(rd8(LONG(BCAST_MINUTE)), ABS(0x1E22));
-    wr8(ABS(0x1E23), units);
-    fc = 0; adc8(0x10); wr8(ABS(0x1E28), (u8)A);
-    lda8(rd8(ABS(0x1E22))); fc = 0; adc8(0x10); wr8(ABS(0x1E27), (u8)A);
+    wr8(ABS(CLOCK_TILES + 0x03), 0x50);                 /* minutes */
+    units = split_digits(rd8(LONG(BCAST_MINUTE)), ABS(CLOCK_TILES + 0x03));
+    wr8(ABS(CLOCK_TILES + 0x04), units);
+    fc = 0; adc8(0x10); wr8(ABS(CLOCK_TILES + 0x09), (u8)A);
+    lda8(rd8(ABS(CLOCK_TILES + 0x03))); fc = 0; adc8(0x10); wr8(ABS(CLOCK_TILES + 0x08), (u8)A);
 
     lda8(rd8(ABS(CLOCK_COLON)));
     if ((u8)A == 0) {
-        wr8(ABS(0x1E21), 0x96);             /* colon, top and bottom halves */
-        wr8(ABS(0x1E26), 0xA6);
+        wr8(ABS(CLOCK_TILES + 0x02), 0x96);             /* colon, top and bottom halves */
+        wr8(ABS(CLOCK_TILES + 0x07), 0xA6);
     } else {
-        wr8(ABS(0x1E21), 0xFC);             /* blank */
-        wr8(ABS(0x1E26), 0xFC);
+        wr8(ABS(CLOCK_TILES + 0x02), 0xFC);             /* blank */
+        wr8(ABS(CLOCK_TILES + 0x07), 0xFC);
     }
     lda8(0x1E);
     wr8(DP(0x02), 0x1E);                    /* tile list at $1E1E */
