@@ -436,9 +436,22 @@ static int g_rivals_slot = -1;
 static uint8_t g_rivals_saved;
 extern uint8_t g_ram[];                 /* WRAM (common_rtl.h) */
 
+/* Stadium 1 or 2 in this engine (launcher Game > Stadium): Gen A's hour has
+ * no jump contests, so a final goes on to its results as a free run does,
+ * and the results wait for the next course's card. */
+static int gena_rules(void)
+{
+    static int v = -1;
+    if (v < 0) {
+        int st = bunbun_option("BUNBUN_STADIUM", "game.stadium", 0);
+        v = st == 1 || st == 2;
+    }
+    return v;
+}
+
 int port_race_is_final(void)
 {
-    return g_ram[0x7D] != 0 && !g_rivals_forced;
+    return g_ram[0x7D] != 0 && !g_rivals_forced && !gena_rules();
 }
 
 static uint8_t *end_minutes(void)       /* $80:C468 in the cartridge image */
