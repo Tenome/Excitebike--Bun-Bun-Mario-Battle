@@ -35,8 +35,8 @@ void NextMode_m1x1(void)
  * rivals still counts as a free run (port_race_is_final). */
 void RaceFinishStep_m1x1(void)
 {
-    lda8(rd8(DP(0x52)));
-    if (fz) { lda8(0x10); wr8(DP(0x52), 0x10); }
+    lda8(rd8(DP(FINISH_TIMER)));
+    if (fz) { lda8(0x10); wr8(DP(FINISH_TIMER), 0x10); }
     cmp8((u8)A, 0x01);
     if (!fz) {
         lda8(0x00);
@@ -47,7 +47,7 @@ void RaceFinishStep_m1x1(void)
         X = dec8((u8)X);
         if (!fz) { ret(); return; }
         ldx8(0x12);
-        lda8(rd8(DP(0x52)));
+        lda8(rd8(DP(FINISH_TIMER)));
         lda8(lsr8((u8)A));
         if (!fc) {
             ldy8(0x06);
@@ -272,8 +272,8 @@ void TitlePushStart_m1x1(void)
     lda8(rd8(LONG(BCAST_MINUTE)));
     cmp8((u8)A, 0x06);
     if (!fc) { ret(); return; }
-    wr8(DP(0xC5), inc8(rd8(DP(0xC5))));
-    lda8(rd8(DP(0xC5)));
+    wr8(DP(TITLE_BLINK), inc8(rd8(DP(TITLE_BLINK))));
+    lda8(rd8(DP(TITLE_BLINK)));
     and8(0x20);
     lda8(lsr8((u8)A));
     wr8(DP(0x00), (u8)A);

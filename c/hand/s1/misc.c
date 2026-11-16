@@ -82,14 +82,14 @@ void DrawClock_m1x1(void)
 {
     lda8(rd8(ABS(CLOCK_ON)));
     if ((u8)A == 0) { ret(); return; }
-    u8 t = dec8(rd8(ABS(0x1E84)));
-    wr8(ABS(0x1E84), t);
+    u8 t = dec8(rd8(ABS(CLOCK_TIMER)));
+    wr8(ABS(CLOCK_TIMER), t);
     if (t != 0) { ret(); return; }
 
     lda8(rd8(ABS(CLOCK_COLON)));
     eor8(0x01);
     wr8(ABS(CLOCK_COLON), (u8)A);                /* colon on/off */
-    wr8(ABS(0x1E84), 0x1E);                 /* next toggle in 30 frames */
+    wr8(ABS(CLOCK_TIMER), 0x1E);                 /* next toggle in 30 frames */
     wr8(DP(0x00), 0x42);                    /* VRAM $1842 */
     wr8(DP(0x01), 0x18);
     wr8(ABS(0x1E1E), 0x25);                 /* 5 tiles wide, 2 rows */
@@ -194,7 +194,7 @@ void FadeStep_m1x1(void)
         lda8(0x80);
         push8(0x80); push16(0x8348); QueueSound_m1x1();
         lda8(0x01);
-        wr8(ABS(0x1E84), 0x01);
+        wr8(ABS(CLOCK_TIMER), 0x01);
         lda8(0x80);
         wr8(ABS(SH_INIDISP), 0x80);
         wr8(ABS(APUIO2), 0);                    /* APUIO2 */
@@ -272,7 +272,7 @@ void BroadcastEventInject_m1x1(void)
         u8 item = rd8(ABS(0x82AF + Y));
         lda8(item);
         wr8(LONG(0x7F3FFF + col), item);
-        wr8(ABS(0x00B0), 0);
+        wr8(ABS(MINUTE_TICKS), 0);
         X = col;
     }
 done:

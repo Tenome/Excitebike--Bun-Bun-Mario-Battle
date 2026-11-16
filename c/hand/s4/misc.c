@@ -36,8 +36,8 @@ void DrawClockB_m1x1(void)
     lda8(rd8(ABS(CLOCK_ON)));
     if (!fn) {
         if (fz) { ret(); return; }
-        u8 t = dec8(rd8(ABS(0x1E84)));
-        wr8(ABS(0x1E84), t);
+        u8 t = dec8(rd8(ABS(CLOCK_TIMER)));
+        wr8(ABS(CLOCK_TIMER), t);
         if (t != 0) { ret(); return; }
     }
     lda8(0x01); wr8(ABS(CLOCK_ON), 0x01);
@@ -45,7 +45,7 @@ void DrawClockB_m1x1(void)
     lda8(rd8(ABS(CLOCK_COLON)));
     eor8(0x01);
     wr8(ABS(CLOCK_COLON), (u8)A);
-    lda8(0x1E); wr8(ABS(0x1E84), 0x1E);
+    lda8(0x1E); wr8(ABS(CLOCK_TIMER), 0x1E);
     lda8(0x42); wr8(DP(0x00), 0x42);
     lda8(0x18); wr8(DP(0x01), 0x18);
     lda8(0x25); wr8(ABS(0x1E1E), 0x25);

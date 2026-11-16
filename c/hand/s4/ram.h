@@ -322,6 +322,31 @@
 #define CAROUSEL_ANGLE  0x1554  /* [+$5] player select: the five portraits' angles on the ring */
 #define CAROUSEL_POS    0x155A  /* [+$A] player select: the portraits' screen positions */
 
+/* ---- multi-use globals, last pass ---- */
+#define RIDER_PIECE_POS 0x0256  /* [+$8] X = rider: its position in the piece script (RunRiderPieces) */
+#define RIDER_PACE      0x0D01  /* [+$10] word, Y = 2X: an off-screen rider's speed, shuffled at the race start */
+#define RIDER_WAVING    0x099E  /* [+$8] X = rider: waving in the run-out after the finish */
+#define RIDER_BOOST     0x199E  /* [+$8] X = rider: a rival given a random boost at the start */
+#define RIDER_IN_MIDDLE 0x092A  /* a rider is in the middle of the screen (CPU riders retarget); 7 for the last rival */
+#define OBJ_RELEASED    0x033F  /* [+$10] X = 2 * slot: the podium's balloons released so far */
+#define WHEELIE_LOCK    0x1979  /* the wheelie's first-time flag ($30), 1 after an arrow piece */
+#define CLOCK_TIMER     0x1E84  /* frames to the clock colon's next blink (30) */
+#define TITLE_BLINK     0x00C5  /* the title's PUSH START blink counter */
+#define END_FRAMES      0x00C1  /* word: frames on the after-the-end screen */
+#define FIRST_RIVAL     0x007E  /* the first rider slot checked for riders ahead (1) */
+#define TUMBLE_TIMER    0x003A  /* the crash tumble timer ($20); also the bonus course's setup wait */
+#define BONUS_SHOWN     0x09C6  /* the bonus count shown, stepping toward BONUS_RESULT */
+#define LAST_TRACK_COL  0x09C8  /* the jump/bonus track column last read (points count once per column) */
+#define SH_BG1SC        0x1900  /* a copy of BG1SC */
+#define BG1_VOFS        0x009B  /* BG1's vertical scroll when VSCROLL_ZOOM is clear */
+#define SPEED_SHOWN     0x00D0  /* word: the speed readout's last value */
+#define SELECT_WAIT     0x198F  /* player select: frames before the choice is taken */
+#define JUMP_SKIPPED    0x1999  /* the jump result board was skipped (everything shown at once) */
+#define BONUS_BANNER    0x00D4  /* the stadium bonus banner's timer ($80 at the finish) */
+#define RANK_SIGN_Y     0x00D3  /* the jump rank sign's Y (rises from $A0) */
+#define MINUTE_TICKS    0x00B8  /* minute changes counted by the clock (PlaceMinuteMarker clears it) */
+#define FINISH_TIMER    0x0052  /* the race-finish step's timer ($10) */
+
 /* ---- sprites ---- */
 #define OAM_BUF         0x1600  /* [+$200] $0200 bytes: the OAM low table image */
 #define OAM_SIZE_BUF    0x1820  /* [+$80] 128 size bytes, packed into the high table */

@@ -45,7 +45,7 @@ R816_EXPORT void ResetBoot1(void)
     lda8(0x13); wr8(LONG(BCAST_HOUR), 0x13);
     lda8(0x02); wr8(LONG(BCAST_MINUTE), 0x02); wr8(LONG(BCAST_FRAME), 0x02);
     lda8(0x05); wr8(LONG(BCAST_FRAME_HI), 0x05);
-    lda8(0x1E); wr8(ABS(0x1E84), 0x1E);
+    lda8(0x1E); wr8(ABS(CLOCK_TIMER), 0x1E);
     wr8(ABS(CLOCK_COLON), 0);
     sep(0x20);
     lda8(0x00); push8(0x00); DB = pull8(); nz8(DB);
@@ -151,8 +151,8 @@ R816_EXPORT void MainLoopFrame1(void)
                 lda8(inc8((u8)A));
             }
             wr8(LONG(BCAST_MINUTE), (u8)A);
-            wr8(ABS(0x00B0), inc8(rd8(ABS(0x00B0))));
-            lda8(0x01); wr8(ABS(0x1E84), 0x01);
+            wr8(ABS(MINUTE_TICKS), inc8(rd8(ABS(MINUTE_TICKS))));
+            lda8(0x01); wr8(ABS(CLOCK_TIMER), 0x01);
             rep(0x20);
             lda16(0x0000); wr16(LONG(BCAST_FRAME), 0);
             sep(0x20);

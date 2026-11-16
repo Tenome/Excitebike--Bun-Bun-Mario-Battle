@@ -517,7 +517,7 @@ void SelectMain_m1x1(void)
         push16(0x89EC); SelectTransition_m1x1();
         goto tail;
     }
-    lda8(rd8(ABS(0x198F)));
+    lda8(rd8(ABS(SELECT_WAIT)));
     if (!fz) {
         rep(0x20);
         wr16(ABS(MODE_TIMER), dec16(rd16(ABS(MODE_TIMER))));
@@ -528,7 +528,7 @@ void SelectMain_m1x1(void)
             wr16(ABS(MODE_TIMER), 0x0001);
         }
         sep(0x20);
-        wr8(ABS(0x198F), dec8(rd8(ABS(0x198F))));
+        wr8(ABS(SELECT_WAIT), dec8(rd8(ABS(SELECT_WAIT))));
         wr8(DP(P1_HELD_HI), 0);
         push8(0x80); push16(0x8A12); SelectDraw_m1x1();
         lda8(rd8(ABS(SELECT_CHOSEN)));
@@ -561,7 +561,7 @@ void SelectMain_m1x1(void)
             lda8(0x3D);
             push8(0x80); push16(0x8A54); QueueSoundB_m1x1();
             lda8(0x1E);
-            wr8(ABS(0x198F), 0x1E);
+            wr8(ABS(SELECT_WAIT), 0x1E);
             wr8(ABS(SELECT_CHOSEN), 0);
             wr8(ABS(SELECT_SLIDING), inc8(rd8(ABS(SELECT_SLIDING))));
         }
@@ -606,7 +606,7 @@ void SelectMain_m1x1(void)
     wr8(ABS(SH_TM), 0x15);
     wr8(ABS(SELECT_SLIDING), inc8(rd8(ABS(SELECT_SLIDING))));
     lda8(0x1E);
-    wr8(ABS(0x198F), 0x1E);
+    wr8(ABS(SELECT_WAIT), 0x1E);
     {
         X = rd8(ABS(0x1579));
         u8 ch = roster_select_char(X);

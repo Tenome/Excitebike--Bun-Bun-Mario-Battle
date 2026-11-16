@@ -288,6 +288,23 @@
 #define COURSE_BEST     0x083D  /* [+$0C] the four courses' best times, 3 bytes each (saved to SAVE_TIMES) */
 #define RIDER_ACTION_POSE 0x0981  /* [+$8] X = rider: the pose its piece action set */
 
+/* ---- multi-use globals, last pass ---- */
+#define RIDER_PIECE_POS 0x0250  /* [+$8] X = rider: its position in the piece script (RunRiderPieces) */
+#define RIDER_PACE      0x0D01  /* [+$10] word, Y = 2X: an off-screen rider's speed, shuffled at the race start */
+#define RIDER_WAVING    0x099E  /* [+$8] X = rider: waving in the run-out after the finish */
+#define RIDER_IN_MIDDLE 0x092A  /* a rider is in the middle of the screen (CPU riders retarget); 7 for the last rival */
+#define OBJ_RELEASED    0x0339  /* [+$10] X = 2 * slot: the podium's balloons released so far */
+#define WHEELIE_LOCK    0x1979  /* the wheelie's first-time flag ($30), 1 after an arrow piece */
+#define CLOCK_TIMER     0x1E84  /* frames to the clock colon's next blink (30) */
+#define TITLE_BLINK     0x00BD  /* the title's PUSH START blink counter */
+#define END_FRAMES      0x00B9  /* word: frames on the after-the-end screen */
+#define FIRST_RIVAL     0x007E  /* the first rider slot checked for riders ahead (1) */
+#define TUMBLE_TIMER    0x003A  /* the crash tumble timer ($20); also the bonus course's setup wait */
+#define BONUS_SHOWN     0x09C6  /* the bonus count shown, stepping toward BONUS_RESULT */
+
+/* ---- minute ticks ---- */
+#define MINUTE_TICKS    0x00B0  /* minute changes counted by the clock (PlaceMinuteMarker clears it) */
+
 /* ---- sprites ---- */
 #define OAM_BUF         0x1600  /* [+$200] $0200 bytes: the OAM low table image */
 #define OAM_SIZE_BUF    0x1820  /* [+$80] 128 size bytes, packed into the high table */

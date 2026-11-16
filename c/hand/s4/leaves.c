@@ -497,7 +497,7 @@ void SetupCourseScreen_m1x1(void)
     lda8(lsr8((u8)A));
     lda8(lsr8((u8)A));
     wr8(ABS(0x09C2), (u8)A);
-    lda8(0x03); wr8(ABS(BG1SC), 0x03); wr8(ABS(0x1900), 0x03);
+    lda8(0x03); wr8(ABS(BG1SC), 0x03); wr8(ABS(SH_BG1SC), 0x03);
     lda8(0x43); wr8(ABS(BG2SC), 0x43);
     lda8(0x55); wr8(ABS(BG12NBA), 0x55);
     lda8(0x30); wr8(ABS(RIDER_HEIGHT), 0x30);

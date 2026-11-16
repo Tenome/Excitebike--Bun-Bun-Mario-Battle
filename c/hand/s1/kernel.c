@@ -281,7 +281,7 @@ void BsxPollStream_m1x1(void)
     if (X == 0) {
         frame++;
         if (frame == 0x0E4C) {
-            wr8(DP(0xB0), (u8)(rd8(DP(0xB0)) + 1));
+            wr8(DP(MINUTE_TICKS), (u8)(rd8(DP(MINUTE_TICKS)) + 1));
             u8 minute = (u8)(rd8(LONG(BCAST_MINUTE)) + 1);
             wr8(LONG(BCAST_MINUTE), minute);
             if (minute == 0x3C && rd8(LONG(BCAST_HOUR)) != 0x11)

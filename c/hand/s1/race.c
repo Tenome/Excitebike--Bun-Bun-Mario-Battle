@@ -326,10 +326,10 @@ void PlayerOverheatWarn_m1x1(void)
     wr8(ABS(ENGINE_HEAT), 0x08);
     cmp8((u8)X, 0x00);
     if (!fz) { ret(); return; }
-    lda8(rd8(ABS(0x1979)));
+    lda8(rd8(ABS(WHEELIE_LOCK)));
     if (!fz) { ret(); return; }
     lda8(0x30);
-    wr8(ABS(0x1979), 0x30);
+    wr8(ABS(WHEELIE_LOCK), 0x30);
     push8(0x80); push16(0xEAF5); QueueSound_m1x1();
     lda8(0x2D);
     push8(0x80); push16(0xEAFB); QueueSound_m1x1();
@@ -542,7 +542,7 @@ void ClearMidScreenRiders_m1x1(void)
                     if (!fc) {
                         push16(0xD05A); ClearRiderState_m1x1();
                         lda8(0x01);
-                        wr8(ABS(0x092A), 0x01);
+                        wr8(ABS(RIDER_IN_MIDDLE), 0x01);
                     }
                 }
             }

@@ -786,7 +786,7 @@ void RiderRunOut_m1x1(void)
         done = !fz;
     }
     if (!done) {
-        lda8(0x01); wr8(ABSX(0x099E), 0x01);
+        lda8(0x01); wr8(ABSX(RIDER_WAVING), 0x01);
         lda8(rd8(DP(FRAME_COUNT)));
         lda8(lsr8((u8)A));
         if (fc) { ret(); return; }
