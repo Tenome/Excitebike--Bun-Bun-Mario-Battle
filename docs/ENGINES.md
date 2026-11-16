@@ -6,8 +6,8 @@ cross-version function maps (`build/xm`).
 
 | | Routines |
 |---|---|
-| same | 130 |
-| changed | 203 |
+| same | 132 |
+| changed | 201 |
 | only in S1 | 74 |
 | only in S4 | 199 |
 
@@ -28,21 +28,22 @@ cross-version function maps (`build/xm`).
 | `80AEC6` | `80AF3F` | CpuRidersStep | 97% | 2 |
 | `8194BE` | `819592` | DrawDustPair | 97% | 2 |
 | `819EF5` | `819FCE` | ObjectFacing | 97% | 2 |
+| `81F8BB` | `81F8BB` | BsxPollStream | 96% | 4 |
+| `80BF88` | `80BCBD` | RaceMoveStep | 96% | 2 |
 | `80ABA0` | `80ABCD` | ThrottleFrom | 96% | 2 |
+| `809F68` | `809E9F` | Mode12_AfterEnd | 96% | 6 |
 | `8196B4` | `819788` | SpawnObject | 95% | 4 |
+| `80DB89` | `80DA77` | BuildCourseColumn | 95% | 10 |
 | `8097FF` | `828F6F` | SaveBestRecords | 95% | 6 |
 | `80C04B` | `80BD88` | UpdateRiderDistances | 95% | 4 |
 | `80EB04` | `80FB58` | RiderBumpCrash | 95% | 2 |
-| `81F8BB` | `81F8BB` | BsxPollStream | 95% | 6 |
 | `80B158` | `80B208` | RaceBookkeeping | 94% | 2 |
 | `80DE23` | `80DD67` | BonusResultStart | 94% | 2 |
 | `80CB47` | `80C997` | BallHit | 94% | 4 |
 | `819670` | `819744` | MoveObjectX | 94% | 4 |
 | `80C654` | `80C3E1` | RaceTimer | 94% | 7 |
 | `8098B2` | `828259` | QueueTimeDigits | 94% | 6 |
-| `81B731` | `81B9DB` | ReleaseBalloons | 94% | 6 |
 | `80B015` | `80B0D0` | RetargetRival | 94% | 2 |
-| `809F68` | `809E9F` | Mode12_AfterEnd | 94% | 10 |
 | `809AF9` | `8099F0` | EndScreenCode | 94% | 4 |
 | `809DE0` | `809CD1` | EndScreenStart | 93% | 2 |
 | `80B02F` | `80B0EA` | CpuAvoidHurdle | 93% | 10 |
@@ -54,23 +55,23 @@ cross-version function maps (`build/xm`).
 | `80C475` | `80C1F3` | CrashRecovery | 92% | 2 |
 | `80DE07` | `80DD45` | Mode0A | 92% | 2 |
 | `80EB39` | `80FBAE` | SlowPieceBrake | 91% | 6 |
-| `81982B` | `8198FF` | FadeInObject | 91% | 4 |
 | `80FFA9` | `80FFA9` | IrqVector | 91% | 8 |
-| `80DB89` | `80DA77` | BuildCourseColumn | 91% | 20 |
 | `80ECE4` | `80FD7E` | DrawSparksAndMarkers | 90% | 10 |
 | `80C604` | `80C391` | SpeedGauge | 90% | 9 |
 | `809A87` | `80997E` | EndScreenRecord | 90% | 8 |
 | `80BFD0` | `80BD0D` | ScrollByPlayerSpeed | 90% | 3 |
+| `818A4D` | `818A4D` | LoadRaceColumn | 89% | 35 |
 | `809EAB` | `809DDA` | StartCredits | 89% | 8 |
 | `8084A8` | `828180` | ForceBlank | 89% | 2 |
-| `818A4D` | `818A4D` | LoadRaceColumn | 88% | 39 |
 | `819778` | `81984C` | FollowObjectPath | 88% | 9 |
 | `819A8D` | `819B5D` | QueueMapTile | 88% | 6 |
 | `808A6D` | `80862A` | Mode0D_Setup | 88% | 5 |
+| `8197E2` | `8198B6` | SkyFadeObject | 88% | 5 |
 | `80E3DF` | `80F3AD` | PlaceLastRival | 88% | 2 |
 | `80FFA5` | `80FFA5` | ResetVector | 88% | 2 |
 | `80E983` | `80F9D0` | RiderDropStep | 87% | 5 |
 | `80C34C` | `80C0B4` | RiderLandCheck | 87% | 4 |
+| `80E4FC` | `80F4C8` | DemoPushStart | 86% | 9 |
 | `80C7EB` | `80C58D` | TickRaceClock | 86% | 5 |
 | `80D31F` | `80D145` | MarkerObjectStep | 86% | 5 |
 | `80DDA7` | `80DC95` | PlayerStop | 86% | 2 |
@@ -91,17 +92,13 @@ cross-version function maps (`build/xm`).
 | `80E3F2` | `80F3BE` | DemoExitSkip35 | 83% | 2 |
 | `80E8B4` | `80F8D6` | RiderPieceAt | 83% | 2 |
 | `80CDF6` | `80CC18` | WheelSpark | 83% | 18 |
-| `8197E2` | `8198B6` | SkyFadeObject | 83% | 7 |
 | `80EDEF` | `80FE93` | PaceBonus | 83% | 15 |
-| `80BF88` | `80BCBD` | RaceMoveStep | 82% | 10 |
 | `80CD54` | `80CB78` | RiderPose | 82% | 21 |
 | `80EAD1` | `80FB25` | PlayerOverheatWarn | 81% | 8 |
 | `809C0D` | `809B0D` | EntryNumberEditor | 81% | 33 |
-| `80DA99` | `80D97C` | PlayerTileState | 81% | 22 |
 | `80AF91` | `80B04E` | PieceOK | 80% | 2 |
 | `80C52E` | `80C2BB` | DrawStartFlags | 80% | 2 |
 | `80E3EE` | `80F3BA` | DemoExitSkip40 | 80% | 2 |
-| `80E4FC` | `80F4C8` | DemoPushStart | 80% | 13 |
 | `80E773` | `80F755` | AnimateAllWheels | 80% | 2 |
 | `80EDB2` | `80F15B` | NextColumnLong | 80% | 2 |
 | `80EDC0` | `80E994` | AddScoreLong | 80% | 2 |
@@ -109,12 +106,14 @@ cross-version function maps (`build/xm`).
 | `819F1E` | `819FF7` | ApplyVelocityX | 80% | 2 |
 | `819F4C` | `81A025` | ApplyVelocity | 80% | 2 |
 | `80FFA1` | `80FFA1` | NmiVector | 80% | 31 |
+| `80E7AC` | `80F78E` | RunRiderPieces | 79% | 56 |
 | `80E9C1` | `80FA0E` | FlattenPlayerPiece | 79% | 9 |
 | `80D97E` | `80D81B` | Mode09 | 79% | 38 |
 | `80DB44` | `80DA2A` | BonusRunOut | 78% | 9 |
 | `808D0C` | `8089B4` | StartModeWithSound | 78% | 4 |
 | `80BEB7` | `80BBCF` | WalkBackOn | 78% | 27 |
 | `8195A3` | `819677` | SparkPieceStep | 77% | 14 |
+| `80DA99` | `80D97C` | PlayerTileState | 77% | 26 |
 | `80DEB3` | `80DDEF` | BonusCountUp | 77% | 16 |
 | `80AFF2` | `80B0AD` | CpuReleaseDpad | 77% | 3 |
 | `80C3B3` | `80C131` | StartJump | 77% | 14 |
@@ -123,22 +122,22 @@ cross-version function maps (`build/xm`).
 | `80EBB5` | `80FC35` | LandingStep | 76% | 7 |
 | `80C12C` | `80BE66` | RivalTarget | 75% | 23 |
 | `809D07` | `809C14` | EndScreenPrompt | 75% | 12 |
-| `80E7AC` | `80F78E` | RunRiderPieces | 75% | 68 |
 | `80EB8E` | `80FC03` | SlowPieceStep | 75% | 13 |
 | `80B498` | `8286EB` | TickTimers | 74% | 9 |
 | `80EA6A` | `80FAB7` | CollectPickupPiece | 74% | 16 |
 | `80CF0D` | `80CD34` | TemperatureGauge | 74% | 53 |
+| `80CCE1` | `80CAE5` | DrawRider | 74% | 27 |
 | `808EA0` | `808B26` | SelectTimerDigits | 74% | 15 |
 | `809236` | `808FF1` | RaceHudInit | 74% | 5 |
 | `80C1C9` | `80BF03` | LaunchBall | 73% | 12 |
 | `80EAFF` | `80FB53` | SetJumpState1 | 73% | 3 |
+| `8199CB` | `819A9B` | FadePaletteStep | 73% | 15 |
 | `80EE68` | `80FF0C` | QueueScoreDigits | 72% | 13 |
 | `80E043` | `80DF55` | AnimSourceFromFrame | 72% | 7 |
 | `80EBC1` | `80FC41` | ResetAndLand | 71% | 4 |
 | `809B4C` | `809A43` | EndScreenChoice | 71% | 21 |
+| `80DB6F` | `80DA55` | BonusTimerStep | 71% | 10 |
 | `80A6B2` | `80A66F` | EraseCollectedCoin | 70% | 31 |
-| `80CCE1` | `80CAE5` | DrawRider | 70% | 31 |
-| `8199CB` | `819A9B` | FadePaletteStep | 69% | 17 |
 | `80AFD5` | `80B090` | CpuThrottle | 69% | 10 |
 | `81A0B5` | `81A1C8` | EngineSound | 68% | 36 |
 | `81A620` | `81A747` | SetHdmaPreset | 67% | 43 |
@@ -148,11 +147,10 @@ cross-version function maps (`build/xm`).
 | `80AE33` | `80AE97` | BrakeRider | 66% | 21 |
 | `808B14` | `8086F8` | Mode0E_Setup | 65% | 16 |
 | `809E46` | `809D37` | BeginFadeInBg3 | 65% | 12 |
-| `80DB6F` | `80DA55` | BonusTimerStep | 65% | 12 |
+| `80D813` | `80E5B0` | SetupJumpContest | 64% | 36 |
 | `80AF9F` | `80B059` | RiderAhead | 64% | 24 |
 | `808369` | `82805F` | InitPpuRegisters | 64% | 39 |
 | `80D038` | `80CE5D` | ClearMidScreenRiders | 62% | 22 |
-| `80D813` | `80E5B0` | SetupJumpContest | 62% | 38 |
 | `80E930` | `80F952` | RiderHalfDrop | 62% | 5 |
 | `80C9C4` | `80C776` | RiderCollisions | 61% | 114 |
 | `80D29F` | `80D12B` | MarkerObjects | 60% | 21 |
@@ -160,27 +158,27 @@ cross-version function maps (`build/xm`).
 | `80E91E` | `80F940` | RiderKickUp | 59% | 7 |
 | `808EF7` | `808B75` | TurnSelectWheels | 58% | 27 |
 | `809BC8` | `809ABF` | EndScreenScrollIn | 58% | 20 |
+| `80CC3D` | `80CA98` | DrawAllRiders | 57% | 41 |
 | `80AF07` | `80AF87` | CpuLaneDecision | 56% | 38 |
-| `80CC3D` | `80CA98` | DrawAllRiders | 55% | 43 |
 | `80E947` | `80F969` | RiderPairHeight | 55% | 5 |
 | `80A7AF` | `80A76C` | RedrawUsedItem | 54% | 43 |
 | `808A9D` | `80865A` | Mode0D_IntroText | 50% | 56 |
 | `81B896` | `81BB40` | RivalSequence_B896 | 49% | 25 |
+| `80B873` | `829182` | LoadScene | 48% | 83 |
 | `80A10E` | `80A070` | PackEntryCode | 47% | 31 |
 | `80A68F` | `80A650` | DrawHudLabelB | 47% | 9 |
-| `80B873` | `829182` | LoadScene | 47% | 85 |
+| `809248` | `8091FC` | RaceSetup | 46% | 30 |
 | `80A66D` | `80A62E` | DrawHudLabelA | 46% | 7 |
 | `80D20F` | `80D08A` | CoinCollected | 46% | 62 |
 | `80C8E9` | `80C68D` | ShowCourseBest | 43% | 13 |
 | `80916B` | `808F26` | PlayerSelectStart | 43% | 34 |
-| `809248` | `8091FC` | RaceSetup | 43% | 32 |
 | `81BE4C` | `81C0F6` | PodiumWalkIn | 43% | 51 |
 | `80E377` | `80F330` | DemoInputStep | 43% | 43 |
 | `81A126` | `81A24B` | SelectWheelPosition | 41% | 44 |
 | `81B836` | `81BAE0` | RivalSequence_B836 | 40% | 21 |
+| `80819F` | `8081A9` | DrawClock | 37% | 51 |
 | `808C2F` | `80889B` | Mode02_SegmentCard | 37% | 17 |
 | `809982` | `809879` | BsxReadSerial3 | 36% | 14 |
-| `80AB3D` | `80AB59` | SegmentTimer | 36% | 54 |
 | `809206` | `808FA6` | ClearRaceState | 35% | 40 |
 | `80876B` | `8083D2` | NmiFixedUploads | 35% | 98 |
 | `80D3C1` | `80D1E6` | DrawSmallObject | 34% | 31 |
@@ -189,9 +187,9 @@ cross-version function maps (`build/xm`).
 | `808C53` | `8088BF` | Mode02_Setup | 32% | 96 |
 | `80D0BA` | `80CF32` | UpdatePlayerPlace | 31% | 31 |
 | `809053` | `808DBA` | SpriteTextRow | 31% | 40 |
+| `80AB3D` | `80AB59` | SegmentTimer | 31% | 58 |
 | `81BAAD` | `81BD57` | RivalSequence_BAAD | 30% | 23 |
 | `81BC4B` | `81BEF5` | RivalSequence_BC4B | 29% | 24 |
-| `80819F` | `8081A9` | DrawClock | 27% | 59 |
 | `8085A6` | `80824E` | PackOamHighTable | 26% | 23 |
 | `80ADF9` | `80AE33` | AccelerateRider | 26% | 52 |
 | `8089ED` | `8085A9` | RunGameModeScript | 24% | 77 |
@@ -500,4 +498,4 @@ cross-version function maps (`build/xm`).
 
 ## Same
 
-DmaFillZero, SpcUpload, NmiFlushVramQueue, Mode00_IntroWait, ModeStepNext, Mode0E_TitleWait, FinishModeSetup, StartSession, BsxReadSerialByte, Mode0F_EndScreen, EndScreenScore, BeginFadeIn, Mode11, StepColourCycle, Add32, MergeBsxFlags, SendSpeedToApu, ThrottleAll, RiderOnRamp, BrakeOnTurn, CpuReleaseButtons, LaneFromY, ReadRiderPieces, DrawBigSprite, ScreenOff, VramQueueTilesLong, VramQueueTiles20, StepLfsr, ReadJoypads, ModeNop, SaveChecksum, Nop_BD39, RiderStepAll, EmptyBE2D, RiderStateStep, RiderRunOut, RiderStartLane, RiderShadowY, ScrollRivalsRelative, SpawnRivals, GroundHeightAbove, HeightAbove, SetRiderLean, Tick08CC, RiderHeightStep, RaceClockStep, DivideAX, RiderLaneBand, Reach20, Reach2, SortAndDrawRiders, DrawRiderShadowPair, SortRidersByPosition, ComputePlaces, MirrorJumpRider, StepObjectX8, StepObjectX, ClearWords1530, SetupSpriteRow15, DispatchBy85, BlankQueueRow, CourseRowList, PlayerHalt, EmptyDDF8, ResetDemoCourse, SetRaceBgMode, TemperatureGaugeJmp, StartMode01, DemoPadDisplay, RunAllRiderPieces, PieceAction, RiderLanePieceAt, LanePieceAt, LanePieceTables, MarkFastRider, RiderGroundHeights, RiderGroundHeightsFrom, HeightBelow, StartJumpBase30, JumpBase30, JumpBase10, RunPieceActions, ClearRiderAction, ItemFlashState, NextColumn, AddScore, QueueScoreDigitsHud, EmptyVector, RaceRowList, FillLaneColumn, BlankQueueRowPal2, CopyTrackColumn, SpawnPlayerSpark, SpawnDustPuff, StepSpriteSlots, EmptyStep9554, StepFallingSprite, ConfettiStep, StepSpark, DrawSpark, MoveObjectX8, UpdateObjects, EmptyStep9828, FindObjectSlot, RivalDispatch_9761, Empty9956, FadeSkyColours, DrawBigBall, SteerObjectStep, AimVelocity, AimRatio, SinCos, EmptyHook, RivalDispatch_B639, EmptyB67E, RivalDispatch_B6B3, DriftUpObject, RivalDispatch_B7A2, RivalDispatch_B8D6, RivalDispatch_BA17, RivalDispatch_BB32, RivalDispatch_BC8A, RivalDispatch_BD52, FrameSequenceA, FrameSequenceB, BsxOpenTimeChannel, ResetMinuteFrame, BsxFindFile, BsxDetect, BsxProbeReceiver
+DmaFillZero, SpcUpload, NmiFlushVramQueue, Mode00_IntroWait, ModeStepNext, Mode0E_TitleWait, FinishModeSetup, StartSession, BsxReadSerialByte, Mode0F_EndScreen, EndScreenScore, BeginFadeIn, Mode11, StepColourCycle, Add32, MergeBsxFlags, SendSpeedToApu, ThrottleAll, RiderOnRamp, BrakeOnTurn, CpuReleaseButtons, LaneFromY, ReadRiderPieces, DrawBigSprite, ScreenOff, VramQueueTilesLong, VramQueueTiles20, StepLfsr, ReadJoypads, ModeNop, SaveChecksum, Nop_BD39, RiderStepAll, EmptyBE2D, RiderStateStep, RiderRunOut, RiderStartLane, RiderShadowY, ScrollRivalsRelative, SpawnRivals, GroundHeightAbove, HeightAbove, SetRiderLean, Tick08CC, RiderHeightStep, RaceClockStep, DivideAX, RiderLaneBand, Reach20, Reach2, SortAndDrawRiders, DrawRiderShadowPair, SortRidersByPosition, ComputePlaces, MirrorJumpRider, StepObjectX8, StepObjectX, ClearWords1530, SetupSpriteRow15, DispatchBy85, BlankQueueRow, CourseRowList, PlayerHalt, EmptyDDF8, ResetDemoCourse, SetRaceBgMode, TemperatureGaugeJmp, StartMode01, DemoPadDisplay, RunAllRiderPieces, PieceAction, RiderLanePieceAt, LanePieceAt, LanePieceTables, MarkFastRider, RiderGroundHeights, RiderGroundHeightsFrom, HeightBelow, StartJumpBase30, JumpBase30, JumpBase10, RunPieceActions, ClearRiderAction, ItemFlashState, NextColumn, AddScore, QueueScoreDigitsHud, EmptyVector, RaceRowList, FillLaneColumn, BlankQueueRowPal2, CopyTrackColumn, SpawnPlayerSpark, SpawnDustPuff, StepSpriteSlots, EmptyStep9554, StepFallingSprite, ConfettiStep, StepSpark, DrawSpark, MoveObjectX8, UpdateObjects, EmptyStep9828, FindObjectSlot, RivalDispatch_9761, FadeInObject, Empty9956, FadeSkyColours, DrawBigBall, SteerObjectStep, AimVelocity, AimRatio, SinCos, EmptyHook, RivalDispatch_B639, EmptyB67E, RivalDispatch_B6B3, DriftUpObject, ReleaseBalloons, RivalDispatch_B7A2, RivalDispatch_B8D6, RivalDispatch_BA17, RivalDispatch_BB32, RivalDispatch_BC8A, RivalDispatch_BD52, FrameSequenceA, FrameSequenceB, BsxOpenTimeChannel, ResetMinuteFrame, BsxFindFile, BsxDetect, BsxProbeReceiver
