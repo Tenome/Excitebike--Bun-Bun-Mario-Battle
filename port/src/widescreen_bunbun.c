@@ -22,9 +22,12 @@
  * jump shadows of riders in the margins (port_ws_shadow_*).
  *
  * Track lookahead. The race's track layer lives in a 64-column tilemap, and
- * the game streams one 8-pixel column into it ($81:8A4D) just before that
- * column reaches the original right edge, so the right margin would show
- * columns from the lap before. Each frame this replays the streamer's
+ * the game streams one 8-pixel column into it ($81:8A4D) 52 columns right of
+ * the screen's left edge, 20 past the original right edge: enough for the
+ * 16:9 right margin. A wider view would need columns further ahead, but the
+ * 64-column map wraps, and anything written past 64 minus the left margin
+ * lands in the left margin (an earlier version wrote 9 columns ahead and
+ * showed track from further on there). Each frame this replays the streamer's
  * decoding on copies of its state ($027B track position, $027D piece,
  * $027E offset in the piece, $0277/$0278 tilemap column) and writes the next
  * columns into the tilemap ahead of the game, exactly as the game will
@@ -98,8 +101,13 @@ static uint16_t rom81w(uint16_t a)
     return (uint16_t)(rom81(a) | rom81((uint16_t)(a + 1)) << 8);
 }
 
-/* $81:8A4D's decoding, side-effect free. */
-static void track_lookahead(void)
+/* $81:8A4D's decoding, side-effect free. The game streams each column 52
+ * columns right of the screen's left edge (20 past the original right edge,
+ * measured in races: BG1 X = (($90 & 1) << 8 | $9A), column = X / 8), so with
+ * the 16:9 margins the game's own columns already cover the right margin.
+ * Columns written further ahead wrap around the 64-column map into the left
+ * margin, so the lookahead stops short of it. */
+static void track_lookahead(int extra)
 {
     uint16_t pos = (uint16_t)(g_ram[0x027B] | g_ram[0x027C] << 8);
     uint8_t piece = g_ram[0x027D], sub = g_ram[0x027E];
@@ -107,7 +115,12 @@ static void track_lookahead(void)
     uint8_t lapsign = g_ram[0x0929], laps = g_ram[0x0928], c93f = g_ram[0x093F];
     const uint8_t *track = &g_ram[0x14000];                  /* $7F:4000 */
     uint8_t mask = rom81(0x8070);
+    unsigned left = ((unsigned)(g_ram[0x90] & 1) << 8 | g_ram[0x9A]) >> 3;
+    unsigned margin = (unsigned)(extra + 7) / 8 + 1;         /* left margin columns, a partial one too */
     for (int n = 0; n < kLookahead + 1; n++) {
+        unsigned mapcol = (page & 4 ? 32u : 0u) + col;
+        if (((mapcol - left) & 63) >= 64 - margin)
+            return;                                            /* would reach the left margin */
         uint16_t ptr;
         uint8_t s;
         int guard = 0;
@@ -185,10 +198,16 @@ void BunbunWsBeginFrame(unsigned number)
     uint8_t mode = g_ram[0x76];
     if (mode == 0x03) {                                        /* a race: the wide view */
         check_prediction(number);
+        /* Steps 0-5 set the race up (the course card fades out at step 0,
+         * then the screen is off); the race scene starts at step 6. */
+        if (g_ram[0x77] < 6) {
+            PpuSetExtraSideSpace(g_ppu, 0, 0, 0);
+            return;
+        }
         /* only once the streamer runs: during the race setup ($027B still
          * 0) other code draws the stands into the same tilemap */
         if (g_ram[0x027B] | g_ram[0x027C])
-            track_lookahead();
+            track_lookahead(extra);
         /* The bottom HUD is BG2 lines 184-223 at scroll 0: a checkered flag
          * across the whole width (the text is on another layer). Reflect
          * it about the native edges so the flag continues into the
