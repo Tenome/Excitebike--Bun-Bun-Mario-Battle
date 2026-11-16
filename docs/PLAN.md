@@ -151,7 +151,8 @@ The rest of the 1 MB is graphics, tracks, music and other data.
    `tools/port_hand.py` turns them back into hex before it translates a
    routine. Riders, objects, effect slots, game flow, timers, scrolling,
    HUD, coins, jump contest, sound rings, player select, demo script and
-   the race globals are named: about 85% of the RAM operands in S1 and S4.
+   the race globals are named: about 86% of the RAM operands in S1 and S4
+   (`tools/handequiv.py` checks a rename keeps the same program).
    Gen A's rider, object and effect arrays sit 6 bytes below Gen B's; most
    $08xx-$0Cxx globals are at the same address in both. Still unnamed
    because each has several uses: DP $3C, $54, $56, $79, $94, $5E; $0904,
