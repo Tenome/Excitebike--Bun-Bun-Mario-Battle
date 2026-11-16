@@ -7,3 +7,4 @@
 int port_end_screen_start(void) { return 0; }
 int port_bsx_exit(u32 site) { (void)site; return 0; }
 void port_course_loaded(void) { }
+void port_ws_clip_rider(void) { }

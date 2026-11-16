@@ -16,7 +16,7 @@
  *   state 0, $E1-$EF:   hide left column, X-high bit on the right column
  *   state 0, x >= $F0:  X-high bit on the left column
  */
-void ClipRiderSprite_m1x1(void)
+static void clip_rider(void)
 {
     u8 oam = rd8(DP(0x07));
     ldy8(oam);
@@ -65,6 +65,11 @@ hide_right:
     wr8(ABS(OAM_BUF + 0x05 + oam), 0xF0);
     wr8(ABS(OAM_BUF + 0x0D + oam), 0xF0);
     ret();
+}
+void ClipRiderSprite_m1x1(void)
+{
+    clip_rider();
+    port_ws_clip_rider();            /* port.h: the port's widescreen margins */
 }
 
 /*

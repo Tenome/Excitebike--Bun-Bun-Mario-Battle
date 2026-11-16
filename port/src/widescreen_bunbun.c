@@ -13,8 +13,8 @@
  *
  * Races and the jump contest show the wide view; every other screen is
  * pillarboxed (the course preview's track band and frame would each need
- * their own fill rules). Gen B
- * (Stadium 3-4) only: the addresses below are that engine's.
+ * their own fill rules). Both exes: Gen A (Stadium 1-2) races take the same
+ * policy without the lookahead; the addresses below are Gen B's.
  *
  * Riders in the margins: PlaceRiderShadow ($80:CE96, hand C) ends with
  * port_ws_rider_sprites (src/roster.c), which unhides a rider's sprites
@@ -70,9 +70,6 @@ static void check_prediction(unsigned frame)
 
 static int ws_extra(void)
 {
-#ifndef BUNBUN_GENB
-    return 0;                     /* the policy below is the Gen B engine's */
-#endif
     static int extra = -1;
     if (extra < 0) {
         const char *v = bunbun_setting("display.widescreen", "off");
@@ -196,6 +193,18 @@ void BunbunWsBeginFrame(unsigned number)
     if (!extra || !g_ppu || !g_snes || !g_snes->cart || !g_snes->cart->rom)
         return;
     uint8_t mode = g_ram[0x76];
+#ifndef BUNBUN_GENB
+    /* Gen A (Stadium 1-2): the race scene from step 6 on, as in Gen B; the
+     * streamer also writes 52 columns right of the left edge, so the
+     * margins need no lookahead. Riders in the margins: ClipRiderSprite
+     * ends with port_ws_clip_rider (src/native_gena.c). */
+    if (mode == 0x03 && g_ram[0x77] >= 6) {
+        PpuSetWidescreenLayerWorldMirrorBand(g_ppu, 1, 184, 224, 0, 256);
+        return;
+    }
+    PpuSetExtraSideSpace(g_ppu, 0, 0, 0);
+    return;
+#endif
     if (mode == 0x03) {                                        /* a race: the wide view */
         check_prediction(number);
         /* Steps 0-5 set the race up (the course card fades out at step 0,

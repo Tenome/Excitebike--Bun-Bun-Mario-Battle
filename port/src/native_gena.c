@@ -53,3 +53,34 @@ void port_course_loaded(void)
     int idx = (g_ram[0x0CD7] | g_ram[0x0CD8]) ? st * 2 + 8 : st * 4 + g_ram[0x7C];
     BunbunCustomCourse(idx, &g_ram[0x14000], 0x1000);           /* $7F:4000 */
 }
+
+/* Widescreen riders (src/widescreen_bunbun.c). Rider X's screen X is
+ * ($0198 - 1) * 256 + $0190: page 0 left of the original screen, 1 on it,
+ * 2 right of it. DrawBigSprite wrote its four 16x16 sprites at $1600 + $07
+ * (columns X and X + 16, rows Y and Y + 16) with the low byte of X, and
+ * ClipRiderSprite hid the columns off the original screen. Inside the wide
+ * view, give each column its X9 bit and put the rows back (Y = $01B0 - 8, as
+ * DrawRider placed them). Gen B does the same in src/roster.c. */
+int BunbunWsExtra(void);
+void port_ws_clip_rider(void)
+{
+    int extra = BunbunWsExtra();
+    if (!extra || g_ram[0x76] != 0x03)
+        return;
+    unsigned r = X & 0xFF;
+    if (r > 7)
+        return;
+    int x = ((int)g_ram[0x0198 + r] - 1) * 256 + g_ram[0x0190 + r];
+    if (x <= -32 - extra || x >= 256 + extra)
+        return;                                        /* outside the wide view */
+    if (x >= 0 && x <= 256 - 32)
+        return;                                        /* the original handles it */
+    unsigned o = g_ram[0x07];
+    uint8_t y = (uint8_t)(g_ram[0x01B0 + r] - 8);
+    g_ram[0x1601 + o] = y;                  g_ram[0x1605 + o] = y;
+    g_ram[0x1609 + o] = (uint8_t)(y + 16);  g_ram[0x160D + o] = (uint8_t)(y + 16);
+    unsigned k = o >> 2;
+    uint8_t x9a = (uint8_t)((x >> 8) & 1), x9b = (uint8_t)(((x + 16) >> 8) & 1);
+    g_ram[0x1820 + k] = (uint8_t)(2 | x9a); g_ram[0x1822 + k] = (uint8_t)(2 | x9a);
+    g_ram[0x1821 + k] = (uint8_t)(2 | x9b); g_ram[0x1823 + k] = (uint8_t)(2 | x9b);
+}
