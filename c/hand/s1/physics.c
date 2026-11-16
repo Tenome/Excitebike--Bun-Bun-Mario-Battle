@@ -74,8 +74,8 @@ void ScrollFarLayer_m1x1(void)
     lda8(rd8(ABS(RIDER_STEP)));
     for (int i = 0; i < 4; i++)
         lda8(asl8((u8)A));
-    adc8(rd8(ABS(0x0994)));
-    wr8(ABS(0x0994), (u8)A);
+    adc8(rd8(ABS(SCROLL_FRAC)));
+    wr8(ABS(SCROLL_FRAC), (u8)A);
     lda8(rd8(DP(0x8F)));
     adc8(0x00);
     wr8(DP(0x8F), (u8)A);

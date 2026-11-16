@@ -245,6 +245,22 @@
 #define BALL_LANE       0x097C  /* the ball's lane position (the player uses it when BALL_OUT) */
 #define BALL_OUT        0x08C7  /* the ball is out on the track */
 
+/* ---- score, coin markers, records ---- */
+#define SCORE_DIGITS    0x0CE5  /* [+$6] the score, six decimal digits (index 5 = units) */
+#define SCORE_ADD       0x09AC  /* [+$6] six digits waiting to be added to the score (AddScore clears them) */
+#define MARKER_X        0x1500  /* [+$8] X = 2 * coin marker: X position (word with MARKER_X + 1) */
+#define MARKER_Y        0x1508  /* [+$8] X = 2 * marker: Y position */
+#define MARKER_VX       0x1510  /* [+$8] X = 2 * marker: velocity */
+#define MARKER_VY       0x1518  /* [+$8] X = 2 * marker: vertical speed, +1 a frame (Gen B retires the marker once it turns positive) */
+#define MARKER_FRAC     0x1520  /* [+$8] X = 2 * marker: position fraction */
+#define MARKER_ON       0x1530  /* [+$8] X = 2 * marker: in use */
+#define MARKER_AGE      0x1538  /* [+$8] X = 2 * marker: word timer, counts up (the oldest is reused) */
+#define PIECES_AHEAD    0x0884  /* [+$20] 4 per rider (0884 + 4X): the heights of the four pieces ahead */
+#define SCROLL_FRAC     0x0994  /* the scroll's fraction (the player's speed * 16 adds into it) */
+#define DEMO_PAD        0x098E  /* the attract demo's pad input for the player this frame */
+#define RECORD_TIME     0x083A  /* [+$3] the course record (minutes, seconds, hundredths) */
+#define RECORD_COURSE   0x084C  /* the course the record belongs to (course - 1; set means a record to show) */
+
 /* ---- sprites ---- */
 #define OAM_BUF         0x1600  /* [+$200] $0200 bytes: the OAM low table image */
 #define OAM_SIZE_BUF    0x1820  /* [+$80] 128 size bytes, packed into the high table */

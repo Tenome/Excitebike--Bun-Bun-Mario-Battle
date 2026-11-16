@@ -286,7 +286,7 @@ void ClearWords1530_m1x1(void)
 {
     push8((u8)X);
     for (int x = 6; x >= 0; x -= 2)
-        wr8(ABS(0x1530 + x), 0);
+        wr8(ABS(MARKER_ON + x), 0);
     X = pull8();
     nz8((u8)X);
     retl();

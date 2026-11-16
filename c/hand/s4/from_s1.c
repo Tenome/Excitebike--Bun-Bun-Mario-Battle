@@ -262,7 +262,7 @@ void FinishModeSetup_m1x1(void)
  */
 void StepObjectX_m1x1(void)
 {
-    u8 v = rd8(ABS(0x1510 + X));
+    u8 v = rd8(ABS(MARKER_VX + X));
     wr8(DP(0x01), (u8)(v << 4));               /* fraction */
     u8 whole = lsr8(lsr8(lsr8(lsr8(v))));
     cmp8(whole, 0x08);
@@ -271,19 +271,19 @@ void StepObjectX_m1x1(void)
     wr8(DP(0x00), whole);
     ldy8(whole & 0x80 ? 0xFF : 0x00);
     wr8(DP(0x02), (u8)Y);                      /* high byte of the step */
-    lda8(rd8(ABS(0x1520 + X)));
+    lda8(rd8(ABS(MARKER_FRAC + X)));
     fc = 0;
     adc8(rd8(DP(0x01)));
-    wr8(ABS(0x1520 + X), (u8)A);
+    wr8(ABS(MARKER_FRAC + X), (u8)A);
     u8 carry = fc;
     push8(carry);                              /* PHA */
-    lda8(rd8(ABS(0x1500 + X)));
+    lda8(rd8(ABS(MARKER_X + X)));
     fc = carry;
     adc8(rd8(DP(0x00)));
-    wr8(ABS(0x1500 + X), (u8)A);
-    lda8(rd8(ABS(0x1501 + X)));
+    wr8(ABS(MARKER_X + X), (u8)A);
+    lda8(rd8(ABS(MARKER_X + 0x01 + X)));
     adc8(rd8(DP(0x02)));
-    wr8(ABS(0x1501 + X), (u8)A);
+    wr8(ABS(MARKER_X + 0x01 + X), (u8)A);
     lda8(pull8());
     fc = 0;
     adc8(rd8(DP(0x00)));
@@ -333,7 +333,7 @@ void ClearWords1530_m1x1(void)
 {
     push8((u8)X);
     for (int x = 6; x >= 0; x -= 2)
-        wr8(ABS(0x1530 + x), 0);
+        wr8(ABS(MARKER_ON + x), 0);
     X = pull8();
     nz8((u8)X);
     retl();
@@ -816,15 +816,15 @@ void AddScore_m1x1(void)
     ldx8(0x05);
     fc = 0;
     for (;;) {
-        lda8(rd8(ABS(0x0CE5 + X)));
-        adc8(rd8(ABS(0x09AC + X)));
-        wr8(ABS(0x0CE5 + X), (u8)A);
+        lda8(rd8(ABS(SCORE_DIGITS + X)));
+        adc8(rd8(ABS(SCORE_ADD + X)));
+        wr8(ABS(SCORE_DIGITS + X), (u8)A);
         X = dec8((u8)X);
         if (fn) break;
         fc = 1;
         sbc8(0x0A);
         if (fc) {
-            wr8(ABS(0x0CE6 + X), (u8)A);
+            wr8(ABS(SCORE_DIGITS + 0x01 + X), (u8)A);
             fc = 1;
         } else {
             wr8(ABS(0x0CE4), (u8)A);
@@ -834,7 +834,7 @@ void AddScore_m1x1(void)
     lda8(0x00);
     ldx8(0x05);
     do {
-        wr8(ABS(0x09AC + X), 0x00);
+        wr8(ABS(SCORE_ADD + X), 0x00);
         X = dec8((u8)X);
     } while (!fn);
     ret();
@@ -867,7 +867,7 @@ void SpawnPlayerSpark_m1x1(void)
     lda8(0xD0); wr8(ABS(EFFECT_VY + X), 0xD0);
     lda8(0x03); wr8(ABS(EFFECT_TIMER + X), 0x03);
     wr8(ABS(EFFECT_STEP + X), 0);
-    lda8(0x01); wr8(ABS(0x09AD), 0x01);
+    lda8(0x01); wr8(ABS(SCORE_ADD + 0x01), 0x01);
     X = pull8(); nz8((u8)X);
     DB = pull8(); nz8(DB);
     retl();

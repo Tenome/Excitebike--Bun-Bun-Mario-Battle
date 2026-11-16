@@ -445,15 +445,15 @@ void AddScore_m1x1(void)
     ldx8(0x05);
     fc = 0;
     for (;;) {
-        lda8(rd8(ABS(0x0CE5 + X)));
-        adc8(rd8(ABS(0x09AC + X)));
-        wr8(ABS(0x0CE5 + X), (u8)A);
+        lda8(rd8(ABS(SCORE_DIGITS + X)));
+        adc8(rd8(ABS(SCORE_ADD + X)));
+        wr8(ABS(SCORE_DIGITS + X), (u8)A);
         X = dec8((u8)X);
         if (fn) break;
         fc = 1;
         sbc8(0x0A);
         if (fc) {
-            wr8(ABS(0x0CE6 + X), (u8)A);
+            wr8(ABS(SCORE_DIGITS + 0x01 + X), (u8)A);
             fc = 1;
         } else {
             wr8(ABS(0x0CE4), (u8)A);
@@ -463,7 +463,7 @@ void AddScore_m1x1(void)
     lda8(0x00);
     ldx8(0x05);
     do {
-        wr8(ABS(0x09AC + X), 0x00);
+        wr8(ABS(SCORE_ADD + X), 0x00);
         X = dec8((u8)X);
     } while (!fn);
     ret();

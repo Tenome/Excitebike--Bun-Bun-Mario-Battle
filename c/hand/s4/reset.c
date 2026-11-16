@@ -109,9 +109,9 @@ R816_EXPORT void ResetBoot4b(void)
     wr8(ABS(0x1E87), 0);
     wr8(ABS(0x1E88), 0);
     wr8(ABS(0x1566), 0);
-    lda8(0x04); wr8(ABS(0x083A), 0x04);
-    wr8(ABS(0x083B), 0);
-    wr8(ABS(0x083C), 0);
+    lda8(0x04); wr8(ABS(RECORD_TIME), 0x04);
+    wr8(ABS(RECORD_TIME + 0x01), 0);
+    wr8(ABS(RECORD_TIME + 0x02), 0);
     lda8(0x04);
     wr8(ABS(0x083D), 0x04);
     wr8(ABS(0x0840), 0x04);

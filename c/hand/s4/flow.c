@@ -242,7 +242,7 @@ void DemoInputStep_m1x1(void)
             X = dec8((u8)X);
             lda8(rd8(LONGX(0x9CD200)));
             wr8(ABS(RIDER_INPUT), (u8)A);
-            wr8(ABS(0x098E), (u8)A);
+            wr8(ABS(DEMO_PAD), (u8)A);
         } else {
             X = rd8(ABS(DEMO_INDEX)); nz8((u8)X);
             wr8(ABS(DEMO_INDEX), inc8(rd8(ABS(DEMO_INDEX))));
@@ -257,7 +257,7 @@ void DemoInputStep_m1x1(void)
             wr8(ABS(DEMO_TIME), (u8)A);
             lda8(rd8(LONGX(0x9CD200)));
             wr8(ABS(RIDER_INPUT), (u8)A);
-            wr8(ABS(0x098E), (u8)A);
+            wr8(ABS(DEMO_PAD), (u8)A);
         }
     }
     fc = 0;
@@ -405,7 +405,7 @@ static void demo_next_entry4(void)
     wr8(ABS(DEMO_TIME), (u8)A);
     lda8(rd8(LONGX(0x9CD200)));
     wr8(ABS(RIDER_INPUT), (u8)A);
-    wr8(ABS(0x098E), (u8)A);
+    wr8(ABS(DEMO_PAD), (u8)A);
     fc = 0;
     ret();
 }

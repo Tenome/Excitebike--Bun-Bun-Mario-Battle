@@ -42,7 +42,7 @@ void CoinMilestone_m1x1(void)
     if (hit) {
         wr8(ABS(0x199D), (u8)A);
         lda8(0x01);
-        wr8(ABS(0x09AD), 0x01);
+        wr8(ABS(SCORE_ADD + 0x01), 0x01);
         wr8(ABS(0x199A), 0x01);
         lda8(0x40);
         wr8(ABS(0x199B), 0x40);
@@ -73,14 +73,14 @@ void CollectCoin_m1x1(void)
     ldx8(0x00);
     for (;;) {
         rep(0x20);
-        lda16(rd16(ABS(0x1538 + X)));
+        lda16(rd16(ABS(MARKER_AGE + X)));
         cmp16(A, rd16(DP(0x00)));
         if (fc) {
             wr16(DP(0x00), A);
             wr8(DP(0x02), (u8)X);
         }
         sep(0x20);
-        lda8(rd8(ABS(0x1530 + X)));
+        lda8(rd8(ABS(MARKER_ON + X)));
         if (fz)
             break;
         X = (u8)(X + 2);
@@ -91,19 +91,19 @@ void CollectCoin_m1x1(void)
             break;
         }
     }
-    wr8(ABS(0x1538 + X), 0);
-    wr8(ABS(0x1539 + X), 0);
+    wr8(ABS(MARKER_AGE + X), 0);
+    wr8(ABS(MARKER_AGE + 0x01 + X), 0);
     lda8(0x01);
-    wr8(ABS(0x1530 + X), 0x01);
+    wr8(ABS(MARKER_ON + X), 0x01);
     rep(0x20);
-    lda16(0x0038); wr16(ABS(0x1500 + X), 0x0038);
+    lda16(0x0038); wr16(ABS(MARKER_X + X), 0x0038);
     lda16(rd16(ABS(RIDER_Y)));
     fc = 0;
     adc16(0x0010);
-    wr16(ABS(0x1508 + X), A);
-    lda16(0x00F8); wr16(ABS(0x1510 + X), 0x00F8);
-    lda16(0x00E0); wr16(ABS(0x1518 + X), 0x00E0);
-    wr16(ABS(0x1520 + X), 0);
+    wr16(ABS(MARKER_Y + X), A);
+    lda16(0x00F8); wr16(ABS(MARKER_VX + X), 0x00F8);
+    lda16(0x00E0); wr16(ABS(MARKER_VY + X), 0x00E0);
+    wr16(ABS(MARKER_FRAC + X), 0);
     wr16(ABS(0x1528 + X), 0);
     sep(0x20);
     wr8(ABS(COIN_TOTAL), inc8(rd8(ABS(COIN_TOTAL))));
@@ -118,12 +118,12 @@ void CollectCoin_m1x1(void)
     }
     lda8(rd8(ABS(0xD11D + Y)));
     fc = 0;
-    adc8(rd8(ABS(0x09AF)));
-    wr8(ABS(0x09AF), (u8)A);
+    adc8(rd8(ABS(SCORE_ADD + 0x03)));
+    wr8(ABS(SCORE_ADD + 0x03), (u8)A);
     lda8(rd8(ABS(0xD124 + Y)));
     fc = 0;
-    adc8(rd8(ABS(0x09B0)));
-    wr8(ABS(0x09B0), (u8)A);
+    adc8(rd8(ABS(SCORE_ADD + 0x04)));
+    wr8(ABS(SCORE_ADD + 0x04), (u8)A);
     wr8(ABS(0x1543), inc8(rd8(ABS(0x1543))));
     lda8(rd8(ABS(0x1543 + Y)));
     lda8(inc8((u8)A));
